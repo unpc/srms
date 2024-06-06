@@ -1,0 +1,23 @@
+<div class="clearfix">
+	<div class="float_left">
+		<span class="description middle"><small><?php echo H(Config::get('system.version')); ?></small></span>
+	</div>
+	<div class="float_left">	
+		<span class="email">
+			<a href="mailto:<?php echo H(Config::get('lab.help.email')); ?>"><small><?php echo H(Config::get('lab.help.email')); ?></small></a>
+		</span>
+	</div>	
+	<div class="float_right">
+		<span class="copyright middle">
+		<?php echo T('%company &#169; %date 版权所有. 保留所有权利.', ['%date'=>Date::format(Date::time(), 'Y'), '%company'=>'<a href="http://www.geneegroup.com" target="_blank">'.T('基理科技').'</a>'])?>
+		</span>
+		<?php 
+		if (!Browser::supported()) {
+		    echo V('footer_browser_suggestion');
+	    }
+		?>
+		<span class="description middle"><small><span id='footer_time'><?php echo H(Date::format()); ?></span></small></span>
+	</div>
+</div>
+<?php if (Module::is_installed('nfs') && L('ME')->id) echo V('nfs:nfs/uploading_list'); ?>
+<?= V('footer_lab') ?>

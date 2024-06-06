@@ -1,0 +1,156 @@
+input.token {
+	display:none;
+}
+
+
+div.token_box {
+	/* max-width: fit-content; */
+	min-width: -webkit-fill-available;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+	cursor:text;
+	margin:0;
+    padding: 5px;
+    *padding: 5px;
+	border:1px solid #E5E5E5;
+    border-radius: 3px;
+	background-color: #FFF;
+    min-height: 50px;
+	display: inline-block;
+
+	input {
+		/*
+			NO. BUG#183 (Cheng.Liu@2010.11.23)
+			去掉display属性，避免在input无法触发keydown事件
+		*/
+		position:absolute;
+		font-size:14px;
+
+        /*
+			NO. BUG (Clh@2018.09.19)
+			去掉用于触发focus的input的位置，会千万触发input时屏幕移动至对应位置
+		*/
+        /* top:-10000px; */
+		/* left:-10000px; */
+		width:0;
+		height:0;
+		border:none;
+		*border-color:white;
+		outline-color:-moz-use-text-color;
+		outline-style:none;
+		outline-width:0;
+		-webkit-appearance: none;	/* 为了隐藏iPad input样子*/
+	}
+
+	input.visible {
+		position:relative;
+		display:block;
+		float:left;
+		left:auto;
+		top:auto;
+		height:auto;
+		/*
+			NO. BUG#183 (Cheng.Liu@2010.11.23)
+			添加padding样式，和其中的div.token保持一致，文本高度才一致
+		*/
+		padding:2px 0px 1px 0px;
+		margin:2px 1px;
+		*margin-top: 0;
+		width:5px;
+	}
+
+    .token_input {
+        height: 30px;
+        line-height: 30px;
+        margin: 5px 0 0 0;
+		padding: 0 0 0 5px;
+		border:0px;
+    }
+
+	div.token {
+		/* position:relative; */
+		display:block;
+		float:left;
+        padding: 0 15px 0 15px;
+		height: 30px;
+		*height: 30px;
+        line-height: 30px;
+        border-radius: 3px;
+        margin: 5px;
+		/* background:url(images/token/normal.gif) no-repeat; */
+		background-color: #F0F0F0;
+		/* border: 1px solid #E5E5E5; */
+		white-space: nowrap;
+		cursor: default;
+		/*
+		* @Date:2018-10-18 11:18:19
+		* @Author: LiuHongbo
+		* @Email: hongbo.liu@geneegroup.com
+		* @Description:token_box中添加button的样式
+		*/
+		&.add{
+			border:1px dashed #F0F0F0 !important;
+			text-align:center;
+			width:90px;
+			color:#F0F0F0;
+			background:#fff;
+			cursor:pointer;
+			span.icon-add{
+				line-height: inherit;
+			}
+		}
+
+
+		.remove_button {
+			display: inline-block;
+			background-image:url(images/token/x.gif) !important;
+			background-position: center center;
+			background-repeat:no-repeat;
+			cursor:pointer;
+			width: 16px;
+			height: 16px;
+			line-height: 16px;
+			padding: 0;
+		}
+
+		strong {
+			display: inline-block;
+			font-weight:normal;
+			line-height: 16px;
+			height: 16px;
+			padding: 0;
+		}
+
+	}
+
+	/* , div.token:hover span */
+	div.token:hover
+	{
+		/* background-image:url(images/token/hover.gif); */
+		background-color: #d8dfea;
+		border-color: #ccd5e4;
+	}
+
+	div.token_em,
+	div.token_em:hover,
+	div.token_selected,
+	div.token_selected:hover {
+		color:#FFF;
+		background-color: var(--basiccolor);
+		/* border-color: #3b5998; */
+	}
+
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+	div.token_box {
+		div.token {
+			height: 30px;
+		}
+
+		input.visible {
+			margin-top: 2px;
+			margin-bottom: 1px;
+		}
+	}
+}

@@ -1,0 +1,68 @@
+<?php 
+
+    $extra = $this->extra->id ? $this->extra : $properties['extra'];
+    $values = $values ?: $properties['values'];
+    $no_error = ($form->no_error !== FALSE);
+    $categories = $extra->get_categories();
+    $reserv = O('eq_reserv', ['component' => $component]);
+    foreach($categories as $category):
+
+    $fields = $extra->get_fields($category);
+    if(count($fields)):?>
+<tr>
+    <td class="label left top nowrap" colspan="2">
+        <h1><?= $category;?></h1>
+    </td>
+</tr>
+
+<tr>
+
+    <?php 
+            $v_count=1;
+            foreach ($fields as $uniqid => $field) :
+            if($field['adopted']){
+                $value = $component->id ? ($no_error ? $reserv->$uniqid : $form[$uniqid]) : ($form[$uniqid] ?: $field['default_value']);
+            }
+            else{
+                $value = $no_error ? $values[$uniqid] : $form['extra_fields'][$uniqid];
+                if ($field['type'] == Extra_Model::TYPE_SELECT) {
+                    $value = $no_error ? $values[$uniqid] : ($form['extra_fields'][$uniqid] ?: -1);
+                }
+            }
+        ?>
+
+    <?php if($field['adopted']):?>
+    <?php echo V('eq_reserv:extra/display/'.$uniqid, ['field'=>$field, 'value'=>$value, 'reserv'=> $reserv, 'is_edit'=>$is_edit, 'extra_class' => $extra_class]);?>
+    <?php echo "</tr><tr>"; ?>
+    <?php else:?>
+    <td class="label left top nowrap <?php echo $extra_class;?>" colspan=2>
+        <div class="title">
+            <?php if ($field['required']) echo '<span class="red">*</span>';?>&#160;<?php echo H($field['title']);?>
+            <?php
+                $error = $form->errors["extra_fields[$uniqid]"][0];
+                $error .= $form->errors["extra_fields[$uniqid][0]"][0]?$form->errors["extra_fields[$uniqid][0]"][0] :
+                    ($form->errors["extra_fields[$uniqid][1]"][0]? $form->errors["extra_fields[$uniqid][1]"][0] : '');
+                ?>
+            <?php echo V('form_filter',['error'=>$error])?>
+        </div>
+
+        <div class="">
+            <?php echo V('extra:display/'.Extra_Model::$types[$field['type']], ['uniqid'=>$uniqid,'field'=>$field, 'value'=>$value]); ?>
+        <div>
+    </td>
+    <?php
+      //   if($v_count%2==0&&$v_count>2)
+         {
+             echo "</tr><tr>";
+         }
+         $v_count++;
+        ?>
+    <?php endif;?>
+    <?php endforeach;?>
+    <?php endif;?>
+    <?php endforeach; ?>
+    <script>
+    jQuery(function($) {
+        $('.validate_error').closest('td').next().find('.require').addClass('error');
+    });
+    </script>

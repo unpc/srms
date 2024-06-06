@@ -1,0 +1,23 @@
+<?php
+    $disabled = L('ME')->is_allowed_to('修改计费设置', $equipment) ? '' : 'disabled="disabled"';
+    $charge_template = $equipment->charge_template;
+    $charge_test_project = $charge_template['test_project'];
+?>
+
+<tr>
+    <td class="lpadding_30">
+        <div class="interval_60"></div>
+        <h2 class="section_title"><?php echo I18N::T('test_project', '测试项目计费设置')?></h2>
+        <div class="interval_30"></div>
+        <div class="charge_setting">
+            <div class="">
+                <div class="charge_dis lmaigin_1e5">
+                    <?= Form::radio('test_project', 'no_charge_test_project' , (!$charge_test_project || !$form['test_project']) ? TRUE : FALSE, I18N::T('test_project', '免费检测'), 'class="monitor" data="" ' . $disabled); ?>
+				</div>
+                <div class="charge_dis lpadding_10">
+                    <?= Form::radio('test_project', 'test_project_count' , ($charge_test_project == 'test_project_count') ? TRUE : FALSE, I18N::T('test_project', '测试项目样品数计费'), 'class="monitor test_project_count" data="test_project" ' . $disabled); ?>
+				</div>
+            </div>
+        </div>
+    </td>
+</tr>

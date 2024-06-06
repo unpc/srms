@@ -1,0 +1,67 @@
+<?php
+$me = L('ME');
+
+$require_exam = false;
+if ($equipment->require_exam) {
+    $require_exam = true;
+    if ($me->id && !$me->gapper_id) {
+        $lousers = (new LoGapper())->get('users', ['email'=> $me->email]);
+        $louser = @current($lousers['items']);
+        if ($louser['id']) {
+            $me->gapper_id = $louser['id'];
+            $me->save();
+        }
+    }
+
+    $history_exams =  (array)$equipment->history_exams;
+    $exams_id_str = implode(',', $history_exams);
+    $remote_exam_app = Config::get('exam.remote_exam_app');
+    $remote_ids = Q("exam[id={$exams_id_str}][remote_app={$remote_exam_app}]")->to_assoc('remote_id', 'remote_id');
+    $exam = Q("$equipment exam")->current();
+    $url = $exam->getRemoteUrl();
+    if ($me->gapper_id) {
+        $result = (new HiExam())->get("user/{$me->gapper_id}/exams/result", ['exams'=>$remote_ids]);
+    }
+    foreach ((array)$result as $res) {
+        if ($res['status'] == '通过') {
+            $require_exam = false;
+            break;
+        }
+    }
+}
+
+if ($require_exam) {
+    $pending_exam_url = Config::get('hiexam.pending_url'); ?>
+<span class="description"><?= I18N::T('equipments', '该设备需要考试和培训后方可使用: ') ?><a class="blue" href="<?= H($url) ?>" target="_blank"><?= I18N::T('equipments', '参加理论考试') ?></a></span>
+<?php
+} else {
+    if (!$me->id) {
+        return;
+    } ?>
+<?php if ($equipment->require_exam) { ?>
+<span class="description"><?= I18N::T('equipments', '该设备需要考试和培训后方可使用: ') ?></span><span><?= I18N::T('equipments', '您已通过理论考试') ?></span>
+<?php } else { ?>
+<span class="description"><?= I18N::T('equipments', '该设备需要培训后方可使用: ') ?></span>
+<?php } ?>
+
+<?php
+$training = Q("ue_training[equipment={$equipment}][user={$me}]:sort(id D):limit(1)")->current();
+if (!$training->id) {
+	$training = O('ue_training', ['equipment' => $equipment, 'user' => $me]);
+}
+switch ($training->status) {
+	case UE_Training_Model::STATUS_APPLIED:
+	case UE_Training_Model::STATUS_AGAIN:
+		echo I18N::T('equipments', '您已经申请参加培训');
+		break;
+	case UE_Training_Model::STATUS_APPROVED:
+		echo I18N::T('equipments', '您已经通过培训');
+		break;
+	case UE_Training_Model::STATUS_REFUSE:
+		echo '<span class="red">' . I18N::T('equipments', '您上次的培训申请被拒绝!') . '</span>';
+		echo '<a class="blue" href="'.$training->url($equipment->id, NULL, NULL, 'apply').'">'.I18N::T('equipments', '申请参加培训').'</a>';
+		break;
+	default:
+    echo '<a class="blue" href="'.$training->url($equipment->id, NULL, NULL, 'apply').'">'.I18N::T('equipments', '申请参加培训').'</a>';
+    }
+}

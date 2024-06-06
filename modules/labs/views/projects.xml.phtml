@@ -1,0 +1,5 @@
+<projects>
+<?php if(count($projects)) foreach($projects as $project): ?>
+	<project id="<?php echo H($project->id ) ?>"><?php echo H($project->name); ?></project>
+<?php endforeach; ?>
+</projects>

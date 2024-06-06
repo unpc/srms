@@ -1,0 +1,51 @@
+# 设置举例 请根据实际情况调整
+# cacs 2代仪器驱动
+# icco 1代仪器驱动
+# dc_cacs 门禁驱动
+# dc_icco 西可门禁驱动
+# computer 电脑驱动
+
+defaults
+{
+#	disabled = computer_device icco_device cacs_device dc_icco_device
+}
+service device_computer
+{
+	socket_type = stream
+	protocol = tcp
+	wait = no
+	type = UNLISTED
+	user = www-data
+	group = www-data
+	env = SITE_ID=%site_id% LAB_ID=%lab_id%
+	port = 2430
+	server = /usr/share/lims2/cli/device.php
+	server_args = computer
+	flags = KEEPALIVE
+}
+service device_cacs
+{
+	socket_type = stream
+	protocol = tcp
+	wait = no
+	type = UNLISTED
+	user = www-data
+	group = www-data
+	env = SITE_ID=%site_id% LAB_ID=%lab_id%
+	port = 2530
+	server = /usr/share/lims2/cli/device.php
+	server_args = cacs
+}
+service device_icco
+{
+	socket_type = stream
+	protocol = tcp
+	wait = no
+	type = UNLISTED
+	user = www-data
+	group = www-data
+	env = SITE_ID=%site_id% LAB_ID=%lab_id%
+	port = 2330
+	server = /usr/share/lims2/cli/device.php
+	server_args = icco
+}

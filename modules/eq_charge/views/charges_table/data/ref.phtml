@@ -1,0 +1,16 @@
+<?php
+
+if (!is_array($c->transaction) && $c->transaction->id):
+?>
+	<span class="panel panel_uniqid">
+		<?php echo Number::fill($c->transaction->id, 6)?>
+	</span>
+<?php
+else:
+?>
+	<span class="panel panel_uniqid">
+		<?php echo Number::fill($c->id, 6)?>
+	</span>
+<?php
+endif;
+?>

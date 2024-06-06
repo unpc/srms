@@ -1,0 +1,19 @@
+<div class="field" style="height: 30px;">
+    <div class="nowrap clearfix" style="min-width: 680px;">
+        <div class="float_left">
+            <div class="lmargin_2 float_left" style="width: 142px;display: inline-block;height: 30px;line-height: 30px">
+                <?php echo I18n::T('eq_sample', $field['title']);?>
+            </div>
+            <div class="lpadding_4 rpadding_4 float_left" style="height: 30px;line-height: 30px">
+                <input name="default" disabled="disabled" class="checkbox" type="checkbox" checked="checked" style="vertical-align: middle"/>
+                <label><?php echo I18N::T('eq_sample', '必填');?></label>
+            </div>
+            <div class="float_left">
+                <?php
+                $type = '数值';
+                echo Form::dropdown("default", I18N::T('eq_sample', [$type]), 0, 'disabled="disabled" class="monitor dropdown" style="width: 100px;"');
+                ?>
+            </div>
+        </div>
+    </div>
+</div>

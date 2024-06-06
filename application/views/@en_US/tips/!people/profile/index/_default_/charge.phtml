@@ -1,0 +1,13 @@
+<div class="description">
+<?php 
+	$params = Config::get('system.controller_params');
+	$id = $params[0];
+	$user = O('user',$id);	
+ ?>
+	<p>You are viewing the general information of  <?php echo $user->name; ?>.</p>
+	<p>* Edit or delete user information.</p>	
+	<p>* View equipment usage/charge history of the current user. Search by specific</p>
+	<p>* Export report.</p>
+	<p>* Administrators only.</p>
+</div>
+

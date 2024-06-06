@@ -1,0 +1,70 @@
+div.reserv_status {
+    width: 500px;
+    float: none;
+    clear: both;
+    text-align: left;
+    .info {
+        font-size: 14px;
+        color: #8A8A8A;
+        float: left;
+        display: inline-block;
+        background-repeat: no-repeat;
+        background-position: 0px center;
+        height: 24px;
+        line-height: 24px;
+    }
+    .late, .overtime, .miss, .leave_early {
+        font-size: 14px;
+        color: #8A8A8A;
+        float: left;
+        display: inline-block;
+        background-repeat: no-repeat;
+        background-position: 0px center;
+        padding-left: 20px;
+        height: 24px;
+        line-height: 24px;
+    }
+    .overtime, .miss, .leave_early {
+        margin-left: 36px;
+    }
+    .late {
+        background-image: url('images/reserv_status/late.png');
+    }
+    .overtime {
+        background-image: url('images/reserv_status/overtime.png');
+    }
+    .miss {
+        background-image: url('images/reserv_status/miss.png');
+    }
+    .leave_early {
+        background-image: url('images/reserv_status/leave_early.png');
+    }
+}
+
+.search_panel {
+    /*float: right;*/
+    /*width: 90% !important;*/
+}
+
+thead.header {
+    background-color: #EEF7F4 !important;
+}
+
+.fourth_tabs {
+    /*margin-left: 80px;*/
+    .tab {
+        border-radius: 0 !important;
+        background: white !important;
+        color: #a3a8ad !important;
+        margin-left: -1px !important;
+        height: 30px !important;
+        margin-top: -4px !important;
+        line-height: 29px !important;
+    }
+    .tab.active_tab {
+        border-radius: 0 !important;
+        background: white !important;
+        color: var(--basiccolor) !important;
+        border-left: 1px solid var(--basiccolor) !important;
+    }
+}

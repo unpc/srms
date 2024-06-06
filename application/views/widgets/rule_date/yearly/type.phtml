@@ -1,0 +1,10 @@
+<div class="interval_20"></div>
+<div>
+<table class="form"><tr>
+<?php $static = H(['yearly_uniqid'=>$yearly_uniqid, 'flexform_index'=>$flexform_index]); ?>
+<td class="left nowrap middle" width="126"><?php echo I18N::T('application','指定'); ?></td>
+<td class="left nowrap middle">
+	<?php echo Form::dropdown('yearly_type['.$flexform_index.']', I18N::T('application', TM_RRule::$yearly_types), $yearly_type ,'class="middle view event:change object:yearly_type static:'.$static.' src:'.URI::url('rrule').'"','class="middle"');
+?></td>
+</tr></table>
+</div>

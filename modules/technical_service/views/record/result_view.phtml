@@ -1,0 +1,88 @@
+<style>
+    .wid6 {
+        width: 7rem;
+    }
+</style>
+<div class="form" style="min-width:550px">
+    <?php
+    $form_id = 'result_' . uniqid();
+    $require = (string)V('form_require', ['extra_class' => 'right']);
+    ?>
+    <form q-object="result" q-event="submit" q-src="<?php echo H(URI::url('!technical_service/record')) ?>"
+          autocomplete="off" method="post" id="<?php echo H($form_id) ?>">
+        <?php echo V('form_error', ['form' => $form]); ?>
+        <input name="apply_record_id" type="hidden" value="<?php echo H($record->id) ?>"/>
+        <table class="form" width="100%">
+            <tr>
+                <td class="label left top nowrap blue" colspan="2">
+                    <h1><span class="red float_left rmargin_1">*</span>
+                        <?php echo I18N::HT('eq_sample', '关联记录'); ?>
+                        <?= $record->connect_type == 'eq_sample' ? '(送样)' : '(使用)' ?>
+                    </h1>
+                </td>
+            </tr>
+            <?php if ($record->connect_type == 'eq_record'): ?>
+                <tr>
+                    <td class="label left top nowrap toggle:connect_type show_on:eq_record" colspan="2">
+                        <?php
+                        $connects = Q("{$record} eq_record");
+                        foreach ($connects as $connect) {
+                            echo (string)V('equipments:autocomplete/record', ['record' => $connect]);
+                        }
+                        ?>
+                    </td>
+                </tr>
+            <?php else: ?>
+                <tr>
+                    <td class="label left top nowrap" colspan="2">
+                        <?php
+                        $connects = Q("{$record} eq_sample");
+                        foreach ($connects as $connect) {
+                            echo (string)V('eq_sample:autocomplete/sample', ['sample' => $connect]);
+                        }
+                        ?>
+                    </td>
+                </tr>
+            <?php endif; ?>
+            <tr>
+                <td class="label left top nowrap blue" colspan="2">
+                    <h1><span class="red float_left rmargin_1">*</span><?php echo I18N::HT('eq_sample', '样品数量'); ?></h1>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="label left nowrap" colspan="2">
+                    <?= $record->success_samples ?? '' ?>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="label left top nowrap blue" colspan="2">
+                    <h1><?php echo I18N::HT('eq_sample', '检测结果'); ?></h1>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="label left nowrap" colspan="2">
+                    <?= $record->result ?? '' ?>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="label left top nowrap blue" colspan="2">
+                    <h1><?php echo I18N::HT('eq_sample', '附件'); ?></h1>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="label left nowrap" colspan="2">
+                    <?php
+                    if (Module::is_installed('nfs') && L('ME')->is_allowed_to('列表文件', $record, ['type' => 'attachments'])) {
+                        echo V('record/edit/attachments', ['record' => $record]);
+                    }
+                    ?>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>

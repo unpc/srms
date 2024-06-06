@@ -1,0 +1,31 @@
+#sidebar div.menu {
+	font-size: 8.25pt;
+}
+
+.sidebar_tooltip {
+	font-size: 8.25pt;
+}
+
+#center .menu .icon_item {
+	width: 72px;
+
+	a {
+		font-size: 11px;
+	}
+}
+
+div.third_tabs {
+	width: 106px;
+}
+
+div.third_tabs_content {
+	margin-left: 109px
+}
+
+div.notification_list .notification_types .notification_type span.type_name {
+	display: block;
+	float:left;
+	height: 16px;
+	width:140px;
+	overflow:hidden;
+}

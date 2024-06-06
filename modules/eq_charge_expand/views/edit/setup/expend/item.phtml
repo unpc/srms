@@ -1,0 +1,32 @@
+<table class="form">
+<tbody>
+	<tr>
+		<td class="top right nowrap"><?php echo I18N::T('eq_charge', '用户标签')?></td>
+		<td colspan="2">
+			<?php
+                echo Widget::factory('equipments:tag_selector', [
+                    'autocomplete'=> URI::url('!equipments/autocomplete/user_tags.'.$equipment->id),
+                    'name'=>'special_tags[]',
+                    'value'=>($error ? $form['special_tags'] : @json_encode($special_tags)),
+                ]);
+	   		?>
+		</td>
+	</tr>
+	<tr>
+		<td class="top right nowrap">
+            <?php echo I18N::T('eq_charge', '每小时需要金额');?>
+		</td>
+		<td>
+			<input class="text currency" name="special_expend_hour[]" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo H((float)$hour) ?>"/>
+		</td>
+	</tr>
+	<tr>
+		<td class="right nowrap middle">
+            <?php echo I18N::T('eq_charge', '每一样品需要金额');?>
+        </td>
+		<td >
+			<input class="text currency" name="special_expend_sample[]" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo H((float)$sample) ?>"/>
+		</td>
+	</tr>
+</tbody>
+</table>

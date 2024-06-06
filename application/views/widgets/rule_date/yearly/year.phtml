@@ -1,0 +1,26 @@
+<?php echo V('application:widgets/rule_date/period', ['flexform_index'=>$flexform_index, 'dtfrom'=>$dtfrom, 'dtto'=>$dtto]); ?>
+
+<?php $yearly_uniqid = 'yearly_'.uniqid(); ?>
+
+<?php echo V('application:widgets/rule_date/yearly/type', ['flexform_index'=>$flexform_index,
+											'yearly_uniqid'=>$yearly_uniqid,
+											'yearly_type'=>$yearly_type,
+										])
+?>
+
+<div id="<?php echo H($yearly_uniqid ) ?>">
+<?php
+	switch ($yearly_type) {
+		case TM_RRule::TYPE_DAY:
+			echo V('application:widgets/rule_date/yearly/year_month_day', ['flexform_index'=>$flexform_index, 'month'=>$rrule[0], 'month_day'=>$rrule[2]]);
+			break;
+		case TM_RRule::TYPE_WEEK:
+			echo V('application:widgets/rule_date/yearly/year_month_week', ['flexform_index'=>$flexform_index, 'month'=>$rrule[0], 'month_week'=>$rrule[1], 'week_day'=>$rrule[2]]);
+			break;
+		default:
+
+			break;
+	}
+
+?>
+</div>

@@ -1,0 +1,54 @@
+<?php
+$require = (string) V('form_require');
+?>
+<div class="form padding_2">
+	<form method="post" action="<?php echo H($message->url('','','','reply') ) ?>">
+		<?php echo V('form_error', ['form'=>$form]);?>
+		<table class="form message_form">
+			<tbody>
+				<tr>
+					<td class="top" colspan="2">
+						<input type="hidden" name="receiver" class="text" size="60" value="<?php echo H($message->sender->id ) ?>"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="label left nowrap middle lpadding_18"><?php echo I18N::T('messages', '收件人'); ?></td>
+                    <td>
+                        <input name="receiver_name" class="text" size="60" disabled="disabled" value="<?php echo H($message->sender->name)?>" />
+						<input type="hidden" name="receiver" class="text" value="<?php echo H($message->sender->id ) ?>" />
+					</td>
+				</tr>
+				<tr><td><div class="interval_20"></div></td></tr>
+				<tr>
+					<td class="label left nowrap middle">
+					<?php echo $require;?>
+					<?php echo I18N::T('messages', '标题'); ?>		
+					</td>
+					<td class="middle">
+						<input name="title" class="text" size="60" value="<?php echo H($form['title'])?>" />
+					</td>
+				</tr>
+				<tr><td></td><td><?php echo V('form_filter', ['error'=>$form->errors['title'][0]]); ?></td><tr>
+				<tr><td><div class="interval_20"></div></td></tr>
+				<tr>
+					<td class="label left nowrap top">
+					<?php echo $require;?>
+					<?php echo I18N::T('messages', '内容'); ?>
+					</td>
+					<td class="top">
+						<textarea name="body" class="text autogrow" rows="5" cols="60"><?php echo H($form['body'])?></textarea>
+					</td>
+				</tr>
+				<tr><td></td><td><?php echo V('form_filter', ['error'=>$form->errors['body'][0]]); ?></td><tr>
+				<tr><td><div class="interval_40"></div></td></tr>
+	
+			</tbody>
+		</table>
+		<div class="button_container">
+        <div class="float_right">
+			<input name="submit" type="submit" class="font-button-save rmargin_16" value="<?php echo I18N::T('messages', '回复'); ?>" />
+			<input type="reset" class="font-button-default" value="<?php echo I18N::T('messages', '取消'); ?>" />
+        </div>
+    </div>
+	</form>
+</div>

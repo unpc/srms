@@ -1,0 +1,48 @@
+<?php
+$curr_value = $sensor->value;
+$vfrom = (double)$sensor->vfrom;
+$vto = (double)$sensor->vto;
+$unit = $sensor->unit();
+if (max($curr_value, $vfrom, $vto) == $curr_value
+    || min($curr_value, $vfrom, $vto) == $curr_value) $class = 'red';
+?>
+<div class="sensor check_hover sensor_actual <?php if ($sensor->status == Env_Sensor_Model::OUT_OF_SERVICE) echo 'sensor_out_of_service'; ?>">
+    <div class="sensor_name clearfix">
+        <?php if (L('ME')->is_allowed_to('修改', $sensor)) { ?>
+            <?php if (Module::is_installed('db_sync') && Db_Sync::is_slave()) : ?>
+                <div class="show_on_hover float_right">
+                    <a class="icon-edit icon-lg" href="<?php echo
+                    Event::trigger('db_sync.transfer_to_master_url', '', ['q_params' => [
+                        'q-object' => 'edit_sensor',
+                        'q-event' => 'click',
+                        'q-static' => ['sensor_id' => $sensor->id],
+                        'q-src' => Event::trigger('db_sync.transfer_to_master_url', '!envmon/sensor', '', true),
+                    ]])
+                    ?>"><?php echo I18N::T('envmon', '设置') ?></a>
+
+                </div>
+            <?php else: ?>
+                <div class="show_on_hover float_right">
+                    <a class="blue" href="#" q-event="click" q-object="edit_sensor"
+                       q-static="<?php echo H(['sensor_id' => $sensor->id]) ?>"
+                       q-src="<?php echo H(URI::url('!envmon/sensor')) ?>"><?php echo I18N::T('envmon', '设置') ?></a>
+                </div>
+            <?php endif; ?>
+        <?php } ?>
+        <div class="float_left">
+            <span class="name"><?php echo H($sensor->name) ?>&#160;&#160;&#160;&#160;&#160;</span>
+        </div>
+    </div>
+    <div class="sensor_body">
+        <div class="current_value">
+            <span class="value <?php echo $class ?>"><?php echo H($curr_value); ?></span>
+            <span class="unit <?php echo $class ?>"><?php echo H($unit); ?></span>
+        </div>
+        <div class="normal_range">
+            <?php
+            echo T('%vfrom %unit - %vto %unit', ['%unit' => H($unit), '%vfrom' => $vfrom, '%vto' => $vto]);
+            ?>
+        </div>
+        <input name="sensor_id" class="hidden" value="<?php echo H($sensor->id) ?>"/>
+    </div>
+</div>

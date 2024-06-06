@@ -1,0 +1,70 @@
+<?php
+$members = I18N::T('labs', User_Model::get_members());
+$tmp_members = [];
+foreach($members as $k=>$g){
+	$tmp_members = array_merge($tmp_members, $g);
+}
+
+?>
+<table>
+	<tr>
+		<td class="center middle nowrap"><?php echo I18N::T('labs', '姓名'); ?></td>
+		<td class="middle nowrap"><?php echo H($user->name); ?></td>
+		<td class="center middle nowrap"><?php echo I18N::T('labs', '性别'); ?></td>
+		<td class="middle nowrap"><?php echo User_Model::$genders[$user->gender]; ?></td>
+		<td class="center middle nowrap"><?php echo I18N::T('labs', '人员类型'); ?></td>
+		<td class="middle nowrap" style="width:100px"><?php echo $tmp_members[$user->member_type]; ?></td>
+		
+		<td rowspan="5" width="100"></td>
+	</tr>
+	<tr>
+		<td class="center middle nowrap"><?php echo I18N::T('labs', '手机'); ?></td>
+		<td class="middle nowrap" colspan="2"><?php echo H($user->mobile); ?></td>
+		<td class="center middle nowrap"><?php echo I18N::T('labs', '电话'); ?></td>
+		<td class="middle nowrap" colspan="2"><?php echo H($user->phone); ?></td>
+	</tr>
+	<tr>
+		<td class="center middle nowrap"><?php echo I18N::T('labs', 'Email'); ?></td>
+		<td class="middle nowrap" colspan="5"><?php echo H($user->email); ?></td>
+	</tr>
+	<?php if($user->organization): ?>
+	<tr>
+		<td class="center middle nowrap"><?php echo I18N::T('labs', '单位名称'); ?></td>
+		<td class="middle nowrap" colspan="5"><?php echo H($user->organization); ?></td>
+	</tr>
+	<?php endif; ?>
+	<tr>
+		<td class="center middle nowrap"><?php echo I18N::T('labs', '院系'); ?></td>
+		<td class="middle nowrap" colspan="2"><?php echo H($user->department); ?></td>	
+		<td class="center middle nowrap"><?php echo I18N::T('labs', '专业'); ?></td>
+		<td class="middle nowrap" colspan="2"><?php echo H($user->major); ?></td>	
+	</tr>
+	<tr>
+		<td rowspan="2"><?php echo I18N::T('labs', '本人签字'); ?></td>
+		<td class="top" colspan="6" height="100" style="border-bottom:none;">
+			<?php echo I18N::T('labs', '本人承诺遵守规则，爱护仪器，保持实验环境整洁。'); ?>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="4" style="border:none;"></td>
+		<td colspan="2" style="border-top:none;border-left:none;"><?php echo I18N::T('labs', '签名'); ?>: </td>
+	</tr>
+	<tr>
+		<td rowspan="2"><?php echo I18N::T('labs', '导师签字'); ?></td>
+		<td class="top" colspan="6" height="100" style="border-bottom:none;">
+			<?php echo I18N::T('labs', '我承诺督促学生守则，对学生进行负责。'); ?>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="4" style="border:none;">&#160;</td>
+		<td colspan="2" style="border-top:none;border-left:none;"><?php echo I18N::T('labs', '签名'); ?>: </td>
+	</tr>
+	<tr>
+		<td rowspan="2"><?php echo I18N::T('labs', '管理员意见'); ?></td>
+		<td class="top" colspan="6" height="100" style="border-bottom:none;">&#160;</td>
+	</tr>
+	<tr>
+		<td colspan="4" style="border-top:none;border-right:none;">&#160;</td>
+		<td colspan="2" style="border-top:none;border-left:none;"><?php echo I18N::T('labs', '签名'); ?>: </td>
+	</tr>
+</table>

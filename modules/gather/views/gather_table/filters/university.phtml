@@ -1,0 +1,4 @@
+<?php
+
+$sites = Config::get('university.list');
+echo Form::dropdown('university', I18N::T('eq_reserv', [0 => '--'] + $sites), $form['university'] ?: -1, 'class="dropdown middle"');

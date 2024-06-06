@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="ShareEffect">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Instrus"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Instrus">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Instru" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Instru">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="SchoolCode">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:length value="5"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="InnerID">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="15"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="YEAR">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:length value="4"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="LSNUSEDHRS" type="xs:int" minOccurs="0"/>
+				<xs:element name="RSCHUSEDHRS" type="xs:int" minOccurs="0"/>
+				<xs:element name="SERUSEDHRS" type="xs:int" minOccurs="0"/>
+				<xs:element name="OPENHRS" type="xs:int" minOccurs="0"/>
+				<xs:element name="SAMPLENUM" type="xs:int" minOccurs="0"/>
+				<xs:element name="TRNSTUD" type="xs:int" minOccurs="0"/>
+				<xs:element name="TRNTEACH" type="xs:int" minOccurs="0"/>
+				<xs:element name="TRNOTHERS" type="xs:int" minOccurs="0"/>
+				<xs:element name="EDUPROJ" type="xs:int" minOccurs="0"/>
+				<xs:element name="RSCHPROJ" type="xs:int" minOccurs="0"/>
+				<xs:element name="SOCIALPROJ" type="xs:int" minOccurs="0"/>
+				<xs:element name="RWDNATION" type="xs:int" minOccurs="0"/>
+				<xs:element name="RWDPROV" type="xs:int" minOccurs="0"/>
+				<xs:element name="RWDTEACH" type="xs:int" minOccurs="0"/>
+				<xs:element name="RWDSTUD" type="xs:int" minOccurs="0"/>
+				<xs:element name="PAPERINDEX" type="xs:int" minOccurs="0"/>
+				<xs:element name="PAPERKERNEL" type="xs:int" minOccurs="0"/>
+				<xs:element name="CHARGEMAN">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="10"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="OtherInfo" minOccurs="0">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="200"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

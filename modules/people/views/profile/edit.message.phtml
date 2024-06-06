@@ -1,0 +1,41 @@
+<div class="form">
+    <form class="edit" autocomplete="off" method="post" action="<?php echo H(URI::url() ) ?>">
+        <table class="form">
+            <tbody>
+            <tr>
+                <td class="left top tight">
+                    <div class="short_container">
+                        <div class="img_icon" style="position: relative;">
+                            <?php echo $user->icon('104', 'class="icon_none_border"');?>
+                        </div>
+                    </div>
+                </td>
+                <td class="top lpadding_30">
+                    <?php
+                    echo V('form_error', ['form' => $form]);
+                    $require = (string) V('form_require');
+                    ?>
+                    <div class="interval_12"></div>
+                    <table class="form">
+                        <tbody>
+                        <tr>
+                            <td class="left nowrap middle rpadding_label"><?php echo $require; ?><?php echo I18N::T('people', '邮件绑定地址') ?></td>
+                            <td class="middle"><input placeholder="请输入邮件绑定地址" name="binding_email" class="text" size="25" value="<?php echo H($form['binding_email'] ?: $user->binding_email); ?>" />
+                                <?php echo V('form_filter',['error'=>$form->errors['binding_email'][0]])?>
+                            </td>
+                        </tr>
+                        <tr><td colspan="2"><div class="interval_20"></div></td></tr>
+                        <?php $message_form = Event::trigger('people.profile.edit.message.form', $user,$form->errors['binding_phone'][0]); ?>
+                        <?php echo $message_form; ?>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="float_right">
+            <input type="submit" name="submit" class="font-button-save" value="<?php echo I18N::T('people', '保存修改'); ?>" />
+        </div>
+        <div class="interval_30"></div>
+    </form>
+</div>

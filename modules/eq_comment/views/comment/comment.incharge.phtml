@@ -1,0 +1,27 @@
+<div class="form padding_1">
+    <form method="post" autocomplete="off" q-event="submit" q-object="comment_incharge"
+        q-src="<?= H(URI::url('!eq_comment/incharge')) ?>">
+        <?= V('form_error', ['form' => $form]); ?>
+        <?= Form::hidden('object_id', $object->id); ?>
+        <?= Form::hidden('object_type', $form['object_type']); ?>
+        <table class="form">
+            <tbody>
+                <tr>
+                    <td class="top icon">
+                        <img src="<?php echo H($object->equipment->icon_url('64')) ?>" />
+                    </td>
+                    <td>
+                        <h3><?php echo I18N::HT('eq_comment', $object->equipment->name) ?></h3>
+                        <?= V('eq_comment:comment/add.incharge', ['object' => $object, 'form' => $form]); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input type="submit" name="submit" class="font-button-save" value="<?php echo H(I18N::T('eq_comment', '提交')) ?>" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>

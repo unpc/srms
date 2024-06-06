@@ -1,0 +1,56 @@
+<?php 
+$upload_form_uniqid = 'upload_form_'.uniqid();
+$error_msg = I18N::T('nfs', '异常原因: 文件上传中止!');
+?>
+<div class="form padding_2" class="prevent_default">
+	<div style="text-align: center; margin-bottom: 15px;">
+		<div>请先下载导入模板, 确保数据格式正确！</div>
+		<a class="prevent_default" style="text-decoration: underline; padding-top: 5px; display: inline-block;" href="<?php echo H(URI::url('!equipments/index/download_template')) ?>">仪器信息导入模板.xlsx</a>
+	</div>
+	<form id="<?php echo H($upload_form_uniqid) ?>" method="post" action="<?php echo H(URI::url('!equipments/index/before_import')) ?>" class="nowrap" style="padding: 1px">
+		<input name="Filedata" type="file" class="middle" />
+		<input name="single" type="hidden" value="1" />
+		<a name="upload" href="#" class="button button_import middle prevent_default"><?php echo I18N::HT('nfs', '上传')?></a>
+	</form>
+</div>
+<script>
+jQuery(function($){
+	var $form = $('#<?php echo $upload_form_uniqid?>');
+	$form
+		.find('a[name=upload]')
+		.bind('click', function(){
+			$form.ajaxSubmit({
+				dataType: 'json',
+				complete: function (data) {
+				},
+				success : function(data, status, xhr) {
+					if (data != null) {
+						if (data.status == false) {
+							if(confirm("当前文件中的部分仪器已经存在 (仪器编号相同), 是否覆盖?")) {
+								Q.trigger({
+									object: 'import',
+									event: 'submit',
+									data: {
+										'file': data.content,
+									},
+									url: '<?php echo URI::url("!equipments/index"); ?>'
+								});
+							}
+							Dialog.close();
+							location.reload();
+						}
+					} else {
+						alert('导入成功');
+						Dialog.close();
+						location.reload();
+					}
+				},
+				error : function (data){
+					alert('导入失败');
+					Dialog.close();
+				}
+			});
+			return false;
+		});
+});
+</script>

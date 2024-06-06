@@ -1,0 +1,43 @@
+<?php
+
+if ($_SESSION['system.unlisted_messages']) { // 发生了跳转
+    $unlisted_messages = (array) $_SESSION['system.unlisted_messages'];
+    unset($_SESSION['system.unlisted_messages']);
+} else {
+    $unlisted_messages = [];
+}
+Misc::array_merge_deep(Lab::$messages, $unlisted_messages);
+if(Lab::$messages):
+
+foreach ((array) Lab::$messages as $type => $messages):
+?>
+<div role="alert" class="message message_<?=$type?>" style="z-index: 2000;display:none">
+    <i class="message_icon icon_<?=$type?>"></i>
+    <p class="message_content"><?php echo implode('</p><p>', $messages); ?></p>
+    <?php if(in_array($type, [Lab::MESSAGE_ERROR, Lab::MESSAGE_WARNING])): ?>
+    <botton class="message_<?=$type?>_cancel icon-cancel1" style="color: #999999;position: absolute;right: 20px;">&nbsp;
+    </botton>
+    <?php endif; ?>
+</div>
+<?php
+endforeach;
+?>
+
+<?php foreach ((array) Lab::$messages as $type => $messages): ?>
+<script>
+$('.message_<?= $type ?>').slideToggle();
+<?php if(!in_array($type, [Lab::MESSAGE_ERROR, Lab::MESSAGE_WARNING])): ?>
+setTimeout(() => {
+    $('.message_<?= $type ?>').slideToggle();
+}, 2000);
+<?php endif; ?>
+$('.message_<?=$type?>_cancel ').click(function() {
+    $('.message_<?= $type ?>').slideToggle();
+});
+</script>
+<?php
+endforeach;
+?>
+
+<?php endif;
+?>

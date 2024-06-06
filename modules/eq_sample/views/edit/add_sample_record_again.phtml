@@ -1,0 +1,199 @@
+<?php 
+$me = L('ME');
+$lab = $sample->sender->lab;
+if ( $form['user_option'] == 'existing_user' && $form['sender'] != $me->id ) {
+	$lab = O('user', $form['sender'])->lab;
+}
+elseif ( $form['user_option'] == 'new_user' ) {
+	$lab = O('lab', (int) Lab::get('equipment.temp_lab_id') );
+}
+
+$tr_project_id = 'tr_project_' . uniqid();
+?>
+<div class="form padding_1  max_dialog_W600" style="min-width:370px">
+<form q-object="add_sample_record" q-event="submit" q-src="<?php echo H(URI::url('!eq_sample/index')) ?>" autocomplete="off" method="post" q-static="<?= H(['again'=>$sample->id]);?>">
+    <?php echo V('form_error', ['form'=>$form]);?>
+    <input name="equipment_id" type="hidden" value="<?php echo H($sample->equipment->id)?>" />
+    <table class="form">
+        <tr>
+            <td class="label left top nowrap" colspan="2"><h1><?php echo I18N::HT('eq_sample', '申请人');?></h1></td>
+        </tr>
+        <tr>
+            <td colspan="2"><div class="lpadding_3"><?php echo V('eq_sample:edit/edit_sample_sender', ['form'=>$form, 'sample'=>$sample]);?></div></td>
+        </tr>
+        <?php 
+            $extra = Extra_Model::fetch($sample->equipment, 'eq_sample');
+            $extra_value = O('extra_value', ['object'=>$sample]);
+            if($extra_value->id) $values = $extra_value->values;
+            echo V('eq_sample:extra/display', ['extra'=>$extra, 'form'=>$form, 'values'=>$values, 'sample'=>$sample]);
+        ?>
+        <?php
+        if (Module::is_installed('sample_approval')) {
+            echo V('sample_approval:sample/advanced', ['form'=>$form]);
+        }
+        ?>
+        <?php //关联项目
+        	if ( class_exists('Lab_Project_Model') ) :
+         ?>
+         <tr>
+			 <td colspan="2"><h1><?php echo I18N::T('eq_sample', '关联项目'); ?></h1></td>
+		</tr>
+         <?php echo V('eq_sample:project/connect', [
+         			'lab' => $lab,
+         			'sample' => $sample,
+         			'tr_project_id' => $tr_project_id,
+         			'form' => $form,
+         			'user_selector' => 'sender',
+     				'existing_user' => 'existing_user',
+					'user_option' => 'user_option',
+     				'url' => URI::url('!eq_sample/index'),
+         ]); ?>
+        <?php endif; ?>
+        <?= Event::trigger('eq_sample.prerender.edit.form', $sample, $form); ?>
+        <tr>
+            <td class="label left top nowrap" colspan="2"><h1><?php echo I18N::HT('eq_sample', '时间设定');?></h1></td>
+        </tr>
+        <tr>
+        	<td class="label right top nowrap">
+	        	<?php echo I18N::HT('eq_sample', '送样时间');?>
+        	</td>
+            <td>
+                <input name="dtsubmit" type="text" class="text date" value="<?php echo H($form['dtsubmit']); ?>" q-date_format="<?php echo HT('$year/$month/$day $hour:$min:$sec')?>"/>
+            </td>
+        </tr>
+        <?php $trial_checkbox_id = 'sample_trial_'. uniqid();?>
+        <?php $trial_checkbox_checked = ($sample->dtstart || $sample->dtend);?>
+        <tr>
+        	<td class="label right top nowrap">
+	        	<input type="checkbox" name="dtrial_check" id="<?php echo H($trial_checkbox_id) ?>" <?php if ($trial_checkbox_checked) :?>checked="checked"<?php endif;?>/>
+                <label for="<?php echo H($trial_checkbox_id) ?>"><?php echo I18N::HT('eq_sample', '测样时间');?></label>
+        	</td>
+            <td>
+                <span class="trial_area">
+                <input name="dtstart" type="text" class="text date" value="<?php echo H($form['dtstart'] ? : $sample->dtstart);?>" <?php if (!$trial_checkbox_checked) :?> disabled="disabled" <?php endif;?> q-date_format="<?php echo HT('$year/$month/$day $hour:$min:$sec')?>"/>
+                &#160;-&#160;
+                <input name="dtend" type="text" class="text date" value="<?php echo H($form['dtend'] ? : $sample->dtend);?>" <?php if (!$trial_checkbox_checked) :?> disabled="disabled" <?php endif;?> q-date_format="<?php echo HT('$year/$month/$day $hour:$min:$sec')?>"/>
+                </span>
+            </td>
+        </tr>
+        <?php $dtpickup_check_id = 'sample_dtpickup_check_'. uniqid();?>
+        <tr class="toggle:status hide_on:<?= EQ_Sample_Model::STATUS_APPLIED?>">
+        	<td class="label right top nowrap">
+                <input type="checkbox" name="dtpickup_check" id="<?php echo H($dtpickup_check_id) ?>" <?php if ($sample->dtpickup) :?>checked="checked"<?php endif;?>/>
+                <label for="<?php echo H($dtpickup_check_id) ?>"><?php echo I18N::T('eq_sample', '取样时间');?></label>
+        	</td>
+            <td class="label left top nowrap"> 
+                <span class="dtpickup_area">
+                <input name="dtpickup" type="text" class="text date" value="<?php echo H($sample->dtpickup);?>" <?php if (!$sample->dtpickup) :?> disabled="disabled" <?php endif;?> q-date_format="<?php echo HT('$year/$month/$day $hour:$min:$sec')?>"/>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td class="label left top nowrap" colspan="2"><h1><?php echo I18N::HT('eq_sample', '送样状态');?></h1></td>
+        </tr>
+        <tr>
+            <td class="middle" colspan="2">
+            <div class="lpadding_3">
+            <?php
+                echo Form::dropdown('status', I18N::T('eq_sample', EQ_Sample_Model::$status), $form['status'] ? : $sample->status, 'class="dropdown monitor" id="' . $sample_status_id . '"');
+                ?>
+            <span class="lpadding_3 toggle:status show_on:<?= EQ_Sample_Model::STATUS_TESTED?>">
+            <?= I18N::HT('eq_sample', '测样成功数');?>&#160;
+            <input name="success_samples" type="text" class="text number" size="3" value="<?= H($form['success_samples'] ?: ($sample->success_samples ?: $sample->count ));?>" />
+            </span>
+            </div>
+            </td>
+        </tr>
+        <?php
+            //有权限用户增加送样时预估收费
+            echo Event::trigger('eq_sample.charge_forecast', $user->id ? $sample : null, $sample->equipment);
+            if ($user->id) $view = Event::trigger('billing.authorized_views', $user, $sample->equipment, $form);
+            echo $view;
+        ?>
+        <tr>
+            <td class="label left top nowrap" colspan="2"><h1><?php echo I18N::HT('eq_sample', '备注');?></h1></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <div class="lpadding_3">
+                <textarea name="note" type="text" cols="48" rows="3" class="text autogrow"><?php echo H($form['note'] ? : $sample->note);?></textarea>
+                </div>
+            </td>
+        </tr>
+        <tr>
+	        <td>&nbsp;</td>
+	        <td class="right description">*&nbsp;<?php echo I18N::T('eq_sample', '必填项'); ?></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+            <div class="lpadding_3 padding_2">
+                <input name="submit" type='submit' class="button button_add middle" value="<?php echo I18N::HT('sample_approval', '提交保存');?>" />
+            </div>
+            </td>
+        </tr>
+    </table>
+    <?php
+        if (Module::is_installed('nfs')) {
+            echo V('eq_sample:edit/attachments', ['sample' => $sample ? : O('eq_sample')]);
+        }
+
+        echo $extra_content;
+    ?>
+</form>
+</div>
+<script>
+$().ready(function() {
+    $('#<?php echo $trial_checkbox_id;?>').bind('click', function() {
+        if ($(this).is(':checked')) {
+            $('.trial_area input').removeAttr('disabled');
+        }
+        else {
+            $('.trial_area input').attr('disabled', 'disabled');
+        }
+    });
+    $('#<?php echo $dtpickup_check_id;?>').bind('click', function() {
+        if ($(this).is(':checked')) {
+            $('.dtpickup_area input').removeAttr('disabled');
+        }
+         else {
+            $('.dtpickup_area input').attr('disabled', 'disabled');
+        }
+    });
+
+	var selector = $("input:hidden[name=sender]")
+	    , url = "<?= URI::url('!eq_sample/index'); ?>";
+	
+	selector.change(function() {
+		var user = $(this).val();
+        reset(url, user);
+	});
+	
+	var option = $(":radio[name=user_option]");
+	//由于该页面需要替换, 先卸载绑定的事件, 否则可能会出现问题
+	option
+    .unbind('click')
+    .bind('click', function(){
+		var user = 0;
+		if ($(this).val() == 'existing_user') {
+			user = selector.val();
+		}
+        else {
+            user = 'new_user';
+        }
+        reset(url, user);
+    });
+    
+    function reset(url, user) {
+	    Q.trigger({
+	    	object: 'add_sample_record_again',
+			event: 'click',
+			data: {
+				'id': '<?= $sample->id ?>',
+                'user': user
+			},
+			url: url
+    	});
+    }
+});
+</script>
+

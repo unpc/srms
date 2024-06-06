@@ -1,0 +1,16 @@
+<?php $hidden = $disabled && $equipment->accept_reserv ? '' : ' hidden toggle:accept_reserv show_on:on'; ?>
+<h2 class="section_title">
+    <span class="border"></span>
+    <span class="black_title"><?= I18N::T('yiqikong_approval', '预约审批设置') ?></span>
+</h2>
+<div class="interval_12"></div>
+<div class="toggle:accept_reserv show_on:on lmaigin_1e5">
+    <?php echo Form::checkbox('need_approval', $equipment->need_approval, I18N::HT('yiqikong_approval', '需要仪器负责⼈审批'), 'class="middle checkbox monitor"' . $disabled, 'class="middle"'); ?>
+</div>
+<div class="toggle:need_approval show_on:on" style="display: block;">
+    <div class="interval_24"></div>
+    <?php
+        echo V('yiqikong_approval:eq_reserv/rules/user', ['equipment' => $equipment, 'disabled' => $disabled,'uncontrolInfo'=>$uncontrolInfo]);
+    ?>
+</div>
+<div class="interval_24"></div>

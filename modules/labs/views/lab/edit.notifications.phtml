@@ -1,0 +1,27 @@
+<form autocomplete="off" method="post" class="edit">
+	<?php if(count($sections) > 0): ?>
+        <table class="form">
+        <tbody>
+            <tr>
+                <td class="icon top" width="130" rowspan="2">
+                    <img src="<?php echo H($lab->icon_url('104')) ?>" width="104" />
+                </td>
+                <td  class="top">
+                    <h2 class="section_title">
+                        <span class="border"></span>
+                        <span class="black_title"><?php echo I18N::T('people', '消息设置') ?></span>
+                    </h2>
+                    <div class="interval_12"></div>
+                    <div class="lmaigin_1e5">
+                        <?php foreach ($sections as $section) {echo $section ?><div class="interval_30"></div><?php } ?>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+        </table>
+	<?php endif; ?>
+    <div class="form float_right" style="padding-left: 130px">
+        <input type="submit" name="submit" class="font-button-save float_right" value="<?php echo H(I18N::T('labs', '保存修改')) ?>" />
+    </div>
+    <div class="interval_60"></div>
+</form>

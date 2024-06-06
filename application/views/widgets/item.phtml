@@ -1,0 +1,29 @@
+<div class="item">
+    <div class="el left">
+        <div class="title">
+            <?php echo $this->title?>
+            <div class="menu_container">
+                <div class="menu_content">
+
+                    <?php foreach($this->menu as $menu_item)
+                    {
+                        echo $menu_item;
+                    }
+                    ?>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <ul>
+                <?php foreach($this->content as $key=> $el):?>
+                <li>
+                    <?php echo $key.':&nbsp'.$el?>
+                </li>
+                <?php endforeach?>
+            </ul>
+            <div>
+                <?php echo $this->image?>
+            </div>
+        </div>
+    </div>
+</div>

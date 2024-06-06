@@ -1,0 +1,20 @@
+<div style="text-align: center; padding: 20px;">
+    <img src="!wechat/qrcode/get_qrcode.<?php echo $image_data; ?>" height="<?php echo H($height ? : 200) ?>" width="<?php echo H($width ? : 200) ?>" />
+</div>
+
+<script type="text/javascript">
+(function($) {
+     setTimeout(function() {
+         $(document).unbind('dialog_close').bind('dialog_close', function(e, ret) {
+
+             //关闭后进行页面刷新
+             if (window.location.href.match('/#.*$/')) {
+                 window.location.reload();
+             }
+             else {
+                 window.location.href = window.location.href;
+             }
+         })
+     }, 100);
+ })(jQuery);
+</script>

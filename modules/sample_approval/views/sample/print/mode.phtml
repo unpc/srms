@@ -1,0 +1,7 @@
+<?php
+    foreach (json_decode($value, true) as $k => $v) {
+        if ($v == 'on') {
+            echo Sample_Approval_Model::$mode[$k] . ' ';
+        }
+    }
+?>

@@ -1,0 +1,12 @@
+<span style="margin-right: 8px;">
+	<?php if(L('ME')->is_allowed_to('查看成果', $publication->lab)):?>
+	<a href="<?php echo H($publication->url(NULL,NULL,NULL,'view') ) ?>"><strong><?php echo H($publication->title); ?></strong></a>
+	<?php else:?>
+	<strong><?php echo H($publication->title); ?></strong>
+	<?php endif;?>
+</span>
+<?php 
+	$root = Tag_Model::root('achievements_publication');
+	$tags = (array) Q("$publication tag_achievements_publication[root=$root]")->to_assoc('name','name');			
+	if (count($tags) > 0) echo '<span class="status_tag status_tag_normal">'.implode('</span> <span class="status_tag status_tag_normal">',$tags).'</span>';			
+?>	

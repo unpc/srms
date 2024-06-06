@@ -1,0 +1,30 @@
+<div class="task_item group_prevent_default" >
+	<table width="100%">
+	<tr>
+	<td class="indicator indicator_p<?php echo $task->priority?>"><div>&#160;</div></td>
+	<td class="brief" width="100%">
+		<div class="deadline"><?php echo Date::format($task->deadline, T('Y/m/d'))?></div>
+		<div q-preview="<?php echo H(URI::url('!treenote/task')) ?>" q-static="<?php echo H(['id'=>$task->id]); ?>">
+			<a class="task_title" href="<?php echo H($task->url()) ?>"><?php echo H($task->title) ?></a>
+		</div>
+	</td>
+	<td class="right tight nowrap" style="padding-right:4px">
+		<?php echo V('treenote:task/table/data/status', ['task'=>$task]) ?>
+	</td>
+	<td class="right tight nowrap" style="padding:0">
+		<div class="child_count">
+<?php 
+		$subtasks = $task->child_tasks(); 
+		$total = $subtasks->total_count();
+		if ($total > 0) {
+			$pending = $subtasks->find('[is_complete=0]')->total_count();
+			echo $pending . ' of ';
+		}
+
+		echo $total;
+?>	
+		</div>
+	</td>
+	</table>
+</div>
+

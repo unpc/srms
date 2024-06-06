@@ -1,0 +1,128 @@
+<div class="hr_1">&#160;</div>
+<?php if (count($panel_buttons)) :?>
+	<div class="panel padding_1 clearfix">
+		<?php echo Widget::factory('application:links', ['links'=>$panel_buttons, 'separator'=>'&#160;']);?>
+	</div>
+<?php endif;?>
+
+<?php
+
+$table = Widget::factory('table');
+
+$table->name = 'resume';
+
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+$table->add_column('@', NULL);//turn on the functionality of search
+
+$table->add_columns([
+	'uname' => [
+		'title' => I18N::T('resume', '姓名'),
+		'filter' => [
+			'form' => V('resume:resume_table/filter/uname', ['uname' => $form['uname']]),
+			'value' => H($form['uname']) ? H($form['uname']) : NULL //row upon the search results if the result is not empty
+		],
+		'sortable'=>TRUE,
+		'nowrap' => TRUE
+	],
+	'sex' => [
+		'title' => I18N::T('resume', '性别'),
+		'filter' => [
+			'form' => V('resume:resume_table/filter/sex', ['sex' => $form['sex']]),
+			'value' => H($form['sex'])  ? H(Resume::$sex[$form['sex']]) : NULL
+		],
+		'nowrap' => TRUE,
+		'sortable'=>TRUE,
+		'align' => 'center'
+	],
+	'education' => [
+		'title' => I18N::T('resume', '学历'),
+		'filter' => [
+			'form' => V('resume:resume_table/filter/education', ['education' => $form['education']]),
+			'value' => H($form['education']) ? H(Resume::$education[$form['education']]) : NULL
+		],
+		'nowrap' => TRUE,
+		'sortable'=>TRUE,
+		'align' => 'center'
+	],
+	'interview_place' => [
+		'title' => I18N::T('resume', '面试地点'),
+		'filter' => [
+			'form' => V('resume:resume_table/filter/interview_place', ['interview_place' => $form['interview_place']]),
+			'value' => H($form['interview_place']) ? H(Resume::$interview_place[$form['interview_place']]) : NULL
+		],
+		'sortable'=>TRUE,
+		'nowrap' => TRUE,
+		'align' => 'center',
+	],
+	'position' => [
+		'title' => I18N::T('resume', '应聘职位'),
+		'filter' => [
+			'form' => V('resume:resume_table/filter/position', ['position_id' => $form['position_id']]),
+			'value' => H($form['position_id'] ? O('position', $form['position_id'])->name : NULL)
+		],
+		'sortable'=>TRUE,
+		'nowrap' => TRUE,
+		'extra_class' => 'flexible'
+	],
+	'ctime' => [
+		'title' => I18N::T('resume', '简历录入时间'),
+		'filter' => [
+			'form' => V('resume:resume_table/filter/ctime', ['ctime_check' => $form['ctime_check'], 'ctime' => $form['ctime']]),
+			'value' => $form['ctime_check'] ? Date::format($form['ctime'], T('Y/m/d')) : NULL
+		],
+		'nowrap' => TRUE,
+		'sortable'=>TRUE,
+		'align' => 'center'
+	],
+	'interview_time' => [
+		'title' => I18N::T('resume', '面试时间'),
+		'filter' => [
+			'form' => V('resume:resume_table/filter/interview_time', ['interview_time_check' => $form['interview_time_check'], 'interview_time' => $form['interview_time']]),
+			'value' => $form['interview_time_check'] ? Date::format($form['interview_time'], T('Y/m/d')) : NULL
+		],
+		'nowrap' => TRUE,
+		'sortable'=>TRUE,
+		'align' => 'center',
+	],
+	'status' => [
+		'title' => I18N::T('resume', '当前状态'),
+		'filter' => [
+			'form' => V('resume:resume_table/filter/status', ['status' => $form['status']]),
+			'value' => H($form['status']) ? H(Resume::$status[$form['status']]) : NULL
+		],
+		'nowrap' => TRUE,
+		'sortable'=>TRUE,
+		'align' => 'center'
+	],
+	'rest' => [
+		'align'=>'right',
+		'nowrap'=>TRUE,
+
+	],
+	]);
+
+$table->empty_message = I18N::T('resume', '当前没有简历信息');
+
+if (count($resumes)) foreach ($resumes as $resume) {
+
+		$links = $resume->links('view');
+
+		$table->add_row([
+							'@'=>V('resume:resume_table/data/icon'),
+							'uname' => V('resume:resume_table/data/uname', ['resume' => $resume]),
+							'sex' => V('resume:resume_table/data/sex', ['resume' => $resume]),
+							'education' => V('resume:resume_table/data/education', ['resume' => $resume]),
+							'position' => V('resume:resume_table/data/position', ['resume' => $resume]),
+							'interview_place' => V('resume:resume_table/data/interview_place', ['resume' => $resume]),
+							'interview_time' => V('resume:resume_table/data/interview_time', ['resume' => $resume]),
+							'ctime' => V('resume:resume_table/data/ctime', ['resume' => $resume]),
+							'status' => V('resume:resume_table/data/status', ['resume' => $resume]),
+							'rest' => Widget::factory('application:links', ['links' => $links])
+							]);
+	}
+
+echo $pagination;
+echo $table;
+?>

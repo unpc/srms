@@ -1,0 +1,50 @@
+<?php $uniqid = uniqid(); ?>
+<div class="interval_20">&nbsp</div>
+<div class="form padding_1">
+<h3>导入预览</h3>
+<form method="post" action="">
+	<div style="overflow:auto">
+	<table class="form flexible">
+	<thead>
+		<tr>
+			<th class="padding_1 nowrap filter left">行数</th>
+			<?php
+			$fields = Config::get("import.{$import_type}_fields");
+			$field_keys = array_values(array_flip($fields));
+			array_shift($field_keys);
+			for($i = 0; $i <= $real_col_num; $i++): 
+				$selector = $form['import_columns'][$i] ? : $field_keys[$i];
+			?>
+				<th class="padding_1 nowrap filter left"><?php echo Form::dropdown("import_columns[$i]", $fields, $selector, 'class="middle"'); ?></th>
+			<?php endfor; ?>
+		</tr>
+	</thead>
+	<?php
+		echo V('import/preview_content_uniqid',[
+			'uniqid'=>$uniqid,
+			'preview_data'=>$preview_data,
+			'real_col_num'=>$real_col_num, 
+			'start_row' => $start_row
+			]);
+	?>
+	</table>
+	</div>
+	<div class="form padding_2">
+	<p>
+	<?php 
+		if (!$form['skip_rows']) {
+			echo Form::checkbox('skip_rows',TRUE, T('从第几行开始导入'),'class="checkbox middle monitor"');
+		} else {
+			echo Form::checkbox('skip_rows',TRUE, T('从第几行开始导入'),'class="checkbox middle monitor"');
+		}
+	?>
+	<input type="text" name="skip_rows_count" class="middle text right toggle_status:skip_rows enable_on:on src:<?php echo URI::url('!orders')?> view object:rows_count event:change static:uniqid=<?php echo $uniqid; ?>" value="<?= $form['skip_rows_count'] ? : 2 ?>" size="5" />
+	</p>
+        <div class="interval_20">&nbsp</div>
+    <p>
+		<input type="submit" name="submit" value="<?php echo I18N::T('orders','导入'); ?>" class="font-button-save middle" />
+		<a href="<?php echo H(URI::url('') ) ?>" class="button button_cancel middle"><?php echo T('取消'); ?></a>
+	</p>
+	</div>
+</form>
+</div>

@@ -1,0 +1,249 @@
+<?php echo CSS::load_async('inventory:inventory'); ?>
+<?php
+	$me = L('ME');
+?>
+<?php if ($me->is_allowed_to('添加', 'stock') || $me->is_allowed_to('领用/归还', 'stock') ||
+		$me->is_allowed_to('代人领用/归还', 'stock') || $me->is_allowed_to('导出','stocks')
+		): ?>
+    <?php if($panel_buttons): ?>
+        <?php echo V('application:panel_buttons',['panel_buttons'=>$panel_buttons]);?>
+    <?php endif; ?>
+<?php endif; ?>
+<?php echo $search_box?>
+<?php
+//echo $pagination;
+/*
+	NO. TASK#247 (Cheng.Liu@2010.11.17)
+	follow_stock模块->table转换
+ */
+
+$table = Widget::factory('table');
+$table->name = 'inventory_stocks';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+$table->add_columns($columns);
+
+
+$table->empty_message = I18N::T('inventory', '没有符合条件的存货');
+
+if (count($stocks) > 0) {
+	foreach ($stocks as $obj) {
+		$stock = O("stock", ['id'=>$obj->parent_id]);
+		
+		if ($stock->is_collection) {
+
+			if ($form['tags']) {
+				$root = Tag_Model::root('inventory');
+				$tag_names = @json_decode($form['tags'], TRUE);
+				foreach ($tag_names as $id => $name) {
+
+					$tag = O('tag', ['name'=>$name,'root'=>$root]);
+
+					if ($tag->id) {
+						$pre_selector[] = $tag;
+					}
+				}
+			}
+			if ($form['tag']) {
+				$root = Tag_Model::root('inventory');
+				$tag = O('tag', ['id'=>$form['tag'], 'root'=>$root]);
+				if ($tag->id) {
+					$pre_selector[] = $tag;
+				}
+			}
+
+			$selector = "stock[is_collection=0][parent={$stock}]";
+			if(trim($form['ref_no'])){
+				$ref_no = Q::quote($form['ref_no']);
+				$selector .= "[ref_no*=$ref_no]";
+			}
+			if($form['barcode']){
+				$barcode = Q::quote($form['barcode']);
+				$selector .= "[barcode=$barcode]";
+			}
+			if($form['product_name']){
+				$product_name = Q::quote($form['product_name']);
+				$selector .= "[product_name*=$product_name]";
+			}
+			if($form['manufacturer']){
+				$manufacturer = Q::quote($form['manufacturer']);
+				$selector .= "[manufacturer*=$manufacturer]";
+			}
+			if($form['catalog_no']){
+				$selector .= '[catalog_no*='.Q::quote($form['catalog_no']).']';
+			}
+			if($form['vendor']){
+				$vendor = Q::quote($form['vendor']);
+				$selector .= "[vendor*=$vendor]";
+			}
+			if($form['location']){
+				$location = Q::quote($form['location']);
+				$selector .= "[location*=$location]";
+			}
+			if($form['expire_status']){
+				$expire_status = Q::quote($form['expire_status']);
+				$selector .= "[expire_status=$expire_status]";
+			}
+			if($form['status']){
+				$status = Q::quote($form['status']);
+				$selector .= "[status=$status]";
+			}
+
+			$sort_by = $form['sort'];
+			$sort_asc = $form['sort_asc'];
+			$sort_flag = $sort_asc ? 'A':'D';
+
+			switch($sort_by){
+				case 'product_name':
+					$selector .= ":sort(quantity D, parent_id D, product_name {$sort_flag})";
+					break;
+				case 'manufacturer':
+					$selector .= ":sort(quantity D, parent_id D, manufacturer {$sort_flag})";
+					break;
+				case 'vendor':
+					$selector .= ":sort(quantity D, parent_id D, vendor {$sort_flag})";
+					break;
+				case 'location':
+					$selector .= ":sort(quantity D, parent_id D, location {$sort_flag})";
+					break;
+				case 'status':
+					$selector .= ":sort(quantity D, parent_id D, status {$sort_flag})";
+					break;
+				case 'ref_no':
+					$selector .= ":sort(quantity D, parent_id D, ref_no {$sort_flag})";
+					break;
+				default:
+					$selector .= ":sort(quantity D, parent_id D, mtime {$sort_flag})";
+			}
+
+
+			if (count($pre_selector)){
+				$selector = '('.implode(', ', $pre_selector).') ' . $selector;
+			}
+			$child_stocks = Q($selector);
+			$child_stock_count = count($child_stocks);
+			
+			$table->add_row([
+				'#custom_row'=>V('inventory:stocks_table/data/collection_view', [
+					'child_stocks_count'=> $child_stock_count,
+					'collection'=>$stock,
+					'child_stocks' => $child_stocks,
+					'form'=>$form
+					]),
+			]);
+
+			$child_class = 'hidden child_'.$stock->id;
+			$n = 0;
+			$page = 1;
+		}
+	}
+
+	foreach ($stocks as $obj) {
+		$stock = O("stock", ['id'=>$obj->parent_id]);
+		if ($stock->is_collection == 0) {
+			$links = L('ME')->follow_links($stock) + $stock->links();
+			$table->add_row([
+//				'@'=>V('inventory:stocks_table/data/status', ['stock'=>$stock]),
+				'ref_no' => V('inventory:stocks_table/data/ref_no', ['stock'=>$stock]),
+				'product_name'=> V('inventory:stocks_table/data/product_name', ['stock'=>$stock]),
+				'manufacturer'=>H($stock->manufacturer),
+				'catalog_no'=>H($stock->catalog_no),
+				'vendor'=>H($stock->vendor),
+				'quantity'=>H($stock->quantity),
+                '_type'=> H($stock->type) ? : '--',
+				'expire_status' => V('inventory:stocks_table/data/expire_status', ['stock' => $stock ]),
+				'location'=>H($stock->location),
+				'rest'=>Widget::factory('application:links', ['links'=>$links])
+			]);	
+		}
+	}
+}
+
+echo $table;
+?>
+
+<div class="pages"><?= $pagination ?></div>
+
+<?php
+
+if (L('ME')->is_allowed_to('修改', 'stock')) {
+	echo JS::load('inventory:collection', [
+		'table_name'=>'table_inventory_stocks',
+		'url'=>URI::url('!inventory/stock')
+	]);
+}
+
+$form_token = Session::temp_token('child_stocks_', 900);
+$_SESSION[$form_token] = $form;
+?>
+<script type="text/javascript">
+jQuery(function() {
+	$('.collection_count, .show_child_stocks').bind('click', function(){
+		var id = $(this).attr('id'); //点击获得 节点的 id
+		if($('.child_'+id).length > 0){ //如果点击时下拉菜单是打开的，则闭合，并解绑定对应scroll事件
+			$('.show_child_stocks_'+id).removeClass('toggle_expand');
+			$('.child_'+id).remove();
+			$('.collection_expire_status_'+id).css('display', 'inline-block');
+			$(window).unbind("scroll.collection_"+id);
+		}
+		else{
+			$('.show_child_stocks_'+id).addClass('toggle_expand'); //如果点击时下拉菜单是关闭的，则绑定scroll事件并触发auto_add_tr方法
+			
+			$('.collection_expire_status_'+id).css('display', 'none');
+			auto_add_tr(id); //打开下拉菜单显示二级存货列表
+			var timerId;
+			$(window).bind("scroll.collection_"+id, function() {
+				clearTimeout(timerId);
+				timerId = setTimeout(function(){auto_add_tr(id)}, 200);
+			});
+		}
+
+		
+	});
+	function auto_add_tr(id) {
+
+		var window_height = $(window).height();
+		var nScrollTop = $(document).scrollTop();
+		var total_length = window_height + nScrollTop; //获得页面所在位置
+		var load_text = "<tr class='child_"+id+"' id='load_view_"+id+"'><td colspan='7'><div class='loading center'><img src='images/icons/loading.gif' height='20px'/></div></td></tr>";
+
+		if ($('.child_'+id).length > 0) {
+			var page = $('.child_'+id).data('page'+id);
+			if (page > 0) {
+				$(".replace_tr_"+id).replaceWith(load_text);
+			}
+		}
+		else {
+			var page = 0
+			var parent_stock = $(".parent_stock_"+id); //如果是第一次加载，则将load_view至于下拉菜单最上部
+			parent_stock.after(load_text);
+		}
+
+		var load_view = $('#load_view_'+id);
+		if (load_view.length > 0) {
+			var offsetTop = load_view.offset().top;
+			if (total_length > offsetTop) {
+		 		Q.trigger({
+					object: 'add_child_tr',
+					event: 'click',
+					global: false,
+					data: {
+						stock_id: id,
+						page: page,
+						form_token: '<?php echo $form_token ?>'
+					},
+					success: function(data) {
+						if (data['#load_view_'+id] != undefined) {
+							var page = data['#load_view_'+id]['page'];
+							$('.child_'+id).data('page'+id, page);
+							if (page > 0) {
+								auto_add_tr(id);
+							}
+						}
+					}
+				});
+			}
+		}		
+	}
+});
+</script>

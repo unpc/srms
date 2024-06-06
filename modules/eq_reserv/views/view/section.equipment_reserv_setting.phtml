@@ -1,0 +1,66 @@
+<div class="equipments_info_style">
+	<?php if($equipment->accept_reserv):
+        $style = '';
+        if (Config::get('system.locale') == 'en_US') {
+            $style = 'style="width: 130px"';
+        }
+    ?>
+	<div class="clearfix">
+		<h2 class="section_title">
+            <span class="border"></span>
+            <span class="black_title"><?php echo I18N::T('eq_reserv', '预约设置') ?></span>
+		</h2>
+		<div class="interval_30"></div>
+		<ul>
+	        <?php
+	            $add_reserv_earliest_limit = $equipment->get('add_reserv_earliest_limit');
+	            if(is_null($add_reserv_earliest_limit)){
+	                $add_reserv_earliest_limit = Lab::get('equipment.add_reserv_earliest_limit', NULL, '@');
+	            }
+
+	            $add_reserv_latest_limit = $equipment->get('add_reserv_latest_limit');
+	            if(is_null($add_reserv_latest_limit)){
+	                $add_reserv_latest_limit = Lab::get('equipment.add_reserv_latest_limit', NULL, '@');
+	            }
+
+	            $modify_reserv_latest_limit = $equipment->get('modify_reserv_latest_limit');
+	            if (is_null($modify_reserv_latest_limit)) {
+	                $modify_reserv_latest_limit = Lab::get('equipment.modify_reserv_latest_limit', NULL, '@');
+	            }
+
+                $delete_reserv_latest_limit = $equipment->get('delete_reserv_latest_limit');
+                if (is_null($delete_reserv_latest_limit)) {
+                    $delete_reserv_latest_limit = Lab::get('equipment.delete_reserv_latest_limit', NULL, '@');
+                }
+
+	            list($add_reserv_earliest_time, $add_reserv_earliest_format) = Date::format_interval($add_reserv_earliest_limit, 'hid');
+	            list($add_reserv_latest_time, $add_reserv_latest_format) = Date::format_interval($add_reserv_latest_limit, 'hid');
+	            list($modify_reserv_latest_time, $modify_reserv_latest_format) = Date::format_interval($modify_reserv_latest_limit, 'hid');
+	            list($delete_reserv_latest_time, $delete_reserv_latest_format) = Date::format_interval($delete_reserv_latest_limit, 'hid');
+	        ?>
+	        <li><?php echo I18N::T('eq_reserv', '<span class="left">' . I18N::T('eq_reserv', '添加预约最早可提前') . '</span> <span class="right" style="margin-left:70px;">%time %unit</span>', [
+	            '%time'=>$add_reserv_earliest_time,
+	            '%unit'=>I18N::T('eq_reserv', Date::unit($add_reserv_earliest_format))
+	        ]); ?></li>
+
+	        <li><?php echo I18N::T('eq_reserv', '<span class="left">' . I18N::T('eq_reserv', '添加预约最晚可提前') . '</span> <span class="right" style="margin-left:70px;">%time %unit</span>', [
+	            '%time' => $add_reserv_latest_time,
+	            '%unit' => I18N::T('eq_reserv', Date::unit($add_reserv_latest_format))
+	        ]); ?></li>
+
+	        <li><?php echo I18N::T('eq_reserv', '<span class="left" '. $style .'>' . I18N::T('eq_reserv', '修改预约最晚可提前') . '</span> <span class="right" style="margin-left:110px;">%time %unit</span>', [
+	            '%time' => $modify_reserv_latest_time,
+	            '%unit' => I18N::T('eq_reserv', Date::unit($modify_reserv_latest_format))
+	        ]); ?></li>
+
+		</ul>
+
+        <uL>
+            <li><?php echo I18N::T('eq_reserv', '<span class="left" '. $style .'>' . I18N::T('eq_reserv', '删除预约最晚可提前') . '</span> <span class="right" style="margin-left:70px;">%time %unit</span>', [
+                    '%time' => $delete_reserv_latest_time,
+                    '%unit' => I18N::T('eq_reserv', Date::unit($delete_reserv_latest_format))
+                ]); ?></li>
+        </uL>
+	</div>
+	<?php endif; ?>
+</div>

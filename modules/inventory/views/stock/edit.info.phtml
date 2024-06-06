@@ -1,0 +1,257 @@
+<?php
+// 初始化变量
+$me = L('ME');
+$no_error = ($form->no_error !== FALSE);
+?>
+<div class="hr_1">&#160;</div>
+<div class="form padding_1">
+
+	<form method="post" autocomplete="off" action="<?php echo H(URI::url() ) ?>" id="<?php echo H($form_id = 'stock_form_id_'.uniqid()) ?>">
+	<?php echo V('form_error', ['form'=>$form]);?>
+	<?php $require = (string) V('form_require'); ?>
+	<table class="form">
+		<tbody>
+			<tr>
+				<td class="label right nowrap top"><?php echo I18N::T('inventory', '自定义编号')?></td>
+				<td class="top">
+					<input name="ref_no" size="20" class="text" value="<?php echo H($no_error ? $stock->ref_no : $form['ref_no']); ?>" />
+				</td>
+			</tr>
+			<tr>
+				<td class="label right nowrap top"><?php echo I18N::T('inventory', '产品名称')?></td>
+				<td class="top">
+                    <?php
+                        echo Widget::factory('inventory:stock_autofill', [
+                                    'autocomplete'=>URI::url('!inventory/autocomplete/add_stock'),
+                                    'name'=>'product_name',
+                                    'stock'=>$stock,
+                                    'form'=>$form,
+                                    'size'=>40,
+									'require'=>$require
+                                ]);
+                    ?>
+				</td>
+			</tr>
+			<tr>
+				<td class="label right nowrap middle"><?php echo I18N::T('inventory', '生产商')?></td>
+				<td class="middle"><input name="manufacturer" class="text" size="40" value="<?php echo H($no_error?$stock->manufacturer:$form['manufacturer']); ?>" /></td>
+			</tr>
+			<tr>
+				<td class="right nowrap middle"><?php echo I18N::T('inventory', '目录号')?></td>
+				<td class="top">
+					<input name="catalog_no" class="text validator" size="40" value="<?php echo H($no_error?$stock->catalog_no:$form['catalog_no']); ?>" />
+				</td>
+			</tr>
+			<tr>
+				<td class="right nowrap middle"><?php echo I18N::T('inventory', '供应商')?></td>
+				<td class="middle"><input name="vendor" class="text" size="40" value="<?php echo H($no_error?$stock->vendor:$form['vendor']); ?>" /></td>
+			</tr>
+			<tr>
+				<td class="right nowrap middle"><?php echo I18N::T('inventory', '型号')?></td>
+				<td class="middle"><input name="model" class="text right" size="20" value="<?php echo H($no_error?$stock->model:$form['model']); ?>" /></td>
+			</tr>
+			<tr>
+				<td class="right nowrap middle"><?php echo I18N::T('inventory', '规格')?></td>
+				<td class="middle"><input name="spec" class="text right" size="20" value="<?php echo H($no_error?$stock->spec:$form['spec']); ?>" /></td>
+			</tr>
+			<tr>
+				<td class="right nowrap middle"><?php echo I18N::T('inventory', '单价')?></td>
+				<td class="middle"><input name="unit_price" class="text currency" size="20" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo H($no_error?$stock->unit_price:$form['unit_price']) ?>" /></td>
+			</tr>
+			<tr>
+				<td class="label right nowrap middle"><?php echo I18N::T('inventory', '条码')?></td>
+				<td class="middle"> <input name="barcode" class="text" size="20" value="<?php echo H($no_error?$stock->barcode:$form['barcode']); ?>" /> </td>
+			</tr>
+			<tr>
+				<td class="label right nowrap middle"><?php echo I18N::T('inventory', '存量')?></td>
+				<td class="middle"> <input name="quantity" class="text number" size="20" value="<?php echo H($no_error?$stock->quantity:$form['quantity']); ?>" /> </td>
+			</tr>
+			<tr>
+				<td class="label right nowrap middle"><?php echo I18N::T('inventory', '总量')?></td>
+				<td class="middle"> <input name="summation" class="text number" size="20" value="<?php echo H($no_error?$stock->summation:$form['summation']); ?>" /> </td>
+			</tr>
+			<tr>
+				<td class="label right nowrap middle"><?php echo I18N::T('inventory', '存放位置')?></td>
+				<td class="middle"><input name="location" class="text" size="40" value="<?php echo H($no_error?$stock->location:$form['location']); ?>" /></td>
+			</tr>
+			<tr>
+				<td class="label right nowrap middle"><?php echo I18N::T('inventory', '库存状态')?></td>
+				<td class="middle">
+                        <?php echo Form::dropdown('status', I18N::T('inventory', Stock_Model::$stock_status), ($no_error?$stock->status:$form['status']) ? : Stock_Model::UNKNOWN, 'class="toggle_status:auto_update_status disable_on:on"'); ?>
+                        &nbsp;&nbsp;
+                        <?php echo Form::checkbox('auto_update_status', $no_error ? $stock->auto_update_status : $form['auto_update_status'], I18N::T('inventory', '根据存量自动更新状态'), 'class="middle monitor"')?>
+				</td>
+			</tr>
+<?php
+	//form提交出错先根据form, form没有根据stock, stock也没有, 使用默认方式初始化界面
+	$expire_radio = '';
+	$disabled = '';
+	$expire_notice_time = '';
+	$default_days = '';
+	$expire_time = $no_error ? ($stock->expire_time ? : Date::time() ) : $form['expire_time'];
+	
+	if ( !$no_error ) {
+		$expire_radio = ($form['expire_status'] == Stock_Model::$never_expired) ? 'never_expire' : 'unknown_expire' ;
+		$expire_notice_time = $form['expire_notice_time'];
+		$default_days = $form['expire_notice_time'];
+	}
+	else {
+		$expire_radio = (!$stock->expire_status || $stock->expire_status == Stock_Model::$never_expired) ? 'never_expire' : 'unknown_expire' ;
+		$default_days = Lab::get( 'stock.default.expire_notice_days', Config::get('stock.default.expire_notice_days', 7) );
+		$expire_notice_time = $stock->id ? $stock->expire_notice_time/86400 : $default_days;
+	}
+	if ( $expire_radio == 'never_expire' ) {
+		$disabled = 'disabled="disabled"';
+		$expire_notice_time = $default_days;
+	}
+?>
+			<tr>
+				<td class="label right nowrap middle"><?php echo I18N::T('inventory', '过期时间');?></td>
+				<td class="middle">
+					<input type="radio" name="expire_status" value="<?php echo Stock_Model::$never_expired; ?>" id="never_expire"
+					 <?php if ( $expire_radio == 'never_expire' ) echo 'checked="checked"'; ?> />
+					<label for="never_expire"><?php echo I18N::T('inventory', '不设置|:add')?></label>
+				</td>
+			</tr>
+			<tr>
+				<td>&#160;</td>
+				<?php $expire_uniqid = 'expire_' . uniqid(); ?>
+				<td class="middle" id="<?php echo $expire_uniqid; ?>">
+					<input type="radio" name="expire_status" value="--" id="unknown_expire"
+					<?php if ( $expire_radio == 'unknown_expire' ) echo 'checked="checked"'; ?> />
+					<input type="text" name="expire_time" class="text date middle" q-date_format="<?php echo HT('$year/$month/$day')?>" value="<?php echo $expire_time; ?>" <?php echo $disabled; ?>  />
+					&nbsp;&nbsp;<?php echo I18N::T('inventory', '提前'); ?> &nbsp;
+					<input type="text" style="width:26px;" class="right text number" name="expire_notice_time"
+					value="<?php echo $expire_notice_time; ?>"
+					<?php echo $disabled; ?> q-number_default_value="<?php echo H($default_days) ?>" />
+					 &nbsp;
+					<?php echo I18N::T('inventory', '天提醒过期'); ?>
+				</td>
+			</tr>
+            <?php if (Module::is_installed('extra')) :?>
+            <tr>
+                <td class="label right nowrap top">
+                    <?php echo I18N::T('inventory', '存货类型');?>
+                </td>
+                <td class="top">
+                    <div>
+                        <?php
+                        $lab = Lab_Model::default_lab();
+                        $extra = Extra_Model::fetch($lab, 'stock');
+
+                        $_c = [];
+                        foreach($extra->get_categories() as $v) {
+                            $_c[$v] = $v;
+                        }
+
+                        $types = ['-1'=> '--'] + $_c;
+
+                        echo Form::dropdown('type', $types, $stock->type ? : ($form['type'] ? : '-1'));
+                        ?>
+                    </div>
+                    <div <?php if ($form['type'] != -1) :?>class="hidden"<?php endif;?> id="<?php echo H($id = 'stock_'. uniqid()) ?>"></div>
+                </td>
+                <?php endif;?>
+            </tr>
+			<tr>
+				<td class="label right nowrap top"><?php echo I18N::T('inventory', '备注')?></td>
+	<td class="top"><textarea name="note" class="text autogrow" cols="40"><?php echo H($no_error?$stock->note:$form['note']); ?></textarea></td>
+			</tr>
+			<tr>
+			  <td class="label right nowrap top"><?php echo I18N::T('inventory', '标签')?></td>
+              <td class="top">
+                <?php
+                    /* xiaopei.li@2011.03.04 */
+                    $root = Tag_Model::root('inventory');
+                    if ($stock->id) {
+                        $tags = (array) Q("$stock tag[root=$root]")->to_assoc('name','name');
+                        if(count($tags)) {
+                            $tags = json_encode($tags,TRUE);
+                        }
+                    }
+                    else{
+                        $tags = '';
+                    }
+                    echo Widget::factory('application:multi_tag_selector',
+                                         [
+                                             'autocomplete'=> URI::url("autocomplete/tags.$root->id"),
+                                             'name'=>'tags',
+                                             'value'=> $no_error ? $tags : $form['tags'],
+                                             'size'=>'40',
+                                             'allow_creating'=>TRUE,
+                                             'token_tip' => I18N::T('inventory', '您可选择标签或按回车键输入新的标签')
+                                             ]);
+                ?>
+			  </td>
+			</tr>
+			<tr>
+				<td class="label right nowrap top"><?php echo I18N::T('inventory', '合并入已有存货')?></td>
+				<td class="top">
+					<?php
+						echo Widget::factory('inventory:stock_selector', [
+							'name'=>'stock_merge',
+							'autocomplete'=>URI::url('!inventory/autocomplete/stock'),
+							'size'=>'40',
+							'stock'=>($stock->parent->id && $stock->parent->id != $stock->id) ? $stock->parent : O('stock', $form['stock_merge']),
+						]);
+					?>
+				</td>
+			</tr>
+			<tr>
+			  <td>&#160;</td>
+			  <?php if($stock->id): ?>
+				<td>
+					<input type="submit" name="submit" class="button button_save" value="<?php echo H(T('保存')) ?>" />
+				</td>
+					 <?php else: ?>
+				<td>
+					<input type="submit" name="submit" class="button button_add" value="<?php echo H(T('添加')) ?>" />
+				</td>
+		<?php endif; ?>
+			</tr>
+		</tbody>
+	</table>
+	</form>
+</div>
+<script type="text/javascript">
+	jQuery(function($) {
+        var form = <?php echo JS::quote($form)?>;
+		$(':radio[name=expire_status]').bind('click', function() {
+			var $ele = $(this);
+			if ( $ele.val() == '<?php echo Stock_Model::$never_expired; ?>' ) {
+				$("#<?php echo $expire_uniqid ?>").children(':text').attr('disabled', 'disabled');
+			}
+			else {
+				$("#<?php echo $expire_uniqid ?>").children(':text').removeAttr('disabled', 'disabled');
+			}
+		});
+
+        $('#<?php echo $form_id?>').find(':input[name=type]').bind('change', function() {
+            category = $(this).val();
+            Q.trigger({
+                object: 'stock_type',
+                src: '<?php echo URI::url('!inventory/stock')?>',
+                event: 'change',
+                global: false,
+                data: {
+                    category: category,
+                    form: form,
+                    sid: <?php echo $stock->id ? : 0;?>
+                },
+                success: function(data) {
+                    var $view = $('#<?php echo $id?>');
+
+                    if (data.view) {
+                        $view.show(0).html(data.view);
+                    }
+                    else {
+                        $view.hide();
+                    }
+                }
+            });
+        });
+
+        //进行一次trigger
+        $('#<?php echo $form_id?>').find(':input[name=type]').trigger('change');
+	});
+</script>

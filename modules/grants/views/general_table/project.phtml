@@ -1,0 +1,7 @@
+<span class="project">
+	<?php if (L('ME')->is_allowed_to('查看', $grant)):?>
+	<a href="<?php echo H($grant->url()) ?>"><?php echo H($grant->project) ?></a>
+	<?php else: ?>
+	<?php echo H($grant->project) ?>
+	<?php endif; ?>
+</span>

@@ -1,0 +1,14 @@
+<?php
+if ($_SESSION['from_lab'] && $_SESSION['q_params']) :?>
+    <?php $q_params = $_SESSION['q_params'];unset($_SESSION['q_params']);?>
+    <script>
+        jQuery(function($){
+            Q.trigger({
+                object: "<?= $q_params['q-object']?>",
+                event: "<?= $q_params['q-event']?>",
+                data: <?= json_encode($q_params['q-static']) ?>,
+                url: "<?= $q_params['q-src']?>"
+            });
+        })
+    </script>
+<?php endif;?>

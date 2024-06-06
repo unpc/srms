@@ -1,0 +1,9 @@
+<div class="hr_1">&#160;</div>
+<div class="wiki_content padding_2">
+<?php $node = $wiki->index(); ?>
+<?php if($node) :?>
+<ul>
+	<?php echo V('index/node', ['node'=>$node]); ?>
+</ul>
+<?php endif; ?>
+</div>

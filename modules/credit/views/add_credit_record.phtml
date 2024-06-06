@@ -1,0 +1,131 @@
+<?php $me = L('ME'); ?>
+<div class="form padding_2">
+<form method="post" q-object="credit_record_add" q-src="<?= URI::url('!credit') ?>" q-event="submit" autocomplete="off" class="prevent_default">
+        <?php $require = (string) V('form_require', ['extra_class' => 'right']); ?>
+        <table class="form">
+            <tr>
+                <td class="nowrap right"><?= $require ?> 用户</td>
+                <td class="nowrap">
+                    <?php
+                        echo Widget::factory('application:user_selector', [
+                            'name' => 'user',
+                            'user' => $form['user'],
+                        ]);
+                    ?>
+                    <br> <?php echo V('form_filter',['error'=>$form->errors['user'][0]])?>
+                </td>
+            </tr>
+            <tr>
+                <td class="nowrap right"><?= $require ?> 计分类型</td>
+                <td class="nowrap">
+                    <?php if ($me->access('管理所有成员信用分')
+                        || $me->access('管理负责仪器的黑名单')
+                        || $me->access('管理下属机构成员的信用分')) : ?>
+                        <?php echo Form::radio('type', Credit_Rule_Model::STATUS_ADD, ($form['type'] == Credit_Rule_Model::STATUS_ADD) ? 0 : 1, I18N::T('credit', Credit_Rule_Model::$status[Credit_Rule_Model::STATUS_ADD]), 'class="middle checkbox monitor "', 'style="margin-right: 72px;"'); ?>
+                        <?php echo Form::radio('type', Credit_Rule_Model::STATUS_CUT, ($form['type'] == Credit_Rule_Model::STATUS_CUT) ? 1 : 0, I18N::T('credit', Credit_Rule_Model::$status[Credit_Rule_Model::STATUS_CUT]), 'class="middle checkbox monitor"'); ?>
+                    <?php else: ?>
+                        <?php echo Form::radio('type', Credit_Rule_Model::STATUS_CUT, Credit_Rule_Model::STATUS_CUT, I18N::T('credit', Credit_Rule_Model::$status[Credit_Rule_Model::STATUS_CUT]), 'class="middle checkbox"'); ?>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <tr class="toggle:type show_on:0">
+                <td class="nowrap right"><?= $require ?> 计分项</td>
+                <td class="nowrap">
+                    <?php
+                        $custom_add_rule = O('credit_rule', ['ref_no' => Credit_Rule_Model::CUSTOM_ADD]);
+                        $add_rules = Q("credit_rule[hidden=0][is_disabled=0][is_custom=1][type=" . Credit_Rule_Model::STATUS_ADD . "]");
+                        $rules = [];
+                        foreach ($add_rules as $credit_rule) {
+                            $rules[$credit_rule->id] = $credit_rule->name;
+                        }
+                    ?>
+                    <?php echo Form::dropdown('add', ['0' => '--'] + $rules, (int)$form['add'], 'class="dropdown monitor"'); ?>
+                    <br> <?php echo V('form_filter',['error'=>$form->errors['add'][0]])?>
+                </td>
+            </tr>
+            <tr class="toggle:type show_on:1">
+                <td class="nowrap right"><?= $require ?> 计分项</td>
+                <td class="nowrap">
+                    <?php
+                        $custom_cut_rule = O('credit_rule', ['ref_no' => Credit_Rule_Model::CUSTOM_CUT]);
+                        $cut_rules = Q("credit_rule[hidden=0][is_disabled=0][is_custom=1][type=" . Credit_Rule_Model::STATUS_CUT . "]");
+                        $rules = [];
+                        foreach ($cut_rules as $credit_rule) {
+                            $rules[$credit_rule->id] = $credit_rule->name;
+                        }
+                    ?>
+                    <?php echo Form::dropdown('cut', ['0' => '--'] + $rules, (int)$form['cut'], 'class="dropdown monitor"'); ?>
+                    <br> <?php echo V('form_filter',['error'=>$form->errors['cut'][0]])?>
+                </td>
+            </tr>
+            <tr class="toggle:add show_on:<?= $custom_add_rule->id?>">
+                <td class="nowrap right">计分分值</td>
+                <td class="nowrap">
+                    <input name="custom_add_score" class="number text middle" value="<?php echo H($form['custom_add_score'] ) ?>""/>
+                    <?php echo $require; ?>
+                </td>
+            </tr>
+            <tr class="toggle:add show_on:<?= $custom_add_rule->id?>">
+                <td class="nowrap right">计分说明</td>
+                <td class="nowrap">
+                    <textarea style="width: 262px" name="custom_add_description" class="text autogrow" rows="4"><?php echo H($form['custom_add_description'] ) ?></textarea>
+                    <?php echo $require; ?>
+                </td>
+            </tr>
+            <tr class="toggle:cut show_on:<?= $custom_cut_rule->id?>">
+                <td class="nowrap right">计分分值</td>
+                <td class="nowrap">
+                    <input name="custom_cut_score" class="number text middle" value="<?php echo H($form['custom_cut_score'] ) ?>""/>
+                    <?php echo $require; ?>
+                </td>
+            </tr>
+            <tr class="toggle:cut show_on:<?= $custom_cut_rule->id?>">
+                <td class="nowrap right">计分说明</td>
+                <td class="nowrap">
+                    <textarea style="width: 262px" name="custom_cut_description" class="text autogrow" rows="4"><?php echo H($form['custom_cut_description']) ?></textarea>
+                    <?php echo $require; ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="nowrap right">
+                    <?php if (!$me->access('管理所有成员信用分')) echo $require; ?>
+                    关联仪器
+                </td>
+                <td class="nowrap">
+                    <?php
+                        echo Widget::factory('equipments:equipment_selector', [
+                            'name' => 'equipment',
+                            'equipment' => $equipment,
+                        ]);
+                    ?>
+                    <br> <?php echo V('form_filter',['error'=>$form->errors['equipment'][0]])?>
+                </td>
+            </tr>
+            <tr>
+                <td class="nowrap right">计分时间</td>
+                <td class="nowrap">
+                    <input name="ctime" class="text date middle" value="<?php echo H($form['ctime'] ?: Date::time()) ?>" date_type="date" />
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="submit" name="submit" class="font-button-save float_right middle" value="<?php echo H(I18N::T('credit', '提交')) ?>" />
+                    <input onclick="javascript:$('.dialog_close').click();" type="reset" class="font-button-default rmargin_16 float_right dialog_close" value="<?php echo I18N::T('credit','关闭')?>">
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('input[name=type]').change(function () {
+            $('.dropdown_text').text('--');
+            if ($(this).val() == 1) {
+                $('select[name=add]').val(0).change();
+            }else {
+                $('select[name=cut]').val(0).change();
+            }
+        });
+    });
+</script>

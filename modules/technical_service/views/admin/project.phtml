@@ -1,0 +1,51 @@
+<div style="display: flow-root;margin-top: -4px;margin-bottom: 12px;margin-right: 1rem">
+    <a class="lmargin_10 float_right view blue pointer event:click object:add_project src:<?php echo URI::url('!technical_service/project')?>">
+        <span class="icon-add vertical_middle"></span>
+        <span class="vertical_middle"><?= T('添加项目') ?></span>
+    </a>
+</div>
+<?php
+echo $pagination;
+
+$table = Widget::factory('table');
+$table->name = 'projects';
+$columns = [
+    'name' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '项目名称'),
+        'sortable' => TRUE,
+        'align' => 'left',
+        'filter' => [
+            'form' => V('technical_service:project_table/filters/name', ['name' => 'name', 'value' => $form['name']]),
+            'value' => $form['name'] ? H($form['name']) : NULL
+        ],
+        'nowrap' => TRUE,
+    ],
+    'equipments' => [
+        'weight' => 30,
+        'title' => I18N::T('technical_service', '关联仪器'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'rest' => [
+        'title' => I18N::T('technical_service', '操作'),
+        'weight' => 70,
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ]
+];
+
+$table->add_columns($columns);
+$table->empty_message = I18N::T('technical_service', Config::get('equipment.default_empty_message'));
+
+foreach ($projects as $project) {
+    $links = $project->links('index');
+    $table->add_row([
+        'name' => V('technical_service:project_table/data/normal_name', ['project' => $project]),
+        'equipments' => V('technical_service:project_table/data/equipments', ['project' => $project]),
+        'rest' => Widget::factory('application:links', ['links' => $links])
+    ]);
+}
+
+echo $table;
+echo $pagination;

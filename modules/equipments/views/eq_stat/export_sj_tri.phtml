@@ -1,0 +1,10 @@
+<h2 class="section_title">
+		<span class="middle"><?php echo I18N::HT('equipments', '下载仪器统计数据') ?></span>
+</h2>
+<div class="clearfix">
+	<ul class="padding_1">
+		<li>
+            <a href="#" q-object="export_sj_tri" q-src="<?= URI::url('!equipments/eq_stat') ?>" target="_self'?>" q-static="<?php echo H(['id' => $equipment->id])?>" q-event="click" class="prevent_default blue" method="post"><?php echo I18N::HT('equipments', '贵重仪器设备年使用情况表'); ?></a>
+		</li>
+	</ul>
+</div>

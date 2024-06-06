@@ -1,0 +1,15 @@
+<h5 class="padding_1 left"><?= I18N::T('application', '系统切换') ?></h5>
+<?php
+$sites = Config::get('site.slave');
+array_unshift($sites, Config::get('site.master'));
+foreach ($sites as $site) : ?>
+    <ul class="padding_1 left" style="padding-left: 10px; list-style: disc;">
+        <li>
+            <?php if ($site['name'] == LAB_ID) : ?>
+                <p style="font-weight: bold;"><?= $site['zh_name'] ?></p>
+            <?php else : ?>
+                <a class="blue" style="font-weight: bold; color: #921a1d;" target="_blank" href="<?= $site['host'] ?>"><?= $site['zh_name'] ?></a>
+            <?php endif; ?>
+        </li>
+    </ul>
+<?php endforeach ?>

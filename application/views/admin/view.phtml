@@ -1,0 +1,17 @@
+<?php if (!$this->withoutToolbox) : ?>
+    <div class='search_panel' style="display: contents">
+    <?php
+
+        echo $secondary_tabs->panel_buttons;
+    	echo $secondary_tabs->search_box;
+    	echo $search_box ?: $panel_buttons;
+    ?>
+    </div>
+<?php endif; ?>
+
+<div class="tab_pagination">
+    <?php echo $secondary_tabs?>
+</div>
+
+<div class="interval_16"></div>
+<?php echo $secondary_tabs->content;?>

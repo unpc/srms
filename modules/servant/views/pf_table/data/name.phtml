@@ -1,0 +1,4 @@
+<a href="<?= H($pf->url() ) ?>"><?= H($pf->name) ?></a>
+<?php if (!$pf->atime) : ?>
+<span class="status_tag status_tag_error"><?= I18N::HT('people', '未激活') ?></span>
+<?php endif; ?>

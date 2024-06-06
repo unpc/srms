@@ -1,0 +1,34 @@
+<?php
+$must_samples = Config::get('eq_record.must_samples');
+?>
+<form method="post" q-object="batch_feedback" q-event="submit" q-src="<?= H(URI::url('!equipments/records'))?>" autocomplete="off" style="padding:10px">
+<?php echo V('form_error', ['form'=>$form]);?>
+<?php $no_error = $form->no_error; ?>
+<p class="padding_1 lmargin_-2">
+    <?php echo Form::radio('record_status', EQ_Record_Model::FEEDBACK_NORMAL, $form['record_status'] == EQ_Record_Model::FEEDBACK_NORMAL, I18N::T('equipments', '运行正常'), 'class="radio middle"', 'class="middle"'); ?>
+    <?php echo Form::radio('record_status', EQ_Record_Model::FEEDBACK_PROBLEM, $form['record_status'] == EQ_Record_Model::FEEDBACK_PROBLEM, I18N::T('equipments', '运行故障'), 'class="radio middle"', 'class="middle"'); ?>
+</p>
+<p class="interval_12"></p>
+<p>
+    <textarea name="feedback" class="text autogrow" cols="42" rows="3"><?php echo H($form['feedback']) ? : ''; ?></textarea>
+</p>
+<?php if (Config::get('equipment.feedback_show_samples', 0)): ?>
+<p class="interval_12"></p>
+<p>
+    <?php echo I18N::T('equipments', '样品数'); ?>
+    <br/>
+<p class="interval_12"></p>
+    <input name="samples" class="text number" size="10" value="<?php echo isset($form['samples']) ? $form['samples'] : $must_samples ? '' : 1 ; ?>" />
+    &nbsp;
+</p>
+<?php endif; ?>
+<!-- 若开启eq_evaluate模块，则加载机主服务评价选项 -->
+<?php if(Module::is_installed('eq_evaluate')): ?>
+    <?php echo V('batch_feedback/incharge_evaluate', ['form' => $form]);?>
+<?php endif; ?>
+<div class="interval_12"></div>
+
+<p class="buttons float_right" style="margin-bottom:1rem">
+    <input type="submit" name="pass" class="font-button-save sm" value="<?php echo H(I18N::T('equipments', '提交')) ?>" />
+</p>
+</form>

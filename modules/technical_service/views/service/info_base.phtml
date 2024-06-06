@@ -1,0 +1,78 @@
+<style>
+    .tmargin_3{
+        margin-top: 40px;
+    }
+</style>
+<div class="equipments_info_style dashboard-info">
+    <h2 class="section_title">
+        <span class="border"></span>
+        <span class="black_title"><?php echo I18N::T('technical_service', '服务简介') ?></span>
+    </h2>
+    <div class="interval_16"></div>
+    <div class="lpadding_3 text" style="width: 1148px"><?= H($service->description ?: '待完善',true); ?></div>
+
+    <h2 class="section_title tmargin_3">
+        <span class="border"></span>
+        <span class="black_title"><?php echo I18N::T('technical_service', '服务项目') ?></span>
+    </h2>
+    <div class="interval_16"></div>
+    <?php
+    $service_equipments = [];
+    $service_projects = [];
+    foreach (Q("service_equipment[service={$service}]") as $service_equipment) {
+        if (isset($service_projects[$service_equipment->project->id])) continue;
+        foreach (Q("service_equipment[service={$service}][project={$service_equipment->project}]") as $service_eq) {
+            $service_equipments[$service_eq->equipment->id] = $service_eq->equipment->name;
+        }
+        $service_projects[$service_equipment->project->id] =  $service_equipment->project->name;
+    }  
+    ?>
+    <div class="lpadding_3">
+        <ul>
+            <?php
+            $index = 1;
+            foreach ($service_projects as $project): 
+            ?>
+            <li><?= $index++ ?>&nbsp;&nbsp;<?= $project ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+
+    <h2 class="section_title tmargin_3">
+        <span class="border"></span>
+        <span class="black_title"><?php echo I18N::T('technical_service', '样品要求') ?></span>
+    </h2>
+    <div class="interval_16"></div>
+    <div class="lpadding_3" style="width: 1148px"><?= H($service->sample_requires ?: '待完善',true); ?></div>
+
+    <h2 class="section_title tmargin_3">
+        <span class="border"></span>
+        <span class="black_title"><?php echo I18N::T('technical_service', '服务设备') ?></span>
+    </h2>
+    <div class="interval_16"></div>
+    <div class="lpadding_3">
+        <ul>
+            <?php
+            $index = 1;
+            foreach ($service_equipments as $eq_name): 
+                ?>
+                <li><?= $index++ ?>&nbsp;&nbsp;<?= $eq_name ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+
+    <h2 class="section_title tmargin_3">
+        <span class="border"></span>
+        <span class="black_title" style="width: 1148px"><?php echo I18N::T('technical_service', '收费标准') ?></span>
+    </h2>
+    <div class="interval_16"></div>
+    <div class="lpadding_3" style="width: 1148px;"><?= H($service->charge_settings ?: '待完善',true); ?></div>
+
+    <h2 class="section_title tmargin_3">
+        <span class="border"></span>
+        <span class="black_title"><?php echo I18N::T('technical_service', '注意事项') ?></span>
+    </h2>
+    <div class="interval_16"></div>
+    <div class="lpadding_3" style="width: 1148px"><?= H($service->attentions ?: '暂无',true); ?></div>
+
+</div>

@@ -1,0 +1,72 @@
+
+<div class="form recovery_page flexible">
+
+<table class="form" style="margin: 0 auto; min-width:700px;">
+	<tbody>
+		<tr><td><div class="interval_60"></div></td></tr>
+		<tr><td colspan=2><h2 style="text-align:center;" class="section_title"><?php echo I18N::HT('people', '重置您的登录密码')?></h2></td></tr>
+		<tr>
+			<td class="top icon" style="padding: 30px 10px 10px 10px;">
+				<img src="<?php echo H(O('user')->icon_url('64')) ?>" />
+			</td>
+			<td class="top">
+			<form method="post" class="view object:fogret_password event:click" autocomplete="off" action="<?php echo H(URI::url('recovery')) ?>">
+			<?php echo V('form_error', ['form'=>$form]);?>
+			<table class="form">
+				<tbody>
+					<tr><td><div class="interval_30"></div></td></tr>
+					<tr>
+						<td class="label left nowrap">
+							<label>
+								<?php echo I18N::HT('people', '请输入您需要重置的帐号')?>
+								<?php echo V('form_filter',['error'=>$form->errors[''][0]])?>
+							</label>
+						</td>
+					</tr>
+					<tr>
+						<td class="middle">
+							<input class="text" name="token" size="30" value="<?php echo H($form['token'])?>" />
+							<?php 
+								$backends = Config::get('auth.backends');
+								if (count($backends)) {
+									$backend_titles = [];
+									foreach ($backends as $key=>$values) {
+										if (!($values['readonly'])) {
+											$backend_titles[$key] = $values['title'];
+										}
+									}
+									$default_backend = Config::get('auth.default_backend_recovery') ? Config::get('auth.default_backend_recovery') : Config::get('auth.default_backend');
+									echo '&#160;@&#160;';
+									echo Form::dropdown('token_backend', T($backend_titles), $default_backend, 'class="dropdown middle"');
+								}
+							?>
+						</td>
+					</tr>
+					<tr><td><div class="interval_20"></div></td></tr>
+					<tr>
+						<td class="label left nowrap" style="padding-top: 10px;"><label><?php echo I18N::HT('people', '或者帐号对应的邮箱地址')?></label></td>
+					</tr>
+					<tr>
+						<td class="middle">
+							<input class="text" name="email" size="30" value="<?php echo H($form['email'])?>" />
+                            <span class="description lmargin_3">提交成功后, 请尽快到您的邮箱查看邮件, 并通过邮件重设密码</span>
+						</td>
+					</tr>
+					<?php if (Config::get('vfcode.switch', false)) :?>
+						<?php echo Event::trigger('recovery.form.extra');?>
+					<?php endif;?>
+					<tr>	
+						<td>
+							<input name="recovery_token" value="<?= md5($token)?>" style="display: none"/>
+							<div class="interval_30"></div>
+							<input type="submit" name="submit" class="font-button-save middle" value="<?php echo H(I18N::T('people', '重置密码')) ?>" />	
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			</form>
+			</td>
+	</tr>
+	</tbody>
+</table>
+</div>

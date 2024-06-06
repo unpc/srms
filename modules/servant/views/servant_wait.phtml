@@ -1,0 +1,92 @@
+<style>
+
+.servant_wait {
+    width: 400px;
+    height: 250px;
+    background-color: #FFF;
+    padding-top: 75px;
+
+}
+
+.servant_wait .title {
+    color: #7498E0;
+    font-size: 36px;
+}
+
+.servant_wait p.content {
+    color: gray;
+    font-size: 18px;
+}
+
+.servant_wait a.select {
+    background-color: #7498E0;
+    color: #FFF;
+    font-size: 18px;
+    padding: 4px 8px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.servant_wait .blue {
+    color: #7498E0 !important;
+}
+
+.loading_box {
+    display: none !important;
+}
+
+</style>
+
+<?php $step_id = 'step_'.uniqid();?>
+<div class="padding_1 middle center servant_wait">
+    <img src="<?php echo H(_C('images/servant_wait.gif')) ?>"></img>
+    <div class="hr_2"></div>
+    <h1 class="middle center title"><?= I18N::T('application', '请 稍 后') ?></h1>
+    <p class="content center"><?= I18N::T('application', '处理中, 请勿关闭此页面')?></p>
+    <p id=<?= $step_id?> class="content center blue"><?= I18N::T('servant', '初始化')?></p>
+    <h1 class="middle center title">. . .</h1>
+    <script>
+    (function($){
+        check = function () {
+            var $step = $("#<?= $step_id?>");
+            Q.trigger({
+                object: 'pf_step',
+                event: 'check',
+                data: {
+                    'platform': '<?= $platform->id?>',
+                    'action': '<?= $action?>',
+                    'pid': '<?= $pid?>'
+                },
+                url: '<?= URI::url('!servant/platform') ?>',
+                success: function(data) {
+                    if (data.msg !== '') {
+                        $step.text(data.msg);
+                    }
+                    if (data.done === true) {
+                        window.location.href = '<?= URI::url('!servant/index') ?>';
+                        clearInterval(check_create);
+                    }
+                }
+            })
+        }
+        check_create = setInterval(check, 1000);
+
+        $('.dialog_close').click(function() {
+            Q.trigger({
+                object: 'pf_step',
+                event: 'stop',
+                data: {
+                    'platform': '<?= $platform->id?>',
+                    'action': '<?= $action?>',
+                    'pid': '<?= $pid ?>'
+                },
+                url: '<?= URI::url('!servant/platform') ?>',
+                success: function(data) {
+                    window.location.replace(window.location.href);
+                }
+            })
+        })
+
+    })(jQuery)
+    </script>
+</div>

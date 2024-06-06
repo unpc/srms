@@ -1,0 +1,6 @@
+<?php
+    $tip = array_map(function($v) {
+            return I18N::T('eq_evaluate', $v);
+    }, ['-1' => '--'] + Config::get('eq_evaluate')['rate.tip']);
+?>
+<?php echo Form::dropdown('score' , $tip, (isset($score) && $score != -1) ? (double)$score : -1, 'class="autosubmittable dropdown middle"');?>

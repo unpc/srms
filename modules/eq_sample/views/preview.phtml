@@ -1,0 +1,37 @@
+<?php $user = $sample->sender;?>
+<div class="padding_1 clearfix">
+    <table class="form">
+    <tr>
+        <td class="top nowrap" colspan="2"><h2><?php echo I18N::T('eq_sample', '送样者信息：')?></h2></td>
+    </tr>
+    <tr>
+      <td class="top icon"><?php echo $user->icon('32') ?></td>
+      <td class="top nowrap">
+        <h2>
+          <a href="<?php echo H($user->url() ) ?>"><?php echo H($user->name) ?></a>
+          <?php if(Module::is_installed('labs') && $sample->lab->id): $lab = $sample->lab; ?>
+          <small>(<a class="blue" href="<?php echo H($lab->url()) ?>"><?php echo H($lab->name) ?></a>)</small>
+          <?php endif; ?>
+        </h2>
+        <table class="form">
+            <tr>
+                <td class="top nowrap right"><?php echo I18N::T('eq_sample', '送样时间')?></td>
+                <td class="top nowrap left"><?php echo Date::format($sample->dtsubmit)?></td>
+            </tr>
+            <tr>
+                <td class="top nowrap right"><?php echo I18N::T('eq_sample', '取样时间')?></td>
+                <td class="top nowrap left"><?php echo $sample->dtpickup ? Date::format($sample->dtpickup) : I18N::T('eq_sample', '未设取样时间')?></td>
+            </tr>
+            <tr>
+                <td class="top nowrap right"><?php echo I18N::T('eq_sample', '测样时间')?></td>
+                <td class="top nowrap left">
+                    <?php echo $sample->dtstart ? Date::format($sample->dtstart) : I18N::T('eq_sample', '未设起始时间')?>
+                    -
+                    <?php echo $sample->dtend ? Date::format($sample->dtend) : I18N::T('eq_sample', '未设结束时间')?>
+                </td>
+            </tr>
+        </table>
+      </td>
+    </tr>
+    </table>
+</div>

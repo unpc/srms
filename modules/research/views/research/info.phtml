@@ -1,0 +1,19 @@
+<h2 class="section_title">
+  <span class="middle"><?php echo I18N::T('research', '基本信息') ?></span>
+</h2>
+<div class="padding_2" style="padding-top:5px">
+  <table class="form equipment_info_form" style="min-width:400px">
+    <tr>
+      <td class="top nowrap"><span class="status_tag status_tag_label"><?php echo I18N::T('research', '服务内容')?></span></td>
+      <td class="top" colspan="3"><?php echo H($research->content, TRUE) ?></td>
+    </tr>
+    <tr>
+      <td class="top nowrap"><span class="status_tag status_tag_label"><?php echo I18N::T('research', '收费标准')?></span></td>
+      <td class="top" colspan="3"><?php echo H($research->charge, TRUE) ?></td>
+    </tr>
+    <tr>
+      <td class="top nowrap"><span class="status_tag status_tag_label"><?php echo I18N::T('research', '服务地点')?></span></td>
+      <td class="top" colspan="3"><?php echo H($research->location, TRUE) ?></td>
+    </tr>
+  </table>
+</div>

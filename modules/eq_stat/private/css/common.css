@@ -1,0 +1,61 @@
+.chart_form {
+	position: absolute;
+	margin-left: -5px;
+	margin-top: 5px;
+	*margin-top: 30px;
+	*margin-left: -64px;
+	width: 280px;
+	color: #666;
+
+	*border:1px solid #999;
+	*border-top-width: 0;
+	border:1px solid #999\9;
+	border-top-width: 0\9;
+
+	box-shadow: 0 3px 6px rgba(0,0,0,0.5);
+	border-radius: 0 0 5px 5px;
+
+    div.equipment_selector_div {
+        margin-left: 8px;
+        vertical-align: middle;
+    }
+}
+
+.eq_stat_chart {
+	background-color: #fff;
+	overflow: hidden;
+}
+
+.eq_stat_message {
+	text-align:center;
+	margin:300px auto;
+	width:450px;
+}
+
+#table_stat_list .point_value {
+    font-size: 110%;
+    font-weight: bold;
+}
+
+.in_service{
+
+}
+
+.out_of_service{
+    color:red;
+}
+
+.no_longer_in_service{
+    color:grey;
+}
+
+ul.eq_stat_triple {
+    width: 500px;
+    overflow: hidden;
+    li {
+        width: 30%;
+        float: left;
+        display:inline;
+        white-space: nowrap;
+    }
+}

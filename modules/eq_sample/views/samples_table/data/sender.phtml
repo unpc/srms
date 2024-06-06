@@ -1,0 +1,29 @@
+<?php
+echo CSS::load_async('eq_reserv:common');
+$me = L('ME');
+$user = $sample->sender;
+$lab = $sample->lab;
+$equipment = $sample->equipment;
+if ($me->is_allowed_to('查看相关人员联系方式', $equipment)) {
+    $show_email = TRUE;
+    $show_phone = TRUE;
+}
+?>
+<div>
+    <p><a href="<?php echo H($user->url()) ?>" class="prevent_default"><?php echo H($user->name); ?></a></p>
+    <?php if ($show_phone || $show_email) : ?>
+        <div class="quote user_grid rpadding_3">
+            <?php if ($show_email) :?>
+                <p class="eq_reserv_user_email"><?php echo URI::mailto(H($user->email), NULL, 'class="description"')?></p>
+            <?php endif;?>
+            <?php if ($show_phone) :?>
+                <p class="eq_reserv_user_phone description"><?php echo H($user->phone)?></p>
+            <?php endif;?>
+        </div>
+    <?php endif;?>
+</div>
+<?php if ($lab->id): ?>
+<div>
+	<a class="description" href="<?php echo H($lab->url()) ?>"><?php echo H($lab->name)?></a>
+</div>
+<?php endif;

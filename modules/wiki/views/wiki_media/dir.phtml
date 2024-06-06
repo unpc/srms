@@ -1,0 +1,30 @@
+<ul>
+	<li>
+	<a class="view object:attachment_dir event:click"><?php echo T('根目录')?></a>
+	<?php
+	
+	function dir_traverse($base, $path=NULL) {
+	
+		$path = preg_replace('/[^\/]$/', '$0/', $path);
+		$output = '';
+		$dh = @opendir($base.$path);
+	
+		if ($dh) {
+			while ($n = readdir($dh)) {
+				$npath = $path.$n;
+				if($n[0]=='.' || is_file($base.$npath))continue;
+				$output .= '<li>';
+				$output .= '<a class="view object:attachment_dir event:click static:'.H(['base'=>$npath]).'">'.H($n).'</a>';
+				$output .= dir_traverse($base, $npath);
+				$output .= '</li>';
+			}
+			closedir($dh);
+		}
+		
+		return '<ul>'.$output.'</ul>';
+	}
+	echo dir_traverse($root);
+		
+	?>
+	</li>
+</ul>

@@ -1,0 +1,71 @@
+<?php if (isset($project) && (!$project->is_locked)):?>
+<div class="group_prevent_default panel padding_1 clearfix">
+	<a class="button button_add" href="<?php echo H(isset($project) ? $project->url(NULL, NULL, NULL, 'add_note') : URI::url('!treenote/note/add')) ?>"><?php echo I18N::HT('treenote', '添加记录')?></a>
+</div>
+<?php endif;?>
+<?php if (isset($task) && (!$task->is_locked)):?>
+<div class="group_prevent_default panel padding_1 clearfix">
+	<a class="button button_add" href="#" q-object="new_note" q-event="click" q-src="<?php echo H(URI::url('!treenote/note') ) ?>"><?php echo I18N::HT('treenote', '添加记录')?></a>
+</div>
+<?php endif;?>
+<?php 
+echo $pagination;
+
+$table = Widget::factory('table');
+
+$table->name = 'treenote_notes';
+
+if($form['dtstart_check'] && $form['dtend_check']) {
+	$form['date'] = H(date('Y/m/d',$form['dtstart'])).'~'.H(date('Y/m/d',$form['dtend']));
+}
+elseif($form['dtstart_check']) {
+	$form['date'] = H(date('Y/m/d',$form['dtstart'])).'~'.I18N::T('treenote','最末');
+}
+elseif($form['dtend_check']) {
+	$form['date'] = I18N::T('treenote','最初').'~'.H(date('Y/m/d',$form['dtend']));
+}
+
+$table->add_columns([
+	'@' => [
+		'extra_class' => 'tight',
+	],
+	'title'=>[
+		'title'=>I18N::T('treenote', '记录'),
+	],
+	'date'=>[
+		'title'=>I18N::T('treenote', '时间'),
+		'filter' => [
+			'form' => V('general/table/filters/date', [
+							'dtstart_check'=>$form['dtstart_check'],
+							'dtstart'=>$form['dtstart'],
+							'dtend_check'=>$form['dtend_check'],
+							'dtend'=>$form['dtend']
+							]),
+			'value' => $form['date'] ? H($form['date']) : NULL
+			],
+		'invisible'=>TRUE,
+	],
+	'rest'=>[
+		'nowrap'=>TRUE,
+		'extra_class' => 'tight',
+		'align'=>'right',
+	],
+]);
+
+$table->empty_message = I18N::T('treenote', '无相关记录');
+$me = L('ME');
+foreach ($notes as $note) {
+	if (!$me->is_allowed_to('列表', $note)) continue;
+	$table->add_row(
+		[
+			'@' => [
+				'view'=> $note->user->icon('32', 'style="display:block"'),
+				'extra'=>'style="padding:4px" align="right" align="right"',
+				'align'=>'top',
+			],
+			'title'=> V('treenote:note/table/data/title', ['note'=>$note]),
+			'rest'=> Widget::factory('application:links', ['links' => $note->links()]),
+			]);
+}
+
+echo $table;

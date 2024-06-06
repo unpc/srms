@@ -1,0 +1,45 @@
+<div class="hr_1">&#160;</div>
+<div class="form padding_1">
+	<form method="post" autocomplete="off">
+	<?php 
+		if(!$form->no_error)
+			echo V('form_error', ['form'=>$form]);
+	?>
+	<?php $require = (string) V('form_require'); ?>
+	<table class="form">
+		<tbody>
+			<tr>
+				<td class="right nowrap middle"><?php echo I18N::T('projects', '收信人列表')?></td>
+				<td class="top">
+					<input 
+						name="users" class="text token" size="40" 
+						value="<?php echo $form->no_error ? H(json_encode($users)) : $form['users'];?>" 
+					/>
+				</td>
+			</tr>
+			<tr>
+				<td class="right nowrap middle"><?php echo I18N::T('projects', '消息标题')?></td>
+				<td class="top">
+					<input name="subject" type="text" size="40" class="text" value="<?php echo $form->no_error ? '' : $form['subject']; ?>" />
+				</td>
+			</tr>			<tr>
+				<td class="right nowrap top"><?php echo I18N::T('projects', '消息正文')?></td>
+				<td class="top">
+					<textarea name="content" cols="40" class="text"><?php echo $form->no_error ? '' : $form['content']; ?></textarea>
+				</td>
+			</tr>
+		</tbody>
+		<tfoot>
+			<tr><td colspan="2" class="hr_1">&#160;</td></tr>
+			<tr>
+				<td>&#160;</td>
+				<td>
+					<input type="submit" name="submit" class="button button_save" value="<?php echo H(T('提交')) ?>" />
+					<input type="reset" class="button button_cancel" value="<?php echo H(T('重置')) ?>" />
+				</td>
+			</tr>
+		</tfoot>
+	</table>
+	</form>
+</div>
+

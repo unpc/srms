@@ -1,0 +1,36 @@
+<?php
+$materials = Material::get_enable_use_materials_by_eq($equipment);
+if ($record->id) {
+    $select_materials = $record->reserv->id ? json_decode($record->reserv->materials, true)
+        : json_decode($record->materials, true);
+}else{
+    $select_materials = [];
+}
+?>
+    <tr>
+        <td class="label left top nowrap" colspan="2">
+            <h1><?php echo I18N::HT('material', '选用耗材');?></h1>
+        </td>
+    </tr>
+<?php foreach ($materials as $material):?>
+    <tr>
+        <td class="label left top nowrap" colspan="2">
+            <div class="title">
+            <?php
+            $checked = isset($form['material'][$material->id]) ? $form['material'][$material->id] == 'on' : isset($select_materials[$material->id]);
+            $value = isset($form['material_number'][$material->id]) ? $form['material_number'][$material->id] : $select_materials[$material->id];
+            echo Form::checkbox("material[$material->id]", $checked, I18N::T('material', $material->name), 'class="middle checkbox"', 'class="middle"')?>
+            </div>
+            <div class="title">
+                <input name="material_number[<?= $material->id?>]" type="text" class="text number" size="36" value="<?= $value?>">
+                <?php echo $material->material_unit->name?>
+            </div>
+        </td>
+    </tr>
+<?php endforeach;?>
+<?php
+//显示已删除 但该记录已选用的耗材
+$ids = $materials->to_assoc('id', 'id');
+$disabled_materials = array_diff_key($select_materials, $ids);
+if (count($disabled_materials)) echo V('material:view/disabled', ['disabled_materials' => $disabled_materials]);
+?>

@@ -1,0 +1,62 @@
+<?php
+  $require = (string)V('form_require');
+	$container = 'container_'.uniqid();
+  $equipments = Q("{$object} equipment");
+  if ($equipments->total_count()) {
+    $value = json_encode($equipments->to_assoc('id','name'));
+  } elseif ($object->id) {
+    $value = '{"0": "--"}';
+  } else {
+    $value = '';
+  }
+  if ($labs->total_count()) {
+    $autocomplete = URI::url('!achievements/autocomplete/equipment', ['labs' => join(',', $labs->to_assoc('id', 'id'))]);
+  } else {
+    $autocomplete = URI::url('!achievements/autocomplete/equipment');
+  }
+?>
+
+<tr><td><div class="interval_20"></div></td></tr>
+    <!-- <table class="form message_form" style="width:100%"> -->
+      <!-- <tbody> -->
+        <tr id="<?php echo $container; ?>">
+          <td class="label middle label_width ">         
+             <?= $require?>
+             <?php echo I18N::T('labs', '请选择关联仪器'); ?>
+          </td>
+          <td colspan='4'>
+          <?= Widget::factory('application:multi_equipment_selector', [
+              'name' => 'equipments',
+              'value' => $form['equipments'] ? : $value,
+              'autocomplete' => $autocomplete
+            ]);
+          ?>
+          </td>
+        </tr>
+      <!-- </tbody> -->
+    <!-- </table> -->
+
+
+<script>
+jQuery(function($){
+  var selector = '#<?= $container?>';
+  var $form = $(selector).parents('form');
+<?php	if ($GLOBALS['preload']['people.multi_lab']) :?>
+  $form.find('input[name=lab]').bind('token.input.change', function() {
+<?php else: ?>
+	$form.find('input[name=lab]').change(function(){
+<?php endif;?>
+		Q.trigger({
+			event:'select_lab_change',
+			data:{
+        container: '<?= $container?>',
+        equipments: '<?= $form["equipments"]?>',
+				labs: $form.find('input[name=lab]').val(),
+				object_name: '<?= $object->name()?>',
+				object_id: '<?= $object->id?>'
+			},
+			url: '<?= URI::url('!equipments/achievements')?>'
+		});
+	});
+});
+</script>

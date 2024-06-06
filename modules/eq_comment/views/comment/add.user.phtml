@@ -1,0 +1,143 @@
+<style>
+  .top {
+    text-align: right;
+    word-break: keep-all;
+  }
+  table.rateit_table {
+      background-color: #ededed80;
+      width: 100%;
+  }
+  table.rateit_table tbody tr:last-child td {
+      padding-bottom: 10px !important;
+  }
+  table.rateit_table tbody tr td:first-child {
+      width: 180px;
+  }
+  table.rateit_table tbody tr td:last-child {
+      padding-left: 16px;
+  }
+</style>
+<?php 
+$tip = Config::get('comment.rate')['tip'];
+?>
+<div class="message message_warning clearfix nowrap" style="border:none; border-radius: 0;margin-right: -24px;margin-left: -24px;color: #333333;font-weight: 400;">
+    <i class="message_icon icon_normal"></i>
+    <?= I18N::T('eq_comment', '请注意评论后无法进行修改！');?>
+</div>
+<form class="form padding_1" method="post" autocomplete="off" q-event="submit" 
+  q-object="comment_user" q-src="<?= H(URI::url('!eq_comment/user')) ?>">
+  <?= V('form_error', ['form' => $form]); ?>
+  <?= Form::hidden('object_name', $object->name()); ?>
+  <?= Form::hidden('object_id', $object->id); ?>
+    <table class="form">
+        <tbody>
+        <tr>
+            <td class="top icon">
+                <img src="<?php echo H($object->equipment->icon_url('64')) ?>" />
+            </td>
+            <td>
+                <table class="form">
+                    <tr>
+                        <td colspan="2" style="padding-top: 0px"><h3><?= I18N::HT('eq_comment', '对使用者的评价') ?></h3></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <table class="form rateit_table">
+                                <tbody>
+                                <tr>
+                                    <td class="nowrap right label middle"><?= I18N::T('eq_comment', '样品吻合度'); ?></td>
+                                    <td class="nowrap label middle">
+                                        <?= Widget::factory('rateit_input', ['name' => "user_attitude",
+                                            'rateit_value' => $form['user_attitude'] ? : $comment->user_attitude ? : 5, 'rateit_tip' => TRUE, 'tip' => $tip]); ?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="nowrap right label middle"><?= I18N::T('eq_comment', '使用熟练度'); ?></td>
+                                    <td class="nowrap label middle">
+                                        <?= Widget::factory('rateit_input', ['name' => "user_proficiency",
+                                            'rateit_value' => $form['user_proficiency'] ? : $comment->user_proficiency ? : 5, 'rateit_tip' => TRUE, 'tip' => $tip]); ?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="nowrap right label middle"><?= I18N::T('eq_comment', '试验台清洁度 / 标准操作'); ?></td>
+                                    <td class="nowrap label middle">
+                                        <?= Widget::factory('rateit_input', ['name' => "user_cleanliness",
+                                            'rateit_value' => $form['user_cleanliness'] ? : $comment->user_cleanliness ? : 5, 'rateit_tip' => TRUE, 'tip' => $tip]); ?>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2"><h3><?= I18N::HT('eq_comment', '测试预期可实现性') ?></h3></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <table class="form rateit_table">
+                                <tbody>
+                                <tr>
+                                    <td class="nowrap right label middle"><?= I18N::T('eq_comment', '测试结果重要性'); ?></td>
+                                    <td class="nowrap label middle">
+                                        <?= Widget::factory('rateit_input', ['name' => "test_importance",
+                                            'rateit_value' => $form['test_importance'] ? : $comment->test_importance ? : 5, 'rateit_tip' => TRUE, 'tip' => $tip]); ?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="nowrap right label middle"><?= I18N::T('eq_comment', '用户对设备功能的了解程度'); ?></td>
+                                    <td class="nowrap label middle">
+                                        <?= Widget::factory('rateit_input', ['name' => "test_understanding",
+                                            'rateit_value' => $form['test_understanding'] ? : $comment->test_understanding ? : 5, 'rateit_tip' => TRUE, 'tip' => $tip]); ?>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="top" style="vertical-align: middle"><?= I18N::T('eq_comment', '测试目的'); ?></td>
+                        <td>
+                            <input class="text" name="test_purpose" size="40" value="<?= H($form['test_purpose'] ? : $comment->test_purpose) ?>" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="top" style="vertical-align: middle"><?= I18N::T('eq_comment', '测试方法'); ?></td>
+                        <td>
+                            <input class="text" name="test_method" size="40" value="<?= H($form['test_method'] ? : $comment->test_method) ?>" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="top" style="vertical-align: middle"><?= I18N::T('eq_comment', '测试结果'); ?></td>
+                        <td>
+                            <input class="text" name="test_result" size="40" value="<?= H($form['test_result'] ? : $comment->test_result) ?>" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="top" style="vertical-align: middle"><?= I18N::T('eq_comment', '结果与用户预期吻合度'); ?></td>
+                        <td>
+                            <input class="text" name="test_fit" size="40" value="<?= H($form['test_fit'] ? : $comment->test_fit) ?>" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="top"><?= I18N::T('eq_comment', '备注'); ?></td>
+                        <td>
+                            <textarea name="test_remark" class="text autogrow" placeholder="备注" cols="43" rows="3"><?= $comment->test_remark; ?><?= $form['test_remark']; ?></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="nowrap">
+                            <div class="float_right">
+                                <input type="submit" name="submit" class="font-button-save" value="<?= H(I18N::T('eq_comment', '提交')) ?>" />
+                            </div>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+  <div class="interval_24"></div>
+</form>

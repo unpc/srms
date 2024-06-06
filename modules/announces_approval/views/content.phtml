@@ -1,0 +1,71 @@
+<?php
+$uniqid = uniqid();
+$form_token = 'form_token_' . $uniqid;
+?>
+
+
+<?php
+$table = Widget::factory('table');
+$table->name = "announces_approval";
+$table->add_columns([
+    'name'=>[
+        'title'=>I18N::T('announces', '标题'),
+        'nowrap'=>FALSE,
+        'filter' => [
+            'form' => V('announces:search_filter/index', ['name'=>$form['query']]),
+            'value' => $form['query'] ? H($form['query']) : NULL,
+            'field'=>'query'
+        ]
+    ],
+    'sender'=>[
+        'title'=>I18N::T('announces', '发布人'),
+        'nowrap'=>TRUE,
+        'align'=>'left',
+    ],
+    'ctime'=>[
+        'title'=>I18N::T('announces', '发布时间'),
+        'nowrap'=>TRUE,
+    ]
+]);
+$table->add_column('rest', ['title'=>I18N::T('people', '操作'), 'align'=>'right', 'nowrap'=>TRUE, 'weight'=> 120,]);
+
+if($form['query']) {
+    $table->empty_message = I18N::T('announces', '没有符合条件的公告');
+}
+else {
+    $table->empty_message = I18N::T('announces', '暂无公告');
+}
+
+
+foreach ($announces as $announce) {
+    $links = $announce->links("approval");
+    $table->add_row([
+        'name'=>V('announces_approval:announces_table/data/name', ['announce'=>$announce]),
+        'sender'=>V('announces:announces_table/data/sender', ['announce'=>$announce]),
+        'ctime'=>Date::format($announce->ctime, 'Y/m/d H:i'),
+        'rest'=>Widget::factory('application:links', ['links'=>$links])
+    ]);
+}
+
+?>
+    <div class="float_left" style="width: 50%;">
+        <?php
+        $param = [
+            // 'is_offset'     => true,
+            'top_input_arr' => ['name'],
+            'columns'       => (array)$table->columns,
+        ];
+        echo V('application:search_box', $param);
+        ?>
+    </div>
+    <div class="interval_24"></div>
+    <div class="interval_24"></div>
+
+<div class="tab_pagination">
+    <?php echo $secondary_tabs; ?>
+</div>
+
+<?php
+echo $table;
+?>
+<div class="pages"><?= $pagination ?></div>

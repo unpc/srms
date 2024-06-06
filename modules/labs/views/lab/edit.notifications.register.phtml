@@ -1,0 +1,7 @@
+<div class="form">
+	<?php echo Form::checkbox('enable_reg_notif', $lab->enable_reg_notif, I18N::T('labs','实验室成员被激活时向负责人发送提醒'), 'class="middle monitor checkbox"'); ?>
+    <div class="interval_12"></div>
+	<div class="middle toggle_status:enable_reg_notif enable_on:on lpadding_3">
+		<?php echo Form::checkbox('ignore_PI_reg_notif', $lab->ignore_PI_reg_notif, I18N::T('labs','负责人自己激活成员时不发送提醒'), 'class="checkbox"'); ?>
+	</div>
+</div>

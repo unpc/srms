@@ -1,0 +1,24 @@
+<div class="padding_1 clearfix">
+	<table class="form">
+		<tbody>
+			<tr>
+				<td class="nowrap"><?php echo I18N::T('food', '菜式名称：');?></td>
+				<td class="nowrap"><?php echo H($food->name);?></td>
+			</tr>
+			<tr>
+				<td class="nowrap"><?php echo I18N::T('food', '供应商：');?></td>
+				<td class="nowrap"><?php echo H($food->supplier);?></td>
+			</tr>
+			<tr>
+				<td class="nowrap"><?php echo I18N::T('food', '菜式价格：');?></td>
+				<td class="nowrap"><?php echo I18N::T('food', Number::currency($food->price));?></td>
+			</tr>
+			<?php if ($food->description) :?>	
+				<tr>
+					<td class="nowrap"><?php echo I18N::T('food', '菜式说明：');?></td>
+					<td class="nowrap"><?php echo H($food->description);?></td>
+				</tr>
+			<?php endif;?>
+		</tbody>
+	</table>
+</div>

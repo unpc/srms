@@ -1,0 +1,9 @@
+<tr>
+	<td class="right nowrap"><strong class="description"><?php echo $properties['label'] ?></span></td>
+	<td>
+		<?php 
+			$reserv = Q("eq_reserv[component={$component}]")->limit(1)->current();
+			echo H($reserv->project->name); 
+		?>
+	</td>
+</tr>

@@ -1,0 +1,5 @@
+<?php if (($order->quantity * $order->unit_price + $order->fare) == $order->price) :?>
+    <span><?php echo H($order->quantity);?></span> × <span><?php echo  Number::currency($order->unit_price);?></span> + <span><?php $fare = $order->fare ? : 0; echo Number::currency($fare);?></span> = <span class="red"><?php echo Number::currency($order->price);?></span>
+<?php else:?>
+    <span class="red"><?php echo Number::currency($order->price);?></span>
+<?php endif;?>

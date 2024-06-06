@@ -1,0 +1,103 @@
+
+<?php
+
+//	$sort_fields = Config::get('labs.people.sortable_columns');
+
+//    $me = L('ME');
+	$table = Widget::factory('table', ['extra_class'=>'user_grid']);
+
+	$table->name = 'labs_users_noactive';
+    $table->add_columns($field);
+//	$table->sort_asc = $sort_asc;
+//	$table->sort_by = $sort_by;
+
+//	$table->add_columns([
+//		'@'=>NULL,
+//		'name'=>[
+//			'title'=>I18N::T('labs', '姓名'),
+//			'filter'=>[
+//				'form'=>V('labs:users_table/filters/name', ['name'=>$form['name']]),
+//				'value'=> $form['name'] ? H($form['name']) : NULL
+//			],
+//			'nowrap'=>TRUE,
+//			'sortable' => in_array('name', $sort_fields),
+//        ],
+//        'contact_info'=>[
+//            'title'=>I18N::T('labs', '联系方式'),
+//            'nowrap'=>TRUE
+//        ],
+//    ]);
+//
+//    if ($me->is_allowed_to('查看联系方式', 'user')) {
+//        $table_add_column['email']  = [
+//			'title'=>I18N::T('labs', '邮箱'),
+//			'filter'=>[
+//				'form'=>V('labs:users_table/filters/email', ['email'=>$form['email']]),
+//				'value'=> $form['email'] ? H($form['email']) : NULL
+//			],
+//			'nowrap'=>TRUE,
+//            'invisible'=>TRUE
+//        ];
+//
+//        $table_add_column['phone'] = [
+//			'title'=>I18N::T('labs', '联系电话'),
+//			'filter'=>[
+//				'form'=>V('labs:users_table/filters/phone', ['phone'=>$form['phone']]),
+//				'value'=> $form['phone'] ? H($form['phone']) : NULL
+//			],
+//			'nowrap'=>TRUE,
+//            'invisible'=>TRUE
+//        ];
+//
+//        $table->add_columns($table_add_column);
+//    }
+//
+//	if ($GLOBALS['preload']['people.enable_member_date']) {
+//		$table->add_column('date', [
+//			'title'=>I18N::T('labs', '所在时间'),
+//			'nowrap'=>TRUE,
+//			'sortable' => in_array('date', $sort_fields),
+//		]);
+//	}
+//
+//	$table->add_columns([
+//		'address'=>[
+//			'title'=>I18N::T('labs', '地址'),
+//			'filter'=>[
+//				'form'=>V('labs:users_table/filters/address', ['address'=>$form['address']]),
+//				'value'=> $form['address'] ? H($form['address']) : NULL
+//			],
+//			'nowrap'=>TRUE,
+//		],
+//		'rest'=>[
+//			'align'=>'right',
+//			'nowrap'=>TRUE
+//		]
+//	]);
+
+	$table->empty_message = I18N::T('labs', '无符合条件的成员');
+	$me = L('ME');
+	if (count($users) > 0 ) {
+		foreach ($users as $user) {
+			$links = $user->links() + $lab->member_links($user);
+			if ($me->id != $user->id) {
+				$links = $me->follow_links($user) + $links;
+		    }
+		    $table->add_row([
+		    	/* '@'=>[
+		    		'view'=>$user->icon('32', 'style="display:block"'),
+		    		'extra'=>'style="padding:4px" align="right" align="right" align="right"'
+		    	], */
+		    	'name'=>V('labs:users_table/data/name', ['user'=>$user]),
+                'contact_info'=>V('labs:users_table/data/contact_info', ['user'=>$user]),
+		    	'date'=>V('labs:users_table/data/date', ['user'=>$user]),
+		    	'address'=>V('labs:users_table/data/address', ['user'=>$user]),
+		    	'rest'=>Widget::factory('application:links', ['links' => $links])
+		    ]);
+		}
+	}
+
+	echo $table;
+?>
+
+<div class="pages"><?= $pagination ?></div>

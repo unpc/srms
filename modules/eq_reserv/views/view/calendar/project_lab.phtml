@@ -1,0 +1,60 @@
+<?php //添加预约: 关联项目
+if (class_exists('Lab_Project_Model')):
+    $tr_lab_id = $tr_lab_id ?: 'tr_lab_' . uniqid();
+    $eq_reserv_must_connect_project = Config::get('eq_reserv.must_connect_lab_project');
+    if ($user->id) {
+        $organizer = $user;
+    } elseif ($form['organizer']) {
+    $organizer = O('user', $form['organizer']);
+} elseif ($component->organizer->id) {
+    $organizer = $component->organizer;
+} else {
+    $organizer = L('ME');
+}
+
+$reserv = $component->id ? O('eq_reserv', ['component' => $component]) : O('eq_reserv');
+if ($GLOBALS['preload']['people.multi_lab']) {
+    $equipment = $equipment->id ? $equipment : $component->calendar->parent;
+    $lab_options = $organizer->get_active_labs($equipment);
+  }
+  else {
+    $lab = Q("$organizer lab")->current();
+    $lab_options = [$lab->id => $lab->name];
+}
+$lab_select = $form->no_error ? (int) ($reserv->project->lab->id ?: 0): (int) $form['project_lab'];
+?>
+    <td id="<?php echo $tr_lab_id; ?>" class="label left top nowrap" valign="middle">
+        <div class="title">
+            <?php if ($GLOBALS['preload']['people.multi_lab']) {
+    echo '*';
+}
+?>
+            <?php echo I18N::T('labs', '实验室'); ?>
+            <?php echo V('form_filter', ['error' => $form->errors['project_lab'][0]]) ?>
+        </div>
+        <?php echo Form::dropdown('project_lab', ['--'] + $lab_options, $lab_select, 'style="width: 280px;"'); ?>
+
+
+    </td>
+
+<?php endif;?>
+<?php if (L('ME')->is_allowed_to('修改预约', 'equipment') || L('ME')->is_allowed_to('修改预约', $component->calendar->parent)): ?>
+<script type="text/javascript">
+$().ready(function () {
+  $('input[name=organizer]').unbind('change');
+  $('input[name=organizer]').bind('change', function(e){
+    var $user_id = $(this).val();
+    Q.trigger({
+      object: 'eq_reserv_organizer',
+      event: 'change',
+      data: {
+        'user_id': $user_id,
+        'equipment_id': <?php echo $component->calendar->parent->id ?>,
+        'tr_lab_id': '<?php echo $tr_lab_id ?>'
+      },
+      url: "<?php echo URI::url('!eq_reserv/index'); ?>"
+    });
+  });
+})
+</script>
+<?php endif;?>

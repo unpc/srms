@@ -1,0 +1,52 @@
+<div>
+<?php 
+echo $primary_tabs;
+?>
+<div class="hr_1">&#160;</div>
+</div>
+<div id="signup_application_print" class="signup-print">
+	<h2><?php echo I18N::T('labs', '您的注册信息如下，请核实后打印')?>: </h2>
+	<div class="print-body">
+		<?php echo V('signup/print',['user'=>$user]); ?>
+	</div>
+	<div>
+		<a class="button button-print" href="<?php echo URI::url('!labs/signup/application.'.$user->id.'.download'); ?>" target="_blank"><?php echo I18N::T('labs', '打印'); ?></a>
+	</div>
+</div>
+<?php if($download): ?>
+<script type="text/javascript">
+jQuery(function($){	
+	var header = '<html><head><meta http-equiv="content-type" content="text/html; charset=UTF-8" /><meta name="renderer" content="webkit" /><meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1" /><meta http-equiv="Content-Style-Type" content="text/css" /><link href="<?php echo URI::url("css?f=print"); ?>" rel="stylesheet" type="text/css" /><title><?php echo $title; ?></title></head><body><div class="signup-print">';
+	var content = $('#signup_application_print .print-body').html();
+	var footer = '</div></body><script type="text/javascript">window.print();<\/script></html>';
+	document.write(header);
+	document.write(content);
+	document.write(footer);
+	document.close();
+});
+</script>
+<?php else: ?>
+<script type="text/javascript">
+jQuery(function($){
+	$('#signup_application_print .button-print').bind('click', function(){
+		var header = '<html><head><meta http-equiv="content-type" content="text/html; charset=UTF-8" /><meta name="renderer" content="webkit" /><meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1" /><meta http-equiv="Content-Style-Type" content="text/css" /><link href="<?php echo URI::url("css?f=print"); ?>" rel="stylesheet" type="text/css" /><title><?php echo $title; ?></title></head><body><div class="signup-print">';
+		var content = $('#signup_application_print .print-body').html();
+		var footer = '</div></body></html>';
+		var pw = $('#signup_application_print .print-body table').width()+22;
+		var ph = $('#signup_application_print .print-body table').height()+22;
+		var printWin = window.open('about:blank', 'printWin', 'height='+ph+', width='+pw+', scrollbars=no, menubar=no, status=no, location=no, resizable=no');
+		if(printWin!=undefined){
+			content = [header, content, footer].join('');
+			printWin.document.write(content);
+			printWin.document.close();
+			printWin.focus()
+			printWin.print();
+			printWin.close();
+			return false;
+		}else{
+			return true;
+		}
+	});
+});
+</script>
+<?php endif; ?>

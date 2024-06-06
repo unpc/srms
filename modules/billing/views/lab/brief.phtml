@@ -1,0 +1,90 @@
+<?php
+$me=L('ME'); 
+$labs = Q("$me lab");
+$cnt = 0;
+$lab_uniq = 'lab_'.uniqid();
+if ($me->is_active()):
+  echo CSS::load_async('billing:common');
+  #ifdef (billing.single_department)
+  if($GLOBALS['preload']['billing.single_department']):
+    $billing_department = Billing_Department::get();
+    foreach ($labs as $lab) :
+      $billing_account = Q("$lab billing_account[department={$billing_department}]")->current();
+      $lab_title = H($lab->name);?>
+      <div class="clearfix padding_1 <?php echo $cnt++ > 1 ? 'toggle' : ''?>">
+        <h4><?php echo H($lab_title);?></h4>
+        <p><span class="description"><?php echo I18N::T('billing', '目前可用经费');?>:</span> <?php echo Number::currency($billing_account->balance);?></p>
+      </div>
+      <?php if($labs->total_count() == 1 && $me->id == $lab->owner->id):?>
+        <div class="right">
+          <a class="blue" href="<?= URI::url('!labs/lab/index.'.$lab->id.'.billing_account')?>"><?= I18N::T('billing', '更多信息 »');?></a>
+        </div>
+      <?php endif;?>
+    <?php endforeach;
+  #ifndef (billing.single_department)
+  else:
+    foreach ($labs as $lab) :
+      $lab_title = H($lab->name);
+      $billing_accounts = Q("$lab billing_account");
+      $effective_accounts = $billing_accounts->find('[balance>0]');
+      $owing_accounts = $billing_accounts->find('[balance<0]');
+      $balance = Q("$lab billing_account")->find('[balance>0]')->sum('balance');
+      $countowing = Q("$lab billing_account")->find('[balance<0]')->sum('balance');
+
+      if (count($effective_accounts)):
+        echo CSS::load_async('preview');
+        echo JS::load_async('preview');?>
+      <div class="clearfix <?php echo $cnt++ > 1 ? 'toggle' : ''?>" q-preview="<?php echo H(URI::url('!billing/account')) ?>" q-static="<?php echo H(['lab_id'=>$lab->id]); ?>">
+      <?php else: ?>
+      <div class="clearfix <?php echo $cnt++ > 1 ? 'toggle' : ''?>">
+      <?php endif; ?>
+        <!-- <div><strong><?php echo H($lab_title);?></strong></div> -->
+        <div>您课题组的仪器经费</div>
+        <?php if ($countowing < 0): ?>
+          <div><?php echo I18N::HT('billing', '拖欠')?>: <?php echo Number::currency(abs($countowing))?></div>
+        <?php endif; ?>
+          <div><?php echo I18N::HT('billing', '总余额')?>: <?php echo Number::currency($balance)?></div>
+      </div>
+      <?php if($labs->total_count() == 1 && $me->id == $lab->owner->id):?>
+        <div class="right">
+          <a class="blue" href="<?= URI::url('!labs/lab/index.'.$lab->id.'.billing_account')?>"><?= I18N::T('billing', '更多信息 »');?></a>
+        </div>
+      <?php
+      endif;
+    endforeach;?>
+    <style type="text/css">
+      #brief_toggle a {
+        display: block;
+        width: 100%;
+        text-decoration: none;
+        background-color: #ddd;
+        background: #eee url(/lims/images/icons/down.png) no-repeat center center;
+      }
+      #brief_toggle a.up {
+        background: #eee url(/lims/images/icons/up.png) no-repeat center center;
+      }
+
+    </style>
+    <?php if ($cnt > 2) :?>
+    <div id="brief_toggle">
+      <a>&nbsp;</a>
+    </div>
+    <script>
+      $().ready(function(){
+        $(".toggle").toggle();
+        $("#brief_toggle").bind('click', function(){
+          $(".toggle").toggle(100);
+          if($("#brief_toggle a.up").length) {
+            $("#brief_toggle a.up").removeClass('up')
+          }
+          else {
+            $("#brief_toggle a").addClass('up')
+          }
+        })
+      })
+    </script>
+    <?php
+    endif;
+  endif;
+endif;
+

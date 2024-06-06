@@ -1,0 +1,105 @@
+<style>
+    .cg{
+       color: #4D4D4D
+    }
+</style>
+<div class="padding_2">
+  <h2 class="section_title">
+    <span class="middle"><?= I18N::T('support', '基本信息') ?></span>
+  </h2>
+  <div style="padding-top:5px">
+    <table class="form equipment_info_form" style="min-width:400px">
+      <tr>
+        <td class="nowrap left top" rowspan="10">
+          <img class="icon icon_user" width="32px" height="32px"
+          src="<?= $user->icon_url() ?>" style="display:block">
+        </td>
+        <td class="nowrap left bottom" style="padding-left: 0px !important;">
+          <span class="status_tag status_tag_label cg">
+            <?= I18N::T('support', '用户名称')?>
+          </span>
+        </td>
+        <td class="bottom left">
+          <?= H($user->name) ?>
+        </td>
+        <td class="nowrap left bottom">
+          <span class="status_tag status_tag_label cg">
+            <?= I18N::T('support', '账号')?>
+          </span>
+        </td>
+        <td class="bottom left">
+          <?= H($user->token) ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left">
+          <span class="status_tag status_tag_label cg">
+            <?= I18N::T('support', '学工号') ?>
+          </span>
+        </td>
+        <td colspan="3">
+          <?= H($user->ref_no) ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left top">
+          <span class="status_tag status_tag_label cg">
+            <?= I18N::T('support', '课题组') ?>
+          </span>
+        </td>
+        <td colspan="3">
+          <?= H(implode(',', Q("{$user} lab")->to_assoc('id', 'name'))) ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left">
+          <span class="status_tag status_tag_label cg">
+            <?= I18N::T('support', '电子邮箱')?>
+          </span>
+        </td> 
+        <td colspan="3">
+          <?= H($user->email) ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left">
+          <span class="status_tag status_tag_label cg">
+            <?= I18N::T('support', '联系电话')?>
+          </span>
+        </td> 
+        <td colspan="3">
+          <?= $user->phone ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left">
+          <span class="status_tag status_tag_label cg">
+            <?= I18N::T('support', '卡号')?>
+          </span>
+        </td> 
+        <td style="width: 25%">
+          <?= H($user->card_no) ?>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div style="padding-top:5px;padding-bottom: 2rem;" class="right">
+    <a class="button button_save faceless_match">
+      <?= I18N::HT('support', '切换')?>
+    </a>
+  </div>
+</div>
+
+<script>
+jQuery(function($) {
+  $('.faceless_match').bind('click', function () {
+    Q.trigger({
+      url: '<?= H(URI::url('!login_plus/manyfaced_god')) ?>',
+      object: 'faceless',
+      event: 'exec',
+      global: false,
+      data: { id: <?= $user->id ?> },
+    });
+  })
+})
+</script>

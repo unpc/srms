@@ -1,0 +1,9 @@
+<div q-preview="<?php echo H(URI::url('!people/list')) ?>" q-static="<?php echo H(['uid'=>$user->id]) ?>">
+<a href="<?php echo H($user->url() ) ?>" style="display:inline-block;min-width: 80px;"><strong class="name rpadding_label"><?php echo H($user->name) ?></strong></a>
+<?php if (!(isset($not_tag) && $not_tag)):?>
+    <?php $status_tags = (string) $user->status_tags(); ?>
+    <?php if ($status_tags): ?>
+        <?php echo $status_tags ?>
+    <?php endif;?>
+<?php endif;?>
+</div>

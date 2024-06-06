@@ -1,0 +1,70 @@
+<?php
+echo CSS::load_async('equipments:relate_list');
+$uniqid = 'relate_archive_'.uniqid();
+$archives = Q("$equipment tag.archive");
+$aid = $form['aid'];
+?>
+<div id="<?php echo H($archive_list_id) ?>" style="width: 50%;height: 30px;line-height: 30px" class="light_panel middle match_parent">
+    <a href="<?php echo H(URI::url(NULL, ['reset_archive'=>TRUE])) ?>" class="archive_tag <?php if ($form['reset_archive']) echo "archive_tag_active";?>"><?php echo I18N::T('equipments', '所有记录')?></a>
+    <a href="<?php echo H(URI::url(NULL, ['unarchive'=>TRUE])) ?>" class="archive_tag <?php if ($form['unarchive'])echo "archive_tag_active";?>"><?php echo I18N::T('equipments', '未归档')?></a>
+    <?php
+    $i = 0;
+    $count = count($archives);
+    foreach($archives as $key => $archive) {
+        if ($i == 2){
+            echo '<span class="archive_tag more_archive">‧‧‧</span><ul style="z-index: 10;display: none" class="more_archive_ul">';
+        }
+        if ($i >= 2){
+            echo '<li class="more_archive_li">';
+        }
+        echo V('equipments:record/archive/archive_info', ['id'=>$key, 'aid'=>$aid, 'equipment'=>$equipment, 'relate_uniqid'=>$uniqid, 'form_token'=>$form['form_token']]);
+        if ($i >= 2){
+            echo '</li>';
+        }
+        if ($i == $count){
+            echo '</ul>';
+        }
+        $i++;
+    }
+    ?>
+
+    <?php /*if ($enable_add_eq_records) : */?><!--
+        <div class="float_right middle records_panel">
+            <a href="<?php /*URI::url();*/?>" class="archive_all" q-object="archive_all"
+               q-event="click" q-static="<?php /*echo H([
+                'form_token' =>$form['form_token'],
+                'archive_id'=>$archive->id,
+                'eid'=>$equipment->id
+            ])*/?>"><?php /* echo I18N::T('equipments', '归档')*/?></a>
+        </div>
+    --><?php /*endif; */?>
+    <!--新建归档-->
+    <?php /*if (L('ME')->is_allowed_to('添加仪器使用记录', $equipment)) :*/?><!--
+    <div class="interval_24"></div>
+    <div class="add_archive">
+        <a class="font-button-default" q-object="add_archive"
+           q-event="click"
+           q-static="<?php /*echo H(['eid'=>$equipment->id])*/?>"
+           q-src="<?php /*echo H(URI::url('!equipments/equipment')) */?>"><?php /*echo I18N::T('equipments', '新建档案')*/?></a>
+    </div>
+--><?php /*endif;*/?>
+</div>
+<script>
+$(document).ready(function() {
+    var more_archive = $('.more_archive');
+    var more_archive_ul = $('.more_archive_ul');
+    console.log(more_archive.offset());
+    more_archive.bind('click', function () {
+        if (more_archive_ul.css('display') == 'none') {
+            more_archive_ul.show();
+            more_archive_ul.css({
+                position: 'absolute',
+                top: more_archive.offset().top - 70,
+                left: more_archive.offset().left - 176
+            });
+        } else {
+            more_archive_ul.hide();
+        }
+    });
+});
+</script>

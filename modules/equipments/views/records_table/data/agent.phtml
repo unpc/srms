@@ -1,0 +1,5 @@
+<?php if($record->agent->id): ?>
+<div><?php $record->agent->render(); ?></div>
+<?php else: ?>
+<div><?php echo "--"; ?></div>
+<?php endif;

@@ -1,0 +1,196 @@
+.triple {
+	width:390px;
+	overflow:hidden;
+}
+.triple li {
+	float:left;
+	display:inline;
+	width:30%;
+}
+
+.short_container {
+    width: 104px;
+
+	a {
+		display: block;
+		text-decoration: none;
+		cursor: pointer;
+		text-align: center;
+		vertical-align: middle;
+	}
+
+	/* a:hover {
+		background-color: #7498E0;
+		color: #FFFFFF;
+		text-decoration: none;
+	} */
+
+    img.icon_none_border {
+        border: none;
+    }
+
+    img.icon {
+        border-radius: 3px;
+    }
+}
+
+.privacy {
+    color: #999;
+}
+
+.no_roles {
+    font-size: 18px;
+}
+
+span.count_result {
+	float: right;
+	line-height: 24px;
+	margin-right:10px;
+}
+
+span.number {
+	color:#f6b439;
+}
+
+img.icon_user {
+    border: 1px solid #EAEBF5;
+}
+
+/*common css*/
+.stepPage{
+	display:none;
+	height:100%;
+}
+.stepCont{
+	width:562px!important;
+}
+.ystep-container {
+	font-family: "Helvetica Neue",Helvetica,"Hiragino Sans GB","Wenquanyi Micro Hei","Microsoft Yahei",Arial,sans-serif;
+	display: inline-block;
+	position: relative;
+	color: #000;
+}
+.ystep-container ul {
+	list-style: none;
+}
+.ystep-container ul,.ystep-container li,.ystep-container p {
+	margin: 0;
+	padding: 0;
+}
+
+/*size css*/
+.ystep-lg {
+	/*width: 700px;*/
+	width:100%;
+	height: 60px;
+	font-size: 18px;
+	/*left: 15%;*/
+	line-height: .3;
+}
+
+.ystep-container-steps{
+	position: relative;
+	top: 2px;
+	cursor: pointer;
+	z-index: 10;
+}
+
+/*large size css*/
+.ystep-lg{
+	position: relative;
+	top: 2px;
+	cursor: pointer;
+	z-index: 10;
+	li{
+		float: left;
+		width: 100px;
+		height: 55px;
+		margin-right: 100px;
+		line-height: 60px;
+		background-color: white;
+	}
+	li:last-child{
+		margin-right: 0px!important;
+	}
+}
+
+.ystep-lg .ystep-progress {
+	width: 400px;
+	height: 5px;
+	position: absolute;
+	top: 30px;
+	/*left: 15px;*/
+	float: left;
+	/*margin-right: 10px;*/
+	overflow: hidden;
+}
+.ystep-lg .ystep-progress-bar {
+	width: 400px;
+	height: 5px;
+	background: #e4e4e4;
+	display: inline-block;
+	float: left;
+}
+.ystep-lg .ystep-progress-highlight {
+	height: 5px;
+	display: block;
+}
+
+.ystep-blue .ystep-progress-highlight {
+	background: #60baff;
+}
+/*按钮样式*/
+.ystep {
+	padding: 20px;
+	/*min-width: 1114px;*/
+}
+.step-button{
+	position: relative;
+	/*top: -85px;*/
+}
+.step-button button{
+	margin: 15px;
+}
+
+div.tab_pagination {
+	height: auto;
+	border-bottom: 1px solid #e5e5e5;
+	margin-bottom: 20px;
+}
+.brief_link_help {
+	background: url(images/buttons/help.png) no-repeat 0 center;
+	_background-image: url(images/buttons/help.gif);
+	padding-left: 18px;
+}
+.brief_tip_div {
+	position: relative;
+}
+.brief_tip {
+	color: gray;
+	position: absolute;
+	z-index: 500;
+	top: -35px;
+	left: 105%;
+	background-color: rgba(255, 249, 215, 0.9);
+	*border: 2px solid #ffcc66;
+	border: 2px solid #ffcc66 \9;
+	*background-color: #fff9d7;
+	background-color: #fff9d7 \9;
+	padding: 10px 10px 0;
+	box-shadow: #666 0 2px 4px;
+	width: 300px;
+    height: 75px;
+	white-space: normal;
+	filter: progid:DXImageTransform.Microsoft.Shadow (Color=#000000, Direction=135, Strength=2);
+	line-height: 1.5;
+}
+.brief_tip::after {
+	content: "";
+	position: absolute;
+	top: 50%;
+	right: 100%;
+	margin-top: -5px;
+	border-width: 5px;
+	border-style: solid;
+	border-color: transparent #fffadb transparent transparent;
+}

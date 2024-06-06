@@ -1,0 +1,142 @@
+<?= $pagination ?>
+<?php
+
+$me = L('ME');
+$table = Widget::factory('table');
+$table->name = 'mine_approval';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+$table->form = $form;
+
+if($form['ap_dtstart_check'] && $form['ap_dtend_check']) {
+    $form['ap_date'] = H(date('Y/m/d',$form['ap_dtstart'])).'~'.H(date('Y/m/d',$form['ap_dtend']));
+} elseif($form['ap_dtstart_check']) {
+    $form['ap_date'] = H(date('Y/m/d',$form['ap_dtstart'])).'~'.I18N::T('eq_charge','最末');
+} elseif($form['ap_dtend_check']) {
+    $form['ap_date'] = I18N::T('eq_charge','最初').'~'.H(date('Y/m/d',$form['ap_dtend']));
+}
+
+switch($flag) {
+    case 'approve':
+        $ap_stime_title = '';
+        break;
+    case 'done':
+        $ap_stime_title = '通过时间';
+        break;
+    case 'rejected':
+        $ap_stime_title = '驳回时间';
+        break;
+    case 'expired':
+        $ap_stime_title = '过期时间';
+        break;
+}
+
+$table->add_columns([
+    '@' => NULL,
+    'ap_equipment'=> [
+        'title' => I18N::T('approval', '仪器名称'),
+        'filter' => [
+            'form' => V('approval_flow:approval_table/filters/ap_equipment', ['ap_equipment' => $form['ap_equipment']]),
+            'value' => $form['ap_equipment'] ? H($form['ap_equipment']) : NULL
+        ],
+        'nowrap' => TRUE
+    ],
+    'ap_date' => [
+        'title' => I18N::T('approval', '预约时间'),
+        'align' => 'left',
+        'nowrap' =>TRUE,
+        'sortable' => TRUE,
+        'filter' => [
+            'form' => V('approval_flow:approval_table/filters/ap_date', ['form' => $form]),
+            'value' => $form['ap_date'] ? H($form['ap_date']) : NULL,
+            'field' => 'ap_dtstart_check,ap_dtend_check,ap_dtstart,ap_dtend'
+        ]
+    ],
+    'ap_lab'=> [
+        'title' => I18N::T('approval', '课题组'),
+        'nowrap' => TRUE
+    ],
+    'ap_user'=> [
+        'title' => I18N::T('approval', '申请人'),
+        'nowrap' => TRUE
+    ],
+    'ap_flag'=> [
+        'title' => I18N::T('approval', '状态'),
+        'nowrap' => TRUE
+    ],
+    'ap_ctime'=> [
+        'title' => I18N::T('approval', '申请时间'),
+        'nowrap' => TRUE
+    ],
+    'ap_stime'=> [
+        'title' => I18N::T('approval', $ap_stime_title),
+        'nowrap' => TRUE
+    ],
+    'ap_description'=> [
+        'title' => I18N::T('approval', '备注'),
+        'nowrap' => TRUE
+    ],
+    'ap_rest'=>[
+		'align'=>'right',
+		'nowrap'=>TRUE,
+	]
+]);
+
+$table->empty_message = I18N::T('approval', '没有查询到相应的项目!');
+
+if (count($approval) > 0) {
+    $sort_by_time = in_array($sort_by, ['ap_date']);
+    $flag_time = $sort_asc ? -1 : 2147483647;
+    $table->approval = $approval;
+    $approval_trunk_time = $approval->dtstart ? Date::get_day_start($approval->dtstart) : 0;
+
+    $flow = Config::get('flow.eq_reserv');
+    foreach($approval as $ap) {
+        $links['view'] = [
+            'text' => I18N::T('approval', '查看'),
+            'extra' => 'q-object="view" q-event="click" q-src="' . H(URI::url('!approval_flow/index')) .
+                '" q-static="' . H(['approval_id' => $ap->id, 'type' => 'mine']) .
+                '" class="blue"',
+        ];
+        if ($sort_by_time) {
+            $ap_time = $ap->dtstart;
+            $ap_trunk_time = $ap_time ? Date::get_day_start($ap_time) : 0;
+
+            if ($ap_trunk_time != $flag_time) {
+                if ($ap_trunk_time == 0 && $sort_by == 'date') {
+                    $separator = I18N::T('approval', '未设项目');
+                } else {
+                    $separator = H(Date::fuzzy($ap_trunk_time));
+                }
+
+                $table->add_row([
+                    '#special_view' => $separator,
+                    '#extra_class' => 'date_header',
+                ]);
+
+                $flag_time = $ap_trunk_time;
+            }
+        }
+        $ap_stime = $ap_stime_title ? O('approved', ['source' => $ap, 'flag' => $flag])->ctime : '';
+
+        $table->add_row([
+            '@'=>[
+                'view'=>$ap->equipment->icon('32', 'style="display:block"'),
+                'extra'=>'style="padding:4px" align="right" align="right" align="right"'
+            ],
+            'ap_equipment' => '<a href="'.$ap->equipment->url().'">'.$ap->equipment->name.'</a>',
+            'ap_date' => date('Y/m/d H:i:s', $ap->dtstart).' - '.date('Y/m/d H:i:s', $ap->dtend),
+            'sample_count' => $ap->source->id ? H($ap->source->sample_count) : H($ap->sample_count),
+            'ap_lab' => Approval::reserv_lab($ap),
+            'ap_user' => '<a class="prevent_default" href="'.$ap->user->url().'">'.$ap->user->name.'</a>',
+            'ap_flag' => $flow[$ap->flag]['title'],
+            'ap_ctime' => date('Y/m/d H:i:s', $ap->ctime),
+            'ap_stime' => $ap_stime_title ? date('Y/m/d H:i:s', $ap_stime) : '',
+            'ap_description' => $ap->source->component->description ? H($ap->source->component->description) : H($ap->reserv_desc),
+            'ap_rest' => Widget::factory('application:links', ['links' => $links])
+        ]);
+    }
+}
+echo $table;
+?>
+<?= $pagination ?>

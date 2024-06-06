@@ -1,0 +1,21 @@
+<?php $require = (string) V('form_require'); ?>
+<?php 
+$uniqid = 'struct_'.uniqid();
+
+$struct = is_object($this->struct) ? $this->struct : O('eq_struct', $this->struct);
+$autocomplete = $this->autocomplete ?: URI::url('autocomplete/struct');
+
+$size = $this->size ?: 40;
+
+$sname = $struct->id ? $struct->name : '';
+
+if ($disabled) {
+    $disabled = 'disabled="disabled"';
+}
+?>
+<input id="<?php echo $uniqid?>_struct" name="<?php echo H($this->name ) ?>" type="hidden" value="<?php echo H($struct->id) ?>" />
+<input id="<?php echo $uniqid?>_struct_name" <?php echo $disabled;?> class="text middle select_on_focus autocomplete:<?php echo H($autocomplete) ?> autocomplete_alt:#<?php echo $uniqid?>_struct" 
+ value="<?php echo H($sname) ?>" q-tooltip="<?php echo H(T('请输入关键字并选择') ) ?>" />
+<?= Config::get('eq_struct.require.struct', FALSE) ?
+    '<span style="margin-left: -3px;">'.$require.'</span>'.Config::get('eq_struct.require.struct.info', FALSE)
+    : '' ?>

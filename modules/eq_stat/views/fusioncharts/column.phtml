@@ -1,0 +1,12 @@
+<graph 
+	baseFont="Arial" baseFontSize="13"  animation="1" showValues="0" formatNumberScale="0" 
+	decimalPrecision="0" showNames="1" hoverCapSepChar=" " yAxisMaxValue="5">
+	<?php foreach ((array) $this->columns as $key => $column): 
+			$name = $column['label'];
+			$color = $this->colors[$key%10];
+			$value = $column['points'][0]['value'];
+			if ($value <= 0) continue;
+	?>
+	<set name="<?php echo H($name)?>" value="<?php echo H($value)?>" color="<?php echo H($color) ?>" />
+	<?php endforeach ?>
+</graph>

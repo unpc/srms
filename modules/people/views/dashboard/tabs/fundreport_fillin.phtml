@@ -1,0 +1,63 @@
+<?= CSS::load_async('calendars:common') ?>
+
+    <script>
+        Q.globals.cal_week_rel = 'edit_week';
+        Q.globals.mode = 'list';
+    </script>
+<?php
+
+$me = L('ME');
+$table = Widget::factory('table');
+$table->name = 'approval';
+$table->form = $form;
+
+$columns = [
+    'ref_no'=> [
+        'title' => I18N::T('equipment', '设备编号'),
+        'align' => 'left',
+        'nowrap' => TRUE
+    ],
+    'equipment'=> [
+        'title' => I18N::T('equipment', '设备名称'),
+        'align' => 'left',
+        'nowrap' => TRUE
+    ],
+    'manufacturer'=> [
+        'title' => I18N::T('equipment', '生产厂家'),
+        'align' => 'left',
+        'nowrap' => TRUE
+    ],
+    'group' => [
+        'title' => I18N::T('equipment', '院级单位'),
+        'align' => 'left',
+        'nowrap' =>TRUE,
+    ],
+    'rest'=>[
+        'title' => I18N::T('people', '操作'),
+        'align'=>'left',
+        'nowrap'=>TRUE,
+    ]
+];
+
+$table->add_columns($columns);
+
+$table->empty_message = I18N::T('yiqikong_approval', '没有查询到相应的项目!');
+
+if (count($fillin) > 0) {
+
+    foreach($fillin as $ap) {
+        $links = dashboard::get_links($ap);
+        $rows = [
+            'ref_no' => V('people:dashboard/tabs/fundreport_fillin_table/data/ref_no', ['ap' => $ap]),
+            'equipment' => V('people:dashboard/tabs/fundreport_fillin_table/data/equipment', ['ap' => $ap]),
+            'manufacturer' => V('people:dashboard/tabs/fundreport_fillin_table/data/manufacturer', ['ap' => $ap]),
+            'group' => V('people:dashboard/tabs/fundreport_fillin_table/data/group', ['ap' => $ap]),
+            'rest' => Widget::factory('application:links', ['links' => $links])
+        ];
+        $table->add_row($rows);
+    }
+}
+echo $table;
+?>
+<div style="text-align: right"><?php echo $pagination; ?></div>
+<div class="interval_10"></div>

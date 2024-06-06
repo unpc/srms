@@ -1,0 +1,10 @@
+<?php
+	$types = [];
+
+	array_unshift($types, $portion->name);
+	while ($portion->parent->id) {
+		$portion = $portion->parent;
+		array_unshift($types, $portion->name);
+	}
+	echo implode(' &#187; ', $types);
+?>

@@ -1,0 +1,10 @@
+<?php
+$has_remote_billing = (bool) count(Config::get('billing.sources'));
+
+$types = Billing_Transaction::$transaction_type_outcome;
+
+if (!$has_remote_billing) {
+    unset($types[Billing_Transaction::FIN_TYPE_OUT_REMOTE]);
+}
+
+echo Form::dropdown('sub_transaction_type', I18N::T('billing', $types), $type ?: 0, 'class="small"');

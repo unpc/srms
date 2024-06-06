@@ -1,0 +1,57 @@
+<?php
+    $me = L('ME');
+	$archive = O('tag', $id);
+    $archive_operate_button_id = 'archive_operate_button_'. uniqid();;
+?>
+<a class="relative clearfix equipment_archive <?php echo $aid == $id ? 'active' : NULL?>" q-object="archive" q-event="click" q-static="<?php echo H(['archive_id'=>$archive->id, 'eid'=>$equipment->id])?>" title="<?php echo H($archive->name);?>">
+    <?php if ($me->is_allowed_to('添加仪器使用记录', $equipment)) :?>
+    <div class="float_right archive_operate_button" id="<?php echo H($archive_operate_button_id) ?>">&#160;&#160;&#160;</div>
+    <?php endif;?>
+    <span class="archive_name"><?php echo H($archive->name);?></span>
+</a>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#<?php echo $archive_operate_button_id?>').bind('click', function() {
+        var uniqid = 'browse_' + Q.uniqid();
+        var $button = $(this);
+
+        var $div =  $('<div id="' + uniqid + '" class="operate_div browse_view hidden"></div>');
+        $div.appendTo('body');
+
+        Q.trigger({
+            object: 'operate_archive',
+            event:'click',
+            data:{
+                uniqid: uniqid,
+                archive_id: <?php echo $archive->id;?>,
+                equipment_id: <?php echo $equipment->id;?>,
+                form_token: '<?php echo $form_token;?>'
+            },
+            url:'<?php echo URI::url('!equipments/equipment')?>',
+            complete:function(data){
+				$(document).trigger('clean.float.view');
+                var offset = $button.offset();
+
+                $('div.operate_div').not($div).remove();
+
+                $div
+                .css({
+                    position: 'absolute',
+                    left: offset.left + $button.outerWidth(),
+                    top: offset.top
+                })
+                .show()
+                .bind('click', function(){
+                    return false;
+                });
+				
+                $(document).one('click',function(){
+                    $div.remove();
+                });
+            }
+        });
+
+        return false;
+    });
+});
+</script>

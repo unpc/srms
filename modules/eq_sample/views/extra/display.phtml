@@ -1,0 +1,70 @@
+<?php
+$categories = $extra->get_categories();
+foreach ($categories as $category):
+    $eqid = $sample->id ? $sample->equipment->id : ($form['equipment_id'] ?? $form['id']);
+    $equipment = $equipment = O('equipment', $eqid);
+    if (Config::get('sample_approval.to_equipment') && !$equipment->sample_approval_enable && in_array($category, ['报告格式及方式'])) {
+        continue;
+    }
+
+    $fields = $extra->get_fields($category);
+    if (count($fields)): ?>
+	        <tr class="begin">
+	            <td class="label left top nowrap" colspan="2">
+	                <h1><?=I18N::T('eq_sample', $category);?></h1>
+	            </td>
+	        </tr>
+	        <!-- <tr> -->
+	    <?php
+    foreach ($fields as $uniqid => $field):
+        if ($field['adopted']) {
+            $value = $sample->$uniqid ?: $form[$uniqid];
+        } else {
+            $value = isset($values[$uniqid]) ? $values[$uniqid] : $form['extra_fields'][$uniqid];
+            if ($field['type'] == Extra_Model::TYPE_SELECT) {
+                $value = isset($values[$uniqid]) ? $values[$uniqid] : ($form['extra_fields'][$uniqid] ?: -1);
+            }
+        }
+        ?>
+
+		<?php if ($field['adopted']): ?>
+		<?php if (Config::get('sample_approval.to_equipment') && !$equipment->sample_approval_enable && in_array($uniqid, ['format', 'mode', 'code', 'type', 'name'])) {
+            continue;
+        }
+        ?>
+		<tr class="left top nowrap">
+		    <?php $error = $form->errors[$uniqid][0]?>
+		    <?php 
+                echo V('eq_sample:extra/display/' . $uniqid, ['field' => $field, 'value' => $value, 'sample' => $sample, 'is_edit' => $is_edit, 'error' => $error]); 
+            ?>
+		</tr>
+		<?php else: ?>
+	<tr>
+	    <td class="label left top nowrap" colspan="2">
+	        <?php if ($field['required']) {
+        echo '<span class="red">*</span>';
+    }
+    ?><?php echo H(I18N::T('eq_sample', $field['title'])); ?>
+	        <?php
+    $error = $form->errors["extra_fields[$uniqid]"][0];
+    $error .= $form->errors["extra_fields[$uniqid][0]"][0] ? $form->errors["extra_fields[$uniqid][0]"][0] :
+    ($form->errors["extra_fields[$uniqid][1]"][0] ? $form->errors["extra_fields[$uniqid][1]"][0] : '');?>
+	        <?php echo V('form_filter', ['error' => $error]) ?>
+	    </td>
+	</tr>
+	<tr>
+	    <td class="label left top nowrap" colspan="2">
+	        <?php echo V('extra:display/' . Extra_Model::$types[$field['type']], ['uniqid' => $uniqid, 'field' => $field, 'value' => $value]); ?>
+	    </td>
+	</tr>
+
+	<?php endif;?>
+<?php endforeach;?>
+</tr>
+<?php endif;?>
+<?php endforeach;?>
+<script>
+jQuery(function($) {
+    $('.validate_error').closest('td').next().find('.require').addClass('error');
+});
+</script>

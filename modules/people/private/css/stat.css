@@ -1,0 +1,64 @@
+ul.stat {
+	color: #333;
+	margin: 5px 0px;
+	text-align: center;
+}
+
+ul.stat li {
+	margin: 0px;
+	float: left;
+    padding: 0 40px;
+	border-right: 1px solid #EDEFF2;
+
+    &:first-child {padding-left: 0;}
+}
+
+ul.stat.todo {
+	display: flex;
+	justify-content: center;
+}
+
+ul.stat.todo li {
+	border: none;
+	margin: auto;
+	white-space: nowrap;
+}
+
+ul.stat.todo {
+	display: flex;
+	justify-content: center;
+}
+
+ul.stat.todo li {
+	border: none;
+	margin: auto;
+}
+
+ul.stat .up .num {
+	color: var(--basiccolor);
+	font-size: 30px;
+}
+
+ul.stat .up .unit {
+	font-size: 14px;
+	color: #666666;
+}
+
+ul.stat .down {
+	font-size: 14px;
+	color: #666666;
+}
+ul.stat .down a{
+	color: #666666;
+}
+
+ul.stat .down .unit {
+    font-size: 14px;
+	color: #666666;
+}
+
+ul.stat li.last {
+	border-right: 0px;
+}
+
+

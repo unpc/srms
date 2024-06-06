@@ -1,0 +1,79 @@
+<div class="hr_1">&#160;</div>
+<div class="form padding_1">
+	<form class="prevent_default" method="post" autocomplete="off">
+		<?php echo V('form_error', ['form' => $form]); ?>
+		<?php $require = (string)V('form_require'); ?>
+		<table class="form">
+			<tbody>
+				<tr>
+					<td class="nowrap label"><?php echo I18N::T('resume', '姓名'); ?></td>
+					<td><input class="text" name="uname" value="<?php echo H($form['uname']); ?>" /><?php echo $require; ?></td>
+					<td class="nowrap label"><?php echo I18N::T('resume', '性别'); ?></td>
+					<?php $sex_set[0] = '--'; $sex_set += Resume::$sex; ?>
+					<td><?php echo Form::dropdown('sex', $sex_set, H($form['sex']) ?: 0, 'class="middle"', 'class="middle dropdown"'); ?></td>
+				</tr>
+
+				<tr>
+					<td class="nowrap label"><?php echo I18N::T('resume', '应聘职位'); ?></td>
+					<?php $positions = Q('position')->to_assoc('id', 'name'); ?>
+					<?php $position_id = $this->position_id ?: 0; ?>
+					<td><?php echo Form::dropdown('position_id', ['--']+$positions, $position_id, ' class="drop middle"'); ?><?php echo $require; ?></td>
+					<td class="nowrap label"><?php echo I18N::T('resume', '出生日期'); ?></td>
+					<td><input class="text date" name="birthday" value="<?php echo H($form['birthday']); ?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/></td>
+				</tr>
+
+				<tr>
+					<td class="nowrap label"><?php echo I18N::T('resume', '面试地点'); ?></td>
+					<?php $interview_place_set[0] = '--'; $interview_place_set += Resume::$interview_place; ?>
+					<td><?php echo Form::dropdown('interview_place', $interview_place_set, H($form['interview_place']) ?: 0, 'class="middle"', 'class="middle dropdown"'); ?></td>
+					<td class="nowrap label"><?php echo I18N::T('resume', '学校'); ?></td>
+					<td><input class="text" name="school" value="<?php echo H($form['school']); ?>" /></td>
+				</tr>
+
+				<tr>
+					<td class="nowrap label"><?php echo I18N::T('resume', '联系方式'); ?></td>
+					<td><input class="text" name="phone" value="<?php echo H($form['phone']); ?>" /></td>
+					<td class="nowrap label"><?php echo I18N::T('resume', '学历'); ?></td>
+					<?php $education_set[0] = '--'; $education_set += Resume::$education; ?>
+					<td><?php echo Form::dropdown('education', $education_set, H($form['education']) ?: 0, 'class="middle"', 'class="middle dropdown"'); ?></td>
+				</tr>
+
+				<tr>
+					<td class="nowrap label"><?php echo I18N::T('resume', '目前所在地'); ?></td>
+					<td><input class="text" name="current_location" value="<?php echo H($form['current_location']); ?>" /></td>
+				</tr>
+
+				<tr>
+					<td class="nowrap label top"><?php echo I18N::T('resume', '教育背景'); ?></td>
+					<td colspan="3">
+						<textarea class="text autogrow" cols="70" rows="7" name="education_background"><?php echo H($form['education_background']); ?></textarea>
+					</td>
+				</tr>
+
+				<tr>
+					<td class="nowrap label top"><?php echo I18N::T('resume', '工作经验'); ?></td>
+					<td colspan="3">
+						<textarea class="text autogrow" cols="70" rows="7" name="experience"><?php echo H($form['experience']); ?></textarea>
+					</td>
+				</tr>
+
+				<tr>
+					<td class="nowrap label top"><?php echo I18N::T('resume', '备注'); ?></td>
+					<td colspan="3">
+						<textarea class="text autogrow" cols="70" rows="7" name="description"><?php echo H($form['description']); ?></textarea>
+					</td>
+				</tr>
+
+				<tr>
+					<td />
+					<td>
+						<input class="button button_save" name="submit" type="submit" value="<?php echo I18N::T('resume', '提交'); ?>" />
+						&#160;&#160;
+						<input class="button button_cancel" name="reset" type="reset" value="<?php echo I18N::T('resume', '重置'); ?>" />
+						&#160;&#160;
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</div>

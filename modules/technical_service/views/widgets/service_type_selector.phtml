@@ -1,0 +1,41 @@
+<?php
+$root_id = $root->root->id ? $root->root->id : $root->id;
+if ($tag->root->id != $root_id) {
+    $tag = $root;
+}
+
+$uniqid = 'tag_selector_' . uniqid();
+$name = $this->name ?: 'tag_id';
+
+echo JS::load_async('application:widgets/tag_selector');
+$opt = [
+    'uniqid' => $uniqid,
+    'tag_name' => $root->name(),
+    'root_id' => $root->id,
+    'status' => $status,
+    'url' => $ajax_url ?: URI::url('tags'),
+    'name' => $name,
+    'ajax' => $ajax,
+];
+
+if ($i18n) $opt['i18n'] = $i18n;
+
+?>
+<div class="tag_selector text_like <?php echo $uniqid ?> <?php echo $this->class ?>">
+    <?php echo V('widgets/tag_selector/container', [
+        'tag' => $tag,
+        'root' => $root,
+        'root_name' => $root_name,
+        'name' => $name,
+        'uniqid' => $uniqid,
+        'i18n' => $i18n,
+        'field_title' => $field_title,
+    ]);
+    ?>
+</div>
+<script>
+    Q.js_ready('application:widgets/tag_selector', function () {
+        var opt = <?php echo JS::quote($opt) ?>;
+        jQuery('.' + opt.uniqid).tagSelector(opt);
+    });
+</script>

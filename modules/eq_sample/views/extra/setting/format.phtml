@@ -1,0 +1,17 @@
+<div class="field padding_1">
+    <div class="nowrap clearfix" style="min-width: 680px;">
+        <div class="float_left">
+            <span class="lmargin_2" style="width: 142px;display: inline-block;">
+                <?php echo I18N::T('eq_sample', $field['title']);?>
+            </span>
+            <span class="lpadding_4 rpadding_4">
+                <input name="default" disabled="disabled" type="checkbox" checked="checked"
+                />
+                <label><?php echo I18N::T('eq_sample', '必填');?></label>
+            </span>
+            <span class="padding_2">
+                <?php echo Form::dropdown("default", I18N::T('eq_sample', ['单选']), 0, 'disabled="disabled" class="monitor dropdown" style="width: 100px;"');?>
+            </span>
+        </div>
+    </div>
+</div>

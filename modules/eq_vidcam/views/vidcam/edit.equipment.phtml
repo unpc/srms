@@ -1,0 +1,43 @@
+<table class="form flexible">
+    <tbody>
+    <tr>
+        <td class="top icon" width="130px" rowspan="2">
+            <div class="icon-radius"><?php echo $equipment->icon('104');?></div>
+        </td>
+        <td>
+            <div class="top flexible">
+                <form method="POST" class="edit">
+                    <?php echo V('form_error', ['form' => $form]);?>
+                    <?php
+                        $vidcams  = Q("{$equipment}<camera vidcam");
+                        $specific = [];
+                        foreach ($vidcams as $key => $vidcam) {
+                            if (isset($specific[$key])) {
+                                continue;
+                            }
+
+                            $specific[$key]['vidcam'] = $vidcam;
+                        }
+                        echo Widget::factory('flexform', [
+                            'title'          => I18N::T('eq_vidcam', '关联摄像头'),
+                            'template_data'  => ['disabled' => true],
+                            'existing_data'  => $specific,
+                            'delete_message' => I18N::T('eq_vidcam', '您确定要取消该摄像头的关联吗? 请谨慎操作!'),
+                            'item_view'      => 'eq_vidcam:vidcam/vidcam_special_item',
+                            'extra_vars'     => [
+                                'equipment'  => $equipment,
+                            ],
+                        ]);
+                        ?>
+                    <div class="interval_36"></div>
+                    <div class="form float_right">
+                        <input type="reset" name="cancel" class="font-button-default rmargin_16" value="<?php echo H(T('取消'))?>" />
+                        <input type="submit" name="submit" class="font-button-save" value="<?php echo H(T('保存修改'))?>" />
+                    </div>
+                    <div class="interval_60"></div>
+                </form>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>

@@ -1,0 +1,63 @@
+<?php
+$me = L('ME');
+$require = V('envmon:form_require', ['extra_class' => 'top']);
+?>
+<div class="form ">
+    <form method="post" autocomplete="off" q-event="submit" q-object="add_node" q-src="<?php echo H(URI::url('!envmon/node')) ?>">
+        <?php echo V('form_error', ['form' => $form]); ?>
+        <table class="form node">
+            <tr>
+                <td class="label left nowrap">
+                    <div class="title">
+                        <?php echo $require; ?>
+                        <?php echo I18N::T('envmon', '名称'); ?>
+                        <?php echo V('form_filter', ['error' => $form->errors['name'][0]]) ?>
+                    </div>
+                    <input name="name" class="text node_input margin_-1" value="<?php echo H($form['name']) ?>" />
+                </td>
+            </tr>
+            <tr>
+                <td class="label left nowrap top" colspan=2>
+                    <div class="title">
+                        <?php echo $require; ?>
+                        <?php echo I18N::T('envmon', '负责人'); ?>
+                        <?php echo V('form_filter', ['error' => $form->errors['incharge'][0]]) ?>
+
+                    </div>
+                    <?php
+echo Widget::factory('multi_user_selector', [
+    'autocomplete' => URI::url('autocomplete/user'),
+    'name' => 'incharge',
+    'value' => $form['incharge'],
+    'extra' => 'token_verify node_incharge_input',
+]);
+?>
+                </td>
+            </tr>
+            <tr>
+                <td class="label left nowrap" colspan=2>
+                    <?php echo I18N::T('envmon', '位置'); ?>
+
+                </td>
+            </tr>
+            <tr class="double">
+                <td class="label left nowrap">
+                    <input name="location" placeholder="楼宇名称" class="text node_input margin_-1" q-tooltip="<?php echo I18N::HT('envmon', '楼宇名称'); ?>"
+                        q-tooltip_position="left" value="<?php echo H($form['location']) ?>">
+
+                </td>
+                <td class="top nowrap">
+                    <input name="location2" class="text node_input margin_-1" placeholder="房间号" q-tooltip="<?php echo I18N::HT('envmon', '房间号'); ?>"
+                        q-tooltip_position="left" value="<?php echo H($form['location2']) ?>">
+                </td>
+            </tr>
+
+        </table>
+        <div class="button_container">
+            <div class="float_right">
+                <input name="cancel" id="cancel" type='reset' class="font-button-default sm rmargin_2e4" value="<?php echo I18N::HT('envmon', '取消'); ?>" />
+                <input name="submit" type='submit' class="font-button-save sm" value="<?php echo I18N::HT('envmon', '添加'); ?>" />
+            </div>
+        </div>
+    </form>
+</div>

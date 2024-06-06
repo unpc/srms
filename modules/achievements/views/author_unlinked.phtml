@@ -1,0 +1,12 @@
+<?php 
+if (!is_null($author_name)) {
+	$user_icon = O('user')->icon_url('32');
+}
+?>
+<div class="padding_1 aumap_user">
+	<input type="hidden"  class="author_user_id"
+		name="authors[<?php echo $author_id?>]" 
+		value="@delete" />
+	<img class="author_img middle" src="<?php echo H($user_icon) ?>" />
+	<span class="author_name middle"><?php echo H($author_name);?></span>
+</div>

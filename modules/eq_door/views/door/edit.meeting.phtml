@@ -1,0 +1,42 @@
+<div class="icon-radius float_left" style="width: 130px;"><?php echo $meeting->icon('104');?></div>
+<div class="form clearfix" style="padding-left: 130px;">
+	<form method="post" class="edit">
+
+        <?php echo V('form_error', ['form'=>$form]);?>
+        <div class="interval_12"></div>
+        <h2 class="section_title">
+            <span class="border"></span>
+            <span class="black_title"><?php echo I18N::T('eq_door', '提前时间')?></span>
+        </h2>
+        <div class="interval_16"></div>
+        <div class="lmaigin_1e5">
+            <span class="label middle"><?php echo I18N::T('eq_door', '刷卡进门时间提前')?></span>
+            &nbsp;&nbsp;
+            <input class="text right number" size="5" name="ahead_time"
+            value="<?= H($form['ahead_time'] ? : ($meeting->ahead_time ? : 0)) ?>" />
+            &nbsp;&nbsp;
+            <span class="label middle"><?= I18N::T('eq_door', '分钟')?></span>
+        </div>
+        <div class="interval_30"></div>
+        <?php
+            $doors = Q("{$meeting}<asso door");
+            $specific = [];
+            foreach ($doors as $key => $door) {
+                if (isset($specific[$key])) continue;
+                $specific[$key]['door'] = $door;
+            }
+            echo Widget::factory('flexform', [
+                'title' => I18N::T('eq_door', '关联门禁'),
+                'template_data' => ['disabled'=>TRUE],
+                'existing_data' => $specific,
+                'delete_message' => I18N::T('eq_door', '您确定要取消该门禁的关联吗？请谨慎操作！'),
+                'item_view' => 'entrance:door/door_special_item',
+                'extra_vars' => [
+                    'meeting' => $meeting,
+                ],
+            ]);
+        ?>
+        <input name="submit" class="font-button-save float_right" type="submit" value="<?= H(I18N::T('eq_door', '保存修改')) ?>">
+        <div class="interval_60"></div>
+	</form>
+</div>

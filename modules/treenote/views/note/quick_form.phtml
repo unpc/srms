@@ -1,0 +1,55 @@
+<?php
+// 初始化变量
+$me = L('ME'); 
+if ($note->id) {
+	$user = $note->user;
+}
+else {
+	$user = $me;
+}
+?>
+<div class="padding_2">
+<form q-object="note_form" q-event="submit" q-src="<?php echo H(URI::url('!treenote/note') ) ?>">
+<?php if (is_object($form)) echo V('application:form_error', ['form'=>$form]);?>
+<?php if ($note->id) echo Form::hidden('id', $note->id); ?>
+<?php if ($task->id) echo Form::hidden('task', $task->id); ?>
+<table class="form flexible">
+<tr>
+<td class="icon top"><?php echo $user->icon('32')?></td>
+<td class="top">
+	<textarea name="content" q-hint="<?php echo I18N::HT('treenote', '内容...')?>" class="text autogrow" cols="60" rows="10"><?php echo $form['content']?></textarea>
+	<div class="hr_1">&#160;</div>
+	<span class="label"><?php echo I18N::HT('treenote', '耗时(hr)'); ?></span>
+	<input class="text number" name="actual_hours" size="5" value="<?php echo H($form['actual_hours']) ?>" />
+	<div class="hr_2">&#160;</div>
+	<div class="clearfix">
+	<div class="float_left">
+	<input class="button button_save" type="submit" name="submit" value="<?php echo H(I18N::T('treenote', '提交')) ?>" />
+	</div>
+	<?php if ($note->id) : ?>
+	<div class="float_right">
+		<a class="font-button-delete" href="#" q-object="delete_note" q-event="click" q-src="<?php echo H(URI::url('!treenote/note')) ?>" q-static="<?php echo H(['id'=>$note->id]) ?>"><?php echo I18N::HT('treenote', '删除该记录')?></a>
+	</div>
+	<?php endif; ?>
+	</div>
+</td>
+</tr>
+</table>
+</form>
+</div>
+<hr/>
+<?php if (Module::is_installed('nfs')) : ?>
+<div class="padding_2">
+<h4><?php echo I18N::HT('treenote', '附件') ?></h4>
+	<div class="hr_1">&#160;</div>
+	<div class="text_like relative" style="display:block">
+					<?php
+						echo V('nfs:nfs_lite/view', [
+							'object'=> $note ?: O('tn_note'),
+							'path_type'=>'attachments'
+						]);
+?>
+	</div>
+
+</div>
+<?php endif;?>

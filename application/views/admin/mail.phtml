@@ -1,0 +1,27 @@
+<?php 
+$me = L('ME');
+?>
+<div class="form padding_2">
+	<form method="post" action="">
+		<?php 
+			$categories = Config::get('newsletter.categories');
+			foreach ($categories as $key => $categorie) :?>
+		<p>
+			<?php
+				$nl_cat_vis = json_decode($me->nl_cat_vis, TRUE);
+				if (!$me->nl_cat_vis || $nl_cat_vis[$key] == TRUE) {
+					$vis = TRUE;
+				}
+				else {
+					$vis = FALSE;
+				}
+				echo Form::checkbox($key, $form[$key] ?: $vis, T($categorie['title']), 'class="middle checkbox"'); 
+			?>
+			&#160;
+			<span class="description"> <?php echo T($categorie['description']) ?></span>
+		</p>
+		<div class="hr_1">&#160;</div>
+		<?php endforeach; ?>
+		<input type="submit" name="submit" class="button button_save" value="<?php echo H(T('更新')) ?>" />
+	</form>
+</div>

@@ -1,0 +1,82 @@
+<?php
+	echo CSS::load_async('schedule:common');
+?>
+<tr>
+	<td class="label right nowrap top"><?php echo $properties['label'] ?></td>
+	<td>
+		<table class="form">
+			<tr>
+				<td>
+					<?php echo Form::radio('attendee_type', 'all', ($component->attendee_type == 'all' || !isset($compontent->attendee_type))? TRUE : FALSE, I18N::T('schedule', '全部成员'), 'class="monitor"'); ?>
+				</td>
+			</tr>
+			<tr>
+				<td class="top nowrap">
+					<?php echo Form::radio('attendee_type', 'part', ($component->attendee_type == 'part') ? TRUE : FALSE, I18N::T('schedule', '部分成员'), 'class="monitor"'); ?>
+					<div class="padding_2 form toggle:attendee_type show_on:part hidden" style="width:275px">
+						<div class="clearfix">
+							<div class="float_left" style="width:70px">
+								<?php 
+									$roles = json_decode($component->attendee_roles, TRUE);
+									echo Form::checkbox('roles', count($roles) ? 1 : 0 , I18N::T('schedule', '角色'), 'class="middle checkbox monitor"', 'class="middle"');
+								?>
+							</div>
+							<div class="toggle:roles show_on:on">		
+								<?php
+									echo Widget::factory('schedule:role_selector', [
+										'value' => $component->attendee_roles,
+										'autocomplete' => URI::url('!schedule/autocomplete/role'),
+										'name' => 'attendee_roles',
+										'ajax'=>TRUE,
+			                            'extra'=>'token_verify middle'
+									]);
+								?>	
+							</div>
+						</div>
+						<div class="hr_1">&#160;</div>
+						<div class="clearfix">
+							<div class="float_left" style="width:70px">
+								<?php
+									$groups = json_decode($component->attendee_groups, TRUE); 
+									echo Form::checkbox('group', count($groups) ? 1 : 0, I18N::T('schedule', '组织机构'), 'class="middle checkbox monitor"', 'class="middle"');
+								?>
+							</div>
+							<div class="toggle:group show_on:on">
+								<?php 
+									echo Widget::factory('schedule:group_selector', [
+										'value' => $component->attendee_groups,
+										'autocomplete' => URI::url('!schedule/autocomplete/group'),
+										'name' => 'attendee_groups',
+										'ajax'=>TRUE,
+										'extra'=>'token_verify middle'
+									]); 	
+								?>
+							</div>
+						</div>
+						<div class="hr_1">&#160;</div>
+						<div class="clearfix">
+							<div class="float_left" style="width:70px">
+								<?php
+									$users = json_decode($component->attendee_users, TRUE); 
+										echo Form::checkbox('user', count($users) ? 1 : 0, I18N::T('schedule', '个别用户'), 'class="middle checkbox monitor"', 'class="middle"');
+								?>
+							</div>
+							<div class="toggle:user show_on:on">
+								<?php
+									echo Widget::factory('schedule:user_selector', [
+										'value' => $component->attendee_users,
+										'autocomplete' => URI::url('!schedule/autocomplete/users'),
+										'name' => 'attendee_users',
+										'ajax'=>TRUE,
+										'extra'=>'token_verify middle'
+									]); 	
+								?>
+							</div>
+						</div>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</td>
+</tr>
+

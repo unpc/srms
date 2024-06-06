@@ -1,0 +1,95 @@
+<?php 
+$me = L('ME');
+$charge = O('eq_charge', ['source'=>$sample]);
+if ($equipment->charge_template['sample'] == 'custom_sample' 
+&& ($sample->equipment->charge_tags['smaple'] || $equipment->charge_tags['sample'])) :
+?>
+<tr class="charge_input">
+    <td class="label left top nowrap" colspan="2"><h1><?php echo I18N::HT('eq_sample', '计费标签');?></h1></td>
+</tr>
+<tr class="charge_input">
+	<td colspan="2">
+		<div class="lpadding_3">
+		<div class="form">
+			<table class="form">
+			<?php
+			if ($sample->id) {
+				$tags = (array) $charge->charge_tags;
+				$eq_tags = (array) $sample->equipment->charge_tags['sample'];
+			}
+			if ($equipment->id) {
+				$eq_tags = (array) $equipment->charge_tags['sample'];
+			}
+			
+			$i = 0;
+			foreach ($eq_tags as $label) :
+				$input_prefix = 'sample_charge_tags['.rawurlencode($label).']';
+				$checked = isset($tags[$label]);
+				$value = $tags[$label];
+				if ($i == 0) echo '<tr>';
+			?>
+					<td>
+						<div class="sample_item">
+							<?php echo Form::checkbox($input_prefix.'[checked]', $checked, H($label), 'class="middle monitor"', 'class="middle"');?>
+						</div>
+					</td>
+					<td>
+						<input name="<?php echo $input_prefix ?>[value]" type="text" class="text number toggle_status:<?php echo $input_prefix ?>[checked] enable_on:on" value="<?php echo H($value)?>" size="10" />
+					</td>
+			<?php
+				if ($i % 2 == 1) echo '</tr>';
+				else echo '<td>&#160&#160;</td>';
+				$i++;
+			endforeach; 
+			?>
+			</table>
+		</div>
+		</div>
+	</td>
+	
+</tr>
+<?php endif;?>
+
+<?php
+	if (($equipment->billing_dept->id || $equipment->billing_dept_id) 
+    && $equipment->charge_script['sample']) :
+	$charge = O('eq_charge', ['source'=>$sample]);
+	$button_id = 'calc_fee_'.uniqid();
+	$uid = 'custom_charge_' . uniqid();
+?>
+<tr class="charge_input">
+    <td class="label left top nowrap blue" colspan="2"><h1><?php echo I18N::HT('eq_sample', '收费金额');?></h1></td>
+</tr>
+<tr class="charge_input">
+	<td class="nowrap" colspan="2">
+		<div class="">
+		<input name="sample_amount" type="text" class="text currency <?= $uid?>" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" size="20" value="<?php echo $charge->amount; ?>" 
+		<?php if(!$charge->custom || !$me->is_allowed_to('修改送样计费', $sample)) echo 'disabled';?>/>
+
+		<?php 
+		if ($me->is_allowed_to('修改送样计费', $sample)) :
+			if(!$sample->id):
+		?>
+			<input class="font-button-save prevent_default  disabled button_disabled button_calculate"  style="color: white;background: var(--basiccolor)"  type="button" value="<?php echo I18N::HT('eq_sample', '计算');?>" q-tooltip="<?= I18N::T('eq_charge', '您需要保存后才能计算送样费用')?>">
+		<?php else:?>
+			<input class="font-button-save record_button_calculate prevent_default "type="button" id="<?php echo H($button_id) ?>" value="<?php echo I18N::HT('eq_sample', '计算');?>">
+		<?php 
+			endif;
+		endif;
+		?>
+		</div>
+	</td>
+</tr>
+<tr class="charge_input" <?= $me->is_allowed_to('修改送样计费', $sample) ? : 'style="display: none;"' ?>>
+	<td colspan="2">
+		<div class="">
+			<?php echo Form::checkbox('sample_custom_charge', $charge->custom, I18N::T('eq_charge', '自定送样收费金额'), 'class="middle checkbox monitor custom_charge" id="'.$uid.'"', 'class="middle"');?>
+		</div>
+	</td>
+</tr>
+<?php echo Event::trigger('sample_extra_charge', $charge, $sample, $uid) ?>
+
+<?php echo JS::load('eq_charge:calc_amount', ['button_id'=>$button_id, 'sample_id'=>$sample->id, 'equipment_id'=>$equipment->id ? : NULL, 'trigger_url'=>URI::url('!eq_charge/charge')]) ?>
+<?php endif; ?>
+
+

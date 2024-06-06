@@ -1,0 +1,74 @@
+<div class="gapper_upgrade">
+<div class="process">
+	<div>
+		<div class="proce proce_ed proce_first float_left">&#160;</div>
+		<div class="node node_ing float_left">&#160;</div>
+		<div class="proce proce_ed proce_normal float_left">&#160;</div>
+		<div class="node node_ing float_left">&#160;</div>
+		<div class="proce proce_ed proce_normal float_left">&#160;</div>
+		<div class="node node_ing float_left">&#160;</div>
+		<div class="proce proce_ed proce_normal float_left">&#160;</div>
+		<div class="node node_ing float_left">&#160;</div>
+		<div class="proce proce_ed proce_last float_left">&#160;</div>
+	</div>
+	<div class="clearfix"></div>
+	<?php if(!count(Gapper::get_mall_groups())) {?>
+	<div class="announce">
+		<div class="float_left center announce-slim"><b><?= I18N::T('gapper','关联商城')?></b></div>
+		<div class="float_left center announce-fat"><b><?= I18N::T('gapper','负责人开通')?></b></div>
+		<div class="float_left center announce-slim"><b><?= I18N::T('gapper','分组设置')?></b></div>
+		<div class="float_left center announce-fat"><b><?= I18N::T('gapper','完成')?></b></div>
+	</div>
+	<?php }else {?>
+	<div class="announce">
+		<div class="float_left center announce-slim"><b><?= I18N::T('gapper','关联商城')?></b></div>
+		<div class="float_left center announce-fat"><b><?= I18N::T('gapper','分组设置')?></b></div>
+		<div class="float_left center announce-slim"><b><?= I18N::T('gapper','负责人开通')?></b></div>
+		<div class="float_left center announce-fat"><b><?= I18N::T('gapper','完成')?></b></div>
+	</div>
+	<?php }?>
+</div>
+<div class="clearfix"></div>
+<div class="float_left gapper_img">
+	<div style="margin:40px">
+		<img src="!gapper/images/gapper.png">
+	</div>
+</div>
+<div class="gapper_content">
+    <p class="title">
+		<?php echo I18N::T('gapper','升级完成')?>
+	</p>
+	<p class="notes">
+		<?php echo I18N::T('gapper','恭喜您升级成功') ?>
+	</p>
+	<p class="notes">
+		<?php echo I18N::T('gapper','%lab_name下的成员可以通过绑定使用系统内的Gapper应用啦!', ['%lab_name'=>Config::get('lab.name')]) ?>
+	</p>
+
+	<div style="margin:40px 120px;">
+		<?php
+			$apps = Config::get('gapper.apps');
+			foreach ($apps as $app_name =>$app) {
+			try {
+				$rpc = Gapper::get_RPC();
+				if(!$rpc) throw new Exception;
+
+				$app_info = $rpc->gapper->app->getInfo($app['client_id']);
+				if ($app_info['icon_url']) {
+					$app['icon_url'] = $app_info['icon_url'];
+				}
+			}
+			catch(Exception $e) {}
+		?>
+			<div class="float_left center group_img gapper_img">
+				<a href="<?= URI::url('!gapper/index', ['app'=>$app_name])?>">
+					<div class="app_img">
+						<img src="<?= $app['icon_url']?>">
+					</div>
+				</a>
+				<p class="icon_font"><b><?= $app['title'] ?></b></p>
+			</div>
+		<?php }?>
+	</div>
+</div>
+</div>

@@ -1,0 +1,22 @@
+<tr>
+	<td class="icon"><?php echo $object->icon('32') ?></td>
+	<td class="left nowrap"><strong><?php echo H($object->name) ?></strong></td>
+	<td class="left nowrap"><?php echo H($object->location) ?> <?php echo H($object->location2) ?></td>
+	<td class="right nowrap">
+        <?php
+        $url = Event::trigger('db_sync.transfer_to_master_url');
+        if ($url):
+        ?>
+            <a href="#" title="<?php echo I18N::T('gismon', '放置'); ?>" onclick="Q.broadcast(this, 'gismon.pickup_device',
+                    {
+                    model:'equipment',
+                    id:<?php echo $object->id ?>,
+                    url: '<?php echo  str_replace("equipment_list", "index",Event::trigger('db_sync.transfer_to_master_url')) ?>',
+                    submit_url: '<?php echo  str_replace("equipment_list", "index", Event::trigger('db_sync.transfer_to_master_url','','',true)) ?>'
+                    }
+                    ); return false;" class="icon-frameworks prevent_default"></a>
+        <?php else: ?>
+		    <a href="#" title="<?php echo I18N::T('gismon', '放置'); ?>" onclick="Q.broadcast(this, 'gismon.pickup_device',{model:'equipment',id:<?php echo $object->id ?>}); return false;" class="icon-frameworks prevent_default"></a>
+	    <?php endif; ?>
+    </td>
+</tr>

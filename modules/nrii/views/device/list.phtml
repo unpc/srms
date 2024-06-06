@@ -1,0 +1,108 @@
+<div class="hr_1">&#160;</div>
+<?php if (count($panel_buttons)) :?>
+	<div class="panel padding_1 clearfix">
+		<span><?= Widget::factory('application:links', ['links'=>$panel_buttons, 'separator'=>'&#160;']);?></span>
+	</div>
+<?php endif;?>
+<?= $pagination ?>
+<?php
+$me = L('ME');
+
+$table = Widget::factory('table');
+$table->name = 'nirr_device';
+$table->form = $form;
+$columns = [
+	'@'=>NULL,
+	'cname'=> [
+        'title' => I18N::T('nrii', '装置名称'),
+        'filter'=> [
+            'form'=> V('nrii:device/filters/text', ['form'=> $form, 'name' => 'cname']),
+            'value'=> I18N::T('nrii', $form['cname']),
+        ],
+        'weight' => 10,
+        'nowrap'=>TRUE
+    ],
+    'innerId'=> [
+        'title' => I18N::T('nrii', '所属单位科学内部编号'),
+        'filter'=> [
+            'form'=> V('nrii:device/filters/text', ['form'=> $form, 'name' => 'innerId']),
+            'value'=> I18N::T('nrii', $form['innerId']),
+        ],
+        'invisible' => TRUE,
+        'weight' => 20,
+        'nowrap'=>TRUE
+    ],
+    'ename'=> [
+        'title' => I18N::T('nrii', '英文名称'),
+        'filter'=> [
+            'form'=> V('nrii:device/filters/text', ['form'=> $form, 'name' => 'ename']),
+            'value'=> H($form['ename']),
+        ],
+        'weight' => 30,
+        'nowrap'=>TRUE
+    ],
+    'worth'=> [
+        'title' => I18N::T('nrii', '原值(万元)'),
+        'filter'=> [
+            'form'=> V('nrii:device/filters/worth', ['form'=> $form]),
+            'value'=> ($form['worthmin'] && $form['worthmax'])? H($form['worthmin'] . '~' .$form['worthmax'] . '(万元)'):'',
+            'field' => 'worthmin,worthmax'
+        ],
+        'weight' => 70,
+        'nowrap'=>TRUE
+    ],
+    // 'nation'=> [
+    //     'title' => I18N::T('nrii', '产地国别'),
+    //     'filter'=> [
+    //         'form'=> V('nrii:device/filters/nation', ['form'=> $form]),
+    //         'value'=> H($form['nation']),
+    //     ],
+    //     'nowrap'=>TRUE
+    // ],
+    'contact'=> [
+        'title' => I18N::T('nrii', '联系人'),
+        'filter'=> [
+            'form'=> V('nrii:device/filters/text', ['form'=> $form, 'name' => 'contact']),
+            'value'=> H($form['contact']),
+        ],
+        'weight' => 80,
+        'nowrap'=>TRUE
+    ],
+    'rest'=> [
+        'title' => I18N::T('nrii', '操作'),
+        'weight' => 90,
+        'nowrap'=>TRUE
+    ]
+];
+$extraColumns = Event::trigger('extra.nrii.device.column', $form, $columns);
+if($extraColumns) {
+    $columns = $extraColumns;
+}
+$table->add_columns($columns);
+$table->empty_message = I18N::T('nrii', '没有查询到相应的科学装置!');
+
+if (count($devices) > 0) {
+    foreach($devices as $device) {
+        $links = $device->links('index');
+        $row = [
+            '@'=>[
+                'view' => $device->icon('32', 'style="display:block"'),
+                'extra' => 'style="padding:4px" align="right"',
+            ],
+            'cname'=>HT($device->cname),
+            'ename'=>HT($device->ename),
+            'worth'=>HT($device->worth),
+            // 'nation'=>HT($device->nation),
+            'contact'=>HT($device->contact),
+            'rest'=>Widget::factory('application:links', ['links' => $links]),
+        ];
+        $extraRow = Event::trigger('extra.nrii.device.row', $device, $row);
+        if($extraRow) {
+            $row = $extraRow;
+        }
+        $table->add_row($row);
+    }
+}
+echo $table;
+?>
+<?= $pagination ?>

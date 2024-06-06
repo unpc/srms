@@ -1,0 +1,79 @@
+<?php
+
+	$templates = Config::get('eq_charge.template');
+	$charge_type = $equipment->charge_template['reserv'];
+	$template = $templates[$charge_type];
+	$charge_title = $template['title'];
+	$charge_tags = $template['content']['reserv']['charge_tags'];
+	$charge_script = $equipment->charge_script['reserv'];
+	$disabled = L('ME')->is_allowed_to('修改计费设置', $equipment) ? '' : 'disabled="disabled"';
+?>
+<div class="form padding_wh_30">
+<table class="form flexible">
+	<tbody>
+	<tr>
+		<td class="top lpadding_30">
+			<h2 class="section_title"><?php echo $charge_title?></h2>
+            <div class="interval_30">&#160;</div>
+			<div>
+				<?php $script_uniqid = 'eqcharge_lua_'.uniqid(); ?>
+				<table class="form">
+					<tbody>
+						<tr>
+							<td class="right nowrap top"><?php echo I18N::T('eq_charge', '计费标签')?></td>
+							<td class="top">
+								<?php if ($disabled): ?>
+									<textarea name="reserv_charge_tags" class="text" cols="80" disabled="disabled"/><?php echo H(@join($charge_tags, ','))?></textarea>
+								<?php else:?>
+									<input name="reserv_charge_tags" class="text token token_tip:<?php echo I18N::T('eq_charge', '您可选择标签或按回车键输入新的标签')?>" size="60" value="<?php echo H(@json_encode($charge_tags))?>"/>
+								<?php endif;?>
+								<div class="interval_20">&#160;</div>
+							</td>
+						</tr>
+						<tr>
+							<td class="right nowrap top"><?php echo I18N::T('eq_charge', 'LUA脚本')?></td>
+							<td class="top flexible">
+								<textarea id="<?php echo H($script_uniqid) ?>" name="reserv_charge_script" class="text code tab_ok" rows="15" cols="80" <?php echo $disabled?>><?php echo H(trim($charge_script))?></textarea>
+							</td>
+						</tr>
+						<tr>
+							<td>&#160;</td>
+                            <?php
+                                $lua_help_links = Config::get('lua.help_link'); 
+                                $locale = Config::get('system.locale');
+                                $lua_help_link = $lua_help_links[$locale];
+                                
+                            ?>
+							<td class="description"><?php echo I18N::T('eq_charge','关于LUA脚本的使用, 请参考%link', ['%link'=>URI::anchor($lua_help_link, 'LUA WIKI', 'target="_blank"')]); ?></td>
+						</tr>
+					</tbody>
+				</table>
+				<?php 
+					echo CSS::load_async('codemirror codemirror.lua');
+					echo JS::load_async('codemirror codemirror.lua');
+				?>
+				<?php if (!$disabled):?>
+				<script>
+				if (!Q.browser.msie || Q.browser.version > 6) {
+					Q.js_ready('codemirror codemirror.lua', function(){
+						/* 需要系统中关于toggle和一些特殊class的处理脚本加载完之后才能进行之后的codemirror处理 */
+						setTimeout(function(){
+							var $editor = CodeMirror.fromTextArea($('#<?php echo $script_uniqid; ?>')[0], {
+								mode : 'lua',
+								lineNumbers : true
+							});
+							/* 在codemirror初始化数据的时候,其中会带有不少setTimeout的事件, 为了确保再次刷新在最后, 此处需要再次进行setTimeout */
+							setTimeout(function(){
+								$editor.refresh();
+							}, 1);
+						}, 1);
+					});
+				}
+				</script> 
+				<?php endif;?>
+			</div>
+		</td>
+	</tr>
+	</tbody>
+</table>
+</div>

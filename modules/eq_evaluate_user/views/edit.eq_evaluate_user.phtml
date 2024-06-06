@@ -1,0 +1,49 @@
+<?php $tip = Config::get('eq_evaluate_user')['rate.tip']; ?>
+<?php $default = Config::get('eq_evaluate_user')['default.rate']; ?>
+<div class="form padding_1">
+    <table class="form">
+        <tbody>
+            <tr>
+                <td class="top icon">
+                    <img src="<?php echo H($record->equipment->icon_url('64')) ?>" />
+                </td>
+                <td class="top">
+                    <h3><?php echo I18N::HT('eq_evaluate_user', '%equipment的使用确认', ['%equipment' => H($record->equipment->name)]) ?></h3>
+                    <form method="post" autocomplete="off" q-event="submit" q-object="evaluate_user" q-src="<?php echo H(URI::url('!eq_evaluate_user/index')) ?>">
+                        <?php echo V('form_error', ['form' => $form]); ?>
+                        <?php echo Form::hidden('record_id', $record->id); ?>
+                        <p class="padding_1 lmargin_-2">
+                            <?php echo Form::radio('status', EQ_Evaluate_User_Model::FEEDBACK_NORMAL, $form['status'] ? : $record->evaluate_user->status == EQ_Evaluate_User_Model::FEEDBACK_NORMAL, I18N::T('eq_evaluate_user', '正常运行'), 'class="radio middle"', 'class="middle"'); ?>
+                            <?php echo Form::radio('status', EQ_Evaluate_User_Model::FEEDBACK_PROBLEM, $form['status'] ? : $record->evaluate_user->status == EQ_Evaluate_User_Model::FEEDBACK_PROBLEM, I18N::T('eq_evaluate_user', '实验过程中故障'), 'class="radio middle"', 'class="middle"'); ?>
+                        </p>
+                        <p>
+                            <textarea name="status_feedback" class="text autogrow" placeholder="描述" cols="42" rows="3"><?php echo $record->evaluate_user->status_feedback; ?><?= $form['status_feedback']; ?></textarea>
+                        </p>
+                        <div class="hr_1">&#160;</div>
+                        <h3><?php echo I18N::HT('eq_evaluate_user', '使用评价') ?></h3>
+                        <p>
+                            <span><?= I18N::T('eq_evaluate_user', '用户使用态度'); ?></span>
+                            <?php ?>
+                            <?php echo Widget::factory('rateit_input', ['name' => "attitude", 'rateit_value' => $form['attitude'] ? : $record->evaluate_user->attitude ? : $default, 'rateit_tip' => TRUE, 'tip' => $tip]); ?>
+                            <textarea name="attitude_feedback" class="text autogrow" placeholder="请填写您对使用者的评价, 您最多可以输入 240 个字" cols="42" rows="3"><?php echo $record->evaluate_user->attitude_feedback; ?><?= $form['attitude_feedback']; ?></textarea>
+                        </p>
+                        <p>
+                            <span><?= I18N::T('eq_evaluate_user', '使用熟练度'); ?></span>
+                            <?php echo Widget::factory('rateit_input', ['name' => "proficiency", 'rateit_value' => $form['proficiency'] ? : $record->evaluate_user->proficiency ? : $default, 'rateit_tip' => TRUE, 'tip' => $tip]) ?>
+                            <textarea name="proficiency_feedback" class="text autogrow" placeholder="请填写您对使用者的评价, 您最多可以输入 240 个字" cols="42" rows="3"><?php echo $record->evaluate_user->proficiency_feedback; ?><?= $form['proficiency_feedback']; ?></textarea>
+                        </p>
+                        <p>
+                            <span><?= I18N::T('eq_evaluate_user', '试验台清洁度'); ?></span>
+                            <?php echo Widget::factory('rateit_input', ['name' => "cleanliness", 'rateit_value' => $form['cleanliness'] ? : $record->evaluate_user->cleanliness ? : $default, 'rateit_tip' => TRUE, 'tip' => $tip]) ?>
+                            <textarea name="cleanliness_feedback" class="text autogrow" placeholder="请填写您对使用者的评价, 您最多可以输入 240 个字" cols="42" rows="3"><?php echo $record->evaluate_user->cleanliness_feedback; ?><?= $form['cleanliness_feedback']; ?></textarea>
+                        </p>
+                        <div class="hr_1">&#160;</div>
+                        <p class="buttons">
+                            <input type="submit" name="submit" class="button button_edit" value="<?php echo H(I18N::T('eq_evaluate_user', '提交')) ?>" />
+                        </p>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

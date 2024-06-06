@@ -1,0 +1,19 @@
+<?php 
+echo CSS::load_async("projects:info");
+$values = [];
+if ($users) foreach($users as $user) {
+	if ($GLOBALS['preload']['people.multi_lab']) {
+		$values[$user->id] = T('%user', ['%user'=>$user->name]);
+	}
+	else {
+		$values[$user->id] = T('%user (%lab)', ['%user'=>$user->name, '%lab'=>Q("$user lab")->current()->name]);
+	}
+}
+
+?>
+<input type = "text" 
+	class = "text token token_verify token_autocomplete:<?php echo URI::url('!projects/autocomplete/user'); ?>" 
+	size = "40" id = "<?php echo uniqid(); ?>" 
+	value = "<?php echo H(json_encode($values)); ?>"
+	<?php if($name) echo 'name = "'. H($name) . '"'; ?>
+/>

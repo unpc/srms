@@ -1,0 +1,9 @@
+<?php if (!L('ME')->id && !Config::get('lab.disable_signup', FALSE)): ?>
+<div class="padding_1 center">
+	<h1>
+		<a href="!yiqikong/signup/register" >
+		<?php echo I18N::T('labs', '注册校外用户'); ?>
+		</a>
+	</h1>
+</div>
+<?php endif; ?>

@@ -1,0 +1,11 @@
+<?php
+    echo CSS::load_async('eq_reserv:common');
+    $user = $eq_reserv->user;
+?>
+<div >
+    <p><a href="<?php echo H($user->url()) ?>" class="prevent_default"><?php echo H($user->name); ?></a></p>
+    <div class="quote user_grid rpadding_3">
+        <p class="eq_reserv_user_email"><?php echo URI::mailto(H($user->email), NULL, 'class="description"')?></p>
+        <p class="eq_reserv_user_phone description"><?php echo H($user->phone)?></p>
+    </div>
+<div>

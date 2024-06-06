@@ -1,0 +1,34 @@
+<?php
+    $tag_name = $tag_name ?: 'tag';
+	$tag = O($tag_name, $id);
+	$uniqid = 'tag_'.uniqid();
+?>
+<div class="item:<?php echo $tag->id; ?> equipment_tag tag_weight:<?php echo $tag->weight; ?> <?php echo $tid == $id ? 'active' : '';?>" id="<?php echo H($uniqid) ?>">
+<div class="tag_title item:<?php echo $tag->id ?>">
+	<div class="tag_drag_handle">&nbsp;</div>
+	<input class="text hidden" value="<?php echo H($id) ?>" />
+	<span class="tag_name"><?php echo H($tag->name)?></span>
+</div>
+</div>
+<script type="text/javascript">
+    $("#<?php echo $uniqid?>").bind('click', function(e){
+        var $item = $(this);
+        var $input = $item.find('input:text:eq(0)');
+        Q.trigger({
+            object:'admin_replace_tag',
+            event:'click',
+            data:{
+                tid:$input.val(),
+                tag_name:'<?= $tag_name?>',
+                uniqid:'<?php echo $relate_uniqid?>'
+            },
+            url:'<?php echo URI::url("!equipments/equipment")?>',
+            complete:function(){
+                $box = $("#<?php echo $relate_uniqid?> .equipment_tags .active");
+                $box.removeClass('active');
+                $item.addClass('active');
+            }
+        });
+        return false;
+    });
+</script>

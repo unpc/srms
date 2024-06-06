@@ -1,0 +1,29 @@
+<tr>
+    <td class="label nowrap middle rpadding_label"><span class="lpadding_2"><?php echo I18N::T('equipments', '放置房间') ?></span></td>
+    <td class="table_interval"></td>
+</tr>
+
+<tr>
+    <td class="middle lpadding_8">
+        <?php
+        if ($no_error) {
+            $root = Tag_Model::root('location');
+            $tags = @json_encode(Q("$equipment tag_location[root=$root]")->to_assoc('id', 'name'));
+        }
+        if (!$disabled) {
+            echo Widget::factory('equipments:tag_selector', [
+                'autocomplete'=> URI::url('!equipments/autocomplete/tag_location'),
+                'name'=>'tag_location',
+                'value'=> $no_error ? $tags : $form['tag_location']
+            ]);
+        }
+        else { ?>
+            <div style="padding-top: 3px;">
+                <?= implode(',', json_decode($tags, true)); ?>
+            </div>
+            <?php
+        }
+        ?>
+    </td>
+    <td class="table_interval"></td>
+</tr>

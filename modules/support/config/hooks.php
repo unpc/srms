@@ -1,0 +1,92 @@
+<?php
+// 系统设置-技术支持页卡
+$config['admin.index.tab'][] = "Support::_index_admin_tab";
+$config['controller[admin/index].ready'][] = 'Support_Data::setup';
+$config['controller[admin/index].ready'][] = 'Support_Reset::setup';
+$config['controller[admin/index].ready'][] = 'Support_System::setup';
+
+// 配置后trigger处理，格式: admin.support.submit.{prekey}.{key}
+$config['admin.support.submit'][] = "Support_Task::submit";
+$config['admin.support.submit.equipment.feedback_deadline'][] = "Support_Task::feedback_deadline";
+$config['admin.support.submit.equipment.feedback_show_samples'][] = "Support_Task::feedback_show_samples";
+$config['admin.support.submit.eq_charge.incharges_fee'][] = "Support_Task::eq_charge_incharges_fee";
+$config['admin.support.submit.eq_record.must_connect_lab_project'][] = "Support_Task::eq_record_must_connect_lab_project";
+$config['admin.support.submit.eq_sample.must_connect_lab_project'][] = "Support_Task::eq_sample_must_connect_lab_project";
+$config['admin.support.submit.eq_sample.response_time'][] = "Support_Task::eq_sample_response_time";
+$config['admin.support.submit.eq_reserv.glogon_arrival'][] = "Support_Task::eq_reserv_glogon_arrival";
+$config['admin.support.submit.eq_reserv.glogon_safe'][] = "Support_Task::eq_reserv_glogon_safe";
+$config['admin.support.submit.eq_reserv.must_connect_lab_project'][] = "Support_Task::eq_reserv_must_connect_lab_project";
+$config['admin.support.submit.eq_record.transaction_locked_deadline'][] = "Support_Task::transaction_locked_deadline";
+$config['admin.support.submit.system.logo'][] = "Support_Task::system_logo";
+$config['admin.support.submit.system.login_background_image'][] = "Support_Task::system_login_background_image";
+$config['admin.support.submit.system.login_logo'][] = "Support_Task::system_login_logo";
+$config['admin.support.submit.system.header_color'][] = "Support_Task::system_header_color";
+$config['admin.support.submit.system.header_height'][] = "Support_Task::system_header_height";
+$config['admin.support.submit.system.header_font_color'][] = "Support_Task::system_header_phone_color";
+$config['admin.support.submit.system.footer_email'][] = "Support_Task::system_footer_email";
+$config['admin.support.submit.system.header_phone'][] = "Support_Task::system_header_phone";
+$config['admin.support.submit.system.header_phone2'][] = "Support_Task::system_header_phone2";
+$config['admin.support.submit.system.page_title'][] = "Support_Task::system_page_title";
+$config['admin.support.submit.preferences.sbmenu_mode'][] = "Support_Task::preferences_sbmenu_mode";
+$config['admin.support.submit.system.base_url'][] = "Support_Task::system_base_url";
+$config['admin.support.submit.vidmon.capture_duration'][] = "Support_Task::vidmon_capture_duration";
+$config['admin.support.submit.vidmon.alarmed_capture_duration'][] = "Support_Task::vidmon_alarmed_capture_duration";
+$config['admin.support.submit.vidmon.capture_max_live_time'][] = "Support_Task::vidmon_capture_max_live_time";
+$config['admin.support.submit.login.single_login'][] = "Support_Task::login_single_login";
+$config['admin.support.submit.online.kf5'][] = "Support_Task::online_kf5";
+$config['admin.support.submit.sidebar.public'][] = "Support_Task::sidebar_public";
+$config['admin.support.submit.eq_sample_i18n.eq_sample'][] = "Support_Task::eq_sample_i18n";
+$config['admin.support.submit.eq_sample_i18n.eq_sample_r'][] = "Support_Task::eq_sample_r_i18n";
+$config['admin.support.submit.eq_reserv_i18n.eq_reserv'][] = "Support_Task::eq_reserv_i18n";
+$config['admin.support.submit.eq_reserv_i18n.eq_reserv_r'][] = "Support_Task::eq_reserv_r_i18n";
+$config['admin.support.submit.people_i18n.undergraduate'][] = "Support_Task::undergraduate_i18n";
+$config['admin.support.submit.people_i18n.graduate'][] = "Support_Task::graduate_i18n";
+$config['admin.support.submit.people_i18n.doctor'][] = "Support_Task::doctor_i18n";
+$config['admin.support.submit.people_i18n.pi'][] = "Support_Task::pi_i18n";
+$config['admin.support.submit.people_i18n.assistant'][] = "Support_Task::assistant_i18n";
+$config['admin.support.submit.people_i18n.labadmin'][] = "Support_Task::labadmin_i18n";
+$config['admin.support.submit.people_i18n.technician'][] = "Support_Task::technician_i18n";
+$config['admin.support.submit.people_i18n.postdoctoral'][] = "Support_Task::postdoctoral_i18n";
+
+// 将配置值转换为显示时的内容，格式: admin.support.convert.{prekey}.{key}
+$config['admin.support.convert'][] = 'Support_Convert::convert';
+$config['admin.support.convert.equipment.feedback_deadline'][] = "Support_Convert::feedback_deadline";
+$config['admin.support.convert.equipment.feedback_show_samples'][] = "Support_Convert::feedback_show_samples";
+$config['admin.support.convert.eq_charge.incharges_fee'][] = "Support_Convert::eq_charge_incharges_fee";
+$config['admin.support.convert.eq_record.must_connect_lab_project'][] = "Support_Convert::eq_record_must_connect_lab_project";
+$config['admin.support.convert.eq_sample.must_connect_lab_project'][] = "Support_Convert::eq_sample_must_connect_lab_project";
+$config['admin.support.convert.eq_sample.response_time'][] = "Support_Convert::eq_sample_response_time";
+$config['admin.support.convert.eq_reserv.glogon_arrival'][] = "Support_Convert::eq_reserv_glogon_arrival";
+$config['admin.support.convert.eq_reserv.glogon_safe'][] = "Support_Convert::eq_reserv_glogon_safe";
+$config['admin.support.convert.eq_reserv.must_connect_lab_project'][] = "Support_Convert::eq_reserv_must_connect_lab_project";
+$config['admin.support.convert.eq_record.transaction_locked_deadline'][] = "Support_Convert::transaction_locked_deadline";
+$config['admin.support.convert.system.footer_email'][] = "Support_Convert::system_footer_email";
+$config['admin.support.convert.system.header_phone'][] = "Support_Convert::system_header_phone";
+$config['admin.support.convert.system.header_phone2'][] = "Support_Convert::system_header_phone2";
+$config['admin.support.convert.system.page_title'][] = "Support_Convert::system_page_title";
+$config['admin.support.convert.preferences.sbmenu_mode'][] = "Support_Convert::preferences_sbmenu_mode";
+$config['admin.support.convert.system.base_url'][] = "Support_Convert::system_base_url";
+$config['admin.support.convert.vidmon.capture_duration'][] = "Support_Convert::vidmon_capture_duration";
+$config['admin.support.convert.vidmon.alarmed_capture_duration'][] = "Support_Convert::vidmon_alarmed_capture_duration";
+$config['admin.support.convert.vidmon.capture_max_live_time'][] = "Support_Convert::vidmon_capture_max_live_time";
+$config['admin.support.convert.login.single_login'][] = "Support_Convert::login_single_login";
+$config['admin.support.convert.online.kf5'][] = "Support_Convert::online_kf5";
+$config['admin.support.convert.sidebar.public'][] = "Support_Convert::sidebar_public";
+$config['admin.support.convert.eq_sample_i18n.eq_sample'][] = "Support_Convert::eq_sample_i18n";
+$config['admin.support.convert.eq_sample_i18n.eq_sample_r'][] = "Support_Convert::eq_sample_r_i18n";
+$config['admin.support.convert.eq_reserv_i18n.eq_reserv'][] = "Support_Convert::eq_reserv_i18n";
+$config['admin.support.convert.eq_reserv_i18n.eq_reserv_r'][] = "Support_Convert::eq_reserv_r_i18n";
+$config['admin.support.convert.people_i18n.undergraduate'][] = "Support_Convert::undergraduate_i18n";
+$config['admin.support.convert.people_i18n.graduate'][] = "Support_Convert::graduate_i18n";
+$config['admin.support.convert.people_i18n.doctor'][] = "Support_Convert::doctor_i18n";
+$config['admin.support.convert.people_i18n.pi'][] = "Support_Convert::pi_i18n";
+$config['admin.support.convert.people_i18n.assistant'][] = "Support_Convert::assistant_i18n";
+$config['admin.support.convert.people_i18n.labadmin'][] = "Support_Convert::labadmin_i18n";
+$config['admin.support.convert.people_i18n.technician'][] = "Support_Convert::technician_i18n";
+$config['admin.support.convert.people_i18n.postdoctoral'][] = "Support_Convert::postdoctoral_i18n";
+
+// 增加系统内部财务账号重新统计计算的功能
+$config['lab.download.receipt'][] = 'Support::lab_view_calculate_account';
+
+// 可查看目前系统运行情况以及操作系统数据存储情况
+$config['admin.support.system_info.stat'][] = 'Support_system::system_info_stat';

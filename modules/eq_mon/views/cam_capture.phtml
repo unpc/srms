@@ -1,0 +1,242 @@
+<?php
+if (!isset($channels[$current_id])) {
+	$current_id = key($channels);
+}
+$current_channel = $channels[$current_id];
+
+$support_monitor = $equipment->support_device_plugin('monitor');
+
+$ips = (array)Config::get('equipment.capture_stream_to');
+$default_name = Config::get('equipment.default_capture_stream_name');
+$stream_to = Event::trigger('equipment.capture_stream_to');
+
+$stream_to = count($ips) ? ($support_monitor ? ($stream_to ?: $ips[$default_name]['address']) : NULL) : NULL;
+
+$support_talk = $support_monitor;
+$capture_window_id = 'capture_'.uniqid();
+$flash_plugin_message_id = 'flash_plugin_message'. uniqid();
+$capture_key = $equipment->capture_key;
+
+$width = 640;
+$height = 480;
+
+echo CSS::load_async('eq_mon:common');
+
+if ($stream_to) {
+	echo JS::load_async('eq_mon:swfobject');
+}
+
+$url_address = URI::url('!eq_mon/client/upload.'.$equipment->id);
+?>
+<div id="<?php echo H($capture_window_id) ?>" class="capture_window" q-src="<?php echo H(URI::url('!eq_mon/index.'.intval($equipment->id)))?>" style="position:relative;">
+    <?php if ($stream_to) :?>
+        <div id="<?php echo H($flash_plugin_message_id) ?>" class="message message_normal padding_1 hidden">
+            <?php echo I18N::T('eq_mon', '您的浏览器似乎不支持实时监控功能，如需使用该功能请%download_flash.', ['%download_flash' => URI::anchor('http://get.adobe.com/flashplayer/', I18N::T('eq_mon', '下载flash插件'), 'class="blue prevent_default" target="_blank"')]); ?>
+        </div>
+    <?php endif;?>
+	<div class="screen">
+		<?php if ($stream_to): ?>
+		<div class="capture_live" q-channel="<?php echo H($current_id); ?>" q-width="<?php echo H($width)?>" q-height="<?php echo H($height) ?>" 
+			q-streamer="<?php echo H($stream_to) ?>" q-streamer-file="<?php echo H($capture_key)?>">
+			<div id="<?php echo H($capture_window_id.'_flash' ) ?>">&#160;</div>
+		</div>
+		<?php else: ?>
+		<img class="capture_image" src="<?php echo H(URI::url('!eq_mon/capture/index.'.intval($equipment->id), ['width'=>$width])) ?>" 
+			width="<?php echo H($width) ?>" height="<?php echo H($height) ?>" style="display:block" />
+		<?php endif; ?>
+	</div>
+	<div class="padding_1 clearfix">
+		<div class="float_left">
+<?php if ($stream_to): ?>
+			<a class="icon_button icon_button_video">&#160;</a>
+<?php endif; ?>
+<?php if ($support_talk): ?>
+			<a class="icon_button icon_button_talk">&#160;</a>
+<?php endif; ?>
+		</div>
+		<?php /*
+		由于多个用户观看不同频道可能会导致换屏的问题，故进行在Glogon切换频道，Web方式不提供
+		?>
+		<div class="float_right">
+		<?php
+		foreach ($channels as $cid => $info) {
+			$names[$cid] = $info['name'];
+		}
+		echo Form::dropdown('channel', $names, $current_id);
+		?>
+		</div>
+		<?php */?>
+	</div>
+</div>
+<script>
+jQuery(function($) {
+	var capture_window = "#<?php echo $capture_window_id; ?>";
+	var $capture_window = $(capture_window);
+
+<?php if ($support_talk): ?>
+	var $talk_container = $(".talk_container");
+	$talk_container = $talk_container.length ? $talk_container : $('<div class="talk_container hidden" ><div class="talk_arrow">&#160;</div><div class="talk_content"></div>');
+	var $talk_arrow = $talk_container.find('.talk_arrow');
+	var $talk_content = $talk_container.find('.talk_content');	
+
+	$(".icon_button_talk").bind('click', function(e){
+		if ($talk_container.is(":hidden")) {
+			$talk_container.appendTo($capture_window);
+			var $el = $(this);
+			var position = $el.position();
+		
+			var left = position.left + ($el.outerWidth() / 2) - 17/2 - 5;
+			$talk_arrow.css({
+				left: left,
+				top: 150
+			});
+		
+			$talk_content.addClass('talk_loading').empty();
+		
+			$talk_container.css({
+				left: 0,
+				top: position.top - 170
+			})
+			.show();
+			
+			
+			Q.trigger({
+				object: 'talk_search',
+				event: 'change',
+				global: false,
+				data: {
+					eid: <?php echo $equipment->id?>,
+					container: 'talk_container'
+				},
+				url: '<?php echo URI::url("!eq_mon/index")?>',
+				success: function(data){
+					$talk_content.removeClass('talk_loading');
+				}
+			});
+		}
+		else {
+			$talk_container.appendTo("body").hide();
+		}
+		e.preventDefault();
+		return false;
+	});
+<?php endif; ?>
+
+<?php if (!$stream_to): ?>
+	$('.capture_image').bind('load', function(){
+		var $el = $(this);
+		var url = $el.data('url');
+		if (!url) {	
+			url = $el.attr('src');
+			$el.data('url', url);
+		}
+
+		setTimeout(function(){
+			var timestamp = new Date().getTime();
+			var src = [url, '&_=', timestamp].join('');
+			$el.attr('src', src);
+		}, 1000);
+	});
+<?php else:?>
+	var capture_flash_id = <?php echo JS::quote($capture_window_id.'_flash'); ?>;
+	var capture_flash;
+	var chat_stream = false;
+
+	var $capture_live = $capture_window.find('.capture_live');
+	var streamer = $capture_live.classAttr('streamer');
+    var $flash_plugin_message = $('#<?php echo $flash_plugin_message_id?>');
+	var file = $capture_live.classAttr('streamer-file');
+
+	var w = parseInt($capture_live.classAttr('width'));
+	var h = parseInt($capture_live.classAttr('height'));
+
+	Q.js_ready('eq_mon:swfobject', function() {
+
+        swfobject.embedSWF("!eq_mon/camera.swf", capture_flash_id, 
+			w, h, "10.0.0", "", 
+			{}, 
+			{ wmode: "transparent", allowFullScreen: "true"},
+			{ wmode: "transparent", allowFullScreen: "true"},
+			function (e) {
+				if (e.success) {
+					setTimeout(function(){
+						capture_flash = $('#' + capture_flash_id)[0];
+					}, 2000);
+				}
+			}
+		);
+
+		$capture_window.find(".icon_button_video").bind('click', function(e){
+			if (capture_flash) {
+				if (capture_flash.isCameraVisible()) {
+					chat_stream = false;
+				   	if (!capture_flash.isCameraPublishing()) {
+						capture_flash.hideSmall();
+					}
+				}
+				else {
+					capture_flash.publishCamera(streamer, file + "_chat");
+					chat_stream = true;
+				}
+			}
+			e.preventDefault();
+			return false;
+		});
+
+		var $version = []; 
+		$version = swfobject.getFlashPlayerVersion();
+
+        if ($version.major > 10) {
+            $flash_plugin_message.hide(); 
+        }
+        else {
+            $flash_plugin_message.show(); 
+        }
+		
+
+	});
+
+<?php endif; ?>
+
+	var _cam_timer = function() {
+		//var channel = $capture_window.find('[name=channel]').val();
+		var url = $capture_window.classAttr('src');
+		
+		//cam
+		Q.trigger({
+			object: 'cam',
+			event: 'keepalive',
+			global: false,
+			data: {
+				channel: '<?php echo $current_id; ?>'
+<?php if ($stream_to): ?>
+				, chat_stream: chat_stream ? 1 : 0
+<?php endif; ?>
+			},
+			url: url,
+			success: function(data) {
+<?php if ($stream_to): ?>
+				if (data.streaming) {
+					if (capture_flash && capture_flash.isMainPlaying && !capture_flash.isMainPlaying()) {
+						capture_flash.playMain(streamer, file);
+					}
+					delete data.streaming;
+				}
+<?php endif; ?>
+			},
+			complete: function() {
+				if ($capture_window.parents('body').length) {
+					setTimeout(_cam_timer, 1500);
+				}
+			}
+		});
+	};
+
+	setTimeout(_cam_timer, 1500);
+
+
+
+});
+</script>
+
+

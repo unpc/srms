@@ -1,0 +1,20 @@
+<?php 
+	$s = $c->source;
+	if ($s->id) {
+		switch ($s->name()) {
+			case 'eq_sample':
+				echo (int)max(1, $s->count);
+				break;
+			case 'eq_record':
+				echo (int)max(Config::get('eq_record.record_default_samples'), $s->samples);
+				break;
+			default :
+				echo '--';
+				break;
+		}
+	}
+	else {
+		echo '--';
+	}
+	
+?>	

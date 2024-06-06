@@ -1,0 +1,10 @@
+<?php
+	$members_type = [];
+	foreach(User_Model::get_members() as $key => $value){
+		$members_type[I18N::T('people', $key)] = $value;
+	}
+?>
+<?php echo Form::dropdown('member_type', [''=>'--'] + I18N::T('people', $members_type), $member_type, 'class="dropdown"'); ?>
+<?php if (Config::get('form.user_signup')['requires']['member_type']) :?>
+<?php echo V('form_require');?>
+<?php endif;?>

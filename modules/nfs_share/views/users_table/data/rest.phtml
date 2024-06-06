@@ -1,0 +1,9 @@
+<?php if (NFS::user_access(L('ME'), '列表文件', $user, ['type' => 'share']) && $user->nfs_size): ?>
+<a class="blue" title="<?php echo I18N::HT('nfs_share', '查看'); ?>" href="<?php echo H(URI::url('!nfs_share/finder/user.' . $user->id)) ?>"></strong>
+    <?php echo I18N::HT('nfs_share', '查看'); ?>
+</a>
+<?php else:?>
+<span style="display:inline-block; width:28px;"></span>
+<?php endif?>
+<?php
+echo implode(' ', nfs_share::nfs_people_operate_links($user));

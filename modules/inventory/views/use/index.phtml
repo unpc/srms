@@ -1,0 +1,79 @@
+<div class="hr_1">&#160;</div>
+<?php $use_form_id = 'use_form_' . uniqid(); ?>
+<div class="form center padding_2 clearfix">
+	<form method="post" autocomplete="off" q-object="barcode" q-event="submit">
+		<?php echo Form::hidden('uniqid', $use_form_id) ?>
+		<span class="label big middle"><?php echo I18N::HT('inventory', '条形码'); ?></span>
+		<input class="text big barcode middle" name="barcode" q-hint="<?php echo I18N::HT('inventory', '请扫描, 或输入并回车')?>" value="<?php echo H($form['value'] ) ?>" size="40"/>
+		<input type="submit" class="hidden" value="<?php echo H(T('扫描')) ?>" />
+	</form>
+</div>
+<div id="<?php echo H($use_form_id) ?>"></div>
+<div class="form padding_1">
+<h2><?php echo I18N::T('inventory', '领用 / 归还记录') ?></h2>
+</div>
+<div class="padding_1 panel clearfix">
+    <a href="#" q-object="export" q-event="click" q-src="<?php echo H(URI::url('!inventory/use')) ?>" q-static="<?php echo H(['type'=> 'print', 'form_token'=> $form_token]);?>" class="button button_print "><?php echo I18N::T('inventory', '打印');?></a>
+    <a href="#" q-object="export" q-event="click" q-src="<?php echo H(URI::url('!inventory/use')) ?>" q-static="<?php echo H(['type'=> 'csv', 'form_token'=> $form_token]);?>" class="button button_save"><?php echo I18N::T('inventory', '导出Excel');?></a>
+</div>
+<?php
+echo $pagination;
+
+$table = Widget::factory('table');
+$table->name = 'stock_uses';
+$table->add_columns(
+	[
+        'ref' => [
+            'title'=> I18N::T('inventory', '自定义编号'),
+            'nowrap'=> TRUE,
+            'align'=> 'center'
+        ],
+		'stock' => [
+			'title' => I18N::T('inventory', '产品名称'),
+			'nowrap' => TRUE
+			],
+		'user' => [
+			'title' => I18N::T('inventory', '用户'),
+			'nowrap' => TRUE
+		],
+		'ctime' => [
+			'title' => I18N::T('inventory', '操作时间'),
+			'nowrap' => TRUE,
+			'align' => 'center',
+			],
+		'use_quantity' => [
+			'title' => I18N::T('inventory', '领用'),
+			'nowrap' => TRUE,
+			'align' => 'center',
+			],
+		'return_quantity' => [
+			'title' => I18N::T('inventory', '归还'),
+			'nowrap' => TRUE,
+			'align' => 'center',
+			],
+		'note' => [
+			'title' => I18N::T('inventory', '备注'),
+			],
+        'links'=> [
+            'nowrap'=> TRUE
+            ]
+		]);
+
+$table->empty_message = I18N::T('inventory', '无领用记录');
+
+foreach ($stock_uses as $stock_use) {
+	$table->add_row(
+		[
+			'ref' => V('inventory:stock_use_table/data/ref', ['stock_use' => $stock_use]),
+			'stock' => V('inventory:stock_use_table/data/stock', ['stock_use' => $stock_use]),
+			'ctime' => V('inventory:stock_use_table/data/ctime', ['stock_use' => $stock_use]),
+			'user' => V('inventory:stock_use_table/data/user', ['stock_use' => $stock_use]),
+			'use_quantity' => V('inventory:stock_use_table/data/use_quantity', ['stock_use' => $stock_use]),
+			'return_quantity' => V('inventory:stock_use_table/data/return_quantity', ['stock_use' => $stock_use]),
+			'note' => V('inventory:stock_use_table/data/note', ['stock_use' => $stock_use]),
+            'links'=> Widget::factory('application:links', ['links'=> $stock_use->links()])
+			]
+		);
+}
+
+echo $table;

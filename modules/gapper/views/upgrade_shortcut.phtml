@@ -1,0 +1,8 @@
+<?php
+	$me = L('ME');
+    $lab = Lab_Model::default_lab();
+    if ($me->is_active()
+        && (!Gapper::is_gapper_user($me) || ($me->token == Config::get('lab.pi') && !$lab->gapper_group))) {
+?>
+	<a href="<?php echo H(URI::url('!gapper/index')) ?>" class="blue"><?php echo I18N::T('gapper', '升级到Gapper账户');?></a>
+<?php }?>

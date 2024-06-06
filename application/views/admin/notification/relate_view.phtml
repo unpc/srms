@@ -1,0 +1,159 @@
+<?php
+$message_uniqid = uniqid();
+$me = L('ME');
+$form_id = 'notification_classification_form_'. uniqid();
+$handlers_type_name_arr = [];
+foreach(Notification::get_handlers() as $handler) {
+    $info = Notification::get_handler_info($handler);
+    $handlers_type_name_arr[$handler] = $info['name'];
+}
+?>
+<div class="relate_view">
+    <form method="post" autocomplete="off" id="<?php echo H($form_id) ?>">
+        <div class="form">
+            <input type="text" name="key" value="<?php echo H($key) ?>" class="hidden" />
+            <div id="<?php echo H($message_uniqid) ?>"></div>
+            <input type="text" name="message_uniqid" value="<?php echo H($message_uniqid) ?>" class="hidden" />
+            <div class="interval_24"></div>
+            <div class="user_box">
+                <div class="main_title clearfix">
+                    <div class="float_left message_type left"><h2 class="section_title"><?php echo T('可接收的消息');?></h2></div>
+                    <div class="float_left device_type left"><h2 class="section_title"><?php echo T('消息发送途径');?></h2></div>
+                </div>
+                <div class="interval_30"></div>
+                <?php
+                $classification = Config::get('notification.classification');
+
+                foreach((array)$classification[$key] as $title => $notification_keys) :?>
+                    <?php //过滤掉预先设定的#开头的系统辅助key
+                        
+                        if ($title[0] == '#') continue;
+                        list($module_name, $title) =  explode("\004", $title, 2);
+                        if (!$title) {
+                            $title = $module_name;
+                            $module_name = NULL;
+                        }
+                    ?>
+                    <div class="user_box_item">
+                        <div class="float_left classification_title">
+                            <h2 style="font-size: 14px;"><?php echo $module_name ? I18N::T($module_name, $title) : T($title);?></h2>
+                        </div>
+                        <?php
+
+                        foreach($handlers_type_name_arr as $type=>$name){
+                            if (!$name) continue;
+                            // echo Form::checkbox($type, FALSE, HT($name), 'class="middle checkbox"', 'class="middle rmargin_60"');
+                            echo Form::checkbox($type, FALSE, HT('全选'), 'class="middle checkbox"', 'class="middle rmargin_83"');
+                        }
+
+                        ?>
+                        <div class="interval_12"></div>
+                        <hr />
+                        <div class="interval_12"></div>
+                        <ol class="notifs">
+                        <?php
+
+                        $notification_keys = Event::trigger('billing_notification.extra_display', (array) $notification_keys);
+
+                        foreach((array) $notification_keys as $template_name) :
+                            $dtemplate = Config::get("notification.$template_name");
+                            $template = Lab::get("notification.$template_name", $dtemplate);
+                        ?>
+                        <li>
+                        <div class="sub_notification">
+                            <span class="title"><?php echo $dtemplate['i18n_module'] ? I18N::T($dtemplate['i18n_module'], $template['description']) : T($template['description'])?></span>
+                            <span class="middle">
+                            <?php
+                                foreach($handlers_type_name_arr as $type => $name) {
+                                    if (!$name) continue;
+
+                                    $item_name = Notification::get_key($template_name, $type, $me);
+
+                                    //通过enable_send来判断是否可进行勾选
+                                    $enable_send = Notification::enable_send($template_name, $type);
+
+                                    //通过enable_receive来判断是否现在已勾选
+                                    $enable_receive = Notification::enable_receive($template_name, $type, $me);
+
+                                    if ($enable_send) {
+                                        //允许发送
+                                        $input_extra_attr = 'class="middle checkbox"';
+                                        $label_extra_attr = 'class="middle rmargin_60"';
+                                    }
+                                    else {
+                                        //不允许发送
+                                        $input_extra_attr = 'class="middle checkbox" disabled="disabled"';
+                                        $label_extra_attr = 'class="middle description rmargin_60"';
+                                    }
+
+                                    echo Form::checkbox($item_name,  $enable_send && $enable_receive, HT($name), $input_extra_attr, $label_extra_attr);
+                                }
+                            ?>
+                            </span>
+                        </div>
+                        </li>
+                        <?php
+                        endforeach;
+                        ?>
+                        </ol>
+                    </div>
+                    <div class="interval_40"></div>
+                <?php endforeach; ?>
+                <div class="interval_20"></div>
+            </div>
+            <div class="submit_button float_right" style="margin-right: 48px;">
+                <input name="submit" type="reset" class="font-button-default rmargin_16" value="<?php echo H(T('取消')) ?>" />
+                <input name="submit" type="submit" class="font-button-save" value="<?php echo H(T('保存修改')) ?>" />
+            </div>
+            <div class="interval_80"></div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+jQuery(function($) {
+    $.each(['messages', 'email', 'sms'], function(i, type) {
+
+        //如果下属的勾选都是diabled，则设置成disabled
+        $input_toggle = $('input[name=' + type + ']').each(function() {
+
+            var $children = $(this).parents('div.user_box_item').find('.notifs').find('input[name*=' + type + ']:not(:disabled)');
+
+            if(!$children.length){
+                $(this).attr('disabled', 'disabled');
+                //下一个兄弟节点(label)增加description
+                $(this).next().addClass('description');
+            }
+            else{
+                $(this).bind('click', function() {
+                    if ($(this).prop('checked')) {
+                        // 如果勾选, 下属都勾选
+                        $(this).parent('div.user_box_item').find('.sub_notification').find('input[name*=' + type + ']:not(:disabled)').prop('checked', true);
+                    }
+                    else {
+                        // 如果不勾选, 下级都不勾选
+                        $(this).parent('div.user_box_item').find('.sub_notification').find('input[name*=' + type + ']').prop('checked', false);
+                    }
+                });
+            }
+        });
+    });
+
+    $('#<?php echo $form_id;?>').submit(function () {
+        Q.trigger({
+            object: 'modify_notification_classification',
+            event: 'submit',
+            url: '<?php echo URI::url('admin')?>',
+            data: {
+                form: $(this).serialize()
+            }
+        });
+        $('body,html').animate({scrollTop:0},200);
+        return false;
+    });
+
+    setTimeout(function(){
+        $("ol.notifs").css("counter-reset", "li");
+    }, 1);
+
+});
+</script>

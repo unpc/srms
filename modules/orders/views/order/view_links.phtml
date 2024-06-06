@@ -1,0 +1,23 @@
+<?php
+$me = L('ME');
+$stock = O('stock', ['order'=>$order]); 
+?>
+<?php if ($stock->id): ?>
+	<a href="<?php echo H($stock->url()) ?>" class="blue"><?php echo I18N::T('orders', '查看相应存货') ?></a>
+<?php elseif ($me->is_allowed_to('添加', $stock) && $order->deliver_status == Order_Model::RECEIVED) : ?>
+	<a class="button button_add" q-object="add_stock" q-event="click" q-src="<?php echo H($order->url()); ?>"><?php echo I18N::HT('orders', '加为存货'); ?></a>
+<?php endif; ?>
+
+<?php 
+if ($order->expense->id): ?>
+<div class="hr_1">&#160;</div>
+	<a href="<?php echo H($order->expense->grant->url('expenses',['id'=>$order->expense_id])) ?>" class="blue"><?php echo I18N::HT('orders', '查看关联经费'); ?></a>
+	<span class="description"> (<?php echo H($order->expense->grant->project) . ': ' . H($order->expense->path(' » ')); ?>)</span>
+	<?php if ($me->is_allowed_to('修改支出', $order->expense->grant)): ?>
+		&#160;
+		<a class="font-button-delete" q-object="remove_expense" q-event="click" q-src="<?php echo H($order->url()); ?>"><?php echo I18N::HT('orders', '解除关联'); ?></a>
+	<?php endif; ?>
+<?php elseif ($me->is_allowed_to('修改支出', 'grant')): ?>
+	<a class="button button_add" q-object="add_expense" q-event="click" q-src="<?php echo H($order->url()); ?>"><?php echo I18N::HT('orders', '关联经费'); ?></a>
+<?php endif; ?>
+

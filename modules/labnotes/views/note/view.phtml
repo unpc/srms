@@ -1,0 +1,41 @@
+<div class="hr_1">&#160;</div>
+<div class="form padding_2">
+	<table class="form message_form">
+		<div class="clearfix nowrap float_right">
+		<?php 
+			$links = $note->links('view'); 
+			foreach($links as & $link) {
+				if ($link['type'] == 'lock' || $link['type'] == 'unlock') {
+					$link['url'] = NULL;
+					$link['extra'] = 'class="button view object:lock_note event:click static:'.HT(['id'=>$note->id]).'  src:'.URI::url('!labnotes/note').'"';
+					unset($link['type']);
+				}
+				else {
+					unset($link['type']);
+				}
+			}
+			echo Widget::factory('application:links', ['links' => $links, 'separator'=>' ']);			
+		?>
+		<div>
+		<tbody>
+			<tr>
+				<td class="label right nowrap middle"><?php echo I18N::T('achievements', '标题:'); ?></td>
+				<td class="middle">
+					<?php echo H($note->title)?>
+				</td>
+			</tr>
+			<tr>
+				<td class="label right nowrap middle"><?php echo I18N::T('achievements', '内容:')?></td>
+				<td class="middle">
+					<?php echo H($note->content)?>
+				</td>
+			</tr>
+			<tr>
+				<td class="label right nowrap middle"><?php echo I18N::T('achievements', '创建时间:'); ?></td>
+				<td class="middle" colspan="2">
+					<?php echo date('Y/m/d', $note->ctime)?>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

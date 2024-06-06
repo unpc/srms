@@ -1,0 +1,14 @@
+<?php foreach ($disabled_test_projects as $disabled_id => $disabled_number):
+    $disabled_test_project = O('test_project', $disabled_id);
+    ?>
+    <tr>
+        <td></td>
+        <td>
+            <div class="title" style="min-width: 400px">
+            <?php
+            echo Form::checkbox("test_project[$disabled_test_project->id]", true, I18N::T('test_project', $disabled_test_project->name), 'class="middle checkbox"', 'class="label"')?>
+            <span class="float_right">样品数<input style="margin-left: 8px" name="test_project_number[<?= $disabled_test_project->id?>]" type="text" class="text number" size="10" value="<?= $disabled_number?>"></span>
+            </div>
+        </td>
+    </tr>
+<?php endforeach;?>

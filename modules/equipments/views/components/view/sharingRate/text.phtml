@@ -1,0 +1,19 @@
+<?php 
+$sum = $data['in_service']['value'] + $data['out_service']['value'];
+$rate = round($data['in_service']['value'] / $sum, 2) * 100 . '%'
+?>
+<div style="width: 100%;height: 100%; position: relative;">
+  <div style="position: absolute;
+  top: 50%;
+  left: 50%;
+  height: auto;
+  width: auto;
+  transform: translate(-50%, -50%);">
+    <h1 style="text-align: center; white-space: nowrap; color: #778996;">
+      <?= H($title) ?>
+    </h1>
+    <p style="text-align: center; white-space: nowrap; font-size: 60px; color: #ffbe28;">
+      <?= H($rate) ?>
+    </p>
+  </div>
+</div>

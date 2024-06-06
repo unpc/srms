@@ -1,0 +1,3 @@
+# 每小时删除过时(1小时前)的未发短信
+# 数据库信息在 gammu-smsdrc 中定义, 若修改数据库信息, 需同步修改此脚本
+37 * * * * root mysql -u genee lims2_sms -e "delete from outbox where timediff(now(), InsertIntoDB) > '01:00:00'"

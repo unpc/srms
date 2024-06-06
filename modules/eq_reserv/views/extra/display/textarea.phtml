@@ -1,0 +1,15 @@
+<tr>
+    <td class="label right top nowrap">
+    <?php if($properties['field']['required']) : ?>*<?php endif; ?>
+    <?php echo I18N::HT('eq_reserv' ,$properties['label'])?>
+    </td>
+    <td class="nowrap">
+        <?php $field = $properties['field'];?>
+        <?php
+            $extra_value = O('extra_value', ['object'=> $component]);
+            $values = $extra_value->values;
+            $vname = ltrim($name, 'extra_');
+        ?>
+        <textarea name="<?php echo H($name) ?>" type="text" cols="40" rows="3" class="text autogrow"><?php echo $component->id ? $values[$vname] : NULL?></textarea>
+    </td>
+</tr>

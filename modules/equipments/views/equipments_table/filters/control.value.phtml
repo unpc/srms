@@ -1,0 +1,16 @@
+<?php if ($mode || $status): ?>
+    <div class="criteria center nowrap">
+        <?php if ($mode == 'power'): ?>
+            <span class="control_status <?php echo $status == 'using' ? 'power_on':'power_off' ?>">&#160;</span>
+        <?php elseif ($mode == 'computer'): ?>
+            <span class="control_status <?php echo $status == 'using' ? 'computer_on':'computer_off' ?>">&#160;</span>
+        <?php elseif ($mode == 'bluetooth'): ?>
+            <span class="control_status <?php echo $status == 'using' ? 'bluetooth_on':'bluetooth_off' ?>">&#160;</span>
+        <?php elseif ($mode == 'nocontrol'): ?>
+            <?php echo I18N::T('equipments', '不控制'); ?>
+        <?php else: ?>
+            <span class="control_status <?php echo $status == 'using' ? 'computer_on':'computer_off' ?>">&#160;</span>
+            <span class="control_status <?php echo $status == 'using' ? 'power_on':'power_off' ?>">&#160;</span>
+        <?php endif; ?>
+    </div>
+<?php endif;?>

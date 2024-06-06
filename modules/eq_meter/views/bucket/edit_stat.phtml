@@ -1,0 +1,38 @@
+<form method="post" action="<?php echo H(URI::url('')) ?>">
+	<div class="lpadding_1">
+		<?php 
+		$eq_meter = O('eq_meter', ['equipment_id'=>$equipment_id]);
+		if ($eq_meter->watt_threshold_min === 0 && $eq_meter->watt_threshold_max === 0) :
+		?>
+			<span style="color:red"><?php echo I18N::T('eq_meter', '当前未设置功率阈值') ?></span>
+		<?php else: ?>
+			<span style="color:#C5B570">
+			<?php
+				if (!$eq_meter->watt_threshold_max && !$eq_meter->watt_threshold_min) {
+					$watt_threshold_min = Config::get('eq_meter.watt_threshold_min', 40);
+				}
+				else {
+					$watt_threshold_min = $eq_meter->watt_threshold_min;
+				}
+				$watt_threshold_max = $eq_meter->watt_threshold_max;
+				if (strlen($watt_threshold_min) && strlen($watt_threshold_max)): 
+			?>
+				<?php echo I18N::T('eq_meter', '功率阈值范围: %min - %max W', ['%min'=>$watt_threshold_min, '%max'=>$watt_threshold_max]); ?>
+			<?php elseif(strlen($watt_threshold_min) && !strlen($watt_threshold_max)) :?>
+				<?php echo I18N::T('equipments', '功率阈值范围: 大于等于%watt W', ['%watt'=>H($watt_threshold_min)]) ?>
+			<?php elseif(!strlen($watt_threshold_min) && strlen($watt_threshold_max)): ?>
+				<?php echo I18N::T('equipments', '功率阈值范围: 小于等于%watt W', ['%watt'=>H($watt_threshold_max)]) ?>
+			<?php endif; ?>
+			</span>		
+		<?php  endif; ?>
+		<div class="padding_1">
+			<a class="button button_edit" q-src="<?php echo H(URI::url('!eq_meter/eq_meter') ) ?>"
+				q-object="edit_stat" q-event="click" q-static="<?php echo H(['equipment_id'=>$equipment_id,'watt_threshold_max'=>$watt_threshold_max, 'watt_threshold_min'=>$watt_threshold_min]) ?>"
+				><?php echo I18N::T('eq_meter', '设置') ?></a>
+				
+			<a class="font-button-delete" q-src="<?php echo H(URI::url('!eq_meter/eq_meter') ) ?>"
+				q-object="clear_watt_setting" q-event="click" q-static="<?php echo H(['equipment_id'=>$equipment_id]) ?>"
+				><?php echo I18N::T('eq_meter', '恢复') ?></a>
+		</div>
+	</div>
+</form>

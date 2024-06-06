@@ -1,0 +1,102 @@
+<div class="hr_1">&#160;</div>
+<div class="form padding_1">
+	<form method="post" autocomplete="off" >
+	<?php echo V('form_error', ['form'=>$form]);?>
+	<?php $require = (string) V('form_require'); ?>
+	<table class="form">
+		<tbody>
+			<tr>
+				<td class="label right nowrap middle"><?php echo I18N::T('grants', '课题名称')?></td>
+				<td class="top"><input name="project" class="text" size="40" value="<?php echo H($form['project'] ? :$grant->project) ?>" /><?php echo $require; ?></td>
+			</tr>
+			<tr>
+				<td class="label right nowrap middle"><?php echo I18N::T('grants', '经费来源')?></td>
+				<td class="top"><input name="source" class="text" size="40" value="<?php echo H($form['source'] ? :$grant->source) ?>" /><?php echo $require; ?></td>
+			</tr>
+			<tr>
+				<td class="label right nowrap middle"><?php echo I18N::T('grants', '经费编号')?></td>
+				<td class="top"><input name="ref" class="text" size="40" value="<?php echo H($form['ref'] ? :$grant->ref) ?>" /></td>
+			</tr>
+			<tr>
+				<td class="label right nowrap middle"><?php echo I18N::T('grants', '经费总额')?></td>
+				<td class="top">
+					<input name="amount" class="text currency" size="40" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo H($form['amount'] ? :$grant->amount) ?>" /><?php echo $require; ?>
+					<?php //不要将它设为 disabled 因为 错误检测 ?>
+					<input type="hidden" name="avail_balance" value="<?php echo H($form['avail_balance'] ? : $grant->avail_balance); ?>" />	
+				</td>
+			</tr>
+			<tr>
+				<td class="label right nowrap middle"><?php echo I18N::T('grants', '使用份额')?></td>
+				<td class="top"><input readonly="readonly" class="text currency readonly" size="40" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo H($form['expense'] ? : $grant->expense) ?>" /></td>
+			</tr>
+			<tr>
+				<td class="label right nowrap middle"><?php echo I18N::T('grants', '剩余份额')?></td>
+				<td class="top">
+					<input readonly="readonly" class="text currency readonly" size="40" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo H($form['balance'] ?  :$grant->balance) ?>" />
+					</td>
+			</tr>
+			<tr>
+				<td class="label right nowrap middle"><?php echo I18N::T('grants', '可分配份额')?></td>
+				<td class="top">
+					<input readonly="readonly" name="grant_avail_balance" class="text currency readonly" size="40" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo H($form['avail_balance'] ? :$grant->avail_balance) ?>" />
+					</td>
+			</tr>
+			<tr>
+				<td class="label right nowrap middle"><?php echo I18N::T('grants', '课题负责人')?></td>
+				<td class="top">
+					<?php 
+						echo Widget::factory('user_selector', 
+								[
+									'name'=>'user', 
+									'autocomplete'=>URI::url('!grants/autocomplete/user.'.$grant->id), 
+									'user'=> $form['user'] ? O('user', $form['user']) : $grant->user,
+							]);
+					?>
+					<?php echo $require; ?>
+				</td>
+			</tr>
+			<tr>
+				<td class="label right nowrap middle top"><?php echo I18N::T('grants', '描述')?></td>
+				<td class="top"><textarea class="text autogrow" cols="37" name="description"><?php echo H($form['description'] ? :$grant->description) ?></textarea></td>
+			</tr>
+			<tr>
+				<td class="label right nowrap middle"><?php echo I18N::T('grants', '日期')?></td>
+				<td class="top">
+					<input name="dtstart" class="text date" value="<?php echo H($form['dtstart'] ? : $grant->dtstart) ?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/>
+					~
+					<input name="dtend" class="text date" value="<?php echo H($form['dtend'] ? : $grant->dtend) ?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/>
+                    &#160;
+                    <span class="middle">
+                        <?php echo I18N::T('grants', '提前 %time 天提醒到期', [
+                            '%time'=> V('grants:grant/remind_time', [
+                                'value'=> isset($form['remind_time']) ? $form['remind_time'] : $grant->remind_time
+                            ])
+                        ])?>
+                    </span>
+				</td>
+			</tr>
+			<tr>
+				<td class="label nowrap right top"><?php echo I18N::T('grants', '分配详情'); ?></td>
+				<td>
+				<?php echo V('grants:portion/edit',['grant'=>$grant, 'gp_form'=>$gp_form]); ?>
+				</td>
+			</tr>
+		</tbody>
+		<tfoot>
+			<tr><td colspan="2" class="hr_1">&#160;</td></tr>
+			<tr>
+				<td>&#160;</td>
+				<td>
+					<input type="submit" name="submit" class="button button_save" value="<?php echo H(I18N::T('grants', '保存')) ?>" />
+
+					&#160;&#160;
+					<?php if (L('ME')->is_allowed_to('删除', $grant)): ?>
+					<a class="font-button-delete" href="<?php echo H($grant->url(NULL,NULL,NULL,'delete')) ?>" confirm="<?php echo I18N::HT('grants', '你确定要删除吗？删除后不可恢复!') ?>"><?php echo I18N::HT('grants', '删除') ?></a>
+					<?php endif; ?>
+				</td>
+			</tr>
+		</tfoot>
+	</table>
+	</form>
+</div>
+

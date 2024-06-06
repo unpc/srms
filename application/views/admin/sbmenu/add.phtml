@@ -1,0 +1,31 @@
+<div class="form">
+	<form method="post" q-object="add_sbmenu_category" action="<?php echo H(URI::url('admin')) ?>" autocomplete="off">
+    <?php echo V('form_error', ['form' => $form]); ?>
+	<?php //$require = (string) V('form_require'); ?>
+	<!-- <div class="float_right tpadding_2">
+	<?php //echo $require; ?>必填
+    </div> -->
+    <div class="interval_24"></div>
+	<table class="form">
+		<tbody>
+			<tr>
+				<td class="left nowrap middle">
+                    <?php //echo $require; ?>
+	                <?php echo I18N::T('labs', '菜单名称')?>
+                    <?php echo V('form_filter', ['error'=>$form->errors["categories[$index][name]"][0]]); ?>
+				</td>
+
+				<td class="right nowrap middle label">
+                    <input type="text" class="text new_search_input" name="categories[<?php echo $index; ?>][name]" value="" />
+				</td>
+			</tr>
+		</tbody>
+	</table>
+		<div class="button_container">
+			<div class="float_right">
+			<input type="button" name="cancel" id="cancel" class="font-button-default  sm rmargin_2e4" value="<?php echo H(I18N::T('admin', '取消')) ?>" />
+			<input type="submit" name="submit" class="font-button-save sm" value="<?php echo H(I18N::T('admin', '确定')) ?>" />
+			</div>
+		</div>
+	</form>
+</div>

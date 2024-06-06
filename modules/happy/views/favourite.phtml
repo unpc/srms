@@ -1,0 +1,76 @@
+<div class="center_content">
+	<div class="hr_1">&nbsp;</div>
+		<div style="padding-top:0px">
+			<?php $require = V('form_require', ['form'=>$form]);?>
+		<div class="form padding_2">
+		<form action="" method="post">
+		<?php echo V('form_error', ['form'=>$form])?>
+			<table class="form">
+				<tbody>	
+				<tr>
+					<td class="right middle">
+						<strong class="description"><?php echo I18N::HT('happy', '发件人:')?></strong>
+					</td> 
+					<td class="middle">
+						<?php echo H($happyhour->creater->name); ?>
+					</td>
+				</tr>
+				<tr>
+					<td class="right middle">
+						<strong class="description"><?php echo I18N::HT('happy', '标题:')?>
+					</td> 
+					<td class="middle">
+						<?php echo H($happyhour->title); ?>
+					</td>
+				</tr>
+				<tr>
+					<td class="right middle">
+						<strong class="description"><?php echo I18N::HT('happy', '发布时间:')?>
+					</td> 
+					<td class="middle">
+						<?php echo Date::format($happyhour->ctime); ?>
+					</td>
+				</tr>
+				<tr>
+					<td class="right middle">
+						<strong class="description"><?php echo I18N::HT('happy', '截止时间:')?>
+					</td> 
+					<td class="middle">
+						<?php echo Date::format($happyhour->dtime); ?>
+					</td>
+				</tr>
+				<tr>
+					<td class="right middle"><strong class="description">选购单:</td>
+					<td class="middle">
+					<?php 
+					foreach($replys as $reply) {
+						echo H($reply->content)."×".H($reply->stock)."&nbsp";
+					} 
+					?>
+					</td>
+				</tr>
+				<tr>
+					<td class="right middle"><strong class="description"><?php echo I18N::T('happy', '菜单:')?>
+					</td>
+					<td class="label left top">
+						<input name="content" class="text" size="20"><?php echo $require;?>
+					</td>	
+					<td>
+						<input name="stock" class="text" size="5" value='1'>
+					</td>
+				</tr>	
+				<tr>
+					<td class="label right nowrap middle">
+					</td>
+					<td>
+						<input type="submit" value="提交" class="button button_add" name="submit">
+					</td>
+				</tr>		
+					</tbody>
+			</table>
+		</form>
+		</div>
+	</div>
+</div>
+
+

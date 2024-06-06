@@ -1,0 +1,54 @@
+<?php
+// 初始化变量
+$me = L('ME');
+$no_error = ($form->no_error !== FALSE);
+?>
+<div class="hr_1">&#160;</div>
+<div class="padding_2 form">
+	<form action="<?php echo H(URI::url()) ?>" method="post" autocomplete="off">
+	<?php echo V('form_error', ['form'=>$form]);?>
+	<?php $require = (string) V('form_require'); ?>
+		<table class="form">
+			<tbody>
+				<tr>
+					<td class="label right nowrap"><?php echo I18N::T('treenote', '名称')?></td>
+					<td><input class="text" size="40" name="title" value="<?php echo H($no_error ? $project->title : $form['title'])?>"/><?php echo $require?></td>
+				</tr>
+				<tr>
+					<td class="label right nowrap"><?php echo I18N::T('treenote', '负责人|:project')?></td>
+					<td>
+					<?php
+						$user = $no_error ? $project->user : $form['user'];
+						if (!$user->id) {
+							$user = $me;
+						}
+						echo Widget::factory('user_selector', [
+												 'autocomplete'=>'',
+												 'name'=>'user', 
+												 'user'=> $user,
+												 'size'=> 40,
+												 ]);
+					?><?php echo $require?>
+					</td>
+				</tr>
+				<tr>
+					<td class="label right nowrap top"><?php echo I18N::T('treenote', '说明')?></td>
+					<td class="top">
+					<textarea class="text autogrow" name="description" cols="60" rows="3"><?php echo $no_error ? $project->description : $form['description']?></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td>&#160;</td>
+					<td class="nowrap">
+						<input class="button button_save" type="submit" name="submit" value="<?php echo H($project->id ? I18N::T('treenote', '修改') : I18N::T('treenote', '添加')) ?>" />
+						<?php if ($project->id && $me->is_allowed_to('删除', $project)): ?>
+							&#160;&#160;&#160;
+							<a class="font-button-delete" confirm="<?php echo I18N::HT('treenote', '您确定删除该项目吗?')?>" href="<?php echo H($project->url(NULL, NULL, NULL, 'delete') ) ?>"><?php echo I18N::HT('treenote', '删除')?></a>
+						<?php endif; ?>
+
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</div>

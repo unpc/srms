@@ -1,0 +1,64 @@
+<div class="form clearfix">
+	<form method="POST" class="edit">
+
+        <table class="form flexible">
+            <tbody>
+            <tr>
+                <td class="top icon" width="130" rowspan="2">
+                    <div class="icon-radius"><?php echo $equipment->icon('104');?></div>
+                </td>
+                <td class="top">
+                    <?php echo V('form_error', ['form' => $form]);?>
+                    <h2 class="section_title">
+                        <span class="border"></span>
+                        <span class="black_title"><?php echo I18N::T('eq_door', '刷卡进门时间提前 (分钟)')?></span>
+                    </h2>
+                    <div class="interval_12"></div>
+                    <div>
+                        <input class="text right number lmaigin_1e5" name="slot_card_ahead_time" value="<?php echo H($form['slot_card_ahead_time'] ?: ($equipment->slot_card_ahead_time ?: 0))?>" />
+                    </div>
+                    <div class="interval_24"></div>
+                    <h2 class="section_title">
+                        <span class="border"></span>
+                        <span class="black_title"><?php echo I18N::T('eq_door', '刷卡进门时间延后 (分钟)')?></span>
+                    </h2>
+                    <div class="interval_12"></div>
+                    <div>
+                        <input class="text right number lmaigin_1e5" name="slot_card_delay_time" value="<?php echo H($form['slot_card_delay_time'] ?: ($equipment->slot_card_delay_time ?: 0))?>" />
+                    </div>
+                    <div class="interval_24"></div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="form eq_door_door_edit_equipment" style="padding-left: 130px">
+            <?php
+                $doors = Q("{$equipment} iot_gdoor.asso");
+                $specific = [];
+                foreach ($doors as $key => $door) {
+                    if (isset($specific[$key])) {
+                        continue;
+                    }
+                    $specific[$key]['door'] = $door;
+                }
+                echo Widget::factory('flexform', [
+                    'title' => I18N::T('iot_gdoor', '关联门牌'),
+                    'template_data' => ['disabled'=>true],
+                    'existing_data' => $specific,
+                    'delete_message' => I18N::T('iot_gdoor', '您确定要取消该门牌的关联吗？请谨慎操作！'),
+                    'item_view' => 'iot_gdoor:gdoor/door_special_item',
+                    'extra_vars' => [
+                        'equipment' => $equipment,
+                    ],
+                ]);
+            ?>
+        </div>
+
+        <div class="interval_30"></div>
+        <div class="form float_right" style="padding-left: 130px">
+            <input name="submit" class="font-button-save" type="submit" value="<?php echo H(I18N::T('eq_door', '保存修改'))?>" />
+            <input type="reset" name="cancel" class="font-button-default rmargin_16" value="<?php echo H(T('取消'))?>" />
+        </div>
+    </form>
+</div>

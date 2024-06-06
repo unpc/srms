@@ -1,0 +1,76 @@
+<?php
+$upload_form_uniqid = 'upload_form_'.uniqid();
+$error_msg = I18N::T('nfs', '异常原因: 文件上传中止!');
+$upload_size = intval(ini_get('upload_max_filesize'));
+?>
+<div class="form" class="prevent_default">
+    <div class="interval_24"></div>
+	<form id="<?php echo H($upload_form_uniqid) ?>" method="post" action="<?php echo H(URI::url('!nfs/nfs/upload.'.$object->name().'.'.$object->id.'.'.$path_type,['path'=>$path, 'form_token'=>$form_token])) ?>" class="nowrap">
+        <div style="height: 30px;line-height: 30px;">
+            <input name="Filedata" type="file" class="middle" />
+    		<input name="single" type="hidden" value="1" />
+		</div>
+		<br>
+        <a name="upload" href="#" class="float_right font-button-save middle prevent_default"><?php echo I18N::HT('nfs', '上传')?></a>
+	</form>
+    <div class="interval_40"></div>
+</div>
+<script>
+jQuery(function($){
+
+    $('input[name=Filedata]').change(function () {
+        let l = this.files[0].size,
+            lt = '<?= $upload_size?>';
+        if (l) {
+            let li = parseInt(lt * 1024 * 1024);
+            if (li < l) {
+                alert('上传体积小于等于<?= $upload_size?>MB以下的文件');
+            }
+        }
+    });
+
+    var $form = $('#<?php echo $upload_form_uniqid?>');
+
+	$form
+	.find('a[name=upload]')
+	.bind('click', function(){
+		$form.ajaxSubmit({
+			dataType: 'json',
+			complete: function (data) {
+				if (data.error == 'aborted' || data.aborted) {
+					alert('<?php echo $error_msg?>');
+				}
+			},
+			success : function(data, status, xhr) {
+
+				Dialog.close();
+				var $tbody = $('#<?php echo $form_id?>').find('tbody:eq(0)');
+				$tbody.prepend(data);
+			}
+		});
+		return false;
+	});
+
+	$(document).bind('dialog_close', function(){
+
+		$('iframe').remove();
+
+		var $loadingBox = $('.loading_box');
+		$loadingBox.trigger('ajaxComplete');
+		if (timer) {
+			clearInterval(timer)
+		}
+		return false;
+	});
+
+    var timer = setInterval(function () {
+        Q.trigger({
+            object: 'check_result',
+            event: 'refresh',
+            global: false,
+            url: "<?php echo H(URI::url('!nfs/nfs')) ?>",
+        });
+    }, 2000);
+
+});
+</script>

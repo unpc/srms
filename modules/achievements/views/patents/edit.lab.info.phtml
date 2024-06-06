@@ -1,0 +1,20 @@
+<?php
+$me = L('ME');
+$require = (string)V('form_require');
+if (Module::is_installed('labs')) : ?>
+<tr>
+  <td class="label left nowrap middle label_width"><?php echo $require;echo I18N::T('labs', '实验室'); ?></td>
+  <td class="middle">
+    <?php
+      $autocomplete = $me->access('添加/修改所有实验室成果') ? FALSE : URI::url("!labs/autocomplete/lab.{$me->id}");
+      $selected_lab = !$form->no_error ? $form['lab'] : (Q("$patent lab")->current()->id ?: '');
+      echo Widget::factory('labs:lab_selector', [
+        'name'=>'lab',
+        'selected_lab'=> $selected_lab,
+        'autocomplete'=> $autocomplete
+      ]);
+    ?>
+  </td>
+  <td colspan="3"></td>
+</tr>
+<?php endif; ?>

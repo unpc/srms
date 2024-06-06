@@ -1,0 +1,14 @@
+<div class="show_collection">
+	<?php 
+		$msg = $collection->id ? I18N::T('inventory', "%name", ['%name'=>$collection->product_name]) : I18N::T('inventroty', '其他存货');	
+	?>
+	<span class="collection_name collection:<?php echo $collection->id?>"><?php echo H($msg);?></span>
+	<?php if($collection->id): ?>
+		<a class="hidden blue"><?php echo I18N::T('inventory', '修改名称'); ?></a>
+	<?php endif; ?>
+	<div id="<?php echo $collection->id; ?>" class="collection_count <?php echo $collection->id;?>">
+		<a style="color:#6FB1D5">
+			<?php echo I18N::HT('inventory', '(共%count条)', ['%count'=>$count]); ?>
+		</a>
+	</div>
+</div>

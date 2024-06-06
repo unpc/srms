@@ -1,0 +1,20 @@
+<tr>
+    <td colspan="2" class="left nowrap category">
+        <b><?php echo I18N::T('material', '选用耗材');?></b>
+    </td>
+</tr>
+<?php
+$select_materials = json_decode($sample->materials, true);
+if ($select_materials) foreach ($select_materials as $id => $number) :
+    $material = O('material', $id);
+    ?>
+    <tr>
+        <td class="left nowrap">
+            <div class="holder">&#160;</div>
+            <?php echo $material->name.'('.$material->material_unit->name.')'?>
+        </td>
+        <td class="left nowrap">
+            <?php echo $number; ?>
+        </td>
+    </tr>
+<?php endforeach; ?>

@@ -1,0 +1,28 @@
+<?php
+
+$title = Date::range($object->dtstart, $object->dtend);
+
+$content = Event::trigger('calendar.component_list.render', $object);
+?>
+<div class="component padding_1">
+<?php
+$me = L('ME');
+if ($me->is_allowed_to('修改事件', $object->calendar) && $me->is_allowed_to('修改', $object)): 
+$q_static = H([
+	'id'=>$object->id
+]);
+?>
+<a href="#" q-object="list_edit_component" q-event="click" q-static="<?php echo H($q_static) ?>" class="function_button blue"><?php echo I18N::T('calendars', '编辑');?></a>
+<?php endif; ?>
+<p class="description"><small><?php echo Date::format($object->dtstart)?> - <?php echo Date::relative($object->dtend, $object->dtstart)?></small></p> 
+<table class="form">
+	<tr>
+		<td class="top icon"><?php echo $object->organizer->icon('48') ?></td>
+		<td class="top">
+			<?php echo $content ?: H($object->name); ?>
+			<p class="description"><?php echo H($object->description, TRUE)?></p>
+		</td>
+	</tr>
+</table>
+</div>
+

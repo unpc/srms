@@ -1,0 +1,14 @@
+<?php 
+$q_static = [
+	'type'=>$type,
+	'basic_info_tbody_id'=>$basic_info_tbody_id
+];
+$q_dynamic = [
+	'pmid'=>'[name=pmid]'
+];
+?>
+<div class="padding_1 nowrap" style="width: 400px;">
+<strong class="middle">PMID</strong>
+<input type="text" class="text middle" name="pmid" />
+<a href="#" title="导入" class="font-button-save" q-object="submit_info" q-event="click" q-static="<?php echo H($q_static) ?>" q-dynamic="<?php echo H($q_dynamic) ?>"><?php echo I18N::T('achievements', '导入');?></a>
+</div>

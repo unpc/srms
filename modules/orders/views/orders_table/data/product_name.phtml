@@ -1,0 +1,36 @@
+<span class="order_id"><?php echo Number::fill($order->id);?></span>
+<a href="<?php echo H($order->url()) ?>" class="nowrap">
+	<strong><?php echo H($order->product_name)?></strong>
+</a>
+<?php
+$source = $order->source;
+$configs = Config::get('mall.sites');
+$source_label = $configs[$source]['label'];
+$mall_order = O('mall_order', ['order'=> $order]);
+$mall_url = URI::url('mall/go', ['source'=> $order->source, 'oid'=> $mall_order->item_id]);
+?>
+<?php if ($source_label && $mall_order->id) :?>
+	<?php if(L('ME')->is_allowed_to('进入商城', 'order')) : ?>
+	<a target="_blank" href="<?php echo H($mall_url ) ?>" class="mall_tag nowrap"><?php echo trim($source_label); ?></a>
+	<?php else:?>
+	<a class="mall_tag nowrap"><?php echo trim($source_label); ?></a>
+	<?php endif;?>
+<?php endif; ?>
+<?php if ( $order->manufacturer || $order->catalog_no || $order->model  ) : ?>
+<div class="description">
+<span class="nowrap"><?php echo H($order->manufacturer); ?></span>
+<?php if ($order->catalog_no) :?>
+	<span class="nowrap">#<?php echo H($order->catalog_no); ?></span>
+<?php endif; ?>
+&#160;
+<?php if ($order->model) : ?>
+	<span class="nowrap"><?php echo H($order->model); ?></span>
+<?php endif; ?>
+</div>
+<?php endif; ?>
+<?php
+$root = Tag_Model::root('inventory'); /* TODO fix inventory tag */
+$tags = Q("$order tag[root=$root]");
+foreach ($tags as $tag) {
+	echo '<a class="inventory_tag" href="'.URI::url('!orders/index?tag='.$tag->id).'">'.H($tag->name).'</a> ';
+}

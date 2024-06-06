@@ -1,0 +1,70 @@
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          lims2_daemon
+# Required-Start:    $remote_fs
+# Required-Stop:     $remote_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: starts lims2_daemon
+# Description:       Starts LIMS2 Daemon
+### END INIT INFO
+
+# 要注意 header 不会被自动处理, 还是得用 update-rc.d (postinst 已加)
+# Author: Xiaopei Li <xiaopei.li@geneegroup.com>
+
+daemon="/usr/bin/daemon"
+daemon_conf="/etc/lims2/daemon.conf"
+
+load_daemon_config() {
+    # 读取配置, 并删除注释和空行
+	sed 's/#.*$//' $daemon_conf | \
+		sed '/^$/d'
+}
+
+start_daemon() {
+	echo "Starting lims2 daemons"
+	load_daemon_config | \
+		while read daemon_opts
+	do
+		echo "$daemon $daemon_opts"
+		$daemon $daemon_opts
+		sleep 1
+	done
+	echo "done"
+}
+
+stop_daemon() {
+	echo "Stopping lims2 daemons"
+
+	# 只要 sudo 运行 daemon, 就会在 /run 中建立 lims2_ 开头的 pidfile,
+	# kill 之即可关闭进程
+    find /var/run/ -name "lims2_daemon_*.pid" -print | while read PID; do
+        kill  $(cat $PID);
+    done
+
+    echo "done"
+}
+
+# main
+if [ ! -f $daemon -o ! -f $daemon_conf ]
+then
+	echo "daemon not installed or daemon_conf not exists"
+	exit 1
+fi
+
+case "$1" in
+	start)
+		start_daemon
+		;;
+	stop)
+		stop_daemon
+		;;
+	restart)
+		stop_daemon
+		start_daemon
+		;;
+	*)
+		echo "Usage: /etc/init.d/lims2_daemon start|stop|restart"
+		exit 2
+		;;
+esac

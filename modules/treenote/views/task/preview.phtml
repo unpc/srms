@@ -1,0 +1,64 @@
+<div class="padding_1">
+	<h2>
+		<?php echo V('treenote:task/table/data/status', ['task'=>$task]); ?>
+		<?php echo H($task->title); ?>
+	</h2>	
+	<div class="hr_1">&#160;</div>
+	<table class="form">
+		<tr>
+			<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::HT('treenote', '所属项目')?></span></td>
+			<td class="nowrap">
+				<a href="<?php echo H($task->project->url()) ?>"><?php echo H($task->project->title) ?></a>
+			</td>
+		</tr>
+		<tr>
+			<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::HT('treenote', '负责人|:task')?></span></td>
+			<td class="nowrap">
+				<?php $task->user->render() ?>
+			</td>
+		</tr>
+		<tr>
+			<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::HT('treenote', '优先级')?></span></td>
+			<td class="nowrap">
+				<?php echo V('treenote:task/table/data/priority', ['task'=>$task]); ?>
+			</td>
+		</tr>
+		<tr>
+			<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::HT('treenote', '截止日期')?></span></td>
+			<td class="nowrap">
+				<?php echo Date::format($task->deadline, T('Y/m/d')) ?>
+			</td>
+		</tr>
+		<?php if ($task->description): ?>
+		<tr>
+			<td class="nowrap tight top"><span class="status_tag status_tag_label"><?php echo I18N::HT('treenote', '说明')?></span></td>
+			<td class="nowrap top">
+				<div class="task_description">
+				<?php echo H($task->description, TRUE) ?>
+				</div>
+			</td>
+		</tr>
+		<?php endif; ?>
+		<tr>
+			<td class="nowrap tight">&#160;</span></td>
+			<td class="nowrap">
+				<?php echo Widget::factory('application:links', ['links' => $task->links('view'), 'separator' => ' ']);?>
+			</td>
+		</tr>
+<?php
+$subtasks = Q("tn_task[parent_task=$task][is_complete=0]:sort(deadline A, priority A)");
+if ($subtasks->total_count() > 0): ?>
+<tr>
+	<td class="nowrap tight top"><span class="status_tag status_tag_label"><?php echo I18N::HT('treenote', '子任务') ?></td>
+	<td class="top">
+		<div class="subtasks">
+		<?php
+			foreach ($subtasks as $t) { echo V('treenote:task/subtask', ['task'=>$t]); }
+		?>
+		</div>
+	</td>
+</tr>
+<?php endif;?>
+	</table>
+</div>
+

@@ -1,0 +1,12 @@
+<div class="hr_1">&#160;</div>
+<div class="form padding_1">
+	<form autocomplete="off" action="<?php echo H(URI::url()) ?>" method="post" enctype="multipart/form-data">
+		<p>
+			<?php echo I18N::T('orders','目前仅支持csv格式的文件，如果你的文件不是csv格式，可以用Excel导出成csv格式.'); ?>
+			<br/>
+			<input name="file" type="file" class="file" />
+			<input type="submit" class="button button_import" name="submit" value="<?php echo H(I18N::T('orders', '导入')) ?>"/>
+		</p>
+	</form>
+	
+</div>

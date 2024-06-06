@@ -1,0 +1,4 @@
+<?php $lab = Q("{$credit->user} lab")->current(); ?>
+<?php if ($lab->id): ?>
+    <div><a href="<?php echo H($lab->url() ) ?>"><?php echo H($lab->name) ?></a></div>
+<?php endif;?>

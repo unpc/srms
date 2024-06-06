@@ -1,0 +1,136 @@
+<?php
+/*
+NO.TASK#260（guoping.zhang@2010.11.19)
+查看、添加、修改日程权限判断
+NO.BUG#178（guoping.zhang@2010.11.20)
+添加日程时is_allowed_to的客体是calendar对象
+*/
+$me = L('ME');
+$can_update = $me->is_allowed_to('修改事件', $component->calendar);
+$can_add = $me->is_allowed_to('添加事件', $component->calendar);
+$can_delete = $me->is_allowed_to('删除', $component);
+if ($can_update || $can_add) :
+	$component_form = $this->component_form;
+if ($component_form['#global_css']) {
+    echo "<style>{$component_form['#global_css']}</style>";
+}
+?>
+<div class="form">
+    <div class="nowrap">
+        <?php
+	  	//guoping.zhang@2011.01.15
+		#ifdef(calendars.enable_repeat_event)
+		if ($GLOBALS['preload']['calendars.enable_repeat_event']) {
+			/*
+			NO.TASK#263(xiaopei.li@2010.11.24)
+			修改rrule链接的显示方式
+			*/
+			if ($me->is_allowed_to('添加重复规则', $component->calendar)) {
+				if (isset($component_form['rrule'])) {
+					$name = 'rrule';
+					$properties = $component_form['rrule'];
+					$path = isset($properties['path']['form']) ? $properties['path']['form'] : 'calendars:calendar/component_form/';
+					echo V($path.$name, ['component'=>$component,
+									'name'=>$name,
+									'properties'=>$properties,
+									'calendar'=>$calendar,
+									'files'=>$files
+							]);
+					unset($component_form['rrule']);
+				}
+			}
+	 }
+	 #endif
+	?>
+    </div>
+    <form class="view object:component_form   max_dialog_W600" autocomplete="off" method="post">
+    <input type="hidden" name="reserv_form_token" value="<?php echo H($form['reserv_form_token']) ?>"/>
+        <?php
+	$notice = Event::trigger('component.notice', $component, $calendar);
+	if ($notice) :
+	?>
+        <div class="message message_normal clearfix nowrap"><?= H($notice);?></div>
+        <?php
+	endif;
+	if (isset($message)):
+	?>
+        <div class="message message_error clearfix nowrap"><?php echo H($message);?></div>
+        <?php endif;?>
+        <?php if ($mode) : ?>
+        <input type="hidden" name="mode" value="<?php echo H($mode) ?>"/>
+        <?php endif;?>
+        <?php echo V('form_error', ['form' => $form]);?>
+        <input type="hidden" name="component_id" value="<?php echo H($component->id) ?>"/>
+        <input type="hidden" name="calendar_id" value="<?php echo H($calendar->id ?: $component->calendar->id) ?>"/>
+        <table class="form">
+        <?php
+		$calendar = $component->calendar;
+		$has_categories = $component_form['#categories'];
+        if ($has_categories) {
+			echo V('calendars:calendar/component_form_with_categories', ['component_form'=> $component_form, 'component'=> $component, 'calendar'=> $calendar, 'files'=> $files, 'form' => $form]);
+        }
+		else {
+            echo V('calendars:calendar/component_form_without_categories', ['component_form'=> $component_form, 'component'=> $component, 'calendar'=> $calendar, 'files'=> $files, 'form' => $form]);
+		}
+		?>
+
+
+            <?php if ($this->tip): ?>
+            <tr>
+                <td colspan="2" align="center" class="description"><?php echo H($this->tip, TRUE); ?></td>
+            </tr>
+            <?php endif; ?>
+
+        </table>
+
+
+
+            <div class="button_container">
+                <div class="float_right">
+                    <?php if ($can_delete): ?>
+                    <input type="submit" name="delete" class="font-button-delete rmargin_2e4" value="<?php echo H(I18N::T('calendars', '删除')) ?>">
+                    <?php endif; ?>
+                    <?php if ($can_update || $can_add): ?>
+                    <input type="submit" name="save" class="font-button-save rmargin_2e4" value="保存">
+                    <input type="button" name="cancel" id="cancel" class="font-button-default" value="取消">
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- <div <?php if ($has_categories) echo 'class="button_container"';?>>
+                <?php if ($can_update || $can_add) :?>
+                <div class="float_right">
+                    <input
+                        type="button"
+                        class="font-button-default sm rmargin_2e4"
+						name="cancel"
+						id="cancel"
+                        value="<?php echo H(I18N::T('calendars', '取消')) ?>"/>
+                    <input
+                        type="submit"
+                        class="font-button-save sm"
+                        name="save"
+                        value="<?php echo H(I18N::T('calendars', '保存')) ?>"/>
+                </div>
+                <?php endif;
+		if ($can_delete) : ?>
+                <input
+                    type="submit"
+                    class="font-button-delete"
+                    name="delete"
+                    value="<?php echo H(I18N::T('calendars', '删除')) ?>"/>
+                <?php endif; ?>
+            </div> -->
+
+
+    </form>
+    <script type="text/javascript">
+        function addAttendee(attId, attRoleId) {
+            var att = $('#' + attId).val();
+            var attRole = $('#' + attRoleId).val();
+        }
+
+
+    </script>
+</div>
+<?php endif; ?>

@@ -1,0 +1,14 @@
+<div class="form padding_2">
+    <form method="post" action="<?php echo H(URI::url('!schedule/export', ['form_token'=> $form_token])) ?>" target="<?= $type == 'csv' ? '_self' : '_blank'?>" class="prevent_default">
+        <?php echo Form::hidden('type', $type);?>
+        <?php echo Form::hidden('dtstart', $dtstart);?>
+        <?php echo Form::hidden('dtend', $dtend);?>
+        <?php echo Form::hidden('calendar_id', $calendar_id);?>
+        <ul class="ep_triple">
+            <?php foreach(Config::get('calendar.export_columns.schedule') as $key => $value) : ?>
+                <li><?php echo Form::checkbox($key, TRUE, I18N::T('schedule', $value))?></li>
+            <?php endforeach;?>
+        </ul>
+        <input class="button button_edit" type="submit" name="submit" value="<?php echo H(I18N::T('schedule', '提交')) ?>" />
+    </form>
+</div>

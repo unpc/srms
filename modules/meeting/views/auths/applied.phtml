@@ -1,0 +1,26 @@
+<?php echo $pagination; ?>
+<?php
+	$table = Widget::factory('table');
+    $table->name = 'meeting_applied_auth';
+	$table->add_columns((array) $columns);
+
+	$table->empty_message = I18N::T('meeting', '没有授权记录!');
+
+	if (count($auths) > 0) {
+		foreach($auths as $auth) {
+			$user = $auth->user;
+			$table->add_row([
+				/* '@'=>[
+					'view' => $user->icon('32', 'style="display:block"'),
+					'extra' => 'style="padding:4px" align="right"',
+				], */
+				'approved_name'=>V('meeting:users_table/data/name', ['user'=>$user]),
+				'contact_info'=>V('meeting:users_table/data/mobile', ['user'=>$user, 'auth'=>$auth]),
+				'address'=>V('meeting:users_table/data/address', ['user'=>$user]),
+				'rest'=>Widget::factory('application:links', ['links' => $auth->links('applied')]),
+			]);
+		}
+    }
+
+	echo $table;
+?>

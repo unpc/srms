@@ -1,0 +1,11 @@
+<?php
+
+$extra = '';
+if ($task->is_complete) {
+	$extra = 'task_status_complete';
+}
+elseif ($task->is_locked) {
+	$extra = 'task_status_locked';
+}
+?>
+<span class="task_status <?php echo $extra?>">&#160;</span>

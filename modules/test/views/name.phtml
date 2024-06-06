@@ -1,0 +1,10 @@
+<?php echo CSS::load_async('nfs:common');?>
+<?php if ($file[type] == 'dir') :?>
+	<span class="file file_dir">
+		<a href="<?php echo H(URI::url().'.'.$file['name'].'%F' ) ?>"><?php echo $file['name'];?></a>
+	</span>
+<?php else :?>
+	<span class="file file_default">
+		<a q-event="click" q-object='execute_file' q-static="<?php echo H($path) ?>" q-src="<?php echo H(URI::url('!test/execute')) ?>" href="#"> <?php echo $file['name'];?> </a>
+	</span>
+<?php endif;?>

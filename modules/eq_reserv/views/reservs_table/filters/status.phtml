@@ -1,0 +1,4 @@
+<?php
+$status = EQ_Reserv_Model::$reserv_status;
+unset($status[EQ_Reserv_Model::PENDING]);
+echo Form::dropdown('reserv_status',I18N::T('eq_reserv', [-1=>'--'] + $status), $form['reserv_status'] ?: -1, 'class="dropdown middle"');

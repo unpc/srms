@@ -1,0 +1,54 @@
+<div class="hr_1">&#160;</div>
+<div class="panel padding_1">
+	<a class="button button_add"><?php echo I18N::T('envmon', '补增记录')?></a>
+</div>
+<?php
+
+echo $pagination;
+
+$table = Widget::factory('table');
+
+$table->name = 'nodes';
+$table->add_columns([
+	'@'=>NULL,
+	'name'=>[
+		'title'=>I18N::T('envmon', '传感器名称'),
+		/*
+		'filter'=>array(
+			'form'=>V('envmon:datapoints/filters/name', array('form'=>$form)),
+			'value'=>$form['name'] ? H($form['name']) : NULL
+		),
+		*/
+		'nowrap'=>TRUE,
+	],
+	'ctime' => [
+		'title' => I18N::T('envmon', '记录时间'),
+		'nowrap'=>TRUE,
+	],
+	'value' => [
+		'title' => I18N::T('envmon', '采样值'),
+		'nowrap'=>TRUE,
+	],
+	'rest'=>[
+		'align' => 'right',
+		'extra_class' => 'flexible',
+ 		'nowrap' => TRUE,
+	],
+]);
+
+$table->empty_message = I18N::HT('envmon', '没有历史记录!');
+
+foreach ($datapoints as $p) {
+	$table->add_row([
+		'@'=>[
+            'view'=> $p->sensor->node->icon('32'),
+			'extra'=>' style="padding:2px; vertical-align:top"'
+		],
+		'name'=> H($p->sensor->name),
+		'ctime' => Date::format($p->ctime),
+		'value' => $p->value.$p->sensor->unit(),
+		'rest' => NULL
+	]);
+}
+
+echo $table;

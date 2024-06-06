@@ -1,0 +1,64 @@
+<?php
+$control_uniqid = 'control_id_' . uniqid();
+?>
+<div class="equipment_detail clearfix" id="<?php echo $control_uniqid; ?>" style="position: relative;">
+    <table class="form flexible">
+        <tbody>
+        <tr>
+            <td class="top icon interval" rowspan="2" style="position: relative;">
+                <?= V('service/view/icon', ['service' => $service, 'id' => $control_uniqid]); ?>
+
+                <div class="clearfix"></div>
+            </td>
+
+            <td class="top nowrap info flexible" rowspan="2">
+                <h2>
+                    <a href="<?php echo H($service->url()) ?>" style="padding-right: 30px;">
+                        <?php echo H($service->name . ' ' . $service->en_name); ?>
+                    </a>
+                </h2>
+                <div style="height: 20px;"></div>
+                <p>
+                        <span style="display: inline-block; width: 50%;">
+                             <?php echo I18N::T('equipments', '负责人') ?>
+                             <?php echo V('technical_service:service_table/data/incharges', ['service' => $service]); ?>
+			            </span>
+                    <span class="rpadding_1"><?php echo I18N::T('technical_service', '联系电话') ?></span>
+                    <span class="adjust_font"><?php echo H($service->phones); ?></span>
+                </p>
+
+                <p>
+                    <span style="display: inline-block; width: 50%;"><?php echo I18N::T('equipments', '邮箱') ?>
+                            <span class="lpadding_1"><?php echo URI::mailto($service->email) ?></span>
+                    </span>
+                <div style="height: 12px;"></div>
+            </td>
+            <td class="top right">
+                <?php
+                $links = $service->links('view');
+                ?>
+                <div class="float_right" style="width: 300px">
+                    <?php
+                    echo Widget::factory('application:links', ['links' => $links, 'separator' => ' ']) ?>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="tab_pagination" style="height: auto;border-bottom: 0px;">
+        <?php echo $secondary_tabs; ?>
+    </div>
+</div>
+
+
+<div class="interval_24_fixed interval_gray"></div>
+<div class="interval_24"></div>
+
+<div class='search_panel' <?php if (!$secondary_tabs->search_box && !$secondary_tabs->panel_buttons) echo 'style="display:none"'; ?>>
+    <div class="interval_16"></div>
+    <?= $secondary_tabs->search_box ?>
+    <?= $secondary_tabs->panel_buttons ?>
+</div>
+<?php
+echo $secondary_tabs->content;
+?>

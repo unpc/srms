@@ -1,0 +1,5 @@
+<?php 
+	$root = Tag_Model::root('achievements_award');
+	$tags = (array) Q("$award tag_achievements_award[root=$root]")->to_assoc('name','name');			
+	echo implode(',',$tags);			
+?>

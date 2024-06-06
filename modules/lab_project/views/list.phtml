@@ -1,0 +1,116 @@
+<?php
+$me = L('ME');
+
+$table = Widget::factory('table');
+$table->name = 'lab_project';
+$table->form = $form;
+if ($form['dtstart_check'] && $form['dtend_check']) {
+    $form['date'] = H(date('Y/m', $form['dtstart'])) . '~' . H(date('Y/m', $form['dtend']));
+} elseif ($form['dtstart_check']) {
+    $form['date'] = H(date('Y/m', $form['dtstart'])) . '~' . I18N::T('eq_charge', '最末');
+} elseif ($form['dtend_check']) {
+    $form['date'] = I18N::T('eq_charge', '最初') . '~' . H(date('Y/m', $form['dtend']));
+}
+
+$columns = [
+    'name' => [
+        'title' => I18N::T('lab_project', '名称'),
+        'filter' => [
+            'form' => V('lab_project:lab_project_table/filters/name', ['name' => $form['name']]),
+            'value' => $form['name'] ? H($form['name']) : NULL
+        ],
+        'nowrap' => TRUE
+    ],
+    'lab' => [
+        'title' => I18N::T('lab_project', '课题组'),
+        'filter' => [
+            'form' => V('lab_project:lab_project_table/filters/lab', ['lab' => $form['lab']]),
+            'value' => $form['lab'] ? O('lab', H($form['lab']))->name : NULL
+        ],
+        'nowrap' => TRUE
+    ],
+    'type' => [
+        'title' => I18N::T('lab_project', '分类'),
+        'filter' => [
+            'form' => V('lab_project:lab_project_table/filters/type', ['type' => $form['type']]),
+            'value' => $form['type'] != -1 && $form['type'] != NULL ? H(Lab_Project_Model::$types[$form['type']]) : NULL
+        ],
+        'nowrap' => TRUE
+    ],
+    'incharge' => [
+        'title' => I18N::T('lab_project', '负责人'),
+        'nowrap' => TRUE
+    ],
+    'ptype' => [
+        'title' => I18N::T('lab_project', '类别'),
+        'nowrap' => TRUE
+    ],
+    'grant' => [
+        'title' => I18N::T('lab_project', '经费'),
+        'nowrap' => TRUE
+    ],
+    'date' => [
+        'title' => I18N::T('lab_project', '时间'),
+        'filter' => [
+            'form' => V('lab_project:lab_project_table/filters/date', [
+                'dtstart_check' => $form['dtstart_check'],
+                'dtstart' => $form['dtstart'],
+                'dtend_check' => $form['dtend_check'],
+                'dtend' => $form['dtend'],
+            ]),
+            'value' => $form['date'] ? H($form['date']) : NULL,
+            'field' => 'dtstart_check,dtstart,dtend,dtend_check'
+        ],
+        'nowrap' => TRUE,
+    ],
+    'rest' => [
+        'align' => 'right',
+        'nowrap' => TRUE,
+    ]
+];
+
+$columns = new ArrayObject($columns);
+Event::trigger('lab_project.table_list.columns', $form, $columns);
+$table->add_columns((array) $columns);
+$table->empty_message = I18N::T('lab_project', '没有查询到相应的项目!');
+
+if (count($lab_projects) > 0) {
+    foreach ($lab_projects as $lab_project) {
+        $links = [];
+        if ($me->is_allowed_to('修改', $lab_project->lab)) {
+            $links['edit'] = [
+                'url' => $lab_project->lab->url('project', '', '', 'edit'),
+                'text' => I18N::T('equipments', '修改'),
+                'extra' => 'class="blue" target="_blank"',
+            ];
+        }
+
+        $row = [
+            'name' => V('lab_project:lab_project_table/data/name', ['lab_project' => $lab_project]),
+            'lab' => V('lab_project:lab_project_table/data/lab', ['lab_project' => $lab_project]),
+            'type' => V('lab_project:lab_project_table/data/type', ['lab_project' => $lab_project]),
+            'incharge' => V('lab_project:lab_project_table/data/incharge', ['lab_project' => $lab_project]),
+            'ptype' => V('lab_project:lab_project_table/data/ptype', ['lab_project' => $lab_project]),
+            'grant' => V('lab_project:lab_project_table/data/grant', ['lab_project' => $lab_project]),
+            'date' => V('lab_project:lab_project_table/data/date', ['lab_project' => $lab_project]),
+            'rest' => Widget::factory('application:links', ['links' => $links])
+        ];
+        $row = new ArrayObject($row);
+        Event::trigger('lab_project.table_list.row', $row, $lab_project);
+        $table->add_row((array) $row);
+    }
+}
+
+if ($list_type == 'lab') {
+    unset($table->columns['lab']['filter']);
+}
+$param = [
+    'is_offset'     => true,
+    'top_input_arr' => ['name'],
+    'columns'       => $table->columns,
+];
+
+echo V('application:search_box', $param);
+echo $table;
+?>
+<?= $pagination ?>

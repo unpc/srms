@@ -1,0 +1,11 @@
+<div class="gray_tag_container middle">
+<?php
+$root = Tag_Model::root('group');
+echo Widget::factory('application:tag_selector', [
+	'root' => $root,
+    'tag' => $form['eq_reserv_group'] ? O('tag_group', $form['eq_reserv_group']) : NULL,
+	'name' => 'eq_reserv_group',
+	'ajax' => TRUE
+]);
+?>
+</div>

@@ -1,0 +1,54 @@
+<span>
+    <?php echo Form::dropdown('transaction_type', I18N::T('billing', Billing_Transaction::$transaction_type), $this->type ? : 0 ,'class="small"'); ?>
+</span>
+<span class="sub_transaction_type">
+</span>
+<script type="text/javascript">
+(function($) {
+    $sub_transaction_type_span = $('span.sub_transaction_type');
+
+    $transaction_type = $(':input[name=transaction_type]');
+
+
+    sub_transaction_type = <?php echo isset($form['sub_transaction_type']) ? $form['sub_transaction_type'] : 0;?>;
+
+    //进行trigger
+    function _trigger_change() {
+
+        v = $transaction_type.val();
+
+        if (v == 0) {
+            $sub_transaction_type_span.empty(); //进行清空
+        }
+        else {
+
+            Q.trigger({
+                object: 'transaction_type',
+                event: 'change',
+                url: '<?php echo URI::url('!billing/transactions');?>',
+                data: {
+                    transaction_type: v,
+                    sub_transaction_type: sub_transaction_type
+                },
+                global: false,
+                success: function(data) {
+                   if (data.view_data) $sub_transaction_type_span.html(data.view_data); //如果有返回结果, 进行内容设定
+                    return false;
+                }
+            });
+
+            //进行trigger
+            sub_transaction_type = 0;
+        }
+
+        return false;
+    }
+
+    _trigger_change(); 
+
+    $transaction_type.bind('change', function() {
+        _trigger_change();
+    });
+
+})(jQuery);
+</script>

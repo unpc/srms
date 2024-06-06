@@ -1,0 +1,132 @@
+<div class="hr_1">&#160;</div>
+<?= $secondary_tabs ?>
+<div class="hr_1">&#160;</div>
+<?php if ($secondary_tabs->selected === 'need' && count($reservs)): ?>
+<?php
+$uniqid = uniqid();
+$select_all_id = 'select_all_' . $uniqid;
+$batch_form_id = 'batch_form_' . $uniqid;
+$form_token = 'form_token_' . $uniqid;
+?>
+<div class="panel padding_1 clearfix">
+    <div class="float_left lpadding_1">
+        <?php
+        echo Form::checkbox('', FALSE, I18N::T('reserv_approve', '全选'), 'id="'.$select_all_id.'"');
+        foreach ($reservs as $reserv)
+            echo Form::checkbox('select['.$reserv->id.']', FALSE, NULL, 'class="hidden" value="'.$reserv->id.'"');
+        ?>
+        &#160;&#160;
+    </div>
+    <span>
+    <?php 
+    $panel_buttons[] = [
+        'text' => I18N::T('people', '批量通过'),
+        'extra' => 'class="button button_tick approve_selected"',
+    ];
+    $panel_buttons[] = [
+        'text' => I18N::T('people', '批量驳回'),
+        'extra' => 'class="button button_delete approve_selected" data-type="reject"',
+    ];
+    echo Widget::factory('application:links', ['links' => $panel_buttons, 'separator'=>'&#160;']);
+    ?>
+    </span>
+</div>
+<?php
+echo JS::load('reserv_approve:approve', [
+        'form_token' => $form_token,
+        'no_checked' => I18N::T('people', '请选择要审核的预约!')
+]);
+
+echo JS::load('reserv_approve:index_operate', ['select_all_id' => $select_all_id, 'batch_form_id' => $batch_form_id]);
+?>
+<?php endif; ?>
+<?= $pagination ?>
+<?php 
+$me = L('ME');
+
+$table = Widget::factory('table');
+$table->name = 'reserv_approve';
+$table->form = $form;
+
+$columns = [
+    '@'=>NULL,
+    'ap_equipment'=> [
+        'title' => I18N::T('reserv_approve', '仪器名称'),
+        'filter'=> [
+            'form'=> V('reserv_approve:approve_table/filters/equipment', ['form'=> $form, 'name'=>'ap_']),
+            'value'=> H($form['ap_equipment']),
+        ],
+        'weight'=>10,
+        'nowrap'=>TRUE
+    ],
+    'ap_organizer' => [
+        'title' => I18N::T('reserv_approve', '预约者'),
+        'weight'=>20,
+        'nowrap' => TRUE,
+        'align' => 'left',
+        'filter' => [
+            'form' => V('reserv_approve:approve_table/filters/organizer', ['form' => $form, 'name'=>'ap_']),
+            'value' => $form['ap_organizer'] ? H($form['ap_organizer']) : NULL
+        ],
+    ],
+    'status' => [
+        'title' => I18N::T('reserv_approve', '审核状态'),
+        'align'=>'left',
+        'weight'=>30,
+        'nowrap'=>TRUE,
+        ],
+    'ap_date' => [
+        'title' => I18N::T('reserv_approve', '时间'),
+        'align' => 'left',
+        'nowrap' =>TRUE,
+        'weight'=>40,
+        'filter' => [
+            'form' => V('reserv_approve:approve_table/filters/ap_date', ['form' => $form]),
+            'value' => $date_value,
+            'field' => 'ap_dtstart_check,ap_dtend_check,ap_dtstart,ap_dtend'
+        ]
+    ],
+    'rest'=> [
+        'title' => I18N::T('reserv_approve', '操作'),
+        'align' => 'right',
+        'weight'=>50,
+        'nowrap'=>TRUE,
+    ]
+];
+
+if (in_array($tab, [Szu_EQ_Reserv_Model::STATE_REJECT, Szu_EQ_Reserv_Model::STATE_CANCEL])) {
+    $columns['note'] = [
+        'title' => I18N::T('reserv_approve', '备注'),
+        'align' => 'left',
+        'weight'=>35,
+        'nowrap'=>TRUE,
+    ];
+}
+
+$table->add_columns($columns);
+
+$table->empty_message = I18N::T('reserv_approve', '没有查询到相应的预约申请!');
+
+if (count($reservs) > 0) {
+    foreach($reservs as $reserv) {
+        $links = Reserv_Approve_Help::links($reserv);
+        $row = [
+            '@'=>[
+                'view'=>V('reserv_approve:approve_table/data/select', ['me' => $me, 'secondary_tabs' => $secondary_tabs, 'reserv' => $reserv, 'select_all_id' => $select_all_id]),
+                'extra'=>'style="padding:4px;min-width:44px;*width:44px;" align="right"',
+            ],
+            'ap_equipment'=> '<a style="text-decoration: underline;" href="'.$reserv->equipment->url().'">'.$reserv->equipment->name.'</a>',
+            'ap_organizer' => V('reserv_approve:approve_table/data/organizer', ['user' => $reserv->user]),
+            'status'=>Reserv_Approve_Help::get_status_str($reserv),
+            'ap_date'=>date('Y-m-d H:i:s', $reserv->dtstart).' - '.date('Y-m-d H:i:s', $reserv->dtend),
+            'rest'=>Widget::factory('application:links', ['links' => $links]),
+        ];
+        if (in_array($tab, [Szu_EQ_Reserv_Model::STATE_REJECT, Szu_EQ_Reserv_Model::STATE_CANCEL])) {
+            $row['note'] = V('reserv_approve:approve_table/data/note', ['tab' => $tab, 'reserv' => $reserv]);
+        }
+        $table->add_row($row);
+    }
+}
+echo $table;
+?>
+<?= $pagination ?>

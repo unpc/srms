@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" style="overflow: hidden; margin: 0px;">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+	<title>Glogon退出登录</title>
+
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <meta http-equiv="Content-Script-Type" content="text/javascript" />
+
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <link href="css/core.css" rel="stylesheet" type="text/css" />
+    <link href="css/text.css" rel="stylesheet" type="text/css" />
+    <link href="css/lims.css" rel="stylesheet" type="text/css" />
+    <link href="css/reset.css" rel="stylesheet" type="text/css" />
+    <link href="css/table.css" rel="stylesheet" type="text/css" />
+    <link href="css/glogon.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="js/jquery.js"></script>
+
+</head>
+
+<body>
+    <img src="images/glogon_banner.bmp" />
+    <div class="form">
+        <form window_width="420" window_height="420" action="glogon_action_submit" method="get" id="form">
+            <table class="form">
+                <tr>
+                    <td class="middle right label nowrap">
+                        仪器状态
+                    </td>
+                    <td class="top">
+                    <input id="normal" name="status" type="radio" class="middle" value_type="int" value="1" checked="true"/>
+                    <label for="normal" class="middle">正常</label>
+
+                    <input id="error" name="status" type="radio" class="middle" value_type="int" value="-1" />
+                    <label for="error" class="middle">故障</label>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="middle right label nowrap">
+                        关联项目
+                    </td>
+                    <td class="top">
+                        <select name="project">
+                            <option value="0" selected="selected">
+                                网络异常, 无法获取项目
+                            </option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="top right label nowrap">
+                        *反馈
+                    </td>
+                    <td class="top">
+                        <textarea name="feedback" rows="6" cols="40"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>&#160;</td>
+                    <td class="content">
+                        <input class="button" type="submit" value="提交" />
+                        <input class="button" type="button" value="取消" onclick="javascript:window.location.href='glogon_action_cancel'"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</body>
+<script type="text/javascript">
+$(document).ready(function() {
+    //form 获取
+    var $form = $('#form')
+        , $status = $form.find(':input[name=status]:checked');
+
+    $form.find(':submit').bind('click', function() {
+
+        var msg = [];
+
+        if (!$form.find('[name=feedback]').val()) {
+            msg.push("请填写反馈备注!");
+        }
+
+        if (msg.length) {
+            alert(msg.join('\n'));
+            return false;
+        }
+
+    });
+
+    $form.find(':reset').bind('click', function() {
+        window.location.href = 'glogon_action_cancel';
+    });
+});
+</script>
+</html>

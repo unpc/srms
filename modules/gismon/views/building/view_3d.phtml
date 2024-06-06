@@ -1,0 +1,4 @@
+<?php $building_id = 'building_plan_'.uniqid(); ?>
+<div class="hr_1">&#160;</div>
+<div id="o3d_<?php echo $building_id?>" style="width:100%; height:<?php echo Config::get('gis.view_height') ?>px;"></div>
+<?php echo JS::load('gismon:building', ['building_id'=>$building_id]); ?>

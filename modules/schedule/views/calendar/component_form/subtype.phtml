@@ -1,0 +1,14 @@
+<tr>
+	<td class="label right nowrap tight"><?php echo $properties['label'] ?></td>
+	<td>
+	<?php
+	echo Form::dropdown(
+				$name, 
+				$properties['default_value']['types'], 
+				!is_null($component->subtype) ? $component->subtype : $properties['default_value']['value'], 
+				'class="middle"'
+			);
+	?>
+	</td>
+</tr>
+

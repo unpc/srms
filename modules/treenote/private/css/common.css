@@ -1,0 +1,290 @@
+table.add_task {
+	width: 70%;
+	div.attachments {
+		min-height: 160px;
+	}
+}
+table.sticky tr.date_header td { 
+	background-color: #999;
+	color:#eee;
+	padding:4px;
+	font-weight:bold;
+	font-size:13px;
+	line-height:1;
+}
+
+.status_tag.p1 {
+	background-color: #f00;
+}
+.status_tag.p2 {
+	background-color: #f93;
+}
+.status_tag.p3 {
+	background-color: #3af;
+}
+.status_tag.p4 {
+	background-color: #6c9;
+}
+
+.status_tag_label {
+	display: block;
+	width: auto;
+}
+
+.treenote_sidebar_view td.sidebar {
+	border-right: 4px solid #fff;
+}
+
+.treenote_project_tasks {
+	width: 480px;
+}
+
+.treenote_sidebar_view, .treenote_project_tasks {
+
+	.task_list {
+
+		.task_item {
+			border-bottom: 1px solid #ccc;
+			border-right: 1px solid #ccc;
+	
+			.deadline {
+				font-size:10px;
+				color: #666;
+			}
+
+			.indicator, .indicator div {
+				padding: 0;
+				width: 8px;
+			}
+
+			.indicator_p0 {
+				background-color: #999;
+			}
+
+			.indicator_p1 {
+				background-color: #f00;
+			}
+			.indicator_p2 {
+				background-color: #f93;
+			}
+			.indicator_p3 {
+				background-color: #3af;
+			}
+			.indicator_p4 {
+				background-color: #6c9;
+			}
+
+			.brief {
+				padding: 3px 6px;
+			}
+
+			.child_count {
+				background-color: #666;
+				color: #eee;
+				font-size:10px;
+				border-radius: 2px 0 0 2px;
+				padding: 2px 3px 2px 4px;
+			}
+		}
+	
+	}
+
+}
+
+.project_description, .task_description, .note_description {
+	padding: 5px;
+	background-color: #eee;
+	border: 1px solid #ddd;
+}
+
+.todo_task_view {
+	.project_link {
+		color: #666;
+	}
+
+	.task_link {
+		font-weight: bold;
+		color: #000;
+	}
+
+	.decoration {
+		color: #999;
+	}
+
+}
+
+.subtasks {
+
+	border-top: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+
+	.subtask_item {
+		border-bottom: 1px solid #ccc;
+		border-right: 1px solid #ccc;
+
+		td { padding: 0; }
+
+		.deadline {
+			font-size:10px;
+			color: #666;
+		}
+
+		.indicator, .indicator div {
+			width: 8px;
+		}
+
+		.indicator_p0 {
+			background-color: #999;
+		}
+
+		.indicator_p1 {
+			background-color: #f00;
+		}
+		.indicator_p2 {
+			background-color: #f93;
+		}
+		.indicator_p3 {
+			background-color: #3af;
+		}
+		.indicator_p4 {
+			background-color: #6c9;
+		}
+
+		.brief {
+			padding: 3px 6px;
+		}
+
+		.child_count {
+			background-color: #666;
+			color: #eee;
+			font-size:10px;
+			border-radius: 2px 0 0 2px;
+			padding: 2px 3px 2px 4px;
+		}
+	}
+
+}
+
+.task_status {
+	display:inline-block;
+	width: 16px;
+	height: 16px;
+	background-repeat:no-repeat;
+	background-position: center center;
+	background-image: url(!treenote/images/status_normal.gif);
+}
+
+.task_status_complete {
+	background-image: url(!treenote/images/status_complete.gif);
+}
+
+.task_status_locked {
+	background-image: url(!treenote/images/status_locked.gif);
+}
+
+@css-define actions: ["lock", "unlocked", "activate", "backward"];
+
+@css-foreach(action in actions) {
+
+	input.button_$action, a.button_$action {
+		padding-left: 22px;
+		background-image: url(!treenote/images/buttons/$action.png);
+		background-repeat: no-repeat;
+		background-position: 4px center;
+		_background-image: url(!treenote/images/buttons/$action.gif); 
+	}
+	
+}
+
+.demand_status, .job_status {
+	border-radius: 2px;
+	min-width: 20px;
+	color: #FFFFFF;
+	display: inline-block;
+    line-height: 1.231;
+    padding: 2px;
+    text-decoration: none;
+    text-align: center;
+    vertical-align: middle;
+}
+
+a.job_status {
+	padding: 3px 4px;
+	border: 1px solid #eee;
+}
+
+a.job_status:hover {
+	text-decoration: none;
+}
+
+.job_status_0 {
+	background-color: #999999;
+}
+
+.job_status_1 {
+	background-color: #8CBF40;
+}
+
+.job_status_2 {
+	background-color: #DD6866;
+}
+
+.job_status_3 {
+	background-color: #7498E0;
+}
+
+.job_status_4 {
+	background-color: #c93;
+}
+
+.job_status_5 {
+	background-color: #B4B20A;
+}
+
+.demand_status_1 {
+	background-color: #999999;
+}
+
+.demand_status_2 {
+	background-color: #DA1111;
+}
+
+.demand_status_3 {
+	background-color: #8CBF40;
+}
+
+.demand_status_4 {
+	background-color: #150707;
+}
+
+.demand_status_5 {
+	background-color: #666666;
+}
+
+.quick_note {
+	padding: 5px;
+	background-color: #eee;
+	margin-bottom:1px;
+}
+
+.quick_notes {
+	margin-bottom:5px;
+}
+
+#table_treenote_tasks {
+	.quick_notes {
+		margin-bottom:5px;
+	}
+
+	tr.row > td {
+		background-color: #fff;
+		border-bottom:1px solid #ddd;
+	}
+}
+
+#table_treenote_notes {
+	td.row_even, td.row_odd {
+		background-color: #fff;
+		border-bottom:1px solid #ddd;
+	}
+}

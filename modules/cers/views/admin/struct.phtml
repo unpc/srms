@@ -1,0 +1,37 @@
+<div class="interval_30"></div>
+<div class="cers">
+	<form class="edit" autocomplete='off' method="POST">
+		<?php echo V('form_error', ['form' => $form]); ?>
+		<?php
+			$no_error = $form->no_error ? TRUE : FALSE;
+			$data = (array)$form['struct'];
+			if (!count($data)) {
+				foreach ($structs as $struct) {
+					$data[] = [
+						'name' => $struct->name,
+						'type' => $struct->type,
+						'description' => $struct->description,
+						'contacts' => json_encode(Q("$struct<incharge user")->to_assoc('id', 'name'))
+					];
+				}
+			}
+
+			echo Widget::factory('flexform', [
+				'title' => NULL,
+				'template_data' => ['disabled'=>TRUE],
+				'existing_data' => $data,
+				'item_view' => 'cers:admin/struct_item',
+				'delete_message' => I18N::T('cers', '您确定要删除该机组及其下面所有信息吗?删除后不可恢复!'),
+				'extra_vars' => [
+					'form' => $form,
+					'require' => (string) V('form_require', ['extra_class' => 'top']),
+					'no_error' => $no_error
+				],
+			]);
+		?>
+		<div class="form float_right">
+            <input class="font-button-default rmargin_16" type="reset" value="<?php echo H(I18N::T('cers', '取消')) ?>" />
+			<input class="font-button-save" type="submit" name="submit" value="<?php echo H(I18N::T('cers', '保存设置')) ?>" />
+		</div>
+	</form>
+</div>

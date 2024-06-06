@@ -1,0 +1,33 @@
+<style>
+    div.login_page .dropdown_container {
+        width: 94px !important;
+        height: 32px !important;
+        line-height: 32px !important;
+    }
+    .dropdown_text {
+        margin-top: 9px;
+    }
+</style>
+<?php
+if (!$backend_titles) {
+	$backends = Config::get('auth.backends');
+	$backend_titles = [];
+	foreach ($backends as $key=>$values) {
+		if (!$values['remote_auth'] || $this->show_remote_auth) {
+			$backend_titles[$key] = $values['title'];
+		}
+	}
+}
+$default_backend = $this->default_backend ?: Config::get('auth.default_backend');
+$name = $this->name ?: 'token';
+$size = $this->size ?: 40;
+?>
+<?php if (count($backend_titles) > 1): ?>
+<input name="<?php echo H($name) ?>" class="text middle <?php echo $extra_class?>"
+       style="width: 173px;height: 32px;padding-left: 28px;"
+       value="<?php echo H($this->token) ?>" <?php echo $extra?> tabindex="1" placeholder="请输入账号" />
+<?php echo Form::dropdown($name.'_backend', T($backend_titles), $this->backend?:$default_backend, 'class="dropdown middle"'); ?>
+<?php else: ?>
+<input name="<?php echo H($name) ?>" class="text middle <?php echo $extra_class?>" style="width: 294px;height: 32px;padding-left: 28px;" value="<?php echo H($this->token) ?>" <?php echo $extra?> tabindex="1" placeholder="请输入账号" />
+<?php echo Form::hidden($name.'_backend', $this->backend ?: $default_backend); ?>
+<?php endif;?>

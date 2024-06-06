@@ -1,0 +1,13 @@
+<?php
+$number_uniqid = 'number_'. uniqid();
+?>
+
+<div class="<?php echo $class?> hidden">
+    <span class="holder">&#160;</span>
+    <div id="<?php echo H($number_uniqid) ?>">
+        <?php echo V('extra:edit/item/number_item', [
+            'prefix' => $prefix,
+            'params' => $field['params'],
+        ]);?>
+    </div>
+</div>

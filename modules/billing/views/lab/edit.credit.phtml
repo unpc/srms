@@ -1,0 +1,39 @@
+<div class="hr_1">&#160;</div>
+<div class="form padding_1">
+<table class="form">
+	<tbody>
+	<tr>
+		<td class="top icon">
+			<a href="<?php echo H(URI::url('!labs/lab/edit.'.$lab->id.'.photo')) ?>"><img src="<?php echo H($lab->icon_url('64')) ?>" /></a>
+		</td>
+		<td class="top">
+			<form autocomplete="off" method="post" action="<?php echo H(URI::url() ) ?>">
+			<?php echo V('form_error', ['form'=>$form]);?>
+			<table class="form">
+				<tbody>
+					<tr>
+						<td class="right nowrap middle"><?php echo I18N::T('billing', '目前可用余额')?></td>
+						<td class="top"><input class="text currency readonly" size="20" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo H((float)$lab->credit_balance ) ?>" readonly="true" /></td>
+					</tr>
+					<tr>
+						<td class="right nowrap middle"><?php echo I18N::T('billing', '添加金额')?></td>
+						<td class="top"><input name="credit_add" class="text currency" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" size="20" value="<?php echo H($form['credit_add']) ?>" /></td>
+					</tr>
+					<tr>
+						<td class="right nowrap top"><?php echo I18N::T('billing', '说明')?></td>
+						<td class="top"><textarea name="description" class="text autogrow" cols="40"><?php echo $form['description']?></textarea></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>
+							<input type="submit" confirm="<?php echo I18N::T('billing', '你确定要充值吗?请确保充值数据正确无误!'); ?>" name="submit" class="button button_save" value="<?php echo H(I18N::T('billing', '充值')) ?>" />
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			</form>
+		</td>
+	</tr>
+	</tbody>
+</table>
+</div>

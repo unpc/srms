@@ -1,0 +1,6 @@
+<?php $me = L('ME'); ?>
+<?php if ($me->is_allowed_to('列表下属机构仪器使用评价', 'equipment')) : ?>
+<a href="<?= URI::url('!equipments/extra/comment.group'); ?>" class="blue">
+    <?= I18N::T('eq_comment', "{$me->group->name}所有仪器的使用评价"); ?>
+</a>
+<?php endif; ?>

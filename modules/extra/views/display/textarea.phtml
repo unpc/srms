@@ -1,0 +1,5 @@
+<?php $name = 'extra_fields['.$uniqid.']';?>
+<textarea name="<?= $name?>" type="text"  style="width:100%;height:60px"cols="<?php echo H($size ? : 40) ?>" 
+    rows="<?php echo H($rows ? : 3) ?>" class="text autogrow"><?= $value ? : $field['default_value'] ?>
+</textarea>
+<?php if($field['remarks']):?><div class="description"><?= H($field['remarks']); ?></div><?php endif; ?>

@@ -1,0 +1,161 @@
+<style>
+    .inp {
+        width: 2rem !important;
+        margin: 0 .2rem !important;
+    }
+</style>
+
+<table class="form" id="table<?= $flexform_index ?>">
+    <tbody id="tbody">
+    <tr>
+        <td class="top right nowrap rpadding_label"><?php echo I18N::T('eq_charge', '用户标签') ?></td>
+        <td colspan="1">
+            <?php
+            echo Widget::factory('equipments:tag_selector', [
+                'autocomplete' => URI::url('!equipments/autocomplete/user_tags.' . $equipment->id),
+                'name' => 'special_tags[]',
+                'value' => ($error ? $form['special_tags'] : @json_encode($special_tags)),
+            ]);
+            ?>
+        </td>
+    </tr>
+    <tr>
+        <td><div class="interval_20">&#160;</div></td>
+    </tr>
+    <tr>
+        <td class="top right nowrap"><?php echo I18N::T('eq_charge', '时长累计折扣') ?></td>
+    </tr>
+    <tr class="count_start">
+        <td class="top right nowrap">
+        </td>
+        <td>
+            单次累计机时<<input class="text currency inp" name="item_start_time_count[]"
+                          value="<?= $count['start']['key'] ?>"/>小时，
+            收费标准<input class="text currency inp" name="item_start_time_count_discount[]"
+                       value="<?= $count['start']['discount'] ?>"/>%
+        </td>
+        <td>
+            <a class="button button_add"
+               onclick="addItem(this);"><?php echo isset($this->add_button_text) ? $this->add_button_text : HT('收费区间'); ?></a>
+        </td>
+    </tr>
+    <tr>
+        <td><div class="interval_10">&#160;</div></td>
+    </tr>
+
+    <?php if (count($count['between'])): ?>
+        <?php foreach ($count['between'] as $bt): ?>
+            <tr>
+                <td class="top right nowrap"></td>
+                <td>
+                    <input class="text currency inp" name="item_zone_start_time_count[<?= $flexform_index ?>][]"
+                           value="<?= $bt['min'] ?>"/>小时<=单次累计使用机时<
+                    <input class="text currency inp" name="item_zone_end_time_count[<?= $flexform_index ?>][]"
+                           value="<?= $bt['max'] ?>"/>小时，
+                    收费标准<input class="text currency inp" name="item_zone_discount[<?= $flexform_index ?>][]"
+                               value="<?= $bt['discount'] ?>"/>%
+                </td>
+                <td>
+                    <a class="button button_delete deltime"
+                       onclick="removeItem(this);"><?php echo isset($this->add_button_text) ? $this->add_button_text : HT('删除'); ?></a>
+                </td>
+            </tr>
+            <tr>
+                <td><div class="interval_10">&#160;</div></td>
+            </tr>
+        <?php endforeach; ?>
+    <?php endif; ?>
+
+    <tr class="count_end">
+        <td class="top right nowrap">
+        </td>
+        <td>
+            单次累计机时>=<input class="text currency inp" name="item_end_time_count[]"
+                           value="<?= $count['end']['key'] ?>"/>小时，
+            收费标准<input class="text currency inp" name="item_end_time_count_discount[]"
+                       value="<?= $count['end']['discount'] ?>"/>%
+        </td>
+    </tr>
+    <tr>
+        <td><div class="interval_20">&#160;</div></td>
+    </tr>
+    <tr>
+        <td class="top right nowrap"><?php echo I18N::T('eq_charge', '时间段折扣') ?></td>
+        <td class="nowrap"style="color: darkgray;">(<?php echo I18N::T('eq_charge', '温馨提示：折扣时间段允许跨天设置，不允许时间重叠') ?>)</td>
+    </tr>
+    <tr class="zone_start">
+        <td class="top right nowrap"></td>
+        <td class="nowrap">
+            <?php
+            if (isset($zone['between'])) {
+                $startData = array_shift($zone['between']);
+                $endData = array_pop($zone['between']);
+            }
+            $start = isset($startData) ? mktime(date('H', $startData['min']), date('i', $startData['min']), 0) : mktime(0, 0, 0);
+            $end = isset($startData) ? mktime(date('H', $startData['max']), date('i', $startData['max']), 0) : mktime(0, 0, 0);
+            ?>
+            <input class="text date" date_type="time" name="item_zone_start_time_init_count[start][]" value="<?php echo H($start) ?>" />（包含）
+            -
+            <input class="text date" date_type="time" name="item_zone_start_time_init_count[end][]" value="<?php echo H($end) ?>" />
+            收费标准<input class="text currency inp" name="item_zone_init_discount[]"
+                       value="<?= $startData['discount'] ?>"/>%
+        </td>
+        <td class="top right nowrap">
+            <a class="button button_add"
+               onclick="addDiscountItem(this);"><?php echo isset($this->add_button_text) ? $this->add_button_text : HT('折扣区间'); ?></a>
+        </td>
+    </tr>
+
+    <tr>
+        <td><div class="interval_10">&#160;</div></td>
+    </tr>
+
+    <?php if (count($zone['between'])): ?>
+        <?php foreach ($zone['between'] as $bt): ?>
+            <tr>
+                <td class="top right nowrap"></td>
+                <td class="nowrap">
+                    <?php
+                    $start = mktime(date('H', $bt['min']), date('i', $bt['min']), 0);
+                    $end = mktime(date('H', $bt['max']), date('i', $bt['max']), 0);
+                    ?>
+                    <input class="text date" name="time_zone[<?= $flexform_index ?>][start][]"
+                           value="<?php echo H($start) ?>"
+                           date_type="time" />（包含） -
+                    <input class="text date" name="time_zone[<?= $flexform_index ?>][end][]"
+                           value="<?php echo H($end) ?>"
+                           date_type="time" />，
+                    收费标准<input class="text currency inp" name="time_zone_discount[<?= $flexform_index ?>][]"
+                               value="<?= $bt['discount'] ?>"/>%
+                </td>
+                <td>
+                    <a class="button button_delete deltime"
+                       onclick="removeDiscountItem(this);"><?php echo isset($this->add_button_text) ? $this->add_button_text : HT('删除'); ?></a>
+                </td>
+            </tr>
+
+            <tr>
+                <td><div class="interval_10">&#160;</div></td>
+            </tr>
+        <?php endforeach; ?>
+    <?php endif; ?>
+
+    <tr class="zone_end">
+        <td class="top right nowrap"></td>
+        <td class="nowrap">
+            <?php
+            $start = isset($endData) ? mktime(date('H', $endData['min']), date('i', $endData['min']), 0) : mktime(0, 0, 0);
+            $end = isset($endData) ? mktime(date('H', $endData['max']), date('i', $endData['max']), 0) : mktime(0, 0, 0);
+            ?>
+            <input class="text date" name="item_zone_end_time_init_count[start][]" value="<?php echo H($start) ?>" date_type="time" />（包含）
+            -
+            <input class="text date" name="item_zone_end_time_init_count[end][]" value="<?php echo H($end) ?>" date_type="time" />
+            收费标准<input class="text currency inp" name="item_zone_init_discount[]" value="<?= $endData['discount'] ?>"/>%
+        </td>
+    </tr>
+    </tbody>
+</table>
+<?php if (isset($special_tags)): ?>
+    <input type="hidden" id="indexid<?= $flexform_index ?>" class="indexid" value="<?= $flexform_index ?>">
+<?php endif; ?>
+

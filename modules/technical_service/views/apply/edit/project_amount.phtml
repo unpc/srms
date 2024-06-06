@@ -1,0 +1,20 @@
+<?php
+$k = "{$apply->id}_{$connect->project->id}";
+?>
+<tr id="<?= $k ?>_tr"
+    data-equipment-id="<?= $connect->equipment->id ?>"
+    data-project-id="<?= $connect->project->id ?>"
+    data-service-id="<?= $connect->service->id ?>"
+    data-apply-id="<?= $apply->id ?>">
+    <td style="" class="right wid6"><?= $connect->project->name ?>
+    </td>
+    <td style="" class="left">
+        <input style="" type="number" id="<?= $k . '_amount' ?>"
+               value="<?= $form[$k . '_amount'] ?? $fee_result['fee'] ?? 0 ?>"
+               name="<?= $k . '_amount' ?>"
+               class="text"/>
+        <input class="lpadding_1 font-button-save record_button_calculate prevent_default" type="button" value="恢复原价">
+    </td>
+    <!-- <td style="" class="lpadding_1"> -->
+    <!-- </td> -->
+</tr>

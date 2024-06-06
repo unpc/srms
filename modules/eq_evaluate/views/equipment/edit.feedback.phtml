@@ -1,0 +1,95 @@
+<?php 
+$me = L('ME');
+$equipment = $record->equipment; 
+$must_connect_project = Config::get('eq_record.must_connect_lab_project');
+$require = V('form_require');
+?>
+<div class="form padding_1">
+<table class="form">
+    <tbody>
+    <tr>
+        <td class="top icon">
+            <img src="<?php echo H($equipment->icon_url('64')) ?>" />
+        </td>
+        <td class="top">
+            <h3><?php echo I18N::HT('equipments', '%equipment的使用反馈', ['%equipment'=>H($equipment->name)]) ?></h3>
+            <form class="view object:feedback" autocomplete="off">
+            <?php 
+                echo V('form_error', ['form'=>$form]);
+                $no_error = ($form->no_error!==FALSE);
+            ?>
+            <?php echo Form::hidden('rel', $rel); ?>
+            <?php echo Form::hidden('record_id', $record->id); ?>
+            <p class="padding_1 lmargin_-2">
+                <?php echo Form::radio('record_status', EQ_Record_Model::FEEDBACK_NORMAL, $form['record_status'] ? : $record->status == EQ_Record_Model::FEEDBACK_NORMAL, I18N::T('equipments', '运行正常'), 'class="radio middle"', 'class="middle"'); ?>
+                <?php echo Form::radio('record_status', EQ_Record_Model::FEEDBACK_PROBLEM, $form['record_status'] ? : $record->status == EQ_Record_Model::FEEDBACK_PROBLEM, I18N::T('equipments', '运行故障'), 'class="radio middle"', 'class="middle"'); ?>
+            </p>
+            <p>
+                <textarea name="feedback" class="text autogrow" cols="42" rows="3"><?php echo $form['feedback'] ? : $record->feedback; ?></textarea>
+            </p>
+            <p>
+                <?php echo I18N::T('equipments', '样品数'); ?>
+                <br/>
+                <?php if (!$record->cannot_lock_samples() && !$record->samples_lock) : ?>
+                    <input name="samples" class="text number" size="10" value="<?php echo $form['samples'] ? : $record->samples; ?>" />
+                    &nbsp;
+                <?php else :?>
+                    <span class="text"><?php echo $record->samples;?></span>
+                <?php endif;?>
+            </p>
+            <?php if (class_exists('Lab_Project_Model')):?>
+                <?php
+                $types = [];
+                if ($GLOBALS['preload']['people.multi_lab']) {
+                    $lab = Q("$record<project lab_project lab")->current();
+                }
+                else {
+                    $lab = Q("{$record->user} lab")->current();
+                }
+                if ( $lab->id ) {
+                    $types = $lab->get_project_items();
+                }
+            $select_project = isset($form['project']) ? $form['project'] : ((int)$record->status != EQ_Record_Model::FEEDBACK_NOTHING ? (int)$record->project->id : $record->reserv->project->id);
+            $has_project = count($types); ?>
+            <p class="padding_1 lmargin_-2">
+                <?php if ($has_project): ?>
+                <?php echo I18N::HT('equipments', '请选择此次仪器使用关联的实验室项目:'); ?>
+                <br/>
+                <?php echo Form::dropdown('project', ['--']+$types, $select_project, 'style="min-width: 294px;"'); ?>
+                <?php else: ?>
+                    <?php if ($must_connect_project) :?>
+                        <?php echo Event::trigger('feedback_no_project_view')?>
+                    <?php else :?>
+                        &nbsp;<span class="description"><?php echo I18N::T('equipments', '* 你可以关联此次仪器使用到某一实验室项目，但你的实验室尚未建立项目，建立项目请联系实验室负责人'); ?></span>
+                    <?php endif;?>
+                <?php endif; ?>
+            </p>
+            <?php endif;?>
+            <?php if($me->id == $record->user->id): ?>
+            <p>
+                <?= I18N::T('equipments', '评分'); ?>
+                <br/>
+                <input name="score" class="text number" size="10" 
+                value="<?= $form['score'] ? : ($record->evaluate->score ? : 5); ?>" />
+                <?= $require; ?>
+            </p>
+            <?php echo V('eq_evaluate:service_extra_view', ['record' => $record, 'form' => $form]);?>
+            <p>
+                <?= I18N::T('equipments', '服务评价'); ?>
+                <textarea name="content" class="text autogrow" cols="42" rows="3"><?= $form['content'] ? : $record->evaluate->content; ?></textarea>
+            </p>
+            <?php echo V('eq_evaluate:equipment_extra_view', ['record' => $record, 'form' => $form]);?>
+            </div>
+            <?php endif; ?>
+            <div class="hr_1">&#160;</div>
+            <?php if ($has_project || !$must_connect_project) :?>
+                <p class="buttons">
+                    <input type="submit" name="submit" class="button button_edit" value="<?php echo H(I18N::T('equipments', '提交')) ?>" />
+                </p>
+            <?php endif;?>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</div>

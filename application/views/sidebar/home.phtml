@@ -1,0 +1,5 @@
+<?php if (!L('ME')->id && !Auth::token()): ?>
+<div class="padding_1 center">
+	<h1><a href="<?php echo H(URI::url(Config::get('system.base_url')) ) ?>"><?php echo T('主页'); ?></a></h1>
+</div>
+<?php endif;?>

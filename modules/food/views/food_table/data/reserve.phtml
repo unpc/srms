@@ -1,0 +1,17 @@
+<?php
+	$reserve = $this->food->reserve;
+	$reserve = json_decode($reserve);
+	$reserve = json_decode($food->reserve);
+	
+	foreach($reserve as $key => $value) {
+		switch($key) {
+			case 1:echo '周一   ';break;
+			case 2:echo '周二   ';break;
+			case 3:echo '周三   ';break;
+			case 4:echo '周四   ';break;
+			case 5:echo '周五   ';break;
+			case 6:echo '周六   ';break;
+			case 7:echo '周日   ';break;
+		}
+	}
+?>

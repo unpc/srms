@@ -1,0 +1,30 @@
+<?php
+$users = Q("$equipment<incharge user");
+$incharges = [];
+
+foreach ($users as $incharge) {
+    if ($GLOBALS['preload']['people.multi_lab']) {
+		$incharges[$incharge->id] = $incharge->name;
+	}
+	else {
+		$incharges[$incharge->id] = $incharge->name.'('.Q("{$incharge} lab")->current()->name.')';
+	}
+}
+
+if (!$disabled) {
+    echo Widget::factory('multi_user_selector', [
+        'name' => 'incharges',
+        'autocomplete' => URI::url('autocomplete/user'),
+        'value' => $no_error ? json_encode($incharges) : $form['incharges'],
+        'extra' => 'token_verify'
+    ]);
+}
+else {
+?>
+<div style="padding-top: 3px;">
+    <?= implode(',', $incharges); ?>
+</div>
+<?php
+}
+echo $require;
+?>

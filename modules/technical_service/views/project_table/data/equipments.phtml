@@ -1,0 +1,17 @@
+<?php
+$equipments = Q("{$project} equipment");
+$index = 1;
+if ($equipments->total_count()):
+    foreach ($equipments as $equipment):
+        ?>
+        <a class="" href="<?php echo H($equipment->url()) ?>">
+            <?= H($equipment->name); ?><?= $index < $equipments->total_count() ? '、' : '' ?>
+        </a>
+
+        <?php
+        $index++;
+    endforeach;
+else:
+    echo '-';
+endif;
+?>

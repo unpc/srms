@@ -1,0 +1,29 @@
+<?php
+echo CSS::load_async('notification_list');
+$container_id = 'container_'.uniqid();
+?>
+<div class="notification_list clearfix">
+	<div class="notification_types">
+        <div class="interval_40"></div>
+		<?php
+			foreach($types as $key => $value) {
+                if (
+                    (People::perm_in_uno() && in_array($key, Config::get("uno.allow_roles"))) 
+                    ||
+                    (!People::perm_in_uno() && isset($value['#enable_callback']) && call_user_func($value['#enable_callback'], L('ME')))
+                    ) {
+                    if (!isset($selected_key)) {
+                        $selected_key = $key;
+                    }
+                    echo V('admin/notification/type', ['key'=>$key, 'value'=>$value, 'container_id'=>$container_id, 'selected_key'=>$selected_key]);
+                    ?>
+                    <div class="interval_12"></div>
+                    <?php
+                }
+			}
+		?>
+	</div>
+    <div class="classification_container" id="<?php echo H($container_id) ?>">
+        <?php echo V('admin/notification/relate_view', ['key'=>$selected_key]);?>
+    </div>
+</div>

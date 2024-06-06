@@ -1,0 +1,45 @@
+<?php
+$tr_authorized_id = $tr_authorized_id ?: 'tr_authorized_' . uniqid();
+?>
+    <tr id="<?php echo $tr_authorized_id; ?>">
+        <?php
+        $me = L('ME');
+        $user = $change && $user->id ? $user : ($component->organizer->id ? $component->organizer : $me);
+        $object = O('eq_reserv', ['component' => $component]);
+        $grantSelect = $object->fund_card_no ?: '';
+        $grants = (array)Billing_Standard::get_grants($user, $component);
+        $canChangeUser = $me->is_allowed_to('修改预约', 'equipment') || $me->is_allowed_to('修改预约', $component->calendar->parent);
+        ?>
+        <td class="top">
+            <?php 
+             $must_select_fund = Config::get('billing_standard.must_select_fund', 0) && 
+             !Event::trigger('billing_standard.not_must_select_fund', $user);
+             if ($must_select_fund) echo "*";
+            ?>
+            <?php echo Form::dropdown('fund_card_no', ['--'] + $grants, $grantSelect); ?>
+        </td>
+    </tr>
+<?php if ($canChangeUser) : ?>
+    <script type="text/javascript">
+      $().ready(function () {
+        $('input[name=organizer]')
+          .bind('change', function (e) {
+            var $user_id = $(this).val()
+              , $curr_lab_id = '<?php echo $lab->id ?: 0 ?>'
+              , $component_id = '<?php echo $component->id ?: 0 ?>'
+              , $tr_authorized_id = '<?php echo $tr_authorized_id ?: 0 ?>'
+            Q.trigger({
+              object: 'grants'
+              , event: 'change'
+              , data: {
+                'user_id': $user_id,
+                'curr_lab_id': $curr_lab_id,
+                'component_id': $component_id,
+                'tr_authorized_id': $tr_authorized_id,
+              }
+              , url: "<?php echo URI::url('!billing_standard'); ?>"
+            });
+          });
+      })
+    </script>
+<?php endif; ?>

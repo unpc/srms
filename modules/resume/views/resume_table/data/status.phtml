@@ -1,0 +1,6 @@
+<div style="margin-left:15px; margin-right:15px">
+<a class="search_link interview_status interview_status_<?php echo $resume->status; ?>" href="<?php echo URI::url('', ['status'=>$resume->status]); ?>">
+	<?php echo H(Resume::$status[$resume->status]); ?>
+</a>
+</div>
+

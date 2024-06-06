@@ -1,0 +1,36 @@
+<?php
+$lab = Lab_Model::default_lab();
+
+$extra = Extra_Model::fetch($lab, 'stock');
+
+$fields = $extra->get_fields($category);
+
+$extra_value = O('extra_value', ['object'=>$stock]);
+
+if($extra_value->id) $values = $extra_value->values;
+
+if (count($fields)) :
+?>
+<div class="padding_1 form tmargin_1 rmargin_1 float_left">
+<table>
+<?php foreach($fields as $uniqid => $field) :?>
+    <?php $value = isset($values[$uniqid]) ? $values[$uniqid]: $form['extra_fields'][$uniqid];?>
+    <tr>
+        <td class="label right top nowrap">
+            <?php if ($field['required']) echo '*';?>&#160;<?php echo H($field['title']);?>
+        </td>
+        <td>
+        <?php echo V('extra:display/'.Extra_Model::$types[$field['type']], ['uniqid'=>$uniqid,'field'=>$field, 'value'=>$value, 'size'=> 34]);?>
+        </td>
+    </tr>
+<?php endforeach;?>
+    <tr>
+        <td colspan="2">
+            <span class="float_right description">
+                * <?php echo I18N::T('inventory', '必填项');?>
+            </span>
+        </td>
+    </tr>
+</table>
+</div>
+<?php endif;?>

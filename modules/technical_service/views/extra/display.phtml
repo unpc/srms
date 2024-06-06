@@ -1,0 +1,50 @@
+<?php
+$categories = $extra->get_categories();
+foreach ($categories as $category):
+
+    $fields = $extra->get_fields($category);
+    if (count($fields)): ?>
+        <tr class="begin">
+            <td class="label left top nowrap" colspan="2">
+                <h1><?= I18N::T('technical_service', $category); ?></h1>
+            </td>
+        </tr>
+        <?php
+        foreach ($fields as $uniqid => $field):
+            if ($field['adopted']) {
+                $value = $sample->$uniqid ?: $form[$uniqid];
+            } else {
+                $value = isset($values[$uniqid]) ? $values[$uniqid] : $form['extra_fields'][$uniqid];
+                if ($field['type'] == Extra_Model::TYPE_SELECT) {
+                    $value = isset($values[$uniqid]) ? $values[$uniqid] : ($form['extra_fields'][$uniqid] ?: -1);
+                }
+            }
+            ?>
+            <tr>
+                <td class="label left top nowrap" colspan="2">
+                    <?php if ($field['required']) {
+                        echo '<span class="red">*</span>';
+                    }
+                    ?><?php echo H(I18N::T('technical_service', $field['title'])); ?>
+                    <?php
+                    $error = $form->errors["extra_fields[$uniqid]"][0];
+                    $error .= $form->errors["extra_fields[$uniqid][0]"][0] ? $form->errors["extra_fields[$uniqid][0]"][0] :
+                        ($form->errors["extra_fields[$uniqid][1]"][0] ? $form->errors["extra_fields[$uniqid][1]"][0] : ''); ?>
+                    <?php echo V('form_filter', ['error' => $error]) ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="label left top nowrap lpadding_16" colspan="2">
+                    <?php echo V('extra:display/' . Extra_Model::$types[$field['type']], ['uniqid' => $uniqid, 'field' => $field, 'value' => $value]); ?>
+                </td>
+            </tr>
+
+        <?php endforeach; ?>
+        </tr>
+    <?php endif; ?>
+<?php endforeach; ?>
+<script>
+    jQuery(function ($) {
+        $('.validate_error').closest('td').next().find('.require').addClass('error');
+    });
+</script>

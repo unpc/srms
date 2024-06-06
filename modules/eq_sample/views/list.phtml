@@ -1,0 +1,118 @@
+<?php
+    echo JS::load('eq_sample:dropdown_links');
+	$me = L('ME');
+	?>
+<div class="" style="width: 70%">
+	<?php echo V('eq_sample:sample_link', ['equipment' => $equipment]) ?>
+</div>
+<div class="interval_24"></div>
+
+<div class="pages"><?= $pagination ?></div>
+
+<?php
+	if($form['dtsubmit_dtstart'] || $form['dtsubmit_dtend']) {
+		$form['dtsubmit_date'] = true;
+	}
+
+	/* if($form['dtrial_dtstart'] || $form['dtrial_dtend']) {
+		$form['dtrial_date'] = true;
+	} */
+
+	if ($form['dtpickup_dtstart'] && $form['dtpickup_dtend']) {
+		$form['dtpickup_date'] = true;
+	}
+
+	$table = Widget::factory('table');
+	$table->name = 'eq_sample';
+	$table->sort_asc = $sort_asc;
+	$table->sort_by = $sort_by;
+	$form_url = URI::url('');
+	if(strpos($form_url, 'sample.list.') > 0) {
+		$form_url = substr($form_url, 0, strlen($form_url)-2);
+	}
+	$table->form_url = $form_url;
+
+    $group_root = Tag_Model::root('group');
+	Event::trigger('eq_sample.table_list.columns', $form, $columns);
+
+	$table->add_columns((array)$columns);
+	$table->empty_message = I18N::T('eq_sample', '没有送样信息');
+
+    $table->samples = $samples;
+	if (count($samples)) {
+		$sort_by_time = in_array($sort_by, ['dtsubmit', 'dtrial', 'dtpickup']); // 或按时间排序
+
+		$flag_time = $sort_asc ? -1 : 2147483647;
+		// 将$sample存放到table对象中
+		$table->samples = $samples;
+
+		foreach ($samples as $sample) {
+			if ($sort_by_time) {
+				$sample_time = $sort_by == 'dtsubmit' ? $sample->dtsubmit : $sample->dtpickup;
+                $sample_trunk_time = $sample_time ? Date::get_day_start($sample_time) : 0;
+
+				if ($sample_trunk_time != $flag_time) {
+					if ($sample_trunk_time == 0 && $sort_by == 'dtpickup') {
+						$separator = I18N::T('eq_sample', '未设取样');
+					}
+					elseif ($sample_trunk_time == 0 && $sort_by == 'dtsubmit') {
+						$separator = I18N::T('eq_sample', '未设送样');
+					}
+					else {
+						$separator = H(Date::fuzzy($sample_trunk_time));
+					}
+
+					$table->add_row([
+						'#special_view'=>$separator,
+						'#extra_class'=>'date_header',
+					]);
+
+					$flag_time = $sample_trunk_time;
+				}
+			}
+			$links = $sample->links();
+			$key = 'sample_' . $sample->id;
+			$row = [
+				'@' => V('eq_sample:samples_table/data/status', ['sample'=>$sample, '_type'=> 'equipment']),
+				'serial_number' => V('eq_sample:samples_table/data/serial_number', ['sample'=>$sample]),
+				'sender' => V('eq_sample:samples_table/data/sender', ['sample'=>$sample]),
+				'count' => V('eq_sample:samples_table/data/count', ['sample'=>$sample]),
+				'dtctime' => V('eq_sample:samples_table/data/ctime', ['sample'=>$sample]),
+				'dtsubmit' => V('eq_sample:samples_table/data/dtsubmit', ['sample'=>$sample]),
+				'dtpickup' => ($sample->status != EQ_Sample_Model::STATUS_APPLIED && $sample->dtpickup) ? V('eq_sample:samples_table/data/dtpickup', ['sample'=>$sample]) : '--',
+				'fee' => V('eq_sample:samples_table/data/fee', ['sample'=>$sample]),
+				'operator' =>V('eq_sample:samples_table/data/operator', ['sample'=>$sample]),
+				'description' => V('eq_sample:samples_table/data/description', ['sample'=>$sample]),
+				'rest0'=> V('eq_sample:samples_table/data/status', ['sample'=>$sample, '_type'=> 'equipment']),
+				'rest'=> Widget::factory('application:links', ['links'=>$links])
+			];
+
+			$row = new ArrayIterator($row);
+			Event::trigger('eq_sample.table_list.row', $row, $sample);
+			$table->add_row_withkey($row, $key);
+		}
+	}
+
+	echo $table;
+?>
+
+<div class="pages"><?= $pagination ?></div>
+<script>
+
+Q.on_broadcasting('nfs[attachments_eq_sample].file_number_changed', function(message, params) {
+
+	Q.trigger({
+		url: '<?php echo URI::url('!eq_sample/index') ?>',
+		object: 'sample_attachement',
+		event: 'change',
+		data: {
+			id: params.id,
+		},
+		global: false,
+		success: function(data) {
+			var $sample_view = $('#view_sample_' + data.sample_id);
+			$sample_view.replaceWith(data.sample_view);
+		}
+	});
+});
+</script>

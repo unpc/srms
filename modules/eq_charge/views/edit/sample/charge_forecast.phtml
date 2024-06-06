@@ -1,0 +1,30 @@
+<?php
+	if (($equipment->billing_dept->id || $equipment->billing_dept_id) 
+	&& ($equipment->charge_script['sample'] || $equipment->charge_script['test_project'])) :
+	$button_id = 'calc_fee_'.uniqid();
+?>
+<tr class="toggle:status show_on:<?= EQ_Sample_Model::STATUS_APPLIED?>">
+    <td class="label left top nowrap blue" colspan="2"><h1><?php echo I18N::HT('eq_sample', '收费预估');?></h1></td>
+</tr>
+<tr class="toggle:status show_on:<?= EQ_Sample_Model::STATUS_APPLIED?>">
+	<td class="nowrap" colspan="2">
+		<div>
+		<input name="sample_amount" type="text" class="text currency" style="*position:relative;*bottom:3px;" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" size="20" value="0" disabled="disabled"/>
+		<input class="font-button-save prevent_default button button_calculate " type="button" id="<?php echo H($button_id) ?>" value="<?php echo I18N::HT('eq_sample', '计算');?>">
+		</div>
+	</td>
+</tr>
+
+<?php echo JS::load('eq_charge:calc_amount', ['button_id'=>$button_id, 'sample_id'=>$sample->id, 'equipment_id'=>$equipment->id ? : NULL, 'trigger_url'=>URI::url('!eq_charge/charge')]) ?>
+<script>
+    //自动计算一次收费预估
+    <?php 
+    // #20201877 大连理工大学送样记录自定义计费有问题 申请中才显示预估收费啊..
+	if ($sample->sender->id && $sample->status == EQ_Sample_Model::STATUS_APPLIED ) :
+	?>
+            $('#<?= $button_id?>').click();
+	<?php
+	endif;
+	?>
+</script>
+<?php endif; ?>

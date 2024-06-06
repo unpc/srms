@@ -1,0 +1,24 @@
+<div class="form padding_1">
+	<div>
+		<?php if ($files): ?>
+		<table class="form">
+			<tbody>
+			<?php foreach ($files as $file): ?>
+				<tr>
+					<?php $links = $resume->links('file'); ?>
+					<td class="top nowrap" style="width:280px"><a href="<?php echo $links['download_file']['url'] . '?name=' . H($file); ?>"><?php echo $file; ?></a></td>
+					<td /><td /><td />
+					<td><a <?php echo $links['delete_file']['extra']; ?> href="<?php echo $links[delete_file]['url'] . '?name=' . H($file); ?>"><?php echo $links['delete_file']['text']; ?></a></td>
+				</tr>
+			<?php endforeach; ?>
+			</tbody>
+		</table>
+		<?php endif; ?>
+	</div>
+	<div style="margin-top:5px">
+		<form action="" enctype="multipart/form-data" method="post">
+			<input type="file" name="attachment" id="attachment"/>
+			<input type="submit" name="submit" value="<?php echo I18N::T('resume', '上传附件'); ?>" />
+		</form>
+	</div>
+</div>

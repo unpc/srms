@@ -1,0 +1,23 @@
+<?php 
+	switch ($t->parent->name()) {
+	case 'eq_charge':
+		$user = $t->parent->user;
+		break;
+	case 'eq_sample':
+		$user = $t->parent->sender;
+		break;
+	}
+	$equipment = $t->parent->equipment;
+	if ($obj instanceof Equipment_Model) {
+		echo $user->icon('32', 'style="display:block"');
+	}
+	elseif ($obj instanceof User_Model) {
+		echo $equipment->icon('32', 'style="display:block"');
+	}
+	elseif ($obj instanceof Lab_Model) {
+		echo $user->icon('32', 'style="display:block"');
+	}
+	else {
+		echo $equipment->icon('32', 'style="display:block"');
+	}
+?>

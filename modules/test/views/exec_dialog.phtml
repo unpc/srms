@@ -1,0 +1,43 @@
+<?php
+	$flexform = Widget::factory('flexform');
+	$flexform->title = I18N::T('test', '添加参数');
+	$flexform->template_data = ['disabled'=>TRUE];
+	$flexform->item_view = 'args';
+	$flexform->extra_vars = [		
+];
+?>
+<div class="form padding_1">
+	<form method="post" autocomplete="off" q-event="submit" q-object="execute_file" q-static="<?php echo H($path);?>">
+		<table class="form flexible">
+			<tbody>
+			<tr>
+				<td class="label left nowrap message_normal" colspan="4"><?php echo I18N::T('test', '脚本文件为')?>：<?php echo $path['file'];?></td>
+			</tr>
+			<tr>
+				<td colspan="4"><?php echo $flexform;?></td>			
+			</tr>
+			<?php if($result):?>
+			<tr>
+				<td colspan="4" class="message_normal">
+					<?php 
+						if(is_array($result)){
+							foreach($result as $res) {
+								echo $res.'<br>';
+							}
+						}
+						else {
+							echo $result;
+						}	
+					?>
+				</td>			
+			</tr>
+			<?php endif?>
+			<tr>
+				<td colspan="2"></td>
+				<td>
+					<input type="submit" name="submit" class="button button_save" value="<?php echo H(I18N::T('test', '执行')) ?>" />
+				</td>
+			</tr>
+		</table>
+	</form>
+</div>

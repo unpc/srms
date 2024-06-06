@@ -1,0 +1,25 @@
+<form method="post" autocomplete="off" q-event="submit" q-object="add_archive" q-static="<?php echo H(['eid'=>$equipment->id])?>">
+<div class="interval_24"></div>
+<div>
+    <?php // echo V('form_error', ['form'=>$form]) ?>
+    <table>
+        <tbody>
+            <tr>
+                <td class="nowrap middle">
+                    <span class="label"><?php echo I18N::T('equipments', '名称') ?></span>
+                    <?php echo V('form_filter', ['error' => $form->errors['name'][0]]); ?>
+                    <!-- <input class="button button_save" type="submit" value="<?php // echo H(I18N::T('equipments', '更新')) ?>" name="submit" /> -->
+                </td>
+                <td>
+                    <input class="text" name="name" value="<?php echo H($form['name']) ?>" />
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="button_container">
+    <div class="float_right">
+        <input class="font-button-save" name="submit" type="submit" value="<?php echo H(I18N::T('equipments', '更新')) ?>" />
+    </div>
+</div>
+</form>

@@ -1,0 +1,8 @@
+<input 
+    type="text"
+    name="<?php echo H($name); ?>"
+    class="text middle <?php echo $extra;?> select_on_focus autocomplete:<?php echo H($autocomplete) ?>" 
+    size="<?php echo H($size ? : '30'); ?>"
+    value="<?php echo H($value); ?>" 
+    q-tooltip="<?php echo H(T('请输入关键字并选择')); ?>" 
+/>

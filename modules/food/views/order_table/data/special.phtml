@@ -1,0 +1,12 @@
+<?php
+$dtstart = $this->time;
+$dtend = mktime(23, 59, 59, date('m', $dtstart), date('d', $dtstart), date('Y', $dtstart));
+$fd_orders = Q("fd_order[ctime={$dtstart}~{$dtend}]");
+$price = 0;
+foreach($fd_orders as $fd_order) {
+	$price += $fd_order->price;	
+}
+
+echo Date::format($dtstart, 'Y/m/d');
+echo '&#160;&#160;';
+echo I18N::HT('food', '总计 %price, 共 %record 条订餐记录', ['%price'=>Number::currency($price), '%record'=>$fd_orders->total_count()]);

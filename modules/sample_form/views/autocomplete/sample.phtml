@@ -1,0 +1,9 @@
+<div class="clearfix">
+  <div class="float_left" style="width: 120px">
+    <span class="label"><?php echo H($element->user->name); ?></span>
+    (<?php echo H($element->eq_element);?>)
+  </div>
+  <div class="right" style="margin-left:120px">
+    <?php echo Date::format($element->ctime, 'Y/m/d H:i'); ?>
+  </div>
+</div>

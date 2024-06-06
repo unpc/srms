@@ -1,0 +1,14 @@
+<?php
+/*
+$selector = "billing_account[department={$department}]<account billing_transaction user";
+$rechargers_set = Q($selector)->to_assoc('id', 'name');
+
+echo Form::dropdown('recharger_id', array('--')+$rechargers_set, H($recharger_id ?: 0), 'class="drop middle"');
+*/
+
+echo Widget::factory('billing:recharger_selector', [
+						 'autocomplete'=>URI::url('!billing/autocomplete/recharger', ['department_id'=>$department->id]),
+						 'name'=>'recharger_id',
+						 'recharger'=> $recharger_id ? O('user', $recharger_id) : NULL,
+						 ]);
+?>

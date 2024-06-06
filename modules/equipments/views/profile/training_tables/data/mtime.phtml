@@ -1,0 +1,6 @@
+<?php
+$ue = O('ue_training', [
+    'user'=> $user,
+    'equipment'=> $equipment,
+]);
+echo Date::format($ue->mtime, 'Y/m/d');

@@ -1,0 +1,40 @@
+<?php $uniqid = uniqid(); ?>
+<div class="panel padding_1 clearfix">
+	<div class="float_right">
+	<a class="button" href="<?php echo H(Config::get('wordpress.wp_base') . '/wp-admin/') ?>"><?php echo I18N::T('wordpress', '进入Wordpress后台编辑')?></a>
+	</div>
+</div>
+<div class="hr_1">&nbsp;</div>
+<?php 
+$table = Widget::factory('table');
+$table->name = 'wordpress_index';
+$table->add_columns([
+						'@' => [
+							'nowrap' => TRUE,
+							'align' => 'center'
+							],
+						'title' => [
+							'title' => I18N::T('wordpress', '页面标题'),
+							'extra_class' => 'flexible',
+							],
+						'date' => [
+							'title' => I18N::T('wordpress', '创建时间'),
+							'align' => 'center',
+							'nowrap' => TRUE
+							]
+						]);
+
+$table->empty_message = I18N::T('wordpress', '没有获取到相关页面信息');
+
+if (count($categories)) {
+	foreach ($categories as $category) {
+if ($category['categoryName'] == '未分类') continue;
+		$table->add_row([
+							'@' => '', 
+							'title' => V('wordpress:pages_table/data/name', ['category'=>$category]),
+							'date' => Date::format($category['dateCreated']->getTimestamp, T('Y/m/d'))							
+							]);
+	}
+}
+echo $table;
+?>

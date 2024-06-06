@@ -1,0 +1,67 @@
+<div class="form padding_1">
+<form q-object="add_expense" q-event="submit" autocomplete="off">
+<?php 
+    echo V('form_error', ['form'=>$form]);
+    $require = (string) V('form_require');
+?>
+<table class="form">
+<tbody>
+	<tr>
+		<td class="label right nowrap"><?php echo I18N::HT('grants', '金额') ?></td>
+	 <td>
+	 <?php echo H(Number::currency($order->price));
+/* <input class="text currency readonly" name="amount" sign="<?php echo H(Config::get('lab.currency_sign')) ?>" value="<?php echo H($order->price)?>" disabled/></td> */
+	 ?>
+	</tr>
+	<tr>
+		<td class="label right nowrap"><?php echo I18N::HT('grants', '说明')?></td>
+		<td class="nowrap"><input class="text" name="summary" size="40" value="<?php echo H($form['summary'] ? : '')?>"/><?php echo $require;?></td>
+	</tr>
+	<tr>
+		<td class="label right nowrap"><?php echo I18N::HT('grants', '负责人') ?></td>
+		<td>
+			<?php echo Widget::factory('application:user_selector', ['name'=>'user_id', 'user'=>L('ME')]);?>
+		</td>
+	</tr>
+	<tr>
+		<td class="label right nowrap"><?php echo I18N::HT('grants', '经费') ?></td>
+		<td class="nowrap">
+			<?php echo Widget::factory('grants:grant_select', ['grant'=>$grant, 'portion'=>$portion]); ?>
+		</td>
+	</tr>
+	<tr>
+		<td class="label right nowrap"><?php echo I18N::HT('grants', '发票号') ?></td>
+		<td><input class="text" name="invoice_no" size="40" value="<?php echo H($form['invoice_no'])?>"/></td>
+	</tr>
+	<tr>
+		<td class="label right nowrap"><?php echo I18N::HT('grants', '标签') ?></td>
+		<td>
+			<?php
+			$root = Tag_Model::root('grant_expense');
+			echo Widget::factory('application:multi_tag_selector',
+					[
+						'autocomplete' => URI::url("autocomplete/tags.$root->id"),
+						'name' => 'tags',
+						'value' => $form['tags'],
+						'size' => '40',
+						'allow_creating' => TRUE,
+						'token_tip' => I18N::T('grants', '您可选择标签或按回车键输入新的标签'),
+					]);
+			?>
+		</td>
+	</tr>
+	<tr>
+		<td class="label right nowrap"><?php echo I18N::HT('grants', '日期') ?></td>
+		<td><input class="text date" name="date" value="<?php echo H($form['date'])?>"/></td>
+	</tr>
+	<tr><td class="hr_1" colspan="2">&#160;</td></tr>
+	<tr>
+		<td></td>
+		<td>
+			<input class="button button_add" type="submit" name="submit" value="<?php echo I18N::HT('grants', '添加')?>" />
+		</td>
+	</tr>
+</tbody>
+</table>
+</form>
+</div>

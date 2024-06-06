@@ -1,0 +1,85 @@
+<div class="hr_1">&#160;</div>
+<?= $secondary_tabs ?>
+<div class="hr_1">&#160;</div>
+<div class="panel padding_1 clearfix">
+	<?php if(L('ME')->is_allowed_to('管理预约等待', $equipment)): ?>
+	<a class="button button_add"
+		q-event="click"
+		q-object='add_wait_join_user'
+		q-static="<?php echo H(['id'=>$equipment->id])?>"
+		q-src="<?php echo H(URI::url('!eq_wait_join')) ?>" ><?php echo I18N::T('eq_wait_join', '添加排队预约用户')?></a>
+	<?php else: ?>
+		<div class="float_left padding_1 nowrap" style="line-height:18px;font-size:18px;">
+			<span class="inline_block middle eq_number">
+				<?= I18N::T('eq_wait_join', '机主如若打开预约等待设置, 您可以在预约失败后申请预约等待!')?>
+			</span>
+		</div>
+	<?php endif; ?>
+</div>
+<?php echo $pagination; ?>
+<?php
+
+	$table = Widget::factory('table');
+	$table->name = 'equipments_wait_join_list';
+	$table->add_columns([
+		'@'=> [
+			'align' => 'center',
+			'nowrap' => TRUE,
+		],
+		'name'=> [
+			'title' => I18N::T('eq_wait_join', '姓名'),
+			'filter' => [
+				'form' => V('eq_wait_join:wait_join_tables/filters/name', ['name'=>$form['name']]),
+				'value' => $form['name'] ? H($form['name']) : NULL
+			],
+			'nowrap' => TRUE
+		],
+		'date'=> [
+			'title' => I18N::T('eq_wait_join', '预计使用时长'),
+			'align' => 'center',
+			'filter' => [
+				'form' => V('eq_wait_join:wait_join_tables/filters/date', ['form' => $form]),
+				'value' => $form['time'] ? H($form['time'] . Date::unit($form['time_format'])) : NULL,
+				'field'=>'time,time_format'
+			],
+			'nowrap' => TRUE
+		],
+		'time' => [
+			'title' => I18N::T('eq_wait_join', '申请时间'),
+			'nowrap' => TRUE
+		],
+		'sample'=> [
+			'title' => I18N::T('eq_wait_join', '测样样品数'),
+			'align' => 'center',
+			'nowrap' => TRUE
+		],
+		'description'=> [
+			'title' => I18N::T('eq_wait_join', '测样要求'),
+			'extra_class' => 'flexible'
+		],
+		'rest'=> [
+			'nowrap' => TRUE,
+			'align' => 'right'
+		]
+	]);
+
+	$table->empty_message = I18N::T('eq_wait_join', '没有符合条件的排队列表');
+
+	foreach ($waiters as $waiter) {
+		$table->add_row([
+			'@' => [
+				'view'=> URI::anchor($waiter->user->url(), $waiter->user->icon('32', 'style="display:block"')),
+				/*因为该列表中不存在了flexbie类， 因为都是自动增长的td，因此为了保持与IE上统一， 该处需要增加样式特殊处理*/
+				'extra'=>'style="padding:4px;min-width:32px;*width:32px;"',
+			],
+			'name' => URI::anchor($waiter->user->url(), $waiter->user->name),
+			'date' => V('eq_wait_join:wait_join_tables/data/date', ['waiter' => $waiter]),
+			'sample' => (int)$waiter->sample,
+			'description' => H($waiter->description),
+			'time' => Date::relative($waiter->ctime),
+			'rest' => Widget::factory('links', ['links' => $waiter->links()])
+		]);
+	}
+
+	echo $table;
+?>

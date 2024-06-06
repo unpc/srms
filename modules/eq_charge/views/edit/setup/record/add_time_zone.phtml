@@ -1,0 +1,12 @@
+<tr>
+    <td class="top right nowrap">
+    </td>
+    <td>
+        <input class="text currency inp" name="item_zone_start_time_count" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="0"/>小时<=单次累计使用机时<
+        <input class="text currency inp" name="item_zone_end_time_count" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="0"/>小时，
+        收费标准<input class="text currency inp" name="item_zone_discount" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="0"/>%
+    </td>
+    <td>
+        <a class="button button_delete deltime" onclick="removeItem()"><?php echo isset($this->add_button_text) ? $this->add_button_text : HT('删除'); ?></a>
+    </td>
+</tr>

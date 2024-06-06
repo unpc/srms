@@ -1,0 +1,16 @@
+<script>
+$().ready(function () {
+    var $token = $("input[name=token]");
+    var $password = $("input[name=password]");
+    var $btn = $("input[name=submit]");
+    var $form = $("form");
+    $btn.bind('click', function(e) {
+        if ($token.val() != '') {
+            $token.val(btoa($token.val()));
+        }
+        if ($password.val() != '') {
+            $password.val(btoa($password.val()));
+        }
+    });
+})
+</script>

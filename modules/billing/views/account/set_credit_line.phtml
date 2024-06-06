@@ -1,0 +1,25 @@
+<script type="text/javascript">
+	document.getElementById("credit_line").onBlur(); //目的是不让光标聚焦到input 输入框 BUG #1912
+</script>
+<div class="form">
+	<form method="post" class="blue view object:credit_line event:submit">
+	<input name="account_id" value="<?php echo H($account->id) ?>" class="hidden" />
+	<table class="form">
+		<tbody>
+			<tr>
+				<td class="left nowrap middle">
+                    <span class="rmargin_16"><?php echo I18N::T('billing', '信用额度')?></span>
+                    <input name="credit_line" id="credit_line" class="text currency" size="20" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo H((float)$account->credit_line ) ?>" />
+                </td>
+                <td></td>
+			</tr>
+		</tbody>
+	</table>
+        <div class="button_container">
+            <div class="float_right">
+                <input name="cancel" id="cancel" type="reset" class="font-button-default sm rmargin_2e4" value="<?php echo H(T('取消') ) ?>">
+                <input name="submit" type="submit" class="font-button-save sm" value="<?php echo H(T('设置') ) ?>">
+            </div>
+        </div>
+	</form>
+</div>

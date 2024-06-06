@@ -1,0 +1,29 @@
+<?php $me = L('ME');?>
+<?php echo V('eq_ban:banstatus_pannel', ['form'=>$form]); ?>
+<?php
+
+$table = Widget::factory('table');
+
+$table->name = 'eq_ban_group';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+$table->add_columns($columns);
+
+$table->empty_message = I18N::T('eq_ban', '找不到相关的黑名单！');
+
+if ($bans->total_count()) foreach ($bans as $ban) {
+	$links = $ban->links('group');
+	$table->add_row([
+		'name' => V('eq_ban:eq_ban_table/data/name', ['ban'=>$ban]),
+		'object' => V('eq_ban:eq_ban_table/data/group', ['ban'=>$ban]),
+		'reason' => V('eq_ban:eq_ban_table/data/reason', ['ban' => $ban]),
+		'ctime' => V('eq_ban:eq_ban_table/data/ctime', ['ban' => $ban]),
+		'atime' => V('eq_ban:eq_ban_table/data/atime', ['ban' => $ban]),
+		'rest'=> Widget::factory('application:links', ['links'=>$links]),
+	]);
+}
+echo $table;
+?>
+
+<div class='pages'><?php echo $pagination;?></div>

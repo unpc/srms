@@ -1,0 +1,32 @@
+<?php echo CSS::load_async('eq_vidcam:history')?>
+<div class="slide_container nowrap">
+    <a href="<?php echo H($vidcam->url('vid_record', NULL, NULL, 'view')) ?>">
+        <?php
+        $num = Config::get('vid_history.img_count', 5);
+        $now = Date::time();
+        $images = Q("vidcam_capture_data[vidcam={$vidcam}][ctime<={$now}]:sort(ctime DESC):limit({$num})");
+        if ($images->length()) :
+            foreach ($images as $image) {
+                $images_array[] = $image->get_thumbnail();
+            }
+            foreach($images_array as $image) :
+        ?>
+            <div class="image">
+                <?php echo $image;?>
+            </div>
+        <?php
+            endforeach;
+        else :
+            $width = Config::get('vidmon.thumbnail_width');
+            $height = Config::get('vidmon.thumbnail_height');
+        ?>
+        <div class="image">
+        <?php echo strtr('<img width="%width" height="%height" src="!eq_vidcam/images/%locale.png" />', [
+                '%width'=> $width,
+                '%height'=> $height,
+                '%locale'=> Config::get('system.locale', 'zh_CN'),
+        ]);?>
+        </div>
+        <?php endif; ?>
+    </a>
+</div>

@@ -1,0 +1,51 @@
+<?php 
+	$me = L('ME');
+	$show_user_phone = $show_user_phone ?: $me->is_allowed_to('查看联系方式', $user);
+	$show_user_email = $show_user_email ?: $me->is_allowed_to('查看联系方式', $user);
+?>
+<tr>
+    <td class="top nowrap" colspan="2"><h2><?php echo I18N::T('people', '预约者信息：')?></h2></td>
+</tr>
+<tr>
+  <td class="top icon"><?php echo $user->icon('32') ?></td>
+  <td class="top nowrap">
+	<h2>
+	  <a href="<?php echo H($user->url() ) ?>"><?php echo H($user->name) ?></a>
+    <?php if(Module::is_installed('labs')):?>
+      <?php 
+      $lab_url = [];
+      foreach (Q("$user lab") as $lab) {
+        $str = '<a class="blue normal" href="'.H($lab->url()).'">'.H($lab->name).'</a>';
+        $lab_url[] = $str;
+      }?>
+      <small>(<?php echo join(' ',$lab_url);?>)</small>
+    <?php endif; ?>
+	</h2>
+	<p>
+	  <?php
+          $roles = L('ROLES');
+          $user_roles = $user->roles();
+          if (count($user_roles) > 0) {
+              foreach ($user_roles as $rid) {
+                  if ($roles[$rid]) {
+                      $role = $roles[$rid];
+                      $roles_arr[] = H($role->name);
+                  }
+              }
+              echo implode(', ', $roles_arr);
+          }
+	  ?>
+    </p>
+    <?php if ($show_user_phone && $user->phone) : ?>
+        <div class="phone"><?php echo I18N::T('people', '联系电话');?>：<?php echo H($user->phone)?></div>
+    <?php endif;?>
+
+    <?php if ($show_user_email && $user->email) : ?>
+        <div class="email"><?php echo I18N::T('people', '电子邮箱');?>：<?php echo H($user->email)?></div>
+    <?php endif;?>
+
+	<?php if ($user->group->id) : ?>
+	<?php echo I18N::T('people', '组织机构'); ?>: <?php echo V('application:tag/path', ['tag'=>$user->group, 'url_template'=>URI::url('!people/list', 'group_id=%tag_id')]); ?><br/>
+	<?php endif ?>
+  </td>
+</tr>

@@ -1,0 +1,118 @@
+<div class="pages"><?= $pagination ?></div>
+<?php
+
+$me = L('ME');
+$table = Widget::factory('table');
+$table->name = 'approval_sample';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+$table->form = $form;
+
+if($form['ctime_dtstart_check'] && $form['ctime_dtend_check']) {
+    $form['ctime'] = H(date('Y/m/d',$form['ctime_dtstart'])).'~'.H(date('Y/m/d',$form['ctime_dtend']));
+} elseif($form['ctime_dtstart_check']) {
+    $form['ctime'] = H(date('Y/m/d',$form['ctime_dtstart'])).'~'.I18N::T('eq_charge','最末');
+} elseif($form['ctime_dtend_check']) {
+    $form['ctime'] = I18N::T('eq_charge','最初').'~'.H(date('Y/m/d',$form['ctime_dtend']));
+}
+
+switch($flag) {
+    case 'approve':
+        $stime_title = '';
+        break;
+    case 'done':
+        $stime_title = '通过时间';
+        break;
+    case 'rejected':
+        $stime_title = '驳回时间';
+        break;
+    case 'expired':
+        $stime_title = '过期时间';
+        break;
+}
+
+$table->add_columns([
+    'equipment'=> [
+        'title' => I18N::T('approval', '仪器名称'),
+        'filter' => [
+            'form' => V('approval_flow:approval_table/filters/equipment', ['equipment' => $form['equipment']]),
+            'value' => $form['equipment'] ? H($form['equipment']) : NULL
+        ],
+        'nowrap' => TRUE
+    ],
+    'date' => [
+        'title' => I18N::T('approval', '送样时间'),
+        'align' => 'left',
+        'nowrap' =>TRUE,
+        'sortable' => TRUE,
+    ],
+    'count' => [
+        'title' => I18N::T('approval', '送样数'),
+        'align' => 'left',
+        'nowrap' =>TRUE,
+    ],
+    'amount' => [
+        'title' => I18N::T('approval', '金额'),
+        'align' => 'left',
+        'nowrap' =>TRUE,
+    ],
+    'ctime'=> [
+        'title' => I18N::T('approval', '申请时间'),
+        'nowrap' => TRUE,
+        'filter' => [
+            'form' => V('approval_flow:approval_table/filters/date', [
+                'form' => $form,
+                'dtstart_check' => $form['ctime_dtstart_check'],
+                'dtend_check' => $form['ctime_dtend_check'],
+                'dtstart' => $form['ctime_dtstart'],
+                'dtend' => $form['ctime_dtend'],
+                'name_prefix' => 'ctime_'
+            ]),
+            'value' => $form['ctime'] ? H($form['ctime']) : NULL,
+            'field' => 'ctime_dtstart_check,ctime_dtend_check,ctime_dtstart,ctime_dtend'
+        ]
+    ],
+    'stime'=> [
+        'title' => I18N::T('approval', $stime_title),
+        'nowrap' => TRUE
+    ],
+    'description'=> [
+        'title' => I18N::T('approval', '备注'),
+        'nowrap' => TRUE
+    ],
+    'rest'=>[
+		'align'=>'right',
+		'nowrap'=>TRUE,
+	]
+]);
+
+$table->empty_message = I18N::T('approval', '没有查询到相应的项目!');
+
+if (count($approval) > 0) {
+
+    foreach($approval as $ap) {
+        $stime = $stime_title ? O('approved', ['source' => $ap, 'flag' => $flag])->ctime : '';
+
+        $links = $ap->links();
+        if ($me->is_allowed_to('删除', $ap->source) && $ap->flag != 'done') {
+            $links['delete'] = [
+                'url' => NULL,
+                'text' => I18N::T('eq_sample', '删除'),
+                'extra' => 'class="blue" q-object="delete_sample" q-event="click" q-static="' .  H(['id'=>$ap->source->id]) . '" q-src="' . URI::url('!eq_sample/index') . '"',
+            ];
+        }
+        $table->add_row([
+            'equipment' => V('approval_flow:approval_table/data/equipment', ['equipment'=>$ap->equipment]),
+            'date' => $ap->source->dtsubmit ? date('Y/m/d H:i:s', $ap->source->dtsubmit) : date('Y/m/d H:i:s', $ap->dtsubmit),
+            'count' => $ap->source->count ? : $ap->count,
+            'amount' => V('approval_flow:approval_table/data/amount', ['source'=>$ap->source]),
+            'ctime' => date('Y/m/d H:i:s', $ap->ctime),
+            'stime' => $stime_title ? date('Y/m/d H:i:s', $stime) : '',
+            'description' => H($ap->note ?: $ap->description ?: $ap->source->note),
+            'rest' => Widget::factory('application:links', ['links' => $links])
+        ]);
+    }
+}
+echo $table;
+?>
+<div class="pages"><?= $pagination ?></div>

@@ -1,0 +1,13 @@
+<?php 
+    $arr = $_SESSION['batch_feedback_select'] ? : []; 
+    if (isset($arr[$record->id]) ) {
+        $checked = 'checked';
+    } else {
+        $checked = '';
+    }
+?>
+<?php
+if(!$record->status && L('ME')->id == $record->user->id):
+?>
+<input name="select[]" class="<?php echo H($select_all_id) ?> checkbox" type="checkbox" <?php echo $checked;?> value="<?php echo $record->id; ?>" style="padding:0; margin:0" />
+<?php endif;?>

@@ -1,0 +1,32 @@
+<?php
+	switch($component->subtype) {
+	case '0' :
+		$subtype = I18N::T('schedule', '组会');
+		break;
+	case '1' :
+		$subtype = I18N::T('schedule', '文献讨论');
+	 	break;
+	case '2' :
+		$subtype = I18N::T('schedule', '其他');
+		break;
+	case '3' :
+		$subtype = I18N::T('schedule', '学术报告');
+		break;
+	}
+
+	$dtstart = Date::format($component->dtstart);
+	$dtend = Date::format($component->dtend, 'H:i:s');
+
+	if ($component->me_room_id) {
+		$meeting = O('meeting', $component->me_room_id);
+		$meeting_name = $meeting->name;
+	}
+	else {
+		$meeting_name = I18N::T('schedule', '未设置会议室');
+	}
+
+	$speaker = O("schedule_speaker", ['component_id'=>$component->id]);
+	$speaker_name = $speaker->name;
+	$str = I18N::T( 'schedule', $template, ['%subtype'=>$subtype, '%dtstart'=>$dtstart, '%dtend'=>$dtend, '%meeting'=>$meeting_name, '%speaker'=>$speaker_name] );
+?>
+<li> ➡ &#160;&#160;&#160;<?php echo $str; ?></li>

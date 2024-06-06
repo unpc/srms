@@ -1,0 +1,28 @@
+<style>
+    #preview_div input2{
+        width: 2rem;
+        height: 1.5rem;
+    }
+</style>
+<?php
+$isdisplay = true;
+switch ($custom_type) {
+    case "eq_reserv":
+    case "record_charge_script":
+    case "reserv_charge_script":
+    case "sample_charge_script":
+        if ($equipment->display_reserv_script[$custom_type]) $isdisplay = false;
+        break;
+    default:
+        $isdisplay = true;
+}
+if ($isGenee) $isdisplay = true;
+?>
+<?php if (!$isGenee && !$equipment->display_reserv_script[$custom_type]):?>
+    <div>
+        <?php echo T("如欲设置脚本计费规则，请联系工程师处理");?>
+    </div>
+<?php endif;?>
+<div class="padding_2 reserv_script_preview" style="display: <?= $isdisplay ? '' : 'none' ?>">
+    <div id="preview_div"><?php echo Equipments::custom_content_render($equipment,$custom_type);?></div>
+</div>

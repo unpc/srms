@@ -1,0 +1,100 @@
+<?php $require = V('form_require');?>
+<?php $optional = V('form_optional');?>
+<div class="form">
+<table class="form relative">
+	<tbody>
+	<tr>
+<!--		<td class="icon top">-->
+<!--			<img src="--><?php //echo H($door->icon_url('64')) ?><!--" />-->
+<!--		</td>-->
+		<td class="top">
+		<form method="post" autocomplete="off" q-object="add" q-event="submit" q-src="<?php echo H(URI::url() ) ?>">
+            <?php echo V('form_error', ['form'=>$form]);?>
+		<table class="form">
+			<tbody>
+			<tr>
+				<td class="left nowrap middle">
+                    <?php echo $require;?><?php echo I18N::T('entrance', '地点')?>
+                    <?php echo V('form_filter',['error'=>$form->errors['location1'][0]])?>
+                </td>
+                <td class="left nowrap middle">
+                    <?php echo $require;?><?php echo I18N::T('entrance', '房间')?>
+                    <?php echo V('form_filter',['error'=>$form->errors['location2'][0]])?>
+                </td>
+			</tr>
+			<tr>
+                <td class="middle" style="padding-top:2px !important;">
+                    <input class="text small_search_text hint:<?php echo I18N::T('entrance', '地点'); ?>" name="location1"  value="<?php echo H($form['location1']) ?>" />
+                </td>
+                <td style="padding-top:0px !important;">
+                    <input class="text small_search_text hint:<?php echo I18N::T('entrance', '房间号'); ?>" name="location2"  value="<?php echo H($form['location2']) ?>" />
+                </td>
+
+			</tr>
+            <tr>
+                <td class="left nowrap middle">
+                    <?php echo $require;?><?php echo I18N::T('entrance','名称') ?>
+                    <?php echo V('form_filter',['error'=>$form->errors['name'][0]])?>
+                </td>
+            </tr>
+            <tr>
+                <td class="top" style="padding-top:2px !important;"><input placeholder="请输入名称" class="text" name="name" size="50" value="<?php echo H($form['name']) ?>" /></td>
+            </tr>
+			<tr>
+			  <td colspan="2" class="left nowrap middle"><?php echo I18N::T('entrance', '负责人'); ?><?php echo $optional; ?></td>
+			</tr>
+            <tr>
+                <td colspan="2" class="top" style="padding-top:2px !important;">
+                    <?php
+                    echo Widget::factory('multi_user_selector',
+                        [
+                            'name'=>'incharges',
+                            'autocomplete'=>URI::url('autocomplete/user'),
+                            'value'=> $form['incharges'],
+                            'extra'=> 'token_verify'
+                        ]);
+//                    echo $optional;
+                    ?>
+                </td>
+            </tr>
+			<tr>
+				<td class="top"><?php echo Form::checkbox('single_direction', $form['single_direction'] == "on", I18N::T('entrance', '出门需要刷卡'), 'class="monitor checkbox"'); ?></td>
+			</tr>
+			<tr>
+				<td class="left nowrap middle" style="padding-top:12px !important;"><?php echo $require;?><?php echo I18N::T('entrance','进门地址') ?><?php echo V('form_filter',['error'=>$form->errors['in_addr'][0]])?></td>
+			</tr>
+            <tr>
+                <td class="top" style="padding-top:2px !important;"><input placeholder="请输入进门地址" class="text" name="in_addr" size="50" value="<?php echo H($form['in_addr']) ?>" /></td>
+            </tr>
+			<tr class="toggle:single_direction show_on:on">
+				<td class="left nowrap middle"><?php echo $require;?><?php echo I18N::T('entrance','出门地址') ?><?php echo V('form_filter',['error'=>$form->errors['out_addr'][0]])?></td>
+			</tr>
+            <tr class="toggle:single_direction show_on:on">
+                <td class="top" style="padding-top:2px !important;"><input placeholder="请输入出门地址" class="text toggle_status:single_direction enable_on:on" name="out_addr" size="50" value="<?php echo H($form['out_addr'])?>" /></td>
+            </tr>
+			<tr>
+				<td class="left nowrap middle"><?php echo $require;?><?php echo I18N::T('entrance','门锁ID') ?><?php echo V('form_filter',['error'=>$form->errors['lock_id'][0]])?></td>
+                <td class="left nowrap middle"><?php echo $require;?><?php echo I18N::T('entrance','门磁ID') ?><?php echo V('form_filter',['error'=>$form->errors['detector_id'][0]])?></td>
+			</tr>
+            <?= Event::trigger('door[edit].view.extra', $form, $door); ?>
+			<tr>
+                <td class="top" style="padding-top:2px !important;"><input placeholder="请输入门锁ID" class="text" name="lock_id" size="50" value="<?php echo H($form['lock_id'] ?: $door->lock_id) ?>" /></td>
+				<td class="top" style="padding-top:2px !important;"><input placeholder="请输入门磁ID" class="text" name="detector_id" size="50" value="<?php echo H($form['detector_id'] ?: $door->detector_id) ?>" /></td>
+			</tr>
+            <tr>
+                <td colspan="2">
+                    <div class="button_container">
+                        <div class="float_right">
+                            <input type="submit" name="submit" class="font-button-save sm" value="<?php echo H(T('添加') ) ?>" />
+                        </div>
+                    </div>
+                </td>
+            </tr>
+			</tbody>
+		</table>
+		</form>
+		</td>
+	</tr>
+	</tbody>
+</table>
+</div>

@@ -1,0 +1,27 @@
+<div class="tab_pagination_border">
+    <?= $secondary_tabs; ?>
+</div>
+<?php if($secondary_tabs->panel_buttons || $secondary_tabs->search_box): ?>
+    <div class='search_panel no_padding_secondary_search'>
+        <?php
+        echo $secondary_tabs->panel_buttons;
+        echo $secondary_tabs->search_box;
+        ?>
+    </div>
+<?php else: ?>
+    <div class="interval_16"></div>
+<?php endif ?>
+
+<?= $secondary_tabs->content; ?>
+<script>
+    jQuery(function($){
+        $(".no_padding_secondary_search").next(".tab_content")
+            .css('margin', '0px 16px 66px 16px')
+            .css('padding', '0px 16px 16px 16px');
+        $(".no_padding_secondary_search")
+            .css('margin', '0px')
+            .css('padding', '16px 0 0 0');
+
+    })
+</script>
+

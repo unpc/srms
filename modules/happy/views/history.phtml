@@ -1,0 +1,78 @@
+	<div class="hr_1">&nbsp;</div>
+	<div style="padding-top:0px">
+		<div class="panel padding_1 clearfix">
+			<?php 
+				if (count($panel_buttons)) {	
+					echo Widget::factory('application:links', ['links'=>$panel_buttons, 'separator'=>'&#160;']);
+			 }
+			?>
+		</div>
+	<?php echo $pagination; ?>
+	</div>
+	<?php
+	$table = Widget::factory('table');
+	$table->name = 'happy';
+	$table->sort_asc = $sort_asc;
+	$table->sort_by = $sort_by;
+    $columns=[
+	    'replyer'=>[
+			'weight'=>20,
+			'title'=>I18N::T('replyer', '用户'),
+			'sortable'=>TRUE,
+			'align'=>'left',
+			'filter'=> [
+				'form' => V('happy:happy_table/creater', ['name'=>'name', 'value'=>$form['name']]),
+				'value' => $form['name'] ? H($form['name']) : NULL
+			],
+			'nowrap'=>TRUE,
+		],
+		'content'=>[
+			'weight'=>20,
+			'title'=>I18N::T('content', '选购物品'),
+			'sortable'=>TRUE,
+			'align'=>'left',
+			'filter'=> [
+				'form' => V('happy:happy_table/creater', ['name'=>'name', 'value'=>$form['name']]),
+				'value' => $form['name'] ? H($form['name']) : NULL
+			],
+			'nowrap'=>TRUE,
+		],
+		'stock'=>[
+			'weight'=>20,
+			'title'=>I18N::T('happy', '购买数'),
+			'sortable'=>TRUE,
+			'align'=>'center',
+			'filter'=> [
+				'form' => V('happy:happy_table/creater', ['name'=>'name', 'value'=>$form['name']]),
+				'value' => $form['name'] ? H($form['name']) : NULL
+			],
+			'nowrap'=>TRUE,
+		],
+		'ctime'=>[
+			'weight'=>20,
+			'title'=>I18N::T('ctime', '发布时间'),
+			'sortable'=>TRUE,
+			'align'=>'left',
+			'filter'=> [
+				'form' => V('happy:happy_table/creater', ['name'=>'name', 'value'=>$form['name']]),
+				'value' => $form['name'] ? H($form['name']) : NULL
+			],
+			'nowrap'=>TRUE,
+		],
+		];
+
+     	foreach ($happyreplys as $happyreply) { 
+			$table->add_row([
+					'replyer' => V('happy:happy_table/history/replyer', ['happyreply'=>$happyreply]),
+					'content' => V('happy:happy_table/history/content', ['happyreply'=>$happyreply]),
+					'stock' => V('happy:happy_table/history/stock', ['happyreply'=>$happyreply]),
+					'ctime'=> Date::format($happyreply->ctime),
+				  ]);
+		}
+
+		$table->add_columns($columns);
+		$table->empty_message = I18N::T('happy', '无历史记录');
+		echo $table;
+		echo $pagination;
+	?>
+

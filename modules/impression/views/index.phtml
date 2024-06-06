@@ -1,0 +1,9 @@
+<script>
+$(function($) {
+    Q.trigger({
+        object: '<?= $module ?>',
+        event: 'view',
+        url: '<?php echo URI::url("!impression/equipment/index"); ?>'
+    });
+})
+</script>

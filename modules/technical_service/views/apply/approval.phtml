@@ -1,0 +1,249 @@
+<style>
+.wid6 {
+    width: 7rem;
+}
+</style>
+<div class="form" style="min-width:550px">
+    <?php
+    $form_id = 'add_sample_' . uniqid();
+    $require = '';//(string)V('form_require', ['extra_class' => 'right']); ?>
+    <form q-object="approval" q-event="submit" q-src="<?php echo H(URI::url('!technical_service/apply')) ?>"
+        autocomplete="off" method="post" id="<?php echo H($form_id) ?>">
+        <?php echo V('form_error', ['form' => $form]); ?>
+        <input name="apply_id" type="hidden" value="<?php echo H($apply->id) ?>" />
+        <table class="form" width="100%">
+            <tr class="begin">
+                <td class="label left top nowrap blue">
+                    <h1><?php echo I18N::HT('technical_service', '基础信息'); ?></h1>
+                </td>
+                <td class="right description middle red"></td>
+            </tr>
+            <tr>
+                <td class="right wid6">
+                    <?= $require ?><?= I18N::T('technical_service', '预约者') ?>
+                </td>
+                <td>
+                    <?php
+                    echo Widget::factory('user_selector', [
+                        'autocomplete' => URI::url('autocomplete/user'),
+                        'name' => 'user',
+                        'user' => $form['user'] ?? $apply->user->id,
+                        'size' => 34,
+                    ]);
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="right wid6">
+                    <?= $require ?><?= I18N::T('technical_service', '样品数量') ?>
+                </td>
+                <td>
+                    <input type="number" value="<?= $form['samples'] ?? $apply->samples ?>" name="samples"
+                        class="text number"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="right wid6 top">
+                    <?= I18N::T('technical_service', '样品描述') ?>
+                </td>
+                <td>
+                    <textarea class="text"
+                        style="word-break: break-word;white-space: normal;line-height: normal;height: 60px;width: 63%;"
+                        cols="4" rows="20"
+                        name="samples_description"><?= $form['samples_description'] ?? $apply->samples_description ?></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td class="right wid6">
+                    <?= $require ?><?= I18N::T('technical_service', '期望完成时间') ?>
+                </td>
+                <td>
+                    <input id="dtrequest" name="dtrequest" class="text date small_search_text"
+                        value="<?php echo $form['dtrequest'] ?? $apply->dtrequest ?? time(); ?>" />
+                </td>
+            </tr>
+            <?php
+            $extra = Extra_Model::fetch($service, 'apply');
+            $has_extra = false;
+            $extra_param = json_decode($extra->params_json,true) ?: [];
+            foreach($extra_param as $e){
+                if(!empty($e)){
+                    $has_extra = true;
+                    break;
+                }
+            }
+            if($has_extra):?>
+            <?php
+            if ($service->id) {
+                $extra = Extra_Model::fetch($service, 'apply');
+                $extra_value = O('extra_value', ['object' => $apply]);
+                if ($extra_value->id) $values = $extra_value->values;
+                echo V('technical_service:extra/display', ['extra' => $extra, 'form' => $form, 'values' => $values, 'sample' => $sample]);
+            }
+            ?>
+            <?php endif;?>
+            <tr class="begin">
+                <td class="label left top nowrap blue">
+                    <h1><?= $require ?><?php echo I18N::HT('technical_service', '选择服务项目组合'); ?></h1>
+                </td>
+            </tr>
+            <?php foreach ($projects as $project_id => $project): ?>
+            <tr>
+                <td class="right wid6">
+                    <?= I18N::T('technical_service', H(O('service_project', $project_id)->name)) ?>
+                </td>
+                <td>
+                    <?php echo Form::dropdown('project_equipment[' . $project_id . ']', [-1 => '-'] + $project, $form['project_equipment'][$project_id] ?? -1, "data-pid={$project_id}") ?>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+
+            <tr class="begin">
+                <td class="label left top nowrap blue">
+                    <h1><?php echo I18N::HT('technical_service', '确认服务收费'); ?></h1>
+                </td>
+            </tr>
+            <tr>
+                <td class="right wid6">
+                    <?= I18N::T('technical_service', '总金额') ?>
+                </td>
+                <td class="lpadding_1">
+                    <input type="number" readonly value="" name="amount" class="text currency number" disabled=""
+                        defaultvalue="¥0.00" sign="¥"  style="color:#aea6a6"/>
+                    <input style="width: 89px;margin-left:1px" class="font-button-save record_button_calculate_total prevent_default " type="button"
+                        id="calculate" value="计算">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="padding-top: 0;">
+                    <table class="form" style="" width="100%" id="detail_amount">
+                        <?php
+                        foreach ($connects as $connect) {
+                            echo V('apply/edit/project_amount', [
+                                'connect' => $connect['connect'],
+                                'apply' => $apply,
+                                'form' => $form,
+                            ]);
+                        }
+                        ?>
+                    </table>
+                </td>
+            </tr>
+            <tr id="step_4" class="begin">
+                <td class="label left top nowrap blue">
+                    <h1><?php echo I18N::HT('technical_service', '上传附件'); ?></h1>
+                </td>
+            </tr>
+            <tr>
+                <td class="left" colspan="2">
+                    <?php
+                    if (Module::is_installed('nfs') && L('ME')->is_allowed_to('上传文件', $apply, ['type' => 'attachments'])) {
+                        echo V('apply/edit/attachments', ['apply' => $apply]);
+                    }
+                    ?>
+                </td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td>
+                    <div class="button_container">
+                        <div class="float_right">
+                            <input type="submit" name="reject" id="cancel" class="font-button-delete"
+                                value="<?php echo H(I18N::T('labs', '驳回')) ?>" />
+                            <input type="submit" name="pass" class="font-button-save"
+                                value="<?php echo H(I18N::T('labs', '通过')) ?>" />
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<script type="text/javascript">
+$(function() {
+    $('[name^=project_equipment]').livequery('change', function() {
+        var equipment_id = $(this).val(),
+            user_id = $('input[name=user]').eq(1).val(),
+            samples = $('input[name=samples]').val(),
+            project_id = $(this).data('pid'),
+            apply_id = '<?= $apply->id ?: 0?>';
+        var k = apply_id + "_" + project_id;
+        Q.trigger({
+            object: 'select_project_equipment',
+            event: 'click',
+            data: {
+                samples: samples,
+                user_id: user_id,
+                equipment_id: equipment_id,
+                apply_id: apply_id,
+                project_id: project_id
+            },
+            url: '<?php echo URI::url("!technical_service/apply/"); ?>' +
+            k, //为了防止浏览器把同时发送的请求当作重复请求取消，加一个随机参数
+            success: function(data) {
+                let tr_index = $('#detail_amount').find('#' + k + '_tr').index();
+                if (tr_index == -1) {
+                    $('#detail_amount').append(data.complete.html);
+                } else {
+                    $('#detail_amount').find('#' + k + '_tr').replaceWith(data.complete
+                        .html);
+                }
+            }
+        });
+    });
+
+    $('.record_button_calculate').livequery('click', function() {
+        var tr = $(this).parent().parent();
+        var project_id = $(tr).data('project-id'),
+            apply_id = $(tr).data('apply-id'),
+            samples = $('input[name=samples]').val(),
+            user_id = $('input[name=user]').eq(1).val(),
+            equipment_id = $(tr).data('equipment-id');
+        var k = apply_id + "_" + project_id;
+        Q.trigger({
+            object: 'select_project_equipment',
+            event: 'click',
+            data: {
+                samples: samples,
+                user_id: user_id,
+                equipment_id: equipment_id,
+                apply_id: apply_id,
+                project_id: project_id
+            },
+            url: '<?php echo URI::url("!technical_service/apply"); ?>',
+            success: function(data) {
+                let tr_index = $('#detail_amount').find('#' + k + '_tr').index();
+                if (tr_index == -1) {
+                    $('#detail_amount').append(data.complete.html);
+                } else {
+                    $('#detail_amount').find('#' + k + '_tr').replaceWith(data.complete
+                        .html);
+                }
+            }
+        });
+    });
+
+    $('input[name=user]').livequery('change', function() {
+        $('[name^=project_equipment]').each(function() {
+            $(this).trigger('change');
+        })
+    });
+    $('input[name=samples]').livequery('input propertychange', function() {
+        $('[name^=project_equipment]').each(function() {
+            $(this).trigger('change');
+        })
+    });
+
+    $('.record_button_calculate_total').livequery('click', function() {
+        var total_fee = 0;
+        $('#detail_amount').find('[name*=_amount]').each(function() {
+            let fee = parseFloat($(this).val()) ?? 0;
+            total_fee += fee;
+        });
+        $('[name=amount]').val(total_fee);
+        $('[name=amount]').prev('[type=number]').html(total_fee);
+        $('[name=amount]').prev('[type=number]').val(total_fee);
+    });
+});
+</script>

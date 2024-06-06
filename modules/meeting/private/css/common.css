@@ -1,0 +1,43 @@
+
+.more_link {
+	padding: 5px;
+	background-color: #eee;
+	font-size: 14px;
+	font-weight: bold;
+	text-align: center;
+	color:#666;
+	display:block;
+}
+
+.more_link:hover {
+	background-color: #999;
+	color: #fff;
+	text-decoration: none;
+}
+
+.multiline {
+	max-height: 3em;
+	overflow: auto;
+}
+
+.meeting_info_form {
+    .status_tag {
+        font-size: 14px;
+        width: 80px;
+        text-align: left;
+        display:block;
+        color: #666;
+        margin-left: 0;
+        height: 18px;
+    }
+}
+
+.triple {
+    width:390px;
+    overflow:hidden;
+    li {
+        float:left;
+        display:inline;
+        width:30%;
+    }
+}

@@ -1,0 +1,26 @@
+<div class="form padding_2" >
+	<form method="post" q-object="into_stock" q-event="submit" q-static="<?php echo H(['sid'=>$stock->id])?>">
+		<table class="form">
+			<tr>
+				<td class="nowrap">
+					<?php echo I18N::T('inventory', '归入已有存货')?>
+				</td>
+				<td class="nowrap">
+					<?php
+						echo Widget::factory('stock_selector', [
+							'name'=>'stock',
+							'autocomplete'=>URI::url('!inventory/autocomplete/stock.'.$stock->id),
+							'size'=>'40'
+						]);
+					?>
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td class="nowrap">
+					<input class="button button_add" name="submit" type="submit" value="<?php echo H(I18N::T('inventory', '归类')) ?>" />
+				</td>
+			</tr>
+		</table>
+	</form>
+</div>

@@ -1,0 +1,68 @@
+.upload_multiple_wrapper {
+    width: 600px;
+    padding-bottom: 20px;
+}
+
+.upload_multiple_header {
+    height: 34px;
+    margin: 30px 0;
+}
+
+.upload_multiple_body {
+    max-height: 400px;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.upload_multiple_body::-webkit-scrollbar {
+    display: none;
+    /* Chrome Safari */
+}
+
+.upload_multiple_error_message {
+    color: #f22314;
+    font-size: 0.9em;
+    line-height: 1.25;
+}
+
+.upload_multiple_progress {
+    font-size: .9em;
+    line-height: 1.25;
+    color: #7a878e;
+}
+
+.upload_multiple_size {
+    font-size: .9em;
+    line-height: 1.25;
+    color: #7a878e;
+}
+
+.upload_multiple_filename {
+    color: #4d627b;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.upload_multiple_list {
+    border-top: 1px solid #E5E5E5;
+    padding: 15px 0;
+}
+
+.upload_multiple_list_box {
+    width: 556px;
+    display: inline-block;
+}
+
+.upload_multiple_remove_button {
+    width: 40px;
+    display: inline-block;
+    text-align: right;
+}
+
+.icon-trash:before {
+    padding: 0;
+}

@@ -1,0 +1,17 @@
+<?php foreach($stocks as $stock): ?>
+<table class="form">
+	<tbody>
+		<tr>
+			<td class="label left nowrap middle" width="200">
+				<?php echo Form::checkbox("stocks[{$stock->id}]", false, $stock->name, 'class="middle" ');?>
+			</td>
+			<td class="label right nowrap middle">
+				<?php echo I18N::T('inventory', '消耗数量:')?>
+			</td>
+			<td class="middle">
+				<input name="expend_number[<?php echo $stock->id?>]" value="" size="3" class="text" disabled="disabled"/>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<?php endforeach; ?>

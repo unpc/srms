@@ -1,0 +1,3 @@
+<span style="color: <?= $equipment->nrii_status == Nrii_Equipment_Model::NRII_STATUS_SUCCEED ? 'gray' : ($equipment->nrii_status == Nrii_Equipment_Model::NRII_STATUS_FAIL ? 'red' : '')?>">
+    <?php echo Nrii_Equipment_Model::$nrii_status[$equipment->nrii_status]?>
+</span>

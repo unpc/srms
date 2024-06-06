@@ -1,0 +1,13 @@
+	<td class="label left nowrap">
+	<div class="title">	
+	<?php echo $properties['label'] ?>
+</div>
+		<?php echo Widget::factory(
+						'user_selector', 
+						[
+							'name'=>$name, 
+							'user'=> $form->no_error ? ( $component->organizer->id ? $component->organizer : L('ME')) : $form['organizer']
+						]
+		); ?>
+	</td>
+

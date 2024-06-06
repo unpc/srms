@@ -1,0 +1,11 @@
+<tr>
+	<td class="label right nowrap"><strong class="description"><?php echo H($properties['label']) ?></strong></td>
+	<td>
+		<?php 
+            $users = (array) @json_decode($component->speakers, TRUE);
+            foreach($users as $uid=>$uname){
+                echo H($uname)." ";
+            }
+		?>
+	</td>
+</tr>

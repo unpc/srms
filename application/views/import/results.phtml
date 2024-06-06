@@ -1,0 +1,68 @@
+<style>
+
+</style>
+<div class="hr_1">&#160;</div>
+<div class="form padding_1">
+	<h3><?php  echo T('导入结果'); ?></h3>
+	<ul>
+		<li class="import-success result-main"><div data-toggle="collapse" data-static="1"><?php echo T('成功导入：%num 条', ['%num' => $success_count]);?></div></li>
+		<li class="import-error result-main">
+			<div data-toggle="collapse" data-static="2"><?php echo T('导入失败：%num 条', ['%num' => $error_count]);?></div>
+			<?php if ($error_count > 0): ?>
+				<ul id="collapse2" class="result-row" style="display: none;">
+					<?php foreach ($error as $key => $value) : ?>
+						<li>
+							<?php echo T( '第%row行', ['%row'=>$key]); 
+							echo '<ul>';
+							foreach ($value as $v_key => $v_value) {
+								echo '<li>';
+                                if (Import::$real_fields[$v_key]) {
+                                    echo T('字段`%col` :', ['%col' => Import::$real_fields[$v_key]]) . (is_array($v_value) ? $v_value[0] : $v_value);
+                                } else {
+                                    echo T('%col ', ['%col' => Import::$real_fields[$v_key]]) . (is_array($v_value) ? $v_value[0] : $v_value);
+                                }
+								echo '</li>';
+							}
+							echo '</ul>';
+							?>
+						</li>
+					<?php endforeach; ?>
+				</ul>
+			<?php endif; ?>
+		</li>
+		<li class="import-warning result-main">
+			<div data-toggle="collapse" data-static="3"><?php echo T('产生警告：%num 条', ['%num' => $warning_count]);?></div>	
+			<?php if ($warning_count > 0): ?>
+				<ul id="collapse3" class="result-row" style="display: none;">
+					<?php foreach ($warning as $key => $value) : ?>
+						<li>
+							<?php echo T( '第%row行', ['%row'=>$key]); 
+							echo '<ul>';
+							foreach ($value as $v_key => $v_value) {
+								echo '<li>';
+								if ($real_fields[$v_key]) {
+									echo T('字段`%col` :', ['%col' => Import::$real_fields[$v_key]]) ;
+								}
+								echo (is_array($v_value) ? $v_value[0] : $v_value);
+								echo '</li>';
+							}
+							echo '</ul>';
+							?>
+						</li>
+					<?php endforeach; ?>
+				</ul>
+			<?php endif; ?>
+		</li>
+	</ul>
+	
+</div>
+<script>
+	(function($){
+    var collapse = $('div[data-toggle="collapse"]')
+    collapse.bind('click', function(){
+        var collapse_id = $(this).attr('data-static')
+        // $('.result-row').hide()
+        $('#collapse'+collapse_id).toggle()
+    })
+})(jQuery);
+</script>

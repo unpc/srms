@@ -1,0 +1,15 @@
+<?php
+if ($service->id) {
+    $users = Q("$service<incharge user");
+    $incharges = [];
+
+    foreach ($users as $incharge) {
+        if ($GLOBALS['preload']['people.multi_lab']) {
+            $incharges[$incharge->id] = $incharge->name;
+        } else {
+            $incharges[$incharge->id] = $incharge->name;
+        }
+    }
+}
+echo implode(',', $incharges);
+?>

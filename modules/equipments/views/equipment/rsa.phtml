@@ -1,0 +1,20 @@
+<?php
+$id = uniqid();
+?>
+<div class="form padding_1 right">
+	<textarea cols="65" rows="9" class="private_key text code middle"><?php echo $private_key; ?></textarea>
+	<div class="hr_1">&#160;</div>
+	<textarea cols="65" rows="9" class="public_key text code middle"><?php echo $public_key; ?></textarea>
+	<div class="hr_1">&#160;</div>
+	<?php 
+	/*
+	NO.BUG#148（guoping.zhang@2010.11.11)
+	bug:IE6中按钮变形因没把外容器撑开并且不向右方浮动
+	解决: 添加样式 nowrap
+	*/
+	?>
+	<a id="<?php echo $id; ?>" class="button nowrap"><?php echo I18N::T('equipments', '使用该密钥对'); ?></a>
+	<?php echo JS::load('equipments:equipment_rsa', [
+		'id'=>$id,
+	]);?>
+</div>

@@ -1,0 +1,67 @@
+<?php 
+$form_config = Config::get('form.user_signup');
+	$requires = (array)$form_config['requires'];
+
+	$_require = function($key) use ($requires) {
+		echo $requires[$key] ? V('form_require') : '';
+	}
+?>
+<tr class="lab">
+	<td class="right nowrap top"><?php $_require('lab_id'); ?><div style="padding-top: 4px"><?php echo I18N::T('labs', '实验室')?></div></td>
+	<td class="sinup_table_interval"></td>
+	<td><?php echo Form::radio('local_remote', 'local_lab', $form['local_remote'] ?: 'local_lab', I18N::T('labs', '选择已有实验室'), 'class="monitor middle"', 'class="middle"');?>
+		<div style="padding-left:15px;padding-bottom:5px">
+		<?php echo Widget::factory('labs:lab_selector', [
+								'name' => 'lab_id',
+								'selected_lab' => $form['lab_id'],
+								'size' => 38,
+								]); ?>
+		</div>
+		<?php echo Form::radio('local_remote', 'remote_lab', $form['local_remote'] ?: 'local_lab', I18N::T('labs', '同步远程实验室'), 'class="monitor middle"', 'class="middle"');?>
+	</td>
+<tr>
+
+<script>
+	jQuery(function($){
+		$local_remote = $('input:radio[name="local_remote"]');
+		$local_remote.on('change',function(){
+			var check = $('input:radio[name="local_remote"]:checked').val();
+			if(check == 'remote_lab'){
+				
+				if(confirm("<?php echo H(I18N::T('labs', '您确定跳转到实验室注册页面？')) ?>")){
+					var $name = $('input.name').val();
+					var $gender = $('select[name=gender]').val();
+					var $member_type = $('select[name=member_type]').val();
+					var $ref_no = $('input.ref_no').val();
+					var $major = $('input.major').val();
+					var $organization = $('input.organization').val();
+					var $email = $('input.email').val();
+					var $phone = $('input.phone').val();
+					var $address = $('input.address').val();
+					
+					var $data = {'name':$name,
+								'gender':$gender,
+								'member_type':$member_type,
+								'ref_no':$ref_no,
+								'major':$major,
+								'organization':$organization,
+								'email':$email,
+								'phone':$phone,
+								'address':$address}
+					Q.trigger({
+						object: 'info_to_session',
+						event: 'click',
+						data: {'data':$data},
+						success: function(data){
+							location.href = "!labs/signup/lab";
+						}
+					});
+					
+				}else{
+					$('input:radio[name="local_remote"][value="local_lab"]').attr("checked",true);
+					$('input:radio[name="local_remote"][value="remote_lab"]').attr("checked",false);
+				}
+			}
+		});
+	});
+</script>

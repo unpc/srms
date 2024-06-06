@@ -1,0 +1,312 @@
+/**
+ * 系统公式样式
+ */
+/* box占位 */
+.interval_1 {
+    height: 1px;
+}
+
+.interval_2 {
+    height: 2px;
+}
+
+.interval_6 {
+    height: 6px;
+}
+
+.interval_8 {
+    height: 8px;
+}
+
+.interval_10 {
+    height: 10px;
+}
+
+.interval_12 {
+    height: 12px;
+}
+
+.interval_15 {
+    height: 15px;
+}
+
+.interval_16 {
+    height: 16px;
+}
+
+.interval_20 {
+    height: 20px;
+}
+
+.interval_22 {
+    height: 22px;
+}
+
+.interval_24 {
+    height: 24px;
+}
+
+.interval_28 {
+    height: 28px;
+}
+
+.interval_30 {
+    height: 30px;
+}
+
+.interval_36 {
+    height: 36px;
+}
+
+.interval_40 {
+    height: 40px;
+}
+
+.interval_50 {
+    height: 50px;
+}
+.interval_60 {
+    height: 60px;
+}
+
+.interval_80 {
+    height: 80px;
+}
+
+.interval_100 {
+    height: 100px;
+}
+
+.C478CD2 {
+    color: var(--basiccolor);
+}
+.inline_block {
+    display: inline-block;
+}
+.width_128 {
+    width: 128px;
+}
+.width_140 {
+    width: 140px;
+}
+
+.width_200 {
+    width: 200px;
+}
+
+.width_115 {
+    width: 115px;
+}
+
+td .interval_24 {
+    min-width: 130px;
+}
+
+/* 占位背景 */
+.interval_16_fixed {
+    height: 16px;
+    margin: 0px -16px;
+    width: auto;
+}
+
+.interval_24_fixed {
+    height: 24px;
+    margin: 0px -16px;
+    width: auto;
+}
+
+.interval_gray {
+    background-color: #F4F8FB;
+}
+
+/* padding和margin */
+.lpadding_8 {
+    padding-left: 8px;
+}
+.lpadding_12 {
+    padding-left: 12px;
+}
+
+.lpadding_1e5 {
+    padding-left: 15px;
+}
+
+.lpadding_16 {
+    padding-left: 16px;
+}
+
+.lpadding_18 {
+    padding-left: 18px;
+}
+
+.lpadding_20 {
+    padding-left: 20px;
+}
+
+.lpadding_21 {
+    padding-left: 21px;
+}
+
+.lpadding_30 {
+    padding-left: 30px;
+}
+
+.lpadding_130 {
+    padding-left: 130px;
+}
+
+.rpadding_6 {
+    padding-right: 6px;
+}
+
+.rpadding_12 {
+    padding-right: 12px;
+}
+
+.rpadding_16 {
+    padding-right: 16px;
+}
+
+.rpadding_48 {
+    padding-right: 48px;
+}
+
+.tpadding_6 {
+    padding-top: 6px
+}
+
+.bpadding_9 {
+    padding-bottom: 9px
+}
+
+.bpadding_28 {
+    padding-bottom: 28px
+}
+
+.bpadding_40 {
+    padding-bottom: 40px
+}
+
+.padding_wh_10 {
+    padding: 10px 0;
+}
+
+.padding_wh_20 {
+    padding: 20px 0;
+}
+
+.padding_wh_30 {
+    padding: 30px 0;
+}
+
+.tmargin_60 {
+    margin-top: 60px;
+}
+
+.bmargin_60 {
+    margin-bottom: 60px;
+}
+
+.lmargin_10 {
+    margin-left: 10px;
+}
+
+.lmargin_30 {
+    margin-left: 30px;
+}
+
+.lmargin_60 {
+    margin-left: 60px;
+}
+
+.rmargin_2 {
+    margin-right: 2px;
+}
+
+.rmargin_10 {
+    margin-right: 10px;
+}
+
+.rmargin_15 {
+    margin-right: 15px;
+}
+
+.rmargin_16 {
+    margin-right: 16px;
+}
+
+.rmargin_20 {
+    margin-right: 20px;
+}
+
+.rmargin_40 {
+    margin-right: 40px;
+}
+
+.rmargin_50 {
+    margin-right: 50px;
+}
+
+.rmargin_60 {
+    margin-right: 60px;
+}
+
+.rmargin_80 {
+    margin-right: 80px;
+}
+
+.rmargin_83 {
+    margin-right: 83.5px;
+}
+
+.rmargin_100 {
+    margin-right: 100px;
+}
+
+.rmargin_152 {
+    margin-right: 152px;
+}
+.rmargin_152_i {
+    margin-right: 152px !important;
+}
+
+hr {
+    border: 0 solid #EDEFF2;
+    border-top-width: 1px;
+    clear: both;
+    height: 0px;
+    display: block;
+    margin: 0;
+    *line-height: 1px !important;
+    *margin-top: -9px !important;
+    *margin-bottom: -9px !important;
+    *font-size: 1px !important;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+/* qrcode */
+.qrcode_mask {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 100px;
+    height: 100px;
+    z-index: 1;
+    cursor: pointer;
+    background: linear-gradient(to bottom right, #FEFFFF 60%, transparent);
+}
+
+.qrcode {
+    position: absolute;
+    height: 100px;
+    width: 100px;
+    right: 0;
+    bottom: 0;
+}
+
+.icon_equipment, .icon-radius img {
+    border-radius: 3px;
+}

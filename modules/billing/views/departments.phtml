@@ -1,0 +1,137 @@
+<?php
+if (Module::is_installed('db_sync')) {
+    $master = Config::get('site.master');
+    $slaves = Config::get('site.slave');
+}
+?>
+<?php if (L('ME')->is_allowed_to('添加', 'billing_department')): ?>
+    <div class="panel padding_1 clearfix">
+        <?php
+        if (Module::is_installed('db_sync')) :
+            $income_selector = $selector . '<department billing_account<account billing_transaction[income!=0]';
+            $outcome_selector = $selector . '<department billing_account<account billing_transaction[outcome!=0]';
+
+            if ($form['dtstart_check'] && $form['dtend_check']) {
+                $dtstart = Date::get_day_start($form['dtstart']);
+                $dtend = Date::get_day_end($form['dtend']);
+                $income_selector .= "[ctime={$dtstart}~{$dtend}]";
+                $outcome_selector .= "[ctime={$dtstart}~{$dtend}]";
+            } elseif ($form['dtstart_check']) {
+                $dtstart = Date::get_day_start($form['dtstart']);
+                $income_selector .= "[ctime>{$dtstart}]";
+                $outcome_selector .= "[ctime>{$dtstart}]";
+            } elseif ($form['dtend_check']) {
+                $dtend = Date::get_day_start($form['dtend']);
+                $income_selector .= "[ctime<{$dtend}]";
+                $outcome_selector .= "[ctime<{$dtend}]";
+            }
+
+            if (!$form['site'] || $form['site'] == $master['name']) {
+                $total_income = Q($income_selector)->sum('income');
+                $outcome_use = Q($outcome_selector)->sum('outcome');
+                $balance = $total_income - $outcome_use;
+            }else{
+                $total_income = 0;
+                $outcome_use = 0;
+                $balance = 0;
+            }
+            
+            $s = $selector;
+            if (Db_Sync::is_master()) {
+                foreach ($slaves as $slave) {
+                    if($form['site'] && $form['site'] != $slave['name']) continue;
+                    try {
+                        $db      = Database::factory($slave['name']);
+                        $total_income += Q($income_selector, null, $db)->sum('income');
+                        $outcome_use += Q($outcome_selector, null, $db)->sum('outcome');
+                        $balance += ($total_income - $outcome_use);
+                    } catch (Exception $e) {
+                        continue;
+                    }
+                }
+            }
+            ?>
+            <div class="float_right">
+                <div class="inline-block transaction_count">
+                    <?php ?>
+                    <?php echo I18N::T('billing', '累计收入: %total_income, 累计支出: %outcome_use, 累计余额: %balance', [
+                        '%total_income' => '<span class="eq_number">' . Number::currency($total_income) . '</span>',
+                        '%outcome_use'  => '<span class="eq_number">' . Number::currency($outcome_use) . '</span>',
+                        '%balance'      => '<span class=" ">' . Number::currency($balance) . '</span>',
+                    ]);
+                    ?>
+                </div>
+            </div>
+        <?php endif;?>
+    </div>
+<?php endif;?>
+
+<?= $search_box ?>
+
+<?php
+	$table = Widget::factory('table');
+	$table->name = 'billing_departments';
+
+	$group = O('tag', $form['group_id']);
+	$table->add_columns($columns);
+
+	$table->empty_message = I18N::T('billing', '没有符合条件的部门');
+
+	if (count($departments) > 0) {
+		foreach ($departments as $department) {
+
+			$links = $department->links();
+		    $table->add_row([
+			/*	'@'=>[
+					'view' => $department->icon('32', 'style="display:block"'),
+					'extra' => 'style="padding:4px" align="right" align="right"',
+				],*/
+		    	'name'=>V('billing:departments_table/data/name', ['object'=>$department]),
+		    	'group'=>V('application:tag/path', ['tag'=>$department->group, 'tag_root'=>$group_root, 'url_template'=>URI::url('','group_id=%tag_id')]),
+		    	'users'=>V('billing:departments_table/data/users', ['object'=>$department]),
+		    	'description'=>H($department->description?:"--"),
+		    	'rest'=>Widget::factory('application:links', ['links' => $links])
+		    ]);
+		}
+	}
+
+    // 开始其他财务部门信息的读取
+    if (Module::is_installed('db_sync') && Db_Sync::is_master()) {
+        foreach ($slaves as $slave) {
+            if($form['site'] && $form['site'] != $slave['name']) continue;
+            try {
+                $db      = Database::factory($slave['name']);
+                // error_log(print_r($db->name(), 1));
+                $departs = Q($selector, null, $db);
+
+                foreach ($departs as $department) {
+                    // if ($department->id == 1) error_log(print_r($department, 1));
+                    $links = $department->links();
+                    $rows  = [
+                        '@'           => [
+                            'view'  => $department->icon('32', 'style="display:block"'),
+                            'extra' => 'style="padding:4px" align="right" align="right"',
+                        ],
+                        'name'        => V('billing:departments_table/data/slave_name', ['object' => $department, 'db' => $db]),
+                        'group'       => V('application:tag/path', ['tag' => $department->group, 'tag_root' => $group_root, 'url_template' => URI::url('', 'group_id=%tag_id')]),
+                        'users'       => V('billing:departments_table/data/users', ['object' => $department, 'db' => $db]),
+                        'description' => H($department->description),
+                        // 'rest'        => Widget::factory('application:links', ['links' => $links]),
+                    ];
+
+                    $rows = new ArrayIterator($rows);
+                    Event::trigger('billing_department.list.rows', $rows, $department, $db, $form);
+                    $table->add_row((array) $rows);
+                }
+            } catch (Exception $e) {
+                continue;
+            }
+        }
+    }
+
+	echo $table;
+
+
+?>
+
+<div class="pages"><?= $pagination ?></div>

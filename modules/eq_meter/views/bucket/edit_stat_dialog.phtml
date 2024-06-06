@@ -1,0 +1,53 @@
+<div class="padding_2">
+<form q-src="<?php echo URI::url('!eq_meter/eq_meter'); ?>" q-object="set_threshold" q-event="submit" >
+<?php 
+	echo V('form_error', ['form'=>$form]);
+	$eq_meter = O('eq_meter', ['equipment_id'=>$equipment_id]);
+?>
+<div style="width:420px" class="padding_2">
+	<table>
+		<tr>
+			<td><?php echo I18N::T('eq_meter', '阈值范围') ?></td>
+			<td>
+				<p class="lpadding_2">
+				<input type="hidden" name="equipment_id" value="<?php echo H($equipment_id ) ?>">
+				<input name="watt_threshold_min" type="text" class="text" size="6" value="<?php echo H($watt_threshold_min ) ?>"/> - 
+				<input  name="watt_threshold_max"type="text" class="text" size="6" value="<?php echo H($watt_threshold_max ) ?>" />&#160;W
+				<input type="hidden" name="eq_meter_id" value="<?php echo H($eq_meter->id ) ?>">
+			</p>
+			</td>
+		</tr>
+		<tr>
+			<td>&#160;</td>
+			<td>
+				<p class="lpadding_2 tpadding_1 description">
+					* <?php echo I18N::T('eq_meter', '率在此阈值范围时, 为仪器的有效机时'); ?>
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td>&#160;</td>
+			<td>
+				<p class="lpadding_2 description">
+					* <?php echo I18N::T('eq_meter', '最小阈值为X, 最大阈值为空, 表示阈值范围为 "大于等于X W"'); ?>
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td>&#160;</td>
+			<td>
+				<p class="lpadding_2 description">
+					* <?php echo I18N::T('eq_meter', '最大阈值为X, 最小阈值为空, 表示阈值范围为 "小于等于X W"'); ?>
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td>&#160;</td>
+			<td class="tpadding_1">
+	            <input type="submit" name="submit" value="<?php echo H(I18N::T('eq_meter', '保存')) ?>" class="button button_save"/>
+			</td>
+		</tr>
+	</table>
+</div>
+</form>
+</div>

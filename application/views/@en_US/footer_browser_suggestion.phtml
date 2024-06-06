@@ -1,0 +1,28 @@
+<?php 
+$notip = Input::form('nobrowstip');
+if (isset($notip)) $_SESSION['browser_diehard'] = $notip;
+?>
+<div class="footer_browser_suggestion middle">
+    <a class="label" onclick="jQuery(this).next().show(); return false">Try Better Browser!</a>
+    <div class="tip<?php echo $_SESSION['browser_diehard']?' hidden':''?>">
+        <h4>Browser Suggestions</h4>
+        <p class="description">We failed to recognize your web browser or it is an outdated version. For the best experience, we strongly recommend you to install a newer browser</p>
+        <div class="hr_1">&#160;</div>
+        <div class="clearfix">
+            <span class="nowrap inline_block"><img class="middle" src="images/browsers/firefox_s.gif" />&#160;<a class="middle" href="http://firefox.com"><strong>Mozilla Firefox</strong></a></span>
+            <div class="hr_1">&#160;</div>
+            <span class="nowrap inline_block"><img class="middle" src="images/browsers/chrome_s.gif" />&#160;<a class="middle" href="http://www.google.com/chrome/"><strong>Google Chrome</strong></a></span>
+            <div class="hr_1">&#160;</div>
+            <span class="nowrap inline_block"><img class="middle" src="images/browsers/safari_s.gif" />&#160;<a class="middle" href="http://www.apple.com/safari/"><strong>Apple Safari</strong></a></span>
+            <div class="hr_1">&#160;</div>
+        </div>
+        <div class="hr_1">&#160;</div>
+            <div class="right">
+            <?php
+            $params = $_GET;
+            $params['nobrowstip'] = 1;
+            ?>
+            <a href="<?php echo H(URI::url('', $params)) ?>" style="color: #633" confirm="Are you sure to skip this tip window?">I don't want to change my browser &#187;</a>
+        </div>
+    </div>
+</div>

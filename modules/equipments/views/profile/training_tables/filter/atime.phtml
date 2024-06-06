@@ -1,0 +1,6 @@
+<?php
+    $form['atime_dtstart'] = $form['atime_dtstart'] ? date('Y-m-d', $form['atime_dtstart']) : '';
+    $form['atime_dtend'] = $form['atime_dtend'] ? date('Y-m-d', $form['atime_dtend']) : '';
+ ?>
+
+<input id="atime_dtstart" date_type="date" name="atime_dtstart" class="date text small_search_text" value="<?php echo H($form['atime_dtstart']); ?>" /><span class="middle description date_interval">-</span><input id="atime_dtend" date_type="date" name="atime_dtend" class="date text small_search_text" value="<?php echo  H($form['atime_dtend']); ?>" />

@@ -1,0 +1,10 @@
+
+<div class="sensors_brief clearfix">
+    <?php
+$sensors = Q("env_sensor[node=$node]");
+
+foreach ($sensors as $sensor) {
+    echo V('envmon:sensor/list_brief', ['sensor' => $sensor]);
+}
+?>
+</div>

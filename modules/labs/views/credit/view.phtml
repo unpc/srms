@@ -1,0 +1,22 @@
+<div class="hr_1">&#160;</div>
+<div class="panel padding_1">
+	<div class="right">
+	<form method="post" autocomplete="off" action="<?php echo H(URI::url()) ?>">
+		<input name="query" class="text search hint:<?php echo I18N::T('labs', '关键字...')?>" value="<?php echo H(Input::form('query'))?>" />
+	</form>
+	</div>
+</div>
+<?php echo $pagination; ?>
+<table class="lab_grid sticky flexible">
+<thead>
+<tr>
+	<th>&#160;</th>
+	<th class="left nowrap"><?php echo I18N::T('labs', '实验室')?></th>
+	<th class="left flexible nowrap"><?php echo I18N::T('labs', '介绍')?></th>
+	<th class="right nowrap"><?php echo I18N::T('labs', '操作')?></th>
+</tr>
+</thead>
+<tbody>
+<?php foreach ($labs as $lab) { $lab->render('lab/grid'); } ?>
+</tbody>
+</table>

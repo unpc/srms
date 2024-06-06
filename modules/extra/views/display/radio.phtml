@@ -1,0 +1,6 @@
+<?php $name = 'extra_fields['.$uniqid.']';?>
+<?php foreach ($field['params'] as $key => $radio_name):?>
+	<span class="rpadding_3 nowrap"><?= Form::radio($name, $radio_name,
+    $value ? : $field['params'][$field['default_value']], $radio_name,'class="radio"');?></span>
+<?php endforeach;?>
+<?php if($field['remarks']):?><div class="description"><?= H($field['remarks']); ?></div><?php endif; ?>

@@ -1,0 +1,4 @@
+<?php 
+$status = Task_Model::$approved;
+echo Form::dropdown('approved', ['all'=>'--']+$status, $this->approved, 'class="middle"'); 
+?>

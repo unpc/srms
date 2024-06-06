@@ -1,0 +1,7 @@
+<?php 
+	$status_set = [];
+	$status_set[0] = '--';
+	$status_set += (array)Resume::$status;
+?>
+
+<?php echo Form::dropdown('status', $status_set, H($this->status) ?: 0, ' class="drop middle"'); ?>

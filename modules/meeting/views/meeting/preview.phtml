@@ -1,0 +1,32 @@
+<div class="lpadding_3 rpadding_3 tpadding_2 bpadding_2 clearfix">
+<table class="form">
+<tbody>
+<tr>
+	<td class="top icon">
+		<?php echo $meeting->icon('64'); ?>
+	</td>
+	<td class="top" style="padding-left: 20px;">
+		<h2 class="tmargin_2">
+		<a href="<?php echo H($meeting->url() ) ?>"><?php echo H($meeting->name); ?></a>
+		</h2>
+			<p class="tmargin_2"><?php echo I18N::HT('meetings', '联系人')?>:
+				<?php echo V('meeting:meeting_table/data/contacts', ['meeting'=>$meeting]);?>
+            </p>
+	</td>
+</tr>
+</tbody>
+</table>
+<div class="interval_20"></div>
+<table class="meeting_info_form form bubble" style="min-width: 400px">
+	<tr>
+		<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::T('meeting', '地点')?></span></td>
+		<td class="nowrap" style="padding-right:4em"><?php echo H($meeting->location) ?></td>
+	</tr>
+    <tr><td height="16"></td></tr>
+	<tr>
+		<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::T('meeting', '备注')?></span></td>
+		<td class="nowrap" style="padding-right:4em"><?php echo H($meeting->description, true) ?></td>
+	</tr>
+    <tr><td height="16"></td></tr>
+</table>
+</div>

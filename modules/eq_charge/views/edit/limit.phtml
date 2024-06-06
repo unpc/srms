@@ -1,0 +1,52 @@
+<?php $disabled = L('ME')->is_allowed_to('修改计费设置', $equipment) ? '' : 'disabled="disabled"';?>
+<form method="post" autocomplete="off" action="<?php echo H(URI::url() ) ?>">
+<div class="form">
+<table class="form flexible">
+	<tbody>
+	<tr>
+<!--		<td class="top icon tight">-->
+<!--			--><?php //echo $equipment->icon('104'); ?>
+<!--		</td>-->
+		<td class="top lpadding_30">
+            <div class="interval_30"></div>
+			<?php if($equipment->charge_script['reserv'] && $equipment->accept_reserv):?>
+			<h2 class="section_title"><?php echo I18N::T('eq_charge', '预约限制');?></h2>
+            <div class="interval_30"></div>
+			<div class="lmaigin_1e5">
+				<?php echo Form::checkbox('reserv_limit',  $equipment->reserv_limit, I18N::T('eq_sample', '预约所需的最低余额'), 'class="middle checkbox"' . $disabled, 'class="middle"');?>
+				<input name="reserv_balance_required" class="text currency" size="10" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo H($equipment->reserv_balance_required) ?>" <?php echo $disabled?>/>
+			</div>
+            <div class="interval_60"></div>
+			<?php endif;?>
+
+			<?php if($equipment->charge_script['record']):?>
+			<h2 class="section_title"><?php echo I18N::T('eq_charge', '使用限制');?></h2>
+            <div class="interval_30"></div>
+			<div class="lmaigin_1e5">
+				<?php echo Form::checkbox('record_limit',  $equipment->record_limit, I18N::T('eq_sample', '使用所需的最低余额'), 'class="middle checkbox"' . $disabled, 'class="middle"');?>
+				<input name="record_balance_required" class="text currency" size="10" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo H($equipment->record_balance_required) ?>" <?php echo $disabled?>/>
+			</div>
+            <div class="interval_60"></div>
+			<?php endif;?>
+
+			<?php if($equipment->charge_script['sample'] && $equipment->accept_sample):?>
+			<h2 class="section_title"><?php echo I18N::T('eq_charge', '送样限制');?></h2>
+            <div class="interval_30"></div>
+			<div class="lmaigin_1e5">
+				<?php echo Form::checkbox('sample_limit',  $equipment->sample_limit, I18N::T('eq_sample', '送样所需的最低余额'), 'class="middle checkbox"' . $disabled, 'class="middle"');?>
+				<input name="sample_balance_required" class="text currency" size="10" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo H($equipment->sample_balance_required) ?>" <?php echo $disabled?>/>
+			</div>
+            <div class="interval_60"></div>
+			<?php endif;?>
+		</td>
+	</tr>
+	</tbody>
+</table>
+</div>
+<?php if (!$disabled):?>
+    <div class="form float_right">
+        <input type="reset" name="cancel" class="font-button-default rmargin_16" value="<?php echo H(T('取消')) ?>" />
+        <input type="submit" name="submit" class="font-button-save" value="<?php echo H(T('保存修改')) ?>" />
+    </div>
+<?php endif;?>
+</form>

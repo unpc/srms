@@ -1,0 +1,40 @@
+<?php 
+
+$chat_count = $chat_count ? : 20;
+$time = $this->time ?: time();
+
+//去到当前仪器使用记录的开始时间
+$current_record = Q("eq_record[equipment={$equipment}][dtstart<{$time}][dtend=0]:sort(id DESC)")->current();
+
+if(!$current_record->id) return;
+
+$dtstart = $current_record->dtstart;
+
+$total_count = Q("eq_chat[equipment={$equipment}][ctime>={$dtstart}]")->total_count();
+$limit = max($total_count - $chat_count, 0);
+
+$chats = Q("eq_chat[equipment={$equipment}][ctime>={$dtstart}]:sort(ctime A)")->limit($limit, $chat_count);
+
+foreach ($chats as $chat) {
+    if ($chat->user->id) {
+		$name = $chat->user->name;
+		if (!$GLOBALS['preload']['people.multi_lab']) {
+			$name .= ' ('.Q("{$chat->user} lab")->current()->name.')';
+		}
+	}
+	elseif ($chat->name) {
+		$name = $chat->name;
+	}
+	else {
+		$name = I18N::T('eq_mon', '未知用户');
+	}
+	$name = H($name);
+    $content = H($chat->content);
+	$show_user = '<p class="speaker">'.$name.' '.date('Y/m/d H:i:s', $chat->ctime).'</p>';
+	$show_text = '<p class="text">'.$content.'</p>';
+	$talks[] = $show_user . $show_text;
+}
+
+if (count($talks)) $talk = join('', $talks);
+
+echo $talk;

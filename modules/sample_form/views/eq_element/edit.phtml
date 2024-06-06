@@ -1,0 +1,25 @@
+<?php
+foreach (Q("eq_element[equipment=$equipment]") as $element) {
+    $existing_data[] = ['result' => $element];
+}
+?>
+<form action="<?= H(URI::url()) ?>" method="POST">
+    <?php echo V('form_error', ['form' => $form]);?>
+    <div class="form padding_2">
+    <?php
+        echo Widget::factory('flexform', [
+            'title' => I18N::T('sample_form', '检测元素'),
+            'template_data' => ['disabled' => TRUE],
+            'existing_data' => $existing_data,
+            'item_view' => 'sample_form:eq_element/item',
+            'extra_vars'=> [
+                'form' => $form,
+            ],
+        ]);
+    ?>
+    </div>
+
+    <div class="form padding_2 text-right" style="text-align: right;">
+        <input type="submit" name="submit" class="font-button-save value="<?php echo H(I18N::T('sample_form', '更新')) ?>" />
+    </div>
+</form>

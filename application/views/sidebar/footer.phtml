@@ -1,0 +1,18 @@
+<?php if (Config::get('debug.statistics')): ?>
+<div class="center padding_2 clearfix">
+	<p class="description middle">
+		(<?php
+		echo T('资源占用%mem', ['%mem'=>File::bytes(memory_get_peak_usage(TRUE))]);
+		echo ', ';
+		echo T('数据库查询%num次', ['%num'=> Database::$query_count]);
+		echo ', ';
+		/*
+		echo T('缓冲命中%num次', array('%num'=> Database::$cache_hits));
+		echo ', ';*/
+		echo T('进程大小%size', ['%size'=>File::bytes(strlen(serialize($_SESSION)))]);
+		echo ', ';
+		echo T('脚本时间%time', ['%time' => round(microtime(TRUE) - $GLOBALS['SCRIPT_START_AT'], 4).'s']);
+		?>)
+	</p>
+</div>
+<?php endif;

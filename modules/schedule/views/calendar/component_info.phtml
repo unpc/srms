@@ -1,0 +1,57 @@
+<tr>
+	<td align="right" class="description"><?php echo I18N::T('schedule', '日程类型'); ?></td>
+	<td>
+	<?php 
+		switch($component->subtype) {
+          case Schedule::TYPE_LABMEETING :
+                   echo I18N::T('schedule', '组会');
+                   break;
+          case Schedule::TYPE_JOURNALCLUB :
+                  echo I18N::T('schedule', '文献讨论');
+                  break;
+          case Schedule::TYPE_OTHERS :
+                   echo I18N::T('schedule', '其他');
+                   break;
+          case Schedule::TYPE_REPORT :
+                  echo I18N::T('schedule', '学术报告');
+                  break;
+        }
+	 ?>
+	 </td>
+</tr>
+
+<tr>
+	<td align="right" class="description"><?php echo I18N::T('schedule', '主题'); ?></td>
+	<td><?php echo H($component->name); ?></td>
+</tr>
+
+<tr>
+	<td align="right" class="description"><?php echo I18N::T('schedule', '报告人'); ?></td>
+	<td>
+	<?php
+		$arr = []; 
+		$schedule_speakers = Q("schedule_speaker[component={$component}]"); 
+		foreach ($schedule_speakers as $schedule_speaker) {
+				$arr[] = $schedule_speaker->user->name;
+		}
+		$speakers = implode(', ', $arr);
+		echo H($speakers);
+	?>
+	</td>
+</tr>
+<?php
+	$views = Event::trigger('schedule.component_info', $component);
+	foreach ((array)$views as $view) {
+		echo $view;
+	}
+?>
+
+<tr>
+	<td align="right" class="description"><?php echo I18N::T('schedule', '开始时间'); ?></td>
+	<td><?php echo Date::format($component->dtstart, T('Y/m/d H:i:s')); ?></td>
+</tr>
+
+<tr>
+	<td align="right" class="description"><?php echo I18N::T('schedule', '结束时间'); ?></td>
+	<td><?php echo Date::format($component->dtend, T('Y/m/d H:i:s')); ?></td>
+</tr>

@@ -1,0 +1,42 @@
+<div class="padding_1">
+	<h2>
+		<?php echo V('treenote:project/table/data/status', ['project'=>$project]); ?>
+		<a href="<?php echo H($project->url() ) ?>"><?php echo H($project->title); ?></a>
+	</h2>
+	<div class="hr_1">&#160;</div>
+	<table class="form">
+		<tr>
+			<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::HT('treenote', '负责人|:project')?></span></td>
+			<td class="nowrap">
+				<?php $project->user->render();?>
+			</td>
+		</tr>
+		<tr>
+			<td class="nowrap tight middle"><span class="status_tag status_tag_label"><?php echo I18N::HT('treenote', '完成度')?></span></td>
+			<td class="nowrap middle">
+<?php	
+$progress = $project->progress();
+$percent = round(100 * $progress['complete'] / $progress['all']);
+?>
+				<strong class="middle"><?php echo H($percent.'%'); ?></strong>
+				<span class="middle"> ( <?php echo $progress['complete'] . ' / ' . $progress['all'];?> )</span>
+			</td>
+		</tr>
+		<?php if ($project->description): ?>
+		<tr>
+			<td class="nowrap tight top"><span class="status_tag status_tag_label"><?php echo I18N::HT('treenote', '说明')?></span></td>
+			<td class="top">
+				<div class="project_description">
+				<?php echo H($project->description, TRUE) ?>
+				</div>
+			</td>
+		</tr>
+		<?php endif; ?>
+	</table>
+	<div class="hr_2">&#160;</div>
+	<?php echo Widget::factory('application:links', ['links' => $project->links('view'), 'separator' => ' ']);?>
+	<div class="hr_2">&#160;</div>
+</div>
+<div class="hr_1">&#160;</div>
+<?php echo $secondary_tabs; ?>
+<?php echo $secondary_tabs->content; ?>

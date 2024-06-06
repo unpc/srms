@@ -1,0 +1,32 @@
+<div class="role_title_hover role_title check_hover form padding_1 clearfix item:<?php echo $role->id ?>">
+    <div data-rid='<?= $role->id ?>' class="role_title_d float_left rpadding_2"
+         style="<?= $role->weight >= 0 ? 'width: 10.4rem;' : 'width:14.8rem;' ?>;">
+        <?php if ($role->weight < 0 || $role->id == 0) : ?>
+            <div class="not_role_drag_handle">&#160;</div>
+            <div class="hidden">
+                <div class="role_drag_handle center"><?php echo HT($role->name); ?></div>
+            </div>
+        <?php else : ?>
+            <div class="not_role_drag_handle">&#160;</div>
+            <div class="hidden">
+                <div class="role_drag_handle center"><?php echo HT($role->name); ?></div>
+            </div>
+        <?php endif ?>
+        <span><?php echo HT(mb_substr($role->name, 0, 10, 'utf8') . (mb_strlen($role->name, 'utf8') > 11 ? '...' : '')); ?></span>
+    </div>
+
+    <?php if ($role->id == 0): ?>
+    <?php else: ?>
+        <?php if ($role->weight >= 0): ?>
+            <div class="float_right show_on_hover"
+                 style="height: 32px;width:75px;border-radius: 2px;margin-top: -.2rem;">
+                <a confirm="<?php echo I18N::T('roles', '你确定要删除吗？请谨慎操作！'); ?>"
+                   title="删除"
+                   class="button icon-trash"
+                   style="font-size: 12px;border: none;color:#F5222D;background: 2px solid var(--basiccolor)"
+                   href="<?php echo $role->url($role->id, NULL, NULL, 'delete'); ?>">
+                    <?php echo I18N::T('roles', '删除') ?></a>
+            </div>
+        <?php endif; ?>
+    <?php endif; ?>
+</div>

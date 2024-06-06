@@ -1,0 +1,6 @@
+<?php
+if ($lab->creator->id): ?>
+<a href="<?php echo H($lab->creator->url()) ?>"><?php echo H($lab->creator->name) ?></a>
+<?php else:
+	echo '--';
+endif;

@@ -1,0 +1,26 @@
+<?php $rel_id = 'gp_'.uniqid(); ?>
+<div class="form padding_1">
+<table class="form grant_portions_table" id="<?php echo H($rel_id) ?>">
+<thead>	
+	<tr>
+		<th class="nowrap middle"><?php echo I18N::T('grants', '支出类别'); ?></th>
+		<th class="nowrap middle right"><?php echo I18N::T('grants', '分配份额'); ?></th>
+		<th class="nowrap middle right"><?php echo I18N::T('grants', '使用份额'); ?></th>
+		<th class="nowrap middle right"><?php echo I18N::T('grants', '剩余份额'); ?></th>
+		<th class="nowrap middle right"><?php echo I18N::T('grants', '可分配份额'); ?></th>
+		<th class="nowrap middle"><a class="button button_add gp_item_add prevent_default"><?php echo T('添加'); ?></a></th>
+	</tr>
+</thead>
+<tbody>
+	<?php
+		echo V('grants:portion/edit_item', ['indent'=>0, 'portion' => O('grant_portion')]);
+		foreach ($gp_form as $gp) {
+			$portion = $gp['portion'];
+			echo V('grants:portion/edit_item', ['indent'=>$gp['indent'], 'portion' => $portion]);
+		}
+		
+	?>	
+</tbody>
+</table>
+<?php echo JS::load('grants:grant_portion_edit', ['rel_id'=>$rel_id,'delete_msg'=>I18N::HT('grants', '该分配下可能关联已有支出，您确定删除嘛?')]);?>
+</div>

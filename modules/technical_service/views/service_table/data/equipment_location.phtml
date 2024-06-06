@@ -1,0 +1,30 @@
+<?php
+$equipment = $connect->equipment;
+if (Config::get('equipment.location_type_select')):
+    ?>
+    <p>
+        <?php
+        $ls = Q("{$equipment} tag_location")->to_assoc('id', 'name');
+        if (count($ls)) {
+            echo join(' &#187; ', $ls);
+        } else {
+            echo '--';
+        }
+        ?>
+    </p>
+    <p>
+        <?= $connect->equipment->location2 ? $equipment->location2 : '' ?>
+    </p>
+<?php else: ?>
+    <p>
+        <?php
+        if (!$equipment->location && !$equipment->location2) echo "--";
+        else {
+            if ($equipment->location) echo H($equipment->location);
+            if ($equipment->location && $equipment->location2) echo " > ";
+            if ($equipment->location2) echo H($equipment->location2);
+        }
+
+        ?>
+    </p>
+<?php endif; ?>

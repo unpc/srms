@@ -1,0 +1,13 @@
+<div class="hr_1">&#160;</div>
+<div style="position:relative; left:450px; width:200px; margin-top:10px">
+	<div class="interview_status interview_status_1 track_block">
+	<?php echo H(Resume::$status[1]); ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo Date::format($resume->ctime, T('Y/m/d H:i:s')); ?>
+	</div>
+	<?php $tracks = $resume->track; ?>
+	<?php foreach ($tracks as $i => $track): ?>
+	<div class="track_pic"></div>
+	<div class="interview_status interview_status_<?php echo $i; ?> track_block">
+	<?php echo H(Resume::$status[$i]); ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo Date::format($track, T('Y/m/d H:i:s')); ?> 
+	</div>
+	<?php endforeach;?>
+</div>

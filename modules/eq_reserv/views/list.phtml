@@ -1,0 +1,167 @@
+<?php echo CSS::load_async('calendars:common'); ?>
+<script>
+    Q.globals.cal_week_rel = 'edit_week';
+    Q.globals.mode = 'list';
+</script>
+
+<?php
+$panel_buttons = [
+    [
+        'tip'   => I18N::T('eq_reserv', '导出Excel'),
+        'text' => I18N::T('equipments', '导出'),
+        'extra' => 'q-object="output" q-event="click" q-src="' . URI::url('!eq_reserv/export') .
+        '" q-static="' . H(['type' => 'csv', 'form_token' => $form_token]) .
+        '" class="button button_save "',
+    ],
+    [
+        'tip'   => I18N::T('eq_reserv', '打印'),
+        'text' => I18N::T('equipments', '打印'),
+        'extra' => 'q-object="output" q-event="click" q-src="' . URI::url('!eq_reserv/export') .
+        '" q-static="' . H(['type' => 'print', 'form_token' => $form_token]) .
+        '" class="button button_print "',
+    ],
+]
+
+?>
+
+
+<?php
+$sort_fields = Config::get('eq_reserv.eq_reserv.sortable_columns');
+$me          = L('ME');
+
+$table = Widget::factory('table');
+
+$table->name     = 'eq_reserv';
+$table->sort_asc = $sort_asc;
+$table->sort_by  = $sort_by;
+
+// 增加下属机构范围,selector有点傻，但是时间不允许
+if ($GLOBALS['preload']['tag.group_limit'] >= 0) {
+    $table->add_column('group', [
+        'title'=>I18N::T('equipments', '组织机构'),
+        'align'=>'left',
+        'suppressible' => TRUE,
+        'invisible' => TRUE,
+        'filter'=> [
+            'form' => V('equipments:equipments_table/filters/group', [
+                'name'=>'group_id', 'group'=>$group,
+                'root'=>$group_root,
+            ]),
+            'value' => V('application:tag/path', ['tag'=>$group, 'tag_root'=>$group_root, 'url_template'=>URI::url('', 'group_id=%tag_id')]),
+            'field' => 'group_id'
+        ],
+        'nowrap'=>TRUE,
+    ]);
+}
+// end
+
+$add_columns_arr = [
+
+    'equipment' => [
+        'title'    => I18N::T('eq_reserv', '预约仪器'),
+        'sortable' => in_array('equipment', $sort_fields),
+        'nowrap'   => true,
+        'align'    => 'left',
+        'filter'   => [
+            'form'  => V('eq_reserv:reservs_table/filters/equipment', ['form' => $form]),
+            'value' => $form['equipment'] ? H($form['equipment']) : null,
+        ],
+        'weight'   => 0,
+    ],
+    'equipment_ref' => [
+        'title'    => I18N::T('eq_reserv', '仪器编号'),
+        'sortable' => in_array('equipment_ref', $sort_fields),
+        'nowrap'   => true,
+        'align'    => 'left',
+        'invisible' => true,
+        'filter'   => [
+            'form'  => V('eq_reserv:reservs_table/filters/equipment_ref', ['form' => $form]),
+            'value' => $form['equipment_ref'] ? H($form['equipment_ref']) : null,
+        ],
+        'weight'   => 5,
+    ],
+    'organizer' => [
+        'title'    => I18N::T('eq_reserv', '预约者'),
+        'sortable' => in_array('organizer', $sort_fields),
+        'nowrap'   => true,
+        'align'    => 'left',
+        'filter'   => [
+            'form'  => V('eq_reserv:reservs_table/filters/organizer', ['form' => $form]),
+            'value' => $form['organizer'] ? H($form['organizer']) : null,
+        ],
+        'weight'   => 10,
+    ],
+
+    'status'    => [
+        'title'    => I18N::T('eq_reserv', '状态'),
+        'sortable' => in_array('status', $sort_fields),
+        'align'    => 'left',
+        'nowrap'   => true,
+        'filter'   => [
+            'form'  => V('eq_reserv:reservs_table/filters/status', ['form' => $form]),
+            'value' => H(EQ_Reserv_Model::$reserv_status[$form['reserv_status']]),
+            'field' => 'reserv_status',
+        ],
+        'weight'   => 20,
+    ],
+    'count' => [
+        'title' => I18N::T('eq_reserv', '样品数'),
+        'align'    => 'left',
+        'nowrap'   => true,
+        'weight'   => 25,
+    ],
+    'date'      => [
+        'title'    => I18N::T('eq_reserv', '时间'),
+        'sortable' => in_array('date', $sort_fields),
+        'align'    => 'left',
+        'nowrap'   => true,
+        'filter'   => [
+            'form'  => V('eq_reserv:reservs_table/filters/date', ['form' => $form]),
+            'value' => $form['dtstart'], $form['dtend'],
+            'field' => 'dtstart,dtend',
+        ],
+        'weight'   => 30,
+    ],
+];
+$add_columns_arr['rest'] = ['algin' => 'right', 'nowrap' => true, 'weight' => 40];
+
+$add_columns_arr = new ArrayObject($add_columns_arr);
+Event::trigger('eq_reserv.table_list.columns', $form, $add_columns_arr);
+$table->add_columns((array) $add_columns_arr);
+
+$table->empty_message = I18N::T('eq_reserv', '无符合条件的实验室');
+
+if (count($eq_reservs) > 0) {
+
+    foreach ($eq_reservs as $eq_reserv) {
+        $component = $eq_reserv->component;
+        $add_row_arr = [
+            // '@' => '<img class="icon icon_user" width="32px" height="32px" src="'.$eq_reserv->equipment->icon_url().'" style="display:block">',
+            'equipment' => '<a href="' . $eq_reserv->equipment->url() . '">' . $eq_reserv->equipment->name . '</a>',
+            'organizer' => V('eq_reserv:reservs_table/data/organizer', ['eq_reserv' => $eq_reserv]),
+            'status'    => V('eq_reserv:reservs_table/data/status', ['eq_reserv' => $eq_reserv]),
+            //'date' => date('Y-m-d H:i:s', $eq_reserv->dtstart).' - '.date('H:i:s', $eq_reserv->dtend),
+            'count'    => H($eq_reserv->count),
+            'date' => H(Date::range($eq_reserv->dtstart, $eq_reserv->dtend)),
+            'rest'      => Widget::factory('application:links', ['links' => $component->links()]),
+        ];
+
+        $row = new ArrayIterator($add_row_arr);
+        Event::trigger('eq_reserv.table_list.row', $row, $eq_reserv);
+        $table->add_row($row);
+    }
+}
+
+$param = [
+    'panel_buttons' => $panel_buttons,
+    'top_input_arr' => ['equipment', 'equipment_ref'],
+    'columns'       => $table->columns,
+    'extra_view'    => '<div class="adj statistics middle">'. $pagination.'</div>'
+];
+echo V('application:search_box', $param);
+
+echo $table;
+
+?>
+
+<div class="pages"><?=$pagination?></div>

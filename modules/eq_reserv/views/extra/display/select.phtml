@@ -1,0 +1,21 @@
+<tr>
+    <td class="label right top nowrap">
+    <?php if($properties['field']['required']) : ?>*<?php endif; ?>
+    <?php echo I18N::HT('eq_reserv', $properties['label'])?>
+    </td>
+    <td>
+    <?php
+    $field = $properties['field'];
+    $extra_value = O('extra_value', ['object'=> $component]);
+    $values = $extra_value->values;
+    $vname = ltrim($name, 'extra_');
+    ?>
+    <?php
+        //[0 =>'a',1=>'b'] 转换成 ['a'=>'a','b'=>'b']
+        foreach ($field['params'] as $option) {
+            $params[$option] = $option;
+        }
+        echo Form::dropdown($name, ['--'] + (array)$params, $values[$vname] ? : 0);
+    ?>
+    </td>
+</tr>

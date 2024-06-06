@@ -1,0 +1,9 @@
+<strong><?php
+$me = L('ME');
+if ($me->is_allowed_to('查看', $vidcam)) :
+?>
+<a href="<?php echo $vidcam->url(); ?>"><?php echo H($vidcam->name); ?></a>
+<?php else :?>
+<?php echo H($vidcam->name); ?></a>
+<?php endif; ?>
+</strong>

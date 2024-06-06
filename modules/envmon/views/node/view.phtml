@@ -1,0 +1,29 @@
+<div class="equipment_detail clearfix">
+
+    <h2><?php echo H($node->name); ?></h2>
+
+    <div class="description tpadding_1 bpadding_2">
+        <span class="rmargin_2e4">
+            地址：<?php echo H($node->location).' '.H($node->location2); ?>
+        </span>
+        <span>
+            <?php echo I18N::T('envmon', '负责人') ?>:
+            <?php echo V('node/data/incharge', ['node'=>$node])?>
+        </span>
+    </div>
+    <div class="sensors_brief clearfix">
+        <?php
+		$sensors = Q("env_sensor[node=$node]");
+
+		foreach ($sensors as $sensor) {
+			echo V('envmon:sensor/list_brief', ['sensor'=>$sensor]);
+		}
+
+?>
+    </div>
+</div>
+<div class="hr_2"></div>
+<div class='tab_pagination'>
+<?php echo $secondary_tabs ?>
+	</div>
+<?php echo $secondary_tabs->content ?>

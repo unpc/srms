@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" style="overflow: hidden; margin: 0px;">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+	<title><?= I18N::T('eq_reserv', '特别提醒') ?></title>
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <meta http-equiv="Content-Script-Type" content="text/javascript" />
+    <base href="<?= H(Config::get('system.base_url') ) ?>" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <?= $this->controller->load_css(); ?>
+    <?= $this->controller->load_js(TRUE); ?>
+</head>
+
+<body>
+    <div window_width="260" window_height="150" style="padding: 10px; width: 240px;">
+        <p><?= I18N::T('equipments', "您的账号正在使用其他仪器，目前使用的仪器有：") ?></p>
+        <?php foreach ( $equipments as $id => $name):  ?>
+        <p><?= H($name) ?></p>
+        <?php endforeach; ?>
+        <div style="text-align: right;">
+            <a onclick="javascript:window.location.href='glogon_action_cancel'"
+            style="color: #0000ff; text-decoration: underline;">
+                <?= I18N::T('eq_reserv', '知道了') ?>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

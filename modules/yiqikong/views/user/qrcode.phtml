@@ -1,0 +1,7 @@
+<div style="text-align: center; padding: 20px;">
+	<div class="message message_normal clearfix nowrap" style="margin-bottom: 20px;">
+        <?= H('该二维码有效期为5分钟，请及时使用，超时请刷新。');?>
+    </div>
+    <img src="<?= URI::url('!yiqikong/qrcode/app', ['update' => time()]); ?>"
+    height="<?php echo H($height ? : 200) ?>" width="<?php echo H($width ? : 200) ?>" />
+</div>

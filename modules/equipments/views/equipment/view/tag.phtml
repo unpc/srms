@@ -1,0 +1,29 @@
+<tr>
+    <td class="label nowrap rpadding_label lpadding_8 bpadding_2"><span class="lpadding_1"><?php echo I18N::T('equipments', '仪器分类')?></span></td>
+</tr>
+
+<tr>
+    <td class="top lpadding_8" colspan="4">
+    <?php
+    if ($no_error) {
+        $root = Tag_Model::root('equipment');
+        $tags = @json_encode(Q("$equipment tag_equipment[root=$root]")->to_assoc('id', 'name'));
+    }
+
+    if (!$disabled) {
+        echo Widget::factory('equipments:tag_selector', [
+            'autocomplete'=> URI::url('!equipments/autocomplete/tags'),
+            'name'=>'tags',
+            'value'=> $no_error ? $tags : $form['tags']
+        ]);
+    }
+    else {
+    ?>
+    <div style="padding-top: 3px;">
+        <?= implode(',', json_decode($tags, true)); ?>
+    </div>
+    <?php
+    }
+    ?>
+    </td>
+</tr>

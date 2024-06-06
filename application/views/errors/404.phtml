@@ -1,0 +1,15 @@
+<script>
+jQuery(function($){
+	var $center = $('#center');
+	var window_height = jQuery(window).height();
+	var error_height = String(window_height * 3/10)+'px';
+	$center.find('.center_content').css({width: '600px', margin: error_height+' auto', paddingBottom: '10em'});
+});
+</script>
+<div class="error center">
+	<h1><?php echo T('您要访问的页面不存在! 如有疑问请与系统管理员联系。') ?></h1>
+</div>
+<?php 
+if (!Auth::logged_in()) {
+	echo Event::trigger('login.view') ? : V('application:login_form');
+}

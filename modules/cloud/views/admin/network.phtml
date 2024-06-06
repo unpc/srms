@@ -1,0 +1,24 @@
+<?php
+
+$uid = posix_getuid();
+$pw = posix_getpwuid($uid);
+
+$rsa = file_get_contents($pw['dir'].'/.ssh/id_rsa');
+?>
+<div class="form padding_1">
+	<table class="form">
+	<tr>
+		<td class="label top nowrap"><?php echo I18N::HT('cloud', 'RSA公钥'); ?></td>
+		<td class="top">
+			<textarea name="rsa" cols="60" rows="5"></textarea>
+		</td>
+	</tr>
+	<tr>
+		<td>&#160;</td>
+		<td>
+			<div class="hr_2">&#160;</div>
+			<a class="button button_connect"><?php echo I18N::HT('cloud', '连接') ?></a>
+		</td>
+	</tr>
+	</table>
+</div>

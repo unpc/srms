@@ -1,0 +1,23 @@
+<div style="float: left;">
+<!--	--><?php //echo V('door/control_status',['door'=>$door]) ?>
+	<?php
+	/*
+	NO.TASK#274(guoping.zhang@2010.11.27)
+	应用权限设置新规则
+	 */
+	$me = L('ME');
+	if($me->is_allowed_to('远程控制', $door, ['direction'=>TRUE])): ?>
+	<a title="<?php echo I18N::T('entrance','进门') ?>" class="button icon-comein middle view object:door_in event:click static:<?php echo H(['id'=>$door->id]) ?>" >
+        <?php echo I18N::T('entrance','进门') ?>
+    </a>
+	<?php endif; ?>
+
+	<?php if (!$door->is_single_direction): ?>
+		<?php if($me->is_allowed_to('远程控制', $door, ['direction'=>FALSE])): ?>
+		<a title="<?php echo I18N::T('entrance','出门') ?>" class="button icon-comein middle view object:door_out event:click static:<?php echo H(['id'=>$door->id]) ?>">
+            <?php echo I18N::T('entrance','出门') ?>
+        </a>
+		<?php endif; ?>
+	<?php endif; ?>
+</div>
+

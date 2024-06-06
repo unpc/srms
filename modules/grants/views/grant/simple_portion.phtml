@@ -1,0 +1,13 @@
+<?php
+if ($width > 0 && $portion->amount > 0): 
+$portion_used = $portion->amount - $portion->balance;
+$portion_balance = $portion->balance;
+$used_tip = I18N::T('grants', '已支出 %num', ['%num'=>Number::currency($portion_used)]);
+$balance_tip = I18N::T('grants', '余额 %num', ['%num'=>Number::currency($portion_balance)]);
+?>
+<div class="portion_bar" style="width: <?php echo $width ?>px"><div class="simple_portion_bar">
+<?php if ($portion_balance>0): ?><div class="part part_balance tooltip:<?php echo H(E($balance_tip))?>" style="width:<?php echo round(100 * $portion_balance/$portion->amount); ?>%">&#160;</div><?php endif; if ($portion_used>0): ?><div class="part <?php echo $portion_balance >=0 ? 'part_used':'part_deficit';?> tooltip:<?php echo H(E($used_tip))?>" style="width:<?php echo round(100 * min($portion->amount, $portion_used)/$portion->amount); ?>%">&#160;
+</div><?php endif; ?>
+</div></div>
+<?php endif; 
+

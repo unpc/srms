@@ -1,0 +1,120 @@
+<div class="padding_2">
+  <h2 class="section_title">
+    <span class="middle"><?= I18N::T('support', '基本信息') ?></span>
+  </h2>
+  <div style="padding-top:5px">
+    <table class="form equipment_info_form" style="min-width:400px">
+      <tr>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('support', '财务账号名称')?>
+          </span>
+        </td>
+        <td class="left flexible" colspan="3">
+          <?= H($account->lab->name) ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('support', '财务部门名称') ?>
+          </span>
+        </td>
+        <td colspan="3">
+          <?= H($account->department->name) ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left top">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('support', '远程充值') ?>
+          </span>
+        </td> 
+        <td>
+          <?= H($account->income_remote) ?>
+        </td>
+        <td class="nowrap left top">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('support', '远程充值已确认金额') ?>
+          </span>
+        </td> 
+        <td>
+          <span class="content_wrap"><?= H($account->income_remote_confirmed) ?></span>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('support', '本地充值')?>
+          </span>
+        </td> 
+        <td>
+          <?= H($account->income_local) ?>
+        </td>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('support', '调账转入')?>
+          </span>
+        </td> 
+        <td>
+            <span class="content_wrap"><?= H($account->income_transfer) ?></span>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('support', '远程扣费')?>
+          </span>
+        </td> 
+        <td>
+          <?= H($account->outcome_remote) ?>
+        </td>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('support', '本地扣费')?>
+          </span>
+        </td> 
+        <td>
+            <span class="content_wrap"><?= H($account->outcome_local) ?></span>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('support', '使用扣费')?>
+          </span>
+        </td> 
+        <td>
+          <?= H($account->outcome_use) ?>
+        </td>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('support', '余额')?>
+          </span>
+        </td> 
+        <td>
+            <span class="content_wrap"><?= H($account->balance) ?></span>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div class="interval_20"></div>
+  <div class="float_right">
+    <a class="font-button-delete middle delete_account_match"><?= I18N::HT('support', '删除')?></a>
+  </div>
+  <div class="interval_60"></div>
+</div>
+
+<script>
+jQuery(function($) {
+  $('.delete_account_match').bind('click', function () {
+    Q.trigger({
+      url: '<?= H(URI::url('!support/data')) ?>',
+      object: 'delete_account',
+      event: 'exec',
+      global: false,
+      data: { id: <?= $account->id ?> },
+    });
+  })
+})
+</script>

@@ -1,0 +1,43 @@
+<?php 
+	$url = ($type == 'csv') ? 'transactions_csv' : 'transactions_print';
+?>
+<div class="form">
+    <?php if ($type == 'csv'): ?>
+        <form id="transaction_form" method="POST" q-object="billing_transaction_export" q-src="<?= URI::url('!billing/transactions') ?>" q-static="<?php echo
+        H(['form_token'=>$form_token, 'type' => $type, 'dept' => $dept, 'lab_id' => $lab_id])?>" q-event="submit" autocomplete="off" class="prevent_default">
+    <?php else: ?>
+        <form action="<?php echo H(URI::url('!billing/transactions/'.$url, ['type'=>$type,'form_token'=>$form_token,'dept'=>$dept,'lab_id'=>$lab_id])) ?>" target="<?=$type == 'csv' ? '_self' : '_blank'?>" class="prevent_default" method="post">
+    <?php endif; ?>
+    <div class="interval_20">&nbsp</div>
+	<ul class="ep_triple">
+	  <?php
+          uasort($columns, function($a, $b) {
+              $aw = (int) isset($a['weight']) ? $a['weight'] : 0;
+              $bw = (int) isset($b['weight']) ? $b['weight'] : 0;
+
+              if ($aw == $bw) {
+                  return 0;
+              }
+              elseif ($aw < $bw) {
+                  return -1;
+              }
+              else {
+                  return 1;
+              }
+          });
+
+	 		foreach ($columns as $p => $p_name) :?>
+	  <li class="nowrap">
+		<?php echo Form::checkbox("columns[{$p}]", TRUE, I18N::T('billing', $p_name['title']), 'class="middle monitor checkbox"', 'class="middle"');?>
+	  </li>
+	  <?php endforeach;?>
+	</ul>
+    <div class="button_container">
+        <div class="float_right">
+             <input name="cancel" id="cancel" type='reset' class="font-button-default sm rmargin_2e4" value="<?php echo I18N::HT('billing', '取消');?>" />
+             <input name="submit" type='submit' class="font-button-save sm" value="<?php echo I18N::HT('billing', '提交');?>" />
+        </div>
+    </div>
+    <span class="red"><?php echo $description?></span>
+  </form>
+</div>

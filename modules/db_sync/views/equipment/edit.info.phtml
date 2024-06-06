@@ -1,0 +1,44 @@
+<?php
+$me       = L('ME');
+$no_error = ($form->no_error !== false);
+$require  = (string) V('form_require', ['extra_class' => 'top']);
+$disabled = $me->is_allowed_to('锁定基本', $equipment) ? '' : ($equipment->info_lock ? 'disabled' : '');
+$sites    = Config::get('site.slave');
+array_unshift($sites, Config::get('site.master'));
+$infos = [];
+foreach ($sites as $site) {
+	    $infos[$site['name']] = $site['zh_name'];
+}
+
+if (!$equipment->id && $_SESSION['from_lab']) {
+    $info  = $_SESSION['from_lab'];
+    $force = true;
+}elseif ($equipment->billing_dept_id) {
+    $info  = $equipment->billing_dept->site;
+    $force = true;
+} else {
+    $info = $equipment->site;
+}
+
+?>
+
+<tr>
+    <td class="label right nowrap middle"><?php echo I18N::T('equipments', '仪器所属站点') ?></td>
+    <td class="top middle">
+    <?php
+        if ($disabled) {
+            echo '<div style="padding-top: 3px;">';
+            echo $equipment->site;
+            echo '</div>';
+        } else {
+            if ($force) {
+                echo '<div style="padding-top: 3px;">' . $infos[$info] . '</div>';
+                echo '<input name="site" type="hidden" value="' . $info . '">';
+            } else {
+                echo Form::dropdown('site', $infos, $info ?: key($infos));
+            }
+        }
+    ?>
+    </td>
+</tr>
+

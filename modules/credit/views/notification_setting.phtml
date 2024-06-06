@@ -1,0 +1,43 @@
+<div class="message_body padding_2">
+    <?php
+    $measures = Q('credit_measures');
+    $currentMeasure = null;
+    foreach ($measures as $measure) {
+        if (strpos($message->body, $measure->name)) {
+            $currentMeasure = $measure;
+            break;
+        }
+    }
+    if ($currentMeasure) {
+        $me = L('ME');
+        $setting = O('notification_read_setting', ['source' => $currentMeasure, 'user' => $me]);
+    }
+    ?>
+    <input type="checkbox" name="not_notification" value="0" <?= isset($setting) && $setting->id ? 'checked' : '' ?>/>
+    <input type="hidden" name="type" value="<?= $config['type'] ?>"/>
+    <input type="hidden" name="mid" value="<?= $message->id ?>"/>
+    <span style="color: gray">不再提醒(勾选后不再收到类型为"<?= $currentMeasure->name ?>"的警告消息)</span>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('input[name=not_notification]').click(function () {
+            let vl = $(this).is(':checked') ? 1 : 0,
+                type = $('input[name=type]').val(),
+                mid = $('input[name=mid]').val();
+
+            $.ajax({
+                url: '<?= URI::url('!credit/setting')?>',
+                data: {
+                    _ajax: 1,
+                    _object: 'notification_setting',
+                    _event: 'submit',
+                    type: type,
+                    vl: vl,
+                    mid: mid,
+                },
+                success: function (data) {
+                },
+            });
+        });
+    });
+</script>

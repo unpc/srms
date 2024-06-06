@@ -1,0 +1,91 @@
+<div class=" clearfix lpadding_3 rpadding_3 tpadding_2 bpadding_2">
+    <table class="form">
+        <tbody>
+            <tr>
+                <td class="top icon">
+                    <?php echo $equipment->icon('64'); ?>
+                </td>
+                <?php $is_admin = L('ME')->is_allowed_to('修改', $equipment); ?>
+                <td class="top" style="padding-left:20px">
+                    <h2 class="tmargin_2">
+                        <a href="<?php echo H($equipment->url() ) ?>"><?php echo H($equipment->name); ?></a>
+                        <small class="icon-selected lmargin_3 blue">&nbsp<?php echo I18N::T('equipments', EQ_Status_Model::$status[$equipment->status]); ?></small>
+                    </h2>
+                    <?php if($equipment->status != EQ_Status_Model::NO_LONGER_IN_SERVICE): ?>
+					<p class="tmargin_2"><?php echo I18N::HT('equipments', '联系人')?>
+					<span class="lmargin_4">
+						<?php echo V('equipments:equipments_table/data/contacts', ['equipment'=>$equipment]);?>
+					</span>
+                    </p>
+                    <!-- <?php if ($equipment->phone) :?> <p><?php echo I18N::T('equipments',
+                    '电话')?>：<?php echo H($equipment->phone)?></p> <?php endif;?> <?php if
+                    ($equipment->email) :?> <p><?php echo I18N::T('equipments', '邮箱')?>：<?php echo
+                    $equipment->email?></p> <?php endif;?> <?php if ($equipment->require_training &&
+                    !$is_admin) : ?> <p><?php echo V('training/status', ['equipment'=>$equipment]);
+                    ?></p> <?php endif; ?> <?php endif; ?>-->
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="form equipment_info_form bubble" style="min-width:400px">
+        <tr>
+            <td class="nowrap tight">
+                <span class="status_tag status_tag_label"><?php echo I18N::T('equipments', '仪器编号')?></span></td>
+            <td class="nowrap" style="padding-right:4em"><?php echo H($equipment->ref_no?:"--") ?></td>
+            <td class="nowrap tight">
+                <span class="status_tag status_tag_label"><?php echo I18N::T('equipments', '规格')?></span></td>
+            <td><?php echo H($equipment->specification?:"--") ?></td>
+        </tr>
+        <tr>
+            <td class="nowrap tight">
+                <span class="status_tag status_tag_label"><?php echo I18N::T('equipments', '生产厂家')?></span></td>
+            <td class="nowrap" style="padding-right:4em"><?php echo H($equipment->manufacturer?:"--") ?></td>
+            <td class="nowrap tight">
+                <span class="status_tag status_tag_label"><?php echo I18N::T('equipments', '型号')?></span></td>
+            <td><?php echo H($equipment->model_no?:"--") ?></td>
+        </tr>
+        <tr>
+            <td class="nowrap tight">
+                <span class="status_tag status_tag_label"><?php echo I18N::T('equipments', '制造国家')?></span></td>
+            <td class="nowrap" style="padding-right:4em"><?php echo H($equipment->manu_at?:"--") ?></td>
+            <td class="nowrap tight">
+                <span class="status_tag status_tag_label"><?php echo I18N::T('equipments', '分类号')?></span></td>
+            <td><?php echo H($equipment->cat_no?:"--") ?></td>
+        </tr>
+        <!-- <tr> <td class="nowrap tight"><span class="status_tag
+        status_tag_label"><?php echo I18N::T('equipments', '放置房间')?></span></td> <td
+        class="nowrap" style="padding-right:4em"><?php echo
+        H($equipment->location) ?></td> <td class="nowrap
+        tight"><span class="status_tag status_tag_label"><?php echo
+        I18N::T('equipments', '出厂日期')?></span></td> <td><?php echo $equipment->manu_date
+        ? Date::format($equipment->manu_date, 'Y/m/d') : NULL ?></td> </tr> -->
+        <tr>
+            <td class="nowrap tight">
+                <span class="status_tag status_tag_label"><?php echo I18N::T('equipments', '组织机构')?></span></td>
+            <td class="nowrap" style="padding-right:4em">
+                <?php
+				echo V('application:tag/path', ['tag'=>$equipment->group, 'tag_root'=>$equipment->group->root]);
+			?>
+            </td>
+            <td class="nowrap tight">
+                <span class="status_tag status_tag_label"><?php echo I18N::T('equipments', '仪器分类')?></span></td>
+            <td class="nowrap" style="padding_right:4em">
+                <?php
+				$root = Tag_Model::root('equipment');
+				$result = Q("$equipment tag_equipment[root={$root}]")->to_assoc('id', 'name');
+				echo implode(',', $result);
+
+			?>
+            </td>
+        </tr>
+        <tr>
+            <td class="nowrap tight">
+                <span class="status_tag status_tag_label"><?php echo I18N::T('equipments', '购置日期')?></span></td>
+            <td><?php echo $equipment->purchased_date ? Date::format($equipment->purchased_date, 'Y/m/d') : "--" ?></td>
+            <td class="nowrap tight">
+                <span class="status_tag status_tag_label"><?php echo I18N::T('equipments', '入网日期')?></span></td>
+            <td><?php echo $equipment->atime ? Date::format($equipment->atime, 'Y/m/d') : "--" ?></td>
+            <td></td>
+        </tr>
+    </table>
+</div>

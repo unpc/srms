@@ -1,0 +1,17 @@
+.tabs_container_wrapper {
+	.tabs_container {
+		.tabs {
+			.tabs_body {
+				.tabs_content {
+					.calendar_content {
+						float: left;
+						display: inline-block;
+						padding-bottom: 4px;
+						line-height: 1.5;
+
+					}
+				}
+			}
+		}
+	}
+}

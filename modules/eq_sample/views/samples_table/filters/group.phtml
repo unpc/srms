@@ -1,0 +1,10 @@
+<div class="gray_tag_container">
+	<?php
+	echo Widget::factory('application:tag_selector', [
+		'tag' => $group ? O('tag_group', $group) : NULL,
+		'root' => Tag_Model::root('group'),
+		'name' => 'group',
+		'ajax' => TRUE
+	]);
+	?>
+</div>

@@ -1,0 +1,6 @@
+<td class="label left nowrap">
+	<div class="title">
+		<?php echo $properties['label'];?>
+    </div>
+    <input id="<?php echo H($name) ?>" name="<?php echo H($name) ?>" type="text" class="date text small_search_text" value="<?php echo H(date('Y-m-d H:i:s', $component->dtstart) ?: date('Y-m-d H:i:s', $properties['default_value']))?>" />
+</td>

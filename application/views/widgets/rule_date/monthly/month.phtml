@@ -1,0 +1,24 @@
+<?php echo V('application:widgets/rule_date/period', ['flexform_index'=>$flexform_index, 'dtfrom'=>$dtfrom, 'dtto'=>$dtto]); ?>
+
+<?php $monthly_uniqid = 'monthly_'.uniqid(); ?>
+<div class="interval_20"></div>
+<?php echo V('application:widgets/rule_date/monthly/type', ['flexform_index'=>$flexform_index,
+											 'monthly_uniqid'=>$monthly_uniqid,
+											 'monthly_type'=>$monthly_type])
+?>
+
+<div id="<?php echo H($monthly_uniqid ) ?>">
+<?php
+	switch ($monthly_type) {
+		case TM_RRule::TYPE_DAY:
+			echo V('application:widgets/rule_date/monthly/month_day', ['flexform_index'=>$flexform_index, 'month_day'=>$rrule[0]]);
+			break;
+		case TM_RRule::TYPE_WEEK:
+			echo V('application:widgets/rule_date/monthly/month_week', ['flexform_index'=>$flexform_index, 'month_week'=>$rrule[0], 'week_day'=>$rrule[1]]);
+			break;
+		default:
+
+			break;
+	}
+?>
+</div>

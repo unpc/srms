@@ -1,0 +1,130 @@
+<?php
+$uniqid = uniqid();
+$select_all_id = 'select_all_' . $uniqid;
+$batch_form_id = 'batch_form_' . $uniqid;
+$delete_selected = 'delete_selected_' . $uniqid;
+$form_token = 'form_token_' . $uniqid;
+?>
+<style>
+    .ttt{
+        height:3.5rem;
+
+    }
+</style>
+
+<?php
+echo JS::load('messages:delete', [
+		'form_token' => $form_token,
+        'delete_selected' => $delete_selected,
+        'no_checked' => I18N::T('messages', '请选择要删除的消息!')
+	]);
+?>
+
+<?php
+$table = Widget::factory('table');
+$table->name = "messages";
+$table->add_columns([
+    'check' => [
+        // 'align' => 'center'
+    ],
+	'name'=>[
+		'title'=>I18N::T('messages', '标题'),
+		'nowrap'=>true,
+        'align'=>'left',
+		'filter' => [
+			'form' => V('messages:search_filter/index', ['form'=>$form]),
+			'value' => $form['query'] ? H($form['query']) : NULL,
+            'field'=>'query'
+        ]
+	],
+	'is_read'=>[
+		'title'=>I18N::T('messages', '状态'),
+		'invisible'=>true,
+		'nowrap'=>true,
+		//'extra_class'=>'flexible',
+        'weight' => 70,
+        'input_type' => 'select',
+        'filter' => [
+			'form' => V('messages:search_filter/is_read', ['form'=>$form]),
+			'value' => $form['is_read'] ? [1 => '未读',2 => '已读'][($form['is_read'])] : NULL,
+            'field'=>'is_read'
+        ]
+	],
+	
+	'sender'=>[
+		'title'=>I18N::T('messages', '发件人'),
+        'nowrap'=>TRUE,
+        'align'=>'left',
+	],
+	'ctime'=>[
+		'title'=>I18N::T('messages', '发件时间'),
+		'nowrap'=>TRUE,
+        'align'=>'left',
+	],
+	'rest'=>[
+        'title'=>I18N::T('messages', '操作'),
+		'nowrap'=>TRUE,
+        'align'=>'left',
+	]
+]);
+
+if($form['query']) {
+	$table->empty_message = I18N::T('messages', '没有符合条件的消息');
+}
+else {
+	$table->empty_message = I18N::T('messages', '暂无新消息');
+}
+
+foreach ($messages as $message) {
+	$tr_class = $message->is_read ? 'message_read ttt':'message_unread ttt';
+	$links = $message->links();
+	$table->add_row([
+		'check'=>V('messages:messages_table/data/select', ['message'=>$message, 'select_all_id'=>$select_all_id]),
+		'name'=>V('messages:messages_table/data/name', ['message'=>$message]),
+		'sender'=>V('messages:messages_table/data/sender', ['message'=>$message]),
+		'ctime'=>Date::format($message->ctime, 'Y/m/d H:i'),
+		'rest'=>Widget::factory('application:links', ['links' => $links]),
+		'#extra_class'=>$tr_class
+	]);
+}
+?>
+
+<?php
+
+$param = [
+    // 'is_offset'     => true,
+    'top_input_arr' => ['name', 'ref_no'],
+    'columns'       => (array)$table->columns,
+];
+echo V('application:search_box', $param);
+?>
+
+
+<div class="clearfix">
+    <form method="post" action="<?php echo H(URI::url('!messages/message/batch_action') ) ?>" id="<?php echo H($batch_form_id ) ?>">
+        <div class="float_left"  style="color: #4D4D4D">
+            <?php echo Form::checkbox('', FALSE, I18N::T('messages', '全选'), 'class="lmargin_10 checkbox middle" id="'.$select_all_id.'" style="vertical-align: -2px;"') ?>
+            <?php foreach ($messages as $message) echo Form::checkbox('select['.$message->id.']', FALSE, NULL, 'class="hidden" value="'.$message->id.'"'); ?>
+            <?php echo I18N::T('messages', '标记为')?>
+            <input name="mark_read" type="submit" class="lmargin_10 font-button-default font-button-color-green" value="<?php echo I18N::T('messages', '已读'); ?>" />
+            <input name="mark_unread" type="submit" class="lmargin_10 font-button-default font-button-color-grey" value="<?php echo I18N::T('messages', '未读'); ?>" />
+            <a class="lmargin_10 font-button-delete font-button-color-red" id="<?php echo $delete_selected; ?>">
+                <?php echo I18N::T('messages', '删除选中'); ?>
+            </a>
+            <a class="lmargin_10 font-button-delete font-button-color-red" confirm="<?php echo I18N::T('messages', '您确定要删除所有已读信息?'); ?>" href="<?php echo Event::trigger('db_sync.message_delete_read_url') ?: H(URI::url('!messages/message/delete_read'))  ?>">
+                <?php echo I18N::T('messages', '删除所有已读消息'); ?>
+            </a>
+        </div>
+    </form>
+</div>
+<div class="interval_16"></div>
+
+<?php
+
+echo $table;
+
+echo JS::load('messages:index_operate', ['select_all_id'=>$select_all_id, 'batch_form_id' => $batch_form_id]);
+
+?>
+
+<div class="pages"><?= $pagination ?></div>

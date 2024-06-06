@@ -1,0 +1,6 @@
+<li class="item icon_item center">
+	<input type="hidden" name="categories[<?php echo $index;?>][items][<?php echo $item_id?>][id]" value="<?php echo H($item_id)?>" />
+	<div class="icon"><img src="<?php echo H($item['icon'])?>" /></div>
+    <div class="interval_12"></div>
+	<span class="nowrap"><?php echo Form::checkbox("categories[{$index}][items][$item_id][checked]", $checked, I18N::T($item['i18n'], $item['title']), 'class="checkbox"');?></span>
+</li>

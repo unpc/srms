@@ -1,0 +1,14 @@
+<div class="form padding_1">
+	<h2><?php echo I18N::T('cloud', '最近备份'); ?></h2>
+	<?php if (is_file($latest_path)): ?>
+		<?php echo I18N::T('cloud', '备份于: %date', ['%date' => Date::format(filectime($latest_path))])?>
+		&#160;(
+		<?php echo File::bytes(File::size($latest_path)); ?>
+		<?php if (L('ME')->access('下载备份')): ?>
+			| <?php echo URI::anchor(URI::url('!cloud/download_latest_backup'), I18N::T('cloud', '下载'), 'class="blue"') ?>
+		<?php endif; ?>
+		)&#160;
+	<?php else: ?>
+		<span class="red"><?php echo I18N::T('cloud', '未找到') ?></span>
+	<?php endif;?>
+</div>

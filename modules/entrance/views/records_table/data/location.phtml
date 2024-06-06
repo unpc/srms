@@ -1,0 +1,21 @@
+<?php 
+if (!$obj->id) {
+    $tags = [];
+    $tag_root = Tag_Model::root('location');
+    foreach (Q("{$record->door} tag_location") as $tag) {
+        $repeated = false;
+        $tags[$tag->id] = $tag;
+        $tag = $tag->parent;
+        while ($tag->id && $tag->id != $tag_root->id) {
+            if (array_key_exists($tag->id, $tags)) {
+                unset($tags[$tag->id]);
+            }
+            $tag = $tag->parent;
+        }
+    }
+
+    foreach ($tags as $tag) {
+        echo V('application:tag/path', ['tag' => $tag, 'tag_root' => $tag_root, 'url_template' => URI::url('', 'location_id=%tag_id')]);
+        echo '<br />';
+    }
+}

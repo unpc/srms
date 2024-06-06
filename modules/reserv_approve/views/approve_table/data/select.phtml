@@ -1,0 +1,17 @@
+<?php if ($secondary_tabs->selected === 'need'): ?>
+<style>
+    .filter_container {
+        min-width: 75px;
+    }
+</style>
+<?php
+
+$approve = Q("$reserv<reserv reserv_approve:limit(1):sort(id D)")->current();
+
+if(!$reserv->approver_change && (($approve->status == Reserv_Approve_Model::STATUS_INIT && $me->is_allowed_to('PI审核', $approve))
+    || ($approve->status == Reserv_Approve_Model::STATUS_PI_APPROVE && $me->is_allowed_to('机主审核', $approve))
+)): ?>
+<div style="display: inline-block; position: relative; bottom: 11px; padding-right: 8px;"><input name="select[]" class="<?php echo H($select_all_id) ?>" type="checkbox" value="<?= $reserv->id; ?>" style="padding:0; margin:0"/></div>
+<?php endif; ?>
+<?php endif; ?>
+<div style="display: inline-block; padding-top: 5px; padding-right: 5px;"><?= $reserv->equipment->icon('32', 'style="display: block"') ?></div>

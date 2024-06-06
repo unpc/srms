@@ -1,0 +1,131 @@
+<?php
+$lbg_cache = _C('images/lb2g.png') && file_exists(ROOT_PATH.PUBLIC_BASE._C('images/lbg.png'));
+?>
+<div style="<?= $lbg_cache ? '' : 'background: linear-gradient(-30deg, rgba(43, 160, 127, 0.38), rgba(87, 239, 196, 0.38));' ?> height: 100%;display: flex;flex-direction: column;justify-content: center;align-items: center;">
+    <div style="width: 400px;text-align: center;margin: 0 auto;"><img style="max-width: 100%" src="<?php echo H(_C('images/login_logo.png')) ?>" /></div>
+    <div class="interval_30"></div>
+
+    <div class="backend-nav-list">
+        <div class="backend-nav-tab active"><?= I18N::T('people', '本地用户')?></div>
+        <?php if ($cas_backend = Config::get('auth.cas_backend')):?>
+        <div class="backend-nav-tab"><?= I18N::T('people', '一卡通用户')?></div>
+        <?php endif;?>
+        <div class="signup-link"><a href="<?php echo URI::url('!labs/signup');?>"><?= I18N::T('people', '注册新用户')?></a></div>
+    </div>
+
+<div class="backend-nav-content form login_form clearfix">
+    <div class="interval_30"></div>
+	<form method="post" autocomplete="off" action="<?php echo H(URI::url('login')) ?>">
+	<table class="form" style="margin:auto">
+		<tbody>
+			<tr>
+				<td class="middle">
+                    <i class="icon-user login_icon"></i>
+					<?php
+						echo Widget::factory('login_token', [
+							'name' => 'token',
+							'token' => $form['token'],
+                            'backend' => $form['token_backend'],
+							'size' => 30,
+						]);
+                    ?>
+                    <?php if ($form->errors['token'][0]) : ?>
+                        <div class="interval_6"></div>
+                        <i class="icon-cancel" style="color: #F5222D;"></i> <?php echo V('form_filter',['error'=>$form->errors['token'][0]])?>
+                    <?php endif; ?>
+
+				</td>
+			</tr>
+          
+
+            <tr>
+                <td> <div class="interval_16"></div></td>
+            </tr>
+			<tr>
+				<td class="middle" >
+                    <i class="icon-lock login_icon"></i>
+                    <input name="password" type="password" placeholder="请输入密码" class="text <?php // echo $form->errors['password'][0] ? 'validate_error' : '' ?>" style="width: 294px;height: 32px;padding-left: 28px" tabindex="2"/>
+                    <?php if ($form->errors['password'][0]) : ?>
+                        <div class="interval_6"></div>
+                        <i class="icon-cancel" style="color: #F5222D;"></i> <?php echo V('form_filter',['error'=>$form->errors['password'][0]])?>
+                    <?php endif; ?>
+				</td>
+			</tr>
+            <tr>
+                <td> <div class="interval_16"></div></td>
+            </tr>
+
+            <?php $extra_login = Event::trigger('login.form.extra', $form);?>
+            <?php if($extra_login): ?>
+                <?php echo $extra_login;?>
+            <?php endif; ?>
+
+            <tr>
+                <td> <div class="interval_16"></div></td>
+            </tr>
+			<tr>
+				<td class="middle nowrap">
+					<?php $_SESSION['verify_token'] = 'cf_login_'.uniqid(); ?>
+					<input type="hidden" name="verify_token" value="<?= md5($_SESSION['verify_token']) ?>" />
+                    <?php echo Form::checkbox('persist', $form['persist'], I18N::T('people', '记住密码'), 'tabindex="3" class="checkbox middle"', 'class="middle"'); ?>
+                    &#160;
+				<a class="float_right middle blue" href="<?php echo H(URI::url('recovery')) ?>"><?php echo HT('忘记密码')?></a></td>
+
+			</tr>
+            <tr>
+                <td> <div class="interval_16"></div></td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="submit" name="submit" class="button font-button-save" value="<?php echo H(I18N::T('people', '登录')) ?>" />
+                </td>
+            </tr>
+            
+            <?php $extra_login = Event::trigger('login.button.extra', $form);?>
+            <?php if($extra_login): ?>
+                <?php echo $extra_login;?>
+            <?php endif; ?>
+
+		</tbody>
+	</table>
+    </form>
+</div>
+    <?php if ($cas_backend):
+        $config = Config::get('auth.backends')[$cas_backend];
+        $url = _U($config['server'], ['from' => LAB_ID, 'redirect' => _U('!people/docking/login')]);
+    ?>
+    <div class="backend-nav-content form login_form clearfix hide">
+        <div class="interval_30"></div>
+        <div class="interval_30"></div>
+        <table class="form" style="margin:auto">
+            <tbody>
+                <tr>
+                    <td class="middle">
+                        <a href="<?= $url;?>" class="backend-cas-link button font-button-save">
+                            <?php echo H(I18N::T('people', '统一身份认证登录')) ?>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="interval_30"></div>
+    </div>
+    <?php endif;?>
+</div>
+<script>
+    //简易tab页
+    let nav = document.querySelectorAll(".backend-nav-list .backend-nav-tab");
+    let item = document.querySelectorAll(".backend-nav-content.login_form");
+
+    for (let i = 0; i < nav.length; i++) {
+        nav[i].index = i;
+        nav[i].onclick = function () {
+            for (var j = 0; j < item.length; j++) {
+                nav[j].classList.remove("active");
+                item[j].style.display = "none";
+            }
+            this.classList.add("active");
+            item[nav[i].index].style.display = "block";
+        };
+    }
+</script>

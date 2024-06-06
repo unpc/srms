@@ -1,0 +1,120 @@
+<div>
+  <h2 class="section_title">
+    <span class="middle"><?= I18N::T('support', '基本信息') ?></span>
+  </h2>
+  <div style="padding-top:5px">
+    <table class="form equipment_info_form" style="min-width:400px">
+      <tr>
+        <td class="nowrap left top" rowspan="10">
+		      <?= V('equipments:equipment/view/icon', ['equipment' => $equipment]); ?>
+        </td>
+        
+      </tr>
+      <tr>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('equipments', '仪器名称')?>
+          </span>
+        </td>
+        <td colspan="3">
+          <?= H($equipment->name) ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('equipments', '仪器编号')?>
+          </span>
+        </td>
+        <td colspan="3">
+          <?= H($equipment->ref_no) ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('equipments', '所属单位')?>
+          </span>
+        </td> 
+        <td colspan="3">
+          <?= H($equipment->group->name) ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('equipments', '入网日期')?>
+          </span>
+        </td> 
+        <td colspan="3">
+          <?= H(date('Y-m-d H:i:s', $equipment->atime)) ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('equipments', '负责人')?>
+          </span>
+        </td> 
+        <td colspan="3">
+          <?php if ($equipment->id) echo H(join(',', Q("{$equipment} user.incharge")->to_assoc('id', 'name'))) ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('equipments', '仪器价格')?>
+          </span>
+        </td> 
+        <td style="width: 25%">
+          <?= H($equipment->price) ?>
+        </td>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('equipments', '送样数')?>
+          </span>
+        </td> 
+        <td style="width: 25%">
+          <?= $samples ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('equipments', '预约数')?>
+          </span>
+        </td> 
+        <td>
+          <span class="content_wrap"><?= $reservs ?><span>
+        </td>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('equipments', '使用数')?>
+          </span>
+        </td> 
+        <td>
+          <span class="content_wrap"><?= $records ?></span>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div class="interval_20"></div>
+  <div class="float_right">
+    <a class="font-button-delete middle delete_equipment_match"><?= I18N::HT('support', '删除')?></a>
+  </div>
+  <div class="interval_60"></div>
+</div>
+
+<script>
+jQuery(function($) {
+  $('.delete_equipment_match').bind('click', function () {
+    Q.trigger({
+      url: '<?= H(URI::url('!support/data')) ?>',
+      object: 'delete_equipment',
+      event: 'exec',
+      global: false,
+      data: { id: <?= $equipment->id ?> },
+    });
+  })
+})
+</script>

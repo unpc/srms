@@ -1,0 +1,28 @@
+<div style="margin-bottom: 30px;">
+    <form method="post" autocomplete="off" id="<?= $form['fields_uniqid']; ?>-form">
+        <table class="field flexible" style="border-spacing: 0px;">
+            <tr>
+                <td>
+                    <div>
+                        <?php echo V('extra:edit/field_for_handle', [
+                                'prefix'=> $prefix,
+                                'field_confirm'=>I18N::T('extra', '是否确定要删除该字段?'),
+                                'extra' => $extra,
+                                'field' => $field,
+                                'form' => $form,
+                        ]);?>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <div class="button_container" style="height: auto;">
+            <div class="float_right">
+                <input type="hidden" name="extra_id" value="<?= $extra->id; ?>">
+                <input type="hidden" name="category" value="<?= $form['category']; ?>">
+                <input type="hidden" name="relate_uniqid" value="<?= $form['relate_uniqid']; ?>">
+                <input type="button" name="cancel" id="cancel" class="font-button-default  sm rmargin_2e4" value="<?php echo H(I18N::T('labs', '取消')) ?>" />
+                <input type="button" name="submit" data-field_save_type="<?= $edit ? 'edit_field' : 'add_field' ?>" class="font-button-save sm save_field" value="<?php echo H(I18N::T('labs', '保存')) ?>" />
+            </div>
+        </div>
+    </form>
+</div>

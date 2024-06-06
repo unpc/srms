@@ -1,0 +1,63 @@
+<div class="form">
+<form method="post" autocomplete="off" q-event="submit" q-object="edit_announce" q-static="<?php echo H(['a_id'=>$announce->id])?>">
+<?php
+    $no_error = ($form['no_error'] !== FALSE);
+	echo V('form_error', ['form'=>$form]);
+?>
+<?php $require = (string) V('form_require'); ?>
+<table class="form flexible">
+	<tbody>
+	<tr>
+		<td class="label left nowrap">
+            <?php echo I18N::T('equipments', '标题'); ?>
+        </td>
+		<td class="top nowrap">
+			<input  style="width: 96%;"  name="title" class="text" value="<?php echo H($form['title'] ? : $announce->title)?>" />
+		</td>
+	</tr>
+	<tr>
+		<td class="label left top nowrap"><?php echo I18N::T('equipments', '内容')?></td>
+		
+		<?php /* BUG #776::ie6 添加修改仪器公告时，textarea换行不体现(kai.wu@2011.8.1)  */ ?>
+		<td class="top">
+		<textarea name="content" class="text autogrow"><?php echo H($form['content'] ? : $announce->content) ?></textarea>
+		</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td class="top nowrap">
+			<?php echo Form::checkbox('important_edit', $form['important_edit'] == 'on' ? TRUE : FALSE, I18N::T('equipments', '重要修改'), 'class="middle checkbox"', 'class="middle"'); ?>
+			<div class="interval_6"></div>
+			<span class="description content_wrap"><?php echo I18N::T('equipments', ' * 若为重要修改，阅读过该公告的用户需重新确认，方可使用仪器')?></span>
+		</td>
+	</tr>
+	<tr>
+		<td class="label left nowrap">&#160;</td>
+		<td class="top nowrap">
+			<?php echo Form::checkbox('stick', $form['stick'] ? ($form['stick'] == 'on' ? TRUE : FALSE) : (bool)$announce->is_sticky, I18N::T('equipments', '置顶公告'), 'class="middle checkbox"', 'class="middle"');?>
+			<div class="interval_40"></div>
+		</td>
+	</tr>
+    <tr>
+        <td class="label left top nowrap"><?php echo I18N::T('equipments', '有效日期')?></td>
+        <td class="top nowrap">
+            <input name="dtstart" class="text date" date_type="date" width="20" value="<?php echo H($no_error ? $announce->dtstart : $form['dtstart']) ?>" />
+            -
+            <input name="dtend" class="text date" date_type="date" width="20" value="<?php echo H($no_error ? $announce->dtend : $form['dtend']) ?>" />
+        </td>
+    </tr>
+	<tr>
+		<td>&#160;</td>
+		<td style="padding: 0;">
+            <div class="button_container">
+                <div class="float_right">
+                    <input type="submit" name="submit" class="font-button-save float_right" value="<?php echo H(I18N::T('equipments', '保存修改')) ?>" />
+                    <div class="clearfix"></div>
+                    <div class="interval_20"></div>
+                </div>
+            </div>
+		</td>
+	</tr>
+</table>
+</form>
+</div>

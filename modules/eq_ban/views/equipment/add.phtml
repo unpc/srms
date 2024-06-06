@@ -1,0 +1,96 @@
+<div class="form lpadding_2 rpadding_2 tpadding_2">
+  <form method="post" autocomplete="off" q-event="submit" q-object="add_ban_eq" >
+    <?php echo V('form_error', ['form'=>$form]);?>
+    <?php $require = (string) V('form_require'); ?>
+    <table class="form flexible" >
+      <tbody>
+      <tr>
+        <td class="middle label left nowrap">
+        <?php
+          $selected = $form['type'] ? : 'user';
+          echo Form::radio('type', 'user', $selected, I18N::T('eq_ban', '用户'), 'class="monitor radio middle"', 'class="middle"');
+        ?>
+        <br>
+        <?php echo V('form_filter',['error'=>$form->errors['user_id'][0]])?>
+        </td>
+        <td class="top toggle_status:type enable_on:user" colspan="2">
+          <?php
+            echo Widget::factory('user_selector', [
+              'autocomplete'=>URI::url('!eq_ban/autocomplete/user.eq'),
+              'name'=> 'user_id',
+              'user'=> O('user', $form['user_id']),
+            ]);
+          ?>
+        </td>
+      </tr>
+      <?php //添加仪器封禁时，目的是禁止某个人使用单台或多台仪器的时间，所以没有课题组?>
+      <?php if (Module::is_installed('labs') ): ?>
+        <tr>
+          <td class="middle label left nowrap">
+          <?php
+            echo Form::radio('type', 'lab', $selected, I18N::T('eq_ban', '实验室'), 'class="monitor radio middle"', 'class="middle"');
+          ?></td>
+          <td class="top toggle_status:type enable_on:lab" colspan="2">
+          <?php
+            echo Widget::factory('labs:lab_selector', [
+              'name'=>'lab_id',
+              'selected_lab'=> $form['lab_id'] ? : 0,
+              'all_labs'=>TRUE,
+            ]);
+          ?>
+          </td>
+        </tr>
+      <?php endif;?>
+      <tr><td style="padding-top:10px"></td></tr>
+      <tr>
+        <td class="middle label left nowrap"><?php echo I18N::T('eq_ban', '封禁仪器')?></td>
+        <td class="middle">
+          <?php
+            $eq_selected = $form['eq_type'] ? : 'all';
+            echo Form::radio('eq_type', 'all', $eq_selected, I18N::T('eq_ban', '负责的全部仪器'), 'class="monitor radio middle"', 'class="middle rmargin_40"');
+          ?>
+          <?php
+            echo Form::radio('eq_type', 'select', $eq_selected, I18N::T('eq_ban', '选择仪器'), 'class="monitor radio middle"', 'class="middle"');
+          ?>
+        </td>
+      </tr>
+
+      <tr class="toggle:eq_type show_on:select">
+        <td></td>
+        <td class="top gray_tag_container">
+            <?php
+            echo Widget::factory('application:multi_equipment_selector', [
+              'name' => 'eqs',
+              'value' => $form['eqs'],
+              'autocomplete' => URI::url('!eq_ban/autocomplete/equipment'),
+            ]);
+            ?>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="middle label left nowrap">
+            <?php echo $require;?><?php echo I18N::T('eq_ban', '封禁原因')?>
+            <?php echo '<br>' . V('form_filter',['error'=>$form->errors['reason'][0]])?>
+        </td>
+        <td class="top" >
+          <textarea style="line-height: normal; padding: 4px 10px; width: 240px;" class="top autogrow reason" name="reason" ><?php echo $form['reason'] ?></textarea>
+        </td>
+      </tr>
+      <tr>
+        <td class="middle label left nowrap"><?php echo $require;?><?php echo I18N::T('eq_ban', '到期时间')?>
+            <br><?php echo V('form_filter',['error'=>$form->errors['atime'][0]])?>
+        </td>
+        <td class="top nowrap">
+          <input name="atime" class="text date" value="<?php echo H($form['atime'] ?: Date::time()) ?>" date_type="date" />
+        </td>
+      </tr>
+    </table>
+    <div class="button_container">
+    <div class="float_right">
+    <input name="cancel" id="cancel" type='reset' class="font-button-default rmargin_2e4" value="<?php echo I18N::HT('eq_ban', '取消');?>" />
+    <input name="submit" type='submit' class="font-button-save" value="<?php echo I18N::HT('eq_ban', '添加封禁');?>" />
+    </div>
+    </div>
+  </form>
+</div>

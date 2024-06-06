@@ -1,0 +1,16 @@
+<?php $user = $equipment;?>
+<tr>
+    <td colspan="2"><h2><?php echo I18N::T('equipments', '预约仪器信息：')?></h2></td>
+</tr>
+<tr>
+    <td class="top icon"><?php echo $user->icon('32') ?></td>
+    <td class="top nowrap">
+        <h2><a href="<?php echo H($equipment->url() ) ?>"><?php echo H($equipment->name) ?></a></h2>
+        <?php if ($equipment->group->id) : ?>
+            <?php echo I18N::T('equipments', '组织机构'); ?>: <?php echo V('application:tag/path', ['tag'=>$equipment->group, 'url_template'=>URI::url('!people/list', 'group_id=%tag_id')]); ?><br/>
+        <?php endif ?>
+    </td>
+</tr>
+<tr>
+    <td colspan="2"></td>
+</tr>

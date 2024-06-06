@@ -1,0 +1,42 @@
+<?php
+$select_test_projects = json_decode($sample->test_projects, true);
+if ($select_test_projects):
+?>
+<tr>
+    <td colspan="4">
+        <b><?php echo I18N::T('test_project', '测试项目');?></b>
+    </td>
+</tr>
+<?php
+$test_projects_by_cat = [];
+foreach ($select_test_projects as $id => $number) {
+    $test_project = O('test_project', $id);
+    $test_projects_by_cat[$test_project->test_project_cat_id][] = [
+            'name' => $test_project->name,
+            'number' => $number,
+    ];
+}
+    foreach ($test_projects_by_cat as $cat_id => $test_project_items) :
+    $test_project_cat = O('test_project_cat', $cat_id);
+    ?>
+        <tr>
+            <td colspan="4">
+                <?php echo I18N::T('test_project', $test_project_cat->name);?>
+            </td>
+        </tr>
+    <?php
+        foreach ($test_project_items as $test_project_item):
+    ?>
+        <tr>
+            <td class="text-right">测试内容</td>
+        <td>
+            <?php echo $test_project_item['name']?>
+        </td>
+            <td class="text-right">测试样品数</td>
+        <td class="left nowrap">
+            <?php echo $test_project_item['number']; ?>
+        </td>
+        </tr>
+    <?php endforeach;?>
+<?php endforeach; ?>
+<?php endif;?>

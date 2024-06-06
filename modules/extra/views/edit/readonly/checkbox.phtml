@@ -1,0 +1,23 @@
+<?php
+    $checkboxs_uniqid = 'checkboxs_'. uniqid();
+    $add_checkbox = 'add_checkbox_'. uniqid();
+?>
+
+<div class="<?php echo $class;?>">
+    <div id="<?php echo H($checkboxs_uniqid) ?>">
+        <?php if (count($field['params'])) : ?>
+            <?php $subprefix = 0;?>
+            <?php foreach($field['params'] as $key => $item) :?>
+                <?php 
+                    echo V('extra:edit/readonly/checkbox_item', [
+                        'prefix'=> $prefix,
+                        'item'=> $item,
+                        'default' => $field['default_value'][$key],
+                        'subprefix'=> $subprefix,
+                    ]);
+                ?>
+                <?php ++ $subprefix;?>
+            <?php endforeach;?>
+        <?php endif;?>
+    </div>
+</div>

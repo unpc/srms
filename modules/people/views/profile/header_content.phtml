@@ -1,0 +1,44 @@
+<?php $me = L('ME'); ?>
+<div class="clearfix header_content_padding">
+    <table class="user_grid form flexible">
+    <tr>
+    	<td class="top icon tight" rowspan="2" style="padding-right: 30px;">
+            <div class="short_container">
+                <div class="img_icon" style="position: relative;">
+                    <?= $user->icon('104', 'class="icon_none_border"') ?>
+                </div>
+
+                <?php // Clh 2019-01-07 加入消息发送按钮 ?>
+                <div class="interval_24"></div>
+                <?php
+                    $items = Event::trigger('people.info.short.picture', $user);
+                    if (count((array) $items)):
+                ?>
+                    <div class="short_info">
+                        <?php foreach ($items as $key => $item){
+                            echo $item;
+                        }
+                        ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+    	</td>
+    	<td class="top nowrap info flexible" rowspan="2">
+    		<?php echo V('people:profile/info', ['user'=>$user, 'stat' => $stat]); ?>
+    	</td>
+        <td class="right top">
+            <div class="float_right" style="width: 300px;">
+                <?php
+                    $link = $user->links('view');
+                    if ($me->id != $user->id) {
+                    	$link += $me->follow_links($user, 'view');
+                    }
+                    $links['separator'] = ' ';
+                    $links['links'] = $link;
+                ?>
+                <?php echo Widget::factory('application:links', $links); ?>
+            </div>
+        </td>
+    </tr>
+    </table>
+</div>

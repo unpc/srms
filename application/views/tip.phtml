@@ -1,0 +1,108 @@
+<?php
+
+function get_current_tip_path() {
+	$route = Input::route();
+	$args = explode('/', $route);
+	if ($args) {
+		$sub_args = explode('.', array_pop($args));
+		foreach($sub_args as $arg) {
+			if ( is_numeric($arg) ) continue;
+			$args[] = URI::decode($arg);
+		}
+	}
+
+	$tips_base = VIEW_BASE.'tips/';
+	
+	$path = '';
+	foreach ($args as $arg) {
+		
+		$npath = Core::file_exists($tips_base.$path.$arg);
+		if (is_dir($npath)) {
+			$path .= $arg . '/';
+			continue;
+		}
+		
+		$npath = Core::file_exists($tips_base.$path.'_default_');
+		if (is_dir($npath)) {
+			$path .='_default_/';
+			continue;
+		}
+
+		$path .= $arg;
+		if (Core::file_exists($tips_base.$path.VEXT)) {
+			return 'tips/'.$path;
+		}
+		else {
+			while(1) {
+				$path = preg_replace('/(^|\/)([^\/]+)$/', '', $path);
+				if (!$path) break;
+				if (Core::file_exists($tips_base.$path.'/_default_'.VEXT)) {
+					return 'tips/'.$path.'/_default_';
+				}
+				elseif (Core::file_exists($tips_base.$path.VEXT)) {
+					return 'tips/'.$path;
+				}
+			}
+		}
+		break;
+
+	}
+	
+	if ($path) {
+		$path = preg_replace('/\/$/', '', $path);
+		if (Core::file_exists($tips_base.$path.'/_default_'.VEXT)) {
+			return 'tips/'.$path.'/_default_';
+		}
+		elseif (Core::file_exists($tips_base.$path.VEXT)) {
+			return 'tips/'.$path;
+		}
+	}
+	
+	return 'tips/_default_';
+
+}
+
+$tip_path = get_current_tip_path();
+$locale = Config::get('system.locale');
+if (!Core::file_exists(VIEW_BASE.'@'.$locale.'/'.$tip_path.VEXT)) return;
+$me = L('ME');
+
+if ($_SESSION['notip'][$tip_path] || $me->hide_all_tips || $me->hidden_tips[$tip_path]) {
+	$this->is_hidden = TRUE;
+}
+
+$tips = V($tip_path);
+if ((string) $tips) :
+?>
+<?php echo $tips ?>
+<?php if ($me->id): ?>
+<div class="links nowrap rpadding_1 right">
+	<a class="blue" id="notip" href="#"><?php echo HT('我知道了') ?></a>
+    <?php if ($me->is_active()) :?>
+    <span class="separator">•</span>
+    <a target="_blank" class="blue" href="<?php echo H(URI::url($slave_host.'admin/preferences.tips')) ?>"><?php echo HT('设置') ?></a>
+    <?php endif;?>
+</div>
+<?php else: ?>
+<p>&#160;</p>
+<?php endif; ?>
+<?php endif; ?>
+<script>
+jQuery(function($){
+	var $notip = $("a#notip");
+	$notip.click( function() {
+		var $this = $(this);
+		var $tip = $this.parents(".tip");
+		$tip.hide();
+		Q.trigger({
+			object: "notip",
+			event: "click",
+			data: {
+				"path": "<?php echo $tip_path; ?>"
+			},
+			url: "<?php echo URI::url('/index'); ?>"
+		});
+		return false;
+	});
+});
+</script>

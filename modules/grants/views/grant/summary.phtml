@@ -1,0 +1,52 @@
+<div class="hr_1">&#160;</div>
+<div class="panel padding_1 clearfix">
+	<div class="float_left">
+		<a q-object="export_summary" q-event="click" q-src="<?php echo H(URI::url('!grants/grant') ) ?>" q-static="<?php echo H(['type'=>'print','form_token'=>$form_token,'grant_id'=>$grant->id]) ?>" class="button button_print " >
+			<?php echo I18N::HT('grants', '打印') ?>
+		</a>
+<!-- 		<a href="<?php //echo URI::url('!grants/grant/summary.'.$grant->id)?>" class="button button_print " target="_blank">
+			<?php //echo I18N::HT('grants', '打印') ?>
+		</a> -->
+	</div>
+</div>
+<?php $div_id = 'div_'.uniqid();?>
+<div id="<?php echo H($div_id) ?>" class="padding_2">
+<table class="form grant_summary">
+<tbody>
+<?php echo V('grants:grant/summary.portions', [
+	'portions'=>$portions,
+	'max_width'=>500,
+	'margin_left'=>0,
+	'grant'=>$grant,
+	'random_id'=>uniqid()
+]);?>
+</tbody>
+</table>
+</div>
+<script>
+jQuery(function($) {
+	$('#<?php echo $div_id;?> .button_list_children').on('click', function() {
+		var that = $(this);
+		var s_data = Q.toQueryParams(that.attr('q-static'));
+		var is_expanded= !!that.data('is_expanded');
+		if (!is_expanded) {
+			Q.trigger({
+				object: 'portion_list_children',
+				event: 'click',
+				data: s_data,
+				success: function(data) {
+					that.data('is_expanded', !is_expanded);
+					that.addClass('button_list_children_expanded');
+				}
+			});
+		}
+		else {
+			var $tr = that.parents('tr:first');
+			var selector = ['tr[id^=', $tr.attr('id'), '_]'].join('');
+			$(selector).remove();
+			that.data('is_expanded', !is_expanded);
+			that.removeClass('button_list_children_expanded');
+		}
+	});
+});
+</script>

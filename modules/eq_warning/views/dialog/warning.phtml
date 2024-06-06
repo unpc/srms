@@ -1,0 +1,19 @@
+
+
+<div class="padding_1">
+	<h3 class="center"><?= H("预警提醒") ?></h3>
+	<div class="lmargin_2 left">
+		<strong><?= $params['body'] ?></strong>
+	</div>
+  <form method="post"
+    autocomplete="off"
+    q-event="submit" q-object="read_dialog"
+    q-src="<?php echo H(URI::url('!eq_warning/notification') ) ?>"
+    class="center">
+    <input type="hidden" value="<?= L('ME')->id; ?>" name="user_id" />
+    <input type="hidden" value="<?= $equipment_id; ?>" name="equipment_id" />
+    <input type="hidden" value="<?= $md5; ?>" name="md5" />
+    <input type="submit" name="submit" class="float_right button button_save" style="border: none;background: none;color:var(--basiccolor);cursor: pointer;" value="<?php echo H(I18N::T('labs', '确认')) ?>" />
+  </form>
+</div>
+

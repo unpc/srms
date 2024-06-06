@@ -1,0 +1,9 @@
+<div class="show_collection">
+	<?php 
+		$msg = $collection->id ? I18N::T('inventory', "%name", ['%name'=>$collection->product_name]) : I18N::T('inventroty', '其他存货');	
+	?>
+	<!-- <img src="images/icons/desc.gif" /> -->
+	<?php if($collection->id): ?>
+		<a class="blue"><?php echo I18N::T('inventory', '修改名称'); ?></a>
+	<?php endif; ?>
+</div>

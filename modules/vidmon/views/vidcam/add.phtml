@@ -1,0 +1,92 @@
+<?php $require = (string) V('form_require', ['extra_class' => 'top vidcam_require'])?>
+<div class="form ">
+    <form class="prevent_default vidcam" method="post" autocomplete="off" q-object="vidcam_add" q-event="submit" q-src="<?php echo H(URI::url('!vidmon/vidcam')) ?>">
+        <?php echo V('form_error', ['form' => $form]); ?>
+        <table class="form">
+            <tbody>
+                <tr>
+                    <td class="nowrap label top" colspan=2>
+                        <div class="title">
+                            <?php echo $require ?>
+
+                            <?php echo I18N::T('vidmon', '名称'); ?>
+                            <?php echo V('form_filter', ['error' => $form->errors['name'][0]]) ?>
+                        </div>
+
+                        <input name="name" class="text vidcam_input" value="<?php echo H($form['name']); ?>" />
+                    </td>
+                </tr>
+                <?php if (Config::get('stream')['use_stream']): ?>
+                <tr>
+                    <td class="nowrap label top"><?php echo I18N::T('vidmon', '标识');?></td>
+                    <td class="nowrap">
+                    <input name="uuid" class="text vidcam_input" value="<?php echo H($form['uuid']); ?>" /><?php echo $require?>
+                    </td>
+                    </tr>
+                </tr>
+                    <td class="nowrap label top"><?php echo I18N::T('vidmon', '类型');?></td>
+                    <td class="nowrap">
+                        <?= Form::dropdown('type', I18N::T('vidmon', Vidcam_Model::$type), $form['type'] ? : Vidcam_Model::TYPE_GENEE, 'class="dropdown"'); ?><?php echo $require?>
+                    </td>
+                    </tr>
+                <?php endif; ?>
+                <tr>
+                    <td class="nowrap label top" colspan=2>
+                        <div class="title">
+                            <?php echo $require; ?>
+                            <?php echo I18N::T('vidmon', '负责人'); ?>
+                            <?php echo V('form_filter', ['error' => $form->errors['incharge'][0]]) ?>
+                        </div>
+                        <?php
+                            echo Widget::factory('multi_user_selector', [
+                                'autocomplete'=>URI::url('autocomplete/user'),
+                                'name'=>'incharge',
+                                'value'=>$form['incharge'],
+                                'extra'=>'token_verify vidcam_incharge_input',
+                            ]);
+                            echo $require;
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap label top">
+                        <?php echo I18N::T('vidmon', '地址'); ?>
+                    </td>
+                </tr>
+                <tr class="double">
+                    <td class="nowrap label top">
+                        <input name="location" class="text vidcam_input tooltip_position:left" value="<?php echo H($form['location']); ?>"
+                            placeholder="楼宇名称" q-tooltip="<?php echo I18N::HT('vidmon', '楼宇名称'); ?>" />
+                    </td>
+                    <td class="nowrap label top">
+                        <input name="location2" class="text vidcam_input tooltip_position:left" value="<?php echo H($form['location2']); ?>"
+                            placeholder="房间号" q-tooltip="<?php echo I18N::HT('vidmon', '房间号'); ?>" />
+                    </td>
+                </tr>
+                <tr>
+                    <?php
+                        $admin_tokens = array_map('Auth::normalize', (array) Config::get('lab.admin'));
+                        if (in_array(L('ME')->token, $admin_tokens)):
+                    ?>
+                    <td class="nowrap label top">
+                        <div class="title">
+                            <?php echo $require ?>
+                            <?php echo I18N::T('vidmon', '控制地址'); ?>
+                            <?php echo V('form_filter', ['error' => $form->errors['control_address'][0]]) ?>
+                        </div>
+                        <input name="control_address" class="text vidcam_input" value="<?php echo H($form['control_address']); ?>" />
+                    </td>
+                </tr>
+                <?php endif;?>
+                <?= Event::trigger('vidcam[edit].view.extra', $form, $vidcam); ?>
+
+            </tbody>
+        </table>
+        <div class="button_container">
+            <div class="float_right">
+                <input name="cancel" id="cancel" type='reset' class="font-button-default sm rmargin_2e4" value="<?php echo I18N::HT('vidom', '取消'); ?>" />
+                <input name="submit" type='submit' class="font-button-save sm" value="<?php echo I18N::HT('vidom', '添加'); ?>" />
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,39 @@
+.door_buttons {
+	background-color:#EEEEEE;
+	border-bottom:1px dotted #CCCCCC;
+	border-top:1px dotted #CCCCCC;
+	color:#000000;
+	padding:5px;
+}
+
+div.token_box {
+	display:block;
+}
+
+span.door_open {
+	background:url(images/icons/door_open.png);
+	_background:url(images/icons/door_open.gif);
+}
+
+span.door_locked {
+	background:url(images/icons/door_locked.png);
+	_background:url(images/icons/door_locked.gif);
+}
+
+span.control_status {
+	width:24px;
+	height:24px;
+	display: inline-block;
+}
+
+.door_info {
+	padding-bottom: 5px;
+	color: #666666;
+	a {
+		color: #666666;
+	}
+	a:hover {
+		text-decoration: underline;
+		color: var(--basiccolor);
+	}
+}

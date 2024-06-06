@@ -1,0 +1,64 @@
+<div class="hr_1">&#160;</div>
+<div class="form padding_1">
+<table class="form">
+	<tbody>
+	<tr>
+		<td class="top icon">
+			<a href="<?php echo $staff->user->url('photo', NULL, NULL, 'edit'); ?>"><img src="<?php echo H($staff->user->icon_url('64')) ?>" /></a>
+		</td>
+		<td class="top">
+			<form method="post" autocomplete="off" action="<?php echo H(URI::url() ) ?>">
+<?php  
+$form_no_error = ($form->no_error!==FALSE); 
+echo V('form_error', ['form'=>$form]);
+$require = (string) V('form_require');
+?>
+			<table class="form">
+				<tbody>
+					<tr>
+						<td class="label right nowrap"><?php echo I18N::T('staff', '职位');?></td>
+						<td class="label">
+						<?php 
+							$positions = Staff::get_positions();
+							echo $positions[ $staff->position->id ];
+						?>
+						</td>
+					</tr>					
+					<tr>
+						<td class="label right nowrap"><?php echo I18N::T('staff', '角色');?></td>
+						<td class="label"><?php echo Staff_Model::$roles[$staff->role]; ?></td>
+					</tr>					
+					<tr>
+						<td class="label right nowrap"><?php echo I18N::T('staff', '身份证号')?></td>
+						<td class="top"><input name="IDnumber" class="text" size="20" value="<?php echo H($form_no_error?$staff->IDnumber:$form['IDnumber'])?>" /></td>
+					</tr>
+					<tr>
+						<td class="label right nowrap"><?php echo I18N::T('staff', '籍贯')?></td>
+						<td class="top"><input name="birthplace" class="text" size="15" value="<?php echo H($form_no_error?$staff->birthplace:$form['birthplace'])?>" /></td>
+					</tr>
+					<tr>
+						<td class="label right nowrap"><?php echo I18N::T('staff', '出生日期')?></td>
+						<td class="top"><input name="birthday" class="text date" size="15" value="<?php echo H($form_no_error?$staff->birthday:$form['birthday'])?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/></td>
+					</tr>
+					<tr>
+						<td class="label right nowrap"><?php echo I18N::T('staff', '学校')?></td>
+						<td class="top"><input name="school" class="text" size="30" value="<?php echo H($form_no_error?$staff->school:$form['school'])?>" /></td>
+					</tr>
+					<tr>
+						<td class="label right nowrap"><?php echo I18N::T('staff', '专业')?></td>
+						<td class="top"><input name="professional" class="text" size="30" value="<?php echo H($form_no_error?$staff->professional:$form['professional'])?>" /></td>
+					</tr>
+					<tr><td colspan="2" class="hr_1">&#160;</td></tr>
+					<tr>
+						<td></td>
+						<td>
+							<input type="submit" name="submit" class="button button_save" value="<?php echo H(I18N::T('equipments', '更新')) ?>" />
+							<input type="reset" class="button button_cancel" value="<?php echo H(I18N::T('equipments', '取消')) ?>" />
+						</td>
+					</tr>
+			</tbody>
+			</table>
+		</td>
+	</tr>
+</table>
+

@@ -1,0 +1,49 @@
+#!/bin/bash
+#===============================================================================
+#
+#        FILE: prerm
+#       USAGE: ---
+# DESCRIPTION: prerm script for lims2
+#              1. 停掉所有相关服务
+#                   xinetd,lighttpd,php5-fpm,memcached,lims2_daemon
+#              2. 备份所有内容
+#              3. 备份sphinx配置文件并隐藏配置文件
+#        BUGS: ---
+#       NOTES: 1. TODO 增加删除前运行脚本的点(xiaopei.li@2011-12-18)
+#      AUTHOR: xiaopei.li
+#     COMPANY: GENEEGROUP
+#     VERSION: v1.0
+#     CREATED: 2013-04-11
+#    REVISION: ---
+#
+#===============================================================================
+
+
+#-------------------------------------------------------------------------------
+#   停掉所有相关服务
+#-------------------------------------------------------------------------------
+service monit stop
+service xinetd stop
+service lighttpd stop
+service nginx restart
+service php5-fpm stop
+service memcached stop
+service lims2_daemon stop
+service sphinxsearch stop
+service cron stop
+stop node-lims2
+
+killall php
+
+rm -rf /var/cache/lims2/*
+
+#-------------------------------------------------------------------------------
+#   备份所有内容 big backup
+#-------------------------------------------------------------------------------
+echo "=== prerm backup... $(date)"
+/etc/lims2/backup -a
+echo "=== prerm done... $(date)"
+
+
+
+exit 0

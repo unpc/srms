@@ -1,0 +1,13 @@
+<div class="float_left"><a target="_blank" href="<?php echo H($building->url()) ?>"><?php echo $building->icon('64') ?></a></div>
+<div class="bubble_info">
+	<h3><a target="_blank" href="<?php echo H($building->url()) ?>"><?php echo H($building->name) ?></a></h3>
+	<p><?php echo H($building->description, TRUE) ?></p>
+	<?php 
+	$in_service = (int)EQ_Status_Model::IN_SERVICE;
+	$equipments = Q("gis_device[building=$building]<object equipment"); if ($equipments->total_count() > 0): ?>
+	<p>
+		<?php echo I18N::T('equipments','共有%total_count台仪器, %using_count台仪器正在使用',['%total_count'=> '<span class="eq_number">'. $equipments->total_count().'</span>','%using_count'=> '<span class="eq_number">'.$equipments->find("[status=$in_service][is_using]")->total_count().'</span>']); ?>	
+	</p>
+	<?php endif; ?>
+	<div class="hr_1">&#160;</div>	
+</div>

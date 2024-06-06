@@ -1,0 +1,8 @@
+<?php 
+$location = [];
+
+if ($vidcam->location) $location[] = H($vidcam->location);
+if ($vidcam->location2) $location[] = H($vidcam->location2);
+
+echo $location ? implode(' ', $location) : '--';
+?>

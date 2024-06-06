@@ -1,0 +1,20 @@
+<table>
+	<tbody>
+        <?php 
+            foreach(json_decode($update->new_data, TRUE) as $key=>$data):
+            if (!$data)
+                continue;
+            if (in_array($key, array_keys($properties))) :
+        ?>
+		<tr>
+			<td class="left top nowrap">
+				<strong class="description"><?php echo I18N::HT('people', $properties[$key]);?></strong>
+			</td>
+			<td class="left top content_wrap lpadding_2">
+				<?php echo new Markup($data, TRUE) ?>
+			</td>
+		</tr>
+	<?php endif; endforeach;?>
+	</tbody>
+</table>
+					

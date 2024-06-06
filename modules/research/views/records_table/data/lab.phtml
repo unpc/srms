@@ -1,0 +1,5 @@
+<?php
+$lab = Q("{$record->user} lab")->current();
+if ($lab->id) :?>
+<a href="<?= $lab->url(); ?>"><?= H($lab->name); ?></a>
+<?php endif;?>

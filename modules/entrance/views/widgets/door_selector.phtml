@@ -1,0 +1,14 @@
+<?php
+$uniqid = 'door_'.uniqid();
+
+$autocomplete = $this->autocomplete ?: URI::url('!entrance/autocomplete/doors');
+
+$size = $this->size ?: 40;
+
+$name = $door->id ? $door->name : '';
+
+?>
+<input id="<?php echo $uniqid?>_door" name="<?php echo H($this->name ) ?>" type="hidden" value="<?php echo H($door->id) ?>" />
+<!--<div>--><?php //echo Form::dropdown('charge', $arr, $equipment->billing_dept->id,'class="monitor dropdown"'); ?><!--</div>-->
+<input placeholder="请输入" id="<?php echo $uniqid?>_door_name" class="text middle select_on_focus autocomplete:<?php echo H($autocomplete) ?> autocomplete_alt:#<?php echo $uniqid?>_door" size="<?php echo H($size) ?>" value="<?php echo H($name) ?>" />
+<!--<div class="description float_right" style="line-height: 30px;margin-left: 30px;"><span class="required">*</span> --><?php //echo I18N::T('entrance', '请输入关键字并选择') ;?><!--</div>-->

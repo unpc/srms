@@ -1,0 +1,270 @@
+<?php
+	$me = L('ME');
+?>
+<tr>
+    <td colspan="2" align="left">
+		<h2>
+        <span class="title">
+            <?php echo I18N::T('eq_reserv', '预约信息')?>
+        </span>
+		</h2>
+    </td>
+</tr>
+<tr>
+	<td class="description" align="left" style="width: 80px">
+        <div class="lmaigin_1e5">
+            <?php echo I18N::T('eq_reserv', '主题'); ?>
+        </div>
+    </td>
+	<td class="lpadding_1"><?php echo H($component->name); ?></td>
+</tr>
+
+<tr>
+	<td class="description" align="left">
+        <div class="lmaigin_1e5">
+            <?php echo I18N::T('eq_reserv', '仪器名称'); ?>
+        </div>
+    </td>
+	<td class="lpadding_1">
+		<?php
+			$parent = $component->calendar->parent;
+			echo  H($parent->name);
+		?>
+	</td>
+</tr>
+
+<tr>
+	<td class="description" align="left">
+        <div class="lmaigin_1e5">
+        <?php echo I18N::T('eq_reserv', '预约者'); ?>
+        </div>
+    </td>
+	<td class="lpadding_1">
+	<?php
+	$user = $component->organizer;
+	$has_lab = Module::is_installed('labs');
+	if ($has_lab && !$GLOBALS['preload']['people.multi_lab']) {
+		echo H($user->name).' ('.H(Q("{$component->organizer} lab")->current()->name).')';
+	}
+	else {
+		echo H($user->name);
+	}
+	?>
+	</td>
+</tr>
+<tr>
+	<td class="description" align="left">
+        <div class="lmaigin_1e5">
+        <?php echo I18N::T('eq_reserv', '起始时间'); ?>
+        </div>
+    </td>
+	<td class="lpadding_1"><?php echo Date::format($component->dtstart, T('Y/m/d H:i:s')); ?></td>
+</tr>
+
+<tr>
+	<td class="description" align="left">
+        <div class="lmaigin_1e5">
+        <?php echo I18N::T('eq_reserv', '结束时间'); ?>
+        </div>
+    </td>
+	<td class="lpadding_1"><?php echo Date::format($component->dtend, T('Y/m/d H:i:s')); ?></td>
+</tr>
+<?php if ( Module::is_installed('labs') ) : ?>
+<tr>
+	<td class="description" align="left">
+        <div class="lmaigin_1e5">
+        <?php echo I18N::T('eq_reserv', '关联项目'); ?>
+        </div>
+    </td>
+	<td class="lpadding_1">
+		<?php
+			$reserv = Q("eq_reserv[component={$component}]")->limit(1)->current();
+			echo H($reserv->project->name);
+		?>
+	</td>
+</tr>
+<?php endif; ?>
+<?php if ( $component->description ) : ?>
+    <tr>
+        <td class="description" align="left">
+            <div class="lmaigin_1e5">
+                <?php echo I18N::T('eq_reserv', '备注'); ?>
+            </div>
+        </td>
+        <td class="lpadding_1">
+            <?= H($component->description); ?>
+        </td>
+    </tr>
+<?php endif; ?>
+<?php
+if ($component->calendar->parent->name() == 'equipment') :
+    $equipment = $component->calendar->parent;
+
+    if (Module::is_installed('extra')) :
+
+        $extra = Extra_Model::fetch($equipment, 'eq_reserv');
+        $extra_value = O('extra_value', ['object'=> $reserv]);
+        $values = $extra_value->values;
+
+        foreach($extra->get_categories() as $category) :?>
+        <?php $fields = (array)$extra->get_fields($category);
+        	$show_extra_info = false;
+        	foreach	($fields as $name => $field) {
+        		if ($show_extra_info) continue;
+	        	if ($values[$name]) {
+	        		switch ($field['type']) {
+	        			case Extra_Model::TYPE_CHECKBOX:
+	        				foreach ($values[$name] as $real_value) {
+				        		if ($real_value == 'on') {
+					        		$show_extra_info = true;
+									break;
+				        		}
+			        		}
+	        				break;
+	        			case Extra_Model::TYPE_RANGE:
+	        				if ($values[$name][0] || $values[$name][1]) {
+	        					$show_extra_info = true;
+	        				}
+	        				break;
+	        			case Extra_Model::TYPE_SELECT:
+	        				if ($values[$name] && $values[$name] != '-1') {
+	        					$show_extra_info = true;
+	        				}
+	        				break;
+	        			default:
+	        				$show_extra_info = true;
+	        				break;
+	        		}
+	        	}
+        	}
+         ?>
+            <?php if (!$show_extra_info || !count($fields)) continue;?>
+            <tr>
+                <td colspan="2" align="left">
+                    <span class="title">
+                        <?php echo I18N::HT('eq_reserv', $category)?>
+                    </span>
+                </td>
+            </tr>
+	        <?php foreach($fields as $name=> $field) :?>
+	        		<?php if ($field['type'] == Extra_Model::TYPE_CHECKBOX) : ?>
+	        			<?php
+							$real_values = [];
+	                    	foreach ($values[$name] as $real_key => $real_value) {
+				        		if ($real_value == 'on') {
+					        		$real_values[] = $real_key;
+				        		}
+			        		}
+						?>
+						<?php if (count($real_values)) : ?>
+						<tr>
+		                    <td class="description" align="left">
+                                <div class="lmaigin_1e5">
+                                <?php echo I18N::T('eq_reserv', $field['title']); ?>
+                                </div>
+                            </td>
+		                    <td class="lpadding_1">
+		                    <?php echo implode(', ', $real_values); ?>
+		                   </td>
+		                </tr>
+						<?php endif; ?>
+					<?php elseif ($field['type'] == Extra_Model::TYPE_RANGE): ?>
+						<?php if ($values[$name][0] || $values[$name][1]): ?>
+							<tr>
+			                    <td class="description" align="left">
+                                    <div class="lmaigin_1e5">
+			                    	<?php echo I18N::T('eq_reserv', $field['title']); ?>
+                                    </div>
+			                    </td>
+			                    <td class="lpadding_1">
+			                    	<?php
+			                    		$v = (array)$values[$name];
+			                    		echo $v[0] . ' - '. $v[1];
+			                    	?>
+			                    </td>
+			                </tr>
+			            <?php endif; ?>
+			        <?php elseif ($field['type'] == Extra_Model::TYPE_SELECT): ?>
+			        	<?php if ($values[$name] && $values[$name] != '-1') : ?>
+	        			<tr>
+		                    <td class="description" align="left">
+                                <div class="lmaigin_1e5">
+                                <?php echo I18N::T('eq_reserv', $field['title']); ?>
+                                </div>
+                            </td>
+		                    <td class="lpadding_1">
+		                    	<?= $values[$name] ?>
+		                    </td>
+		                </tr>
+	        			<?php endif; ?>
+                    <?php elseif ($field['type'] == Extra_Model::TYPE_DATETIME): ?>
+                        <tr>
+                            <td class="description" align="left">
+                                <div class="lmaigin_1e5"><?php echo I18N::T('eq_reserv', $field['title']); ?></div>
+                            </td>
+                            <td>
+                                <div class="lpadding_1"><?= date('Y-m-d H:i:s',$values[$name]) ?></div>
+                            </td>
+                        </tr>
+					<?php else : ?>
+						<?php if ($values[$name]) : ?>
+	        			<tr>
+		                    <td class="description" align="left">
+                                <div class="lmaigin_1e5">
+                                <?php echo I18N::T('eq_reserv', $field['title']); ?>
+                                </div>
+                            </td>
+		                    <td class="lpadding_1">
+		                    	<?php echo $values[$name]; ?>
+		                    </td>
+		                </tr>
+	        			<?php endif; ?>
+	        		<?php endif; ?>
+	        <?php endforeach; ?>
+<?php
+        endforeach;  //$extra->get_categories()
+     endif; //Module::is_installed('extra')
+endif; //$component->calednar->parent->name() == 'equipment'
+?>
+<?php
+if ($view = Event::trigger('component_info.prerender.extra', $component)):
+?>
+	<tr>
+	    <td colspan="2" align="left">
+			<h2>
+	        <span class="title">
+	            <?php echo I18N::T('eq_reserv', '附加信息')?>
+	        </span>
+			</h2>
+	    </td>
+	</tr>
+<?= $view ?>
+<?php endif; ?>
+<?php /*When user previews the reservation of eq, providing eidt/delete function. BUG 4746*/ ?>
+<?php if ( $me->is_allowed_to('修改', $component) || $me->is_allowed_to('删除', $component) ) : ?>
+<tr>
+	<td>&nbsp;</td>
+	<td>
+		<?php if ( $me->is_allowed_to('修改', $component) ) : ?>
+		<a title="修改" class="button icon-edit" q-src="<?php echo URI::url('!calendars/calendar'); ?>" q-event="click" q-static="<?php echo H([
+							'id' => $component->id,
+							'calendar_id' => $component->calendar->id,
+							'dtstart' => $component->dtstart,
+							'dtend' => $component->dtend,
+							'mode' => 'week',
+						]); ?>" q-object="edit_component">
+		<?php echo I18N::T('eq_reserv', '修改'); ?>
+		</a>
+		<?php endif; ?>
+
+		<?php if ( $me->is_allowed_to('删除', $component) ) : ?>
+		<a title="删除" class="button icon-trash" q-src="<?php echo URI::url('!calendars/calendar'); ?>" q-event="click" q-object="delete_component" q-static="<?php echo H([
+				'component_id' => $component->id,
+
+		]); ?>">
+		<?php echo I18N::T('eq_reserv', '删除'); ?>
+		</a>
+		<?php endif; ?>
+	</td>
+</tr>
+<?php endif; ?>

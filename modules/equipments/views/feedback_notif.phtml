@@ -1,0 +1,29 @@
+<?php
+$me = L('ME');
+if (!$me->id || !$me->is_active()) return;
+
+$now = Date::time();
+//$record = Event::trigger('eq_record.get_nofeedback', $me);
+if (Module::is_installed('db_sync') && DB_SYNC::is_slave() && DB_SYNC::is_module_unify_manage('equipment')) {
+    $record = Q("equipment[site=".LAB_ID."] eq_record[user=$me][dtend>0][dtend<=$now][status=0]:sort(dtend D):limit(1)")->current();
+}
+else {
+    $record = Q("eq_record[user=$me][dtend>0][dtend<=$now][status=0]:sort(dtend D):limit(1)")->current();
+}
+if(!$record->id) return;
+
+?>
+<div class="message_error">
+	<h4><?php echo I18N::T('equipments', '请填写使用反馈')?></h4>
+    <a class="blue overflow" href="<?php echo $record->equipment->url('feedback'); ?>"><strong><?php echo H($record->equipment->name); ?></strong></a>
+    <span class="small"><?php echo date('Y/m/d', $record->dtstart);?></span>
+	<span class="small small_2"><?php echo date('H:m:s',$record->dtstart);?>&#160;-&#160;<?php echo date('H:m:s',$record->dend);?></span>
+	<div class="description">
+		* <?php echo I18N::T('equipments', '在您提交反馈信息之前')?><div class="interval_12"></div><span style="padding-left: 8px;"><?php echo I18N::T('equipments', '您将无法使用任何设备')?></span>
+	</div>
+	<?php if (!Config::get('eq_record.must_connect_lab_project') && !Module::is_installed('eq_evaluate')) :?>
+		<div class="right">
+			<a confirm="<?php echo H(I18N::T('equipments', '您是否确定之前所有未填写反馈的仪器均使用正常?') ) ?>" href="<?php echo H(URI::url('!equipments/records/nofeedback')) ?>"><?php echo I18N::T('equipments', '全部使用正常')?> </a><span class="message_image_right icon-right"></span>
+		</div>
+	<?php endif;?>
+</div>

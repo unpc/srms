@@ -1,0 +1,36 @@
+<div class="hr_1">&#160;</div>
+<div class="form padding_2">
+	<form autocomplete="off" method="post" action="<?php echo H(URI::url() ) ?>">
+	<?php
+		echo V('form_error', ['form' => $form]);
+		$no_error = ($form->no_error !== FALSE);
+	?>
+	<table class="form">
+		<tbody>
+			<tr>
+				<td class="right nowrap middle"><?php echo I18N::T('exhibition', '设备总数')?></td>
+				<td class="middle"><input name="total" class="text" size="20" value="<?php echo H($no_error ? $total : $form['total']) ?>" />&#160;<?php echo I18N::T('exhibition', '台')?></td>
+			</tr>
+            <tr>
+				<td class="right nowrap middle"><?php echo I18N::T('exhibition', '共享中')?></td>
+				<td class="middle"><input name="share" class="text" size="20" value="<?php echo H($no_error ? $share : $form['share']) ?>" />&#160;<?php echo I18N::T('exhibition', '台')?></td>
+			</tr>
+            <tr>
+				<td class="right nowrap middle"><?php echo I18N::T('exhibition', '使用中')?></td>
+				<td class="middle"><input name="use" class="text" size="20" value="<?php echo H($no_error ? $use : $form['use']) ?>" />&#160;<?php echo I18N::T('exhibition', '台')?></td>
+			</tr>
+            <tr>
+				<td class="right nowrap middle"><?php echo I18N::T('exhibition', '维护中')?></td>
+				<td class="middle"><input name="maintain" class="text" size="20" value="<?php echo H($no_error ? $maintain : $form['maintain']) ?>" />&#160;<?php echo I18N::T('exhibition', '台')?></td>
+			</tr>
+			<tr><td colspan="2" class="hr_1">&#160;</td></tr>
+			<tr>
+				<td></td>
+				<td>
+					<input type="submit" name="submit" class="button button_save" value="<?php echo H(T('保存')) ?>" />
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	</form>
+</div>

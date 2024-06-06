@@ -1,0 +1,5 @@
+<?php if ($value) :?>
+    <span class="point_value"><?php echo (int) max(ceil($value/ 3600), 0);?></span>
+<?php else: ?>
+    <span class="description">-</span>
+<?php endif;?>

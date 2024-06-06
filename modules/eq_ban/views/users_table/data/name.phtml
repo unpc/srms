@@ -1,0 +1,4 @@
+<div><a href="<?php echo H($user->url() ) ?>"><strong class="name"><?php echo H($user->name) ?></strong></a></div>
+<?php $lab = $user->lab; if ($lab->id): ?>
+<div><a class="description" href="<?php echo H($lab->url() ) ?>"><?php echo H($lab->name) ?></a></div>
+<?php endif;?>

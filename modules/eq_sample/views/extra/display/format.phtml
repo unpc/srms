@@ -1,0 +1,14 @@
+<tr>
+    <td class="label right top nowrap">
+        <div class="lpadding_3"><?php echo I18n::T('eq_sample', $field['title']);?>
+        </div>
+    </td>
+    <td>
+        <input type="radio" name="format" value="<?= Sample_Approval_Model::FORMAT_TEXT ?>"
+        <?= $value == Sample_Approval_Model::FORMAT_TEXT ? 'checked' : '' ?>>
+        &nbsp;<?= I18N::T('eq_sample','文本') ?>
+        <input type="radio" name="format" value="<?= Sample_Approval_Model::FORMAT_PDF ?>"
+        <?= $value == Sample_Approval_Model::FORMAT_PDF ? 'checked' : '' ?>>
+        &nbsp;<?= I18N::T('eq_sample','电子版') ?>
+    </td>
+</tr>

@@ -1,0 +1,3 @@
+<?php
+$charge = O('eq_charge', ['source' => $source]);
+echo Number::currency($charge->amount);

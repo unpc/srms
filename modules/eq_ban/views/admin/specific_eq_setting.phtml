@@ -1,0 +1,63 @@
+<table class="form td_padding_2 match_parent" >
+    <tr>
+        <td class="middle">
+            <div><?php echo I18N::T('eq_ban', '仪器组织机构')?></div>
+            <div class="interval_10"></div>
+            <?php
+            echo Widget::factory('application:multi_tag_selector', [
+                'autocomplete'=> URI::url('autocomplete/groups'),
+                'name'=>"eq_tags[$flexform_index]",
+                'value'=>@json_encode((array)$tags)
+            ]);
+            ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="middle">
+            <div><?php echo I18N::T('eq_ban', '自动加入黑名单的迟到次数上限') ?></div>
+            <div class="interval_10"></div>
+            <input type="text" name="eq_max_allowed_late_times[<?php echo $flexform_index; ?>]" size="35" class="text number" value="<?php echo H($max_allowed_late_times ) ?>" />
+            <span class="description"><?php echo I18N::T('eq_ban', '次') ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="middle">
+            <div><?php echo I18N::T('eq_ban', '自动加入黑名单的早退次数上限') ?></div>
+            <div class="interval_10"></div>
+            <input type="text" name="eq_max_allowed_leave_early_times[<?php echo $flexform_index; ?>]" size="35" class="text number" value="<?php echo H($max_allowed_leave_early_times ) ?>" />
+            <span class="description"><?php echo I18N::T('eq_ban', '次') ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="middle">
+            <div><?php echo I18N::T('eq_ban', '自动加入黑名单的爽约次数上限') ?></div>
+            <div class="interval_10"></div>
+            <input type="text" name="eq_max_allowed_miss_times[<?php echo $flexform_index; ?>]" size="35" class="text number" value="<?php echo H($max_allowed_miss_times ) ?>" />
+            <span class="description"><?php echo I18N::T('eq_ban', '次') ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="middle">
+            <div><?php echo I18N::T('eq_ban', '自动加入黑名单的超时次数上限') ?></div>
+            <div class="interval_10"></div>
+            <input type="text" name="eq_max_allowed_overtime_times[<?php echo $flexform_index; ?>]" size="35" class="text number" value="<?php echo H($max_allowed_overtime_times ) ?>" />
+            <span class="description"><?php echo I18N::T('eq_ban', '次') ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="middle">
+            <div><?php echo I18N::T('eq_ban', '自动加入黑名单的违规行为上限') ?></div>
+            <div class="interval_10"></div>
+            <input type="text" name="eq_max_allowed_violate_times[<?php echo $flexform_index; ?>]" size="35" class="text number" value="<?php echo H($max_allowed_violate_times ) ?>" />
+            <span class="description"><?php echo I18N::T('eq_ban', '次') ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="middle">
+            <div><?php echo I18N::T('eq_ban', '自动加入黑名单的总违规次数上限') ?></div>
+            <div class="interval_10"></div>
+            <input type="text" name="eq_max_allowed_total_count_times[<?php echo $flexform_index; ?>]" size="35" class="text number" value="<?php echo H($max_allowed_total_count_times ) ?>" />
+            <span class="description"><?php echo I18N::T('eq_ban', '次') ?>
+        </td>
+    </tr>
+</table>

@@ -1,0 +1,7 @@
+<?php
+	echo Widget::factory('user_selector', [
+			'autocomplete'=>URI::url('!projects/autocomplete/user'), 
+			'name'=>'query', 
+			'user'=>($form['query'] ? (O('user', $form['query'])) : NULL),
+	]); 
+?>

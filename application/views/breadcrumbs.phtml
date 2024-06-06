@@ -1,0 +1,23 @@
+<?php
+/**
+* breadcrumb.phtml
+* 模块修改页面中的修改标题(例：仪器1 > 修改)
+*
+* @author: zx
+* @time: 2021-01-20
+**/
+?>
+<div style="background-color: #ffffff;padding:16px 0 0 16px;">
+    <div class="breadcrumb_title">
+        <div class="name">
+            <?php foreach ($breadcrumbs as $breadcrumb): ?>
+            <?php if(isset($breadcrumb['url'])): ?>
+                <a class="float_left" href="<?php echo $breadcrumb['url']; ?>"><?php echo H($breadcrumb['title']); ?></a>
+                <span class="angle-right float_left">/</span>
+            <?php else:?>
+                    <span class="modify" style="color: #4D4D4D"><?php echo H($breadcrumb['title']); ?></span>
+            <?php endif;?>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,27 @@
+<div class="clearfix">
+	<?php echo CSS::load_async('achievements:publication'); ?>
+	<h2 class="general_title">
+		<span class="middle"><?php echo I18N::T('achievements', '获奖信息') ?></span>
+	</h2>
+	<div class="publication_template">
+		<ol class='publications'>
+			<?php foreach ($awards as $award): ?>
+			<li class="publication">
+				<?php echo V('achievements:author_name', ['achievement'=>$award]);?>
+				<span class="title">
+					<?php if(L('ME')->is_allowed_to('查看成果', $award->lab)):?>
+					<a href="<?php echo $award->url(); ?>"><?php echo H($award->name)?></a>
+					<?php else:?>
+					<?php echo H($award->name); ?>
+					<?php endif;?>.
+				</span>
+				<span class="year">
+					<?php echo Date::format($award->date, H('Y')); ?>
+				</span>
+			</li>
+			<?php endforeach; ?>
+		</ol>
+	</div>
+	<div class="hr_3">&#160;</div>
+</div>
+

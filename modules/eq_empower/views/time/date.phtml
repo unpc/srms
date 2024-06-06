@@ -1,0 +1,21 @@
+<table class="form">
+	<tr><td colspan="2" class="left nowrap middle middle_text"><h4><?php echo I18N::T('eq_empower', '设置工作时间'); ?></h4></td></tr>
+<tr><td><div class="interval_6"></div></td><tr>
+<tr>
+	<td class="left nowrap middle middle_text lpadding_1e5"><?php echo I18N::T('eq_empower','规则起止日期') ?></td>
+	<td name="<?php echo H('working_date['.$flexform_index.']') ?>" class="left nowrap middle" colspan="3">
+		<input size="20" name="startdate[<?php echo $flexform_index ?>]" date_type="date" class="text date"  value="<?php echo H($startdate)?:time(); ?>" />
+		-
+		<input size="20" name="enddate[<?php echo $flexform_index ?>]"  date_type="date" class="text date" value="<?php echo H($enddate)?:time(); ?>" />
+	</td>
+</tr>
+<tr><td><div class="interval_6"></div></td><tr>
+<tr>
+	<td class="left nowrap middle middle_text lpadding_1e5"><?php echo I18N::T('eq_empower','起止时间') ?></td>
+	<td name="<?php echo H('working_time['.$flexform_index.']') ?>" class="left nowrap middle" colspan="3">
+		<input size="20" name="starttime[<?php echo $flexform_index ?>]" class="text date" date_type="time"  value="<?php echo H(is_null($starttime)?mktime(8,0,0,1,1,1971):$starttime ) ?>" />
+		-
+		<input size="20" name="endtime[<?php echo $flexform_index ?>]" class="text date" date_type="time" value="<?php echo H(is_null($endtime)?mktime(17,0,0,1,1,1971):$endtime ) ?>"  />
+	</td>
+</tr>
+</table>

@@ -1,0 +1,10 @@
+<?php 
+$uniqid = 'building_'.uniqid();
+$autocomplete = $this->autocomplete ?: URI::url('autocomplete/building');
+
+$size = $this->size ? : 40;
+
+?>
+<input id="<?php echo $uniqid?>_building" name="<?php echo H($this->name ) ?>" 
+type="hidden" value="<?php echo H($this->value) ?>" />
+<input id="<?php echo $uniqid?>_building_name" class="text middle select_on_focus autocomplete:<?php echo H($autocomplete) ?> autocomplete_alt:#<?php echo $uniqid?>_building" size="<?php echo H($size) ?>" value="<?php echo H($this->value) ?>" q-tooltip="<?php echo H(T('请输入关键字并选择') ) ?>" />

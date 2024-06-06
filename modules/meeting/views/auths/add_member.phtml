@@ -1,0 +1,38 @@
+<div class="hr_1">&#160;</div>
+<div class="padding_1">
+  <form autocomplete="off" q-object="add_approved_user" q-event="submit" q-static="<?php echo H(['meeting_id'=>$meeting_id]) ?>">
+	<table class="form">
+	  <tr>
+		<td class="left middle nowrap"><?php echo I18N::T('meeting', '已通过授权的用户') ?></td>
+		<td class="left middle padding_1">
+		  <?php
+				echo Widget::factory('multi_user_selector', [
+						'name'=>'approved_users', 
+						'autocomplete'=>URI::url('autocomplete/user'), 
+						'value'=> '',
+					]);
+		  ?>
+		</td>
+	  </tr>
+	  <tr>
+		<td class="left middle nowrap"><?php echo I18N::T('meeting', '过期时间') ?></td>
+		<td class="left middle padding_1">
+			<?php
+				 echo Form::radio('atime', 0, 0, I18N::T('meeting', '不过期'), 'class="monitor middle"', 'class="middle"');
+				 echo '&#160;&#160;';
+				 echo Form::radio('atime', 1, 0, NULL, 'class="monitor middle"', 'class="middle"'); 
+			?>
+		<span class="toggle_status:atime enable_on:1">
+			<input name="deadline" class="text date" q-date_format="<?php echo HT('$year/$month/$day')?>"/>
+		</span>
+		</td>
+	  </tr>
+	  <tr>
+		<td>&#160;</td>
+		<td class="left middle">
+		  <input type="submit" class="button button_add" value="<?php echo H(I18N::T('meeting', '添加') ) ?>" />
+		</td>
+	  </tr>
+	</table>
+  </form>
+</div>

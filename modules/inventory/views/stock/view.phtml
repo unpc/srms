@@ -1,0 +1,118 @@
+<?php echo CSS::load_async('inventory:inventory'); ?>
+<div class="hr_1">&#160;</div>
+<?php
+$links = $stock->links('view');
+if(count($links)):
+?>
+<div class="panel padding_1">
+<?php
+$me = L('ME');
+echo Widget::factory('application:links', ['links' => $stock->links('view'), 'separator'=>' ']);
+?>
+</div>
+<?php endif;?>
+<div class="inventory_info">
+  <?php if ($stock->barcode): ?>
+  <div class="float_right text_like">
+  <div class="barcode"><?php echo H($stock->barcode); ?></div>
+  </div>
+  <?php endif; ?>
+  <h2>
+	<?php if ($stock->ref_no): ?>
+	<span class="status_tag middle"><?php echo H($stock->ref_no); ?></span>
+	<?php endif; ?>
+	<span class="product_name middle"><?php echo H($stock->product_name); ?>
+  </h2>
+  <div>
+  	<?php if ( $stock->manufacturer ) : ?>
+	<span class="manufacturer middle"><?php echo H($stock->manufacturer); ?></span>
+	<?php endif; ?>
+	<?php if ( $stock->catalog_no ) : ?>
+	<span class="catalog_no middle"> #<?php echo H($stock->catalog_no); ?></span>
+	<?php endif; ?>
+	&#160;&#160;
+  </div>
+  <div class="hr_2">&#160;</div>
+  <div class="lpadding_3">
+	<ul class="product_info clearfix">
+	  <li>
+		<span class="label"><?php echo I18N::T('inventory', '型号'); ?>:</span>
+		<span class="value"><?php echo H($stock->model);?></span>
+	  </li>
+	  <li>
+		<span class="label"><?php echo I18N::T('inventory', '规格'); ?>:</span>
+		<span class="value"><?php echo H($stock->spec);?></span>
+	  </li>
+	  <li class="clear">&#160;</li>
+	  <li>
+		<span class="label"><?php echo I18N::T('inventory', '供应商'); ?>:</span>
+		<span class="value"><?php echo H($stock->vendor);?></span>
+	  </li>
+	  <li>
+		<span class="label"><?php echo I18N::T('inventory', '单价'); ?>:</span>
+		<span class="value"><?php echo H(Number::currency($stock->unit_price));?></span>
+	  </li>
+	  <li class="clear">&#160;</li>
+	  <li>
+		<span class="label"><?php echo I18N::T('inventory', '存量'); ?>:</span>
+		<span class="value"><?php echo H($stock->quantity);?></span>
+	  </li>
+	  <li>
+		<span class="label"><?php echo I18N::T('inventory', '总量'); ?>:</span>
+		<span class="value"><?php echo H($stock->summation);?></span>
+	  </li>
+	  <li class="clear">&#160;</li>
+	  <li>
+		<span class="label"><?php echo I18N::T('inventory', '库存状态'); ?>:</span>
+		<span class="value"><?php echo I18N::T('inventory', Stock_Model::$stock_status[$stock->status]);?></span>
+	  </li>
+	  <?php if ( $stock->expire_status != Stock_Model::$never_expired ) : ?>
+	  <li class="clear">&#160;</li>
+	  <li>
+		<span class="label"><?php echo I18N::T('inventory', '过期时间'); ?>:</span>
+		<span class="value">
+		<?php $expire_text_color = 'never_expired';
+			if ( $stock->expire_status == Stock_Model::$has_expired ) {
+				$expire_text_color = 'has_expired';
+			}
+			else if ( $stock->expire_status == Stock_Model::$almost_expired ) {
+				$expire_text_color = 'almost_expired';
+			}
+		  ?>
+		 <span class="<?php echo $expire_text_color; ?>"><?php echo date('Y/m/d', $stock->expire_time); ?></span>
+		</span>
+	  </li>
+	  <?php endif; ?>
+	  <li class="clear">&#160;</li>
+	  <li>
+		<span class="label"><?php echo I18N::T('inventory', '存放位置'); ?>:</span>
+		<span class="value"><?php echo H($stock->location);?></span>
+	  </li>
+	  <li class="clear">&#160;</li>
+	  <li>
+		<span class="label"><?php echo I18N::T('inventory', '备注'); ?>:</span>
+		<span class="value"><?php echo H($stock->note);?></span>
+	  </li>
+	</ul>
+	<div class="hr_2">&#160;</div>
+	<?php
+	echo $other_content;
+	?>
+  </div>
+  <?php
+  $root = Tag_Model::root('inventory'); /* TODO fix inventory tag */
+  $tags = (array) Q("$stock tag[root=$root]")->to_assoc('name','name');
+  if (count($tags)) {
+  echo '<div class="hr_2">&#160;</div><div class="clearfix">';
+	foreach ($tags as $tag) {
+	echo '<span class="inventory_tag">'.$tag.'</span> ';
+	}
+	echo '</div>';
+  }
+  ?>
+  <div class="hr_3">&#160;</div>
+  <?php
+      echo V('inventory:stock/other', ['stock'=>$stock,'secondarys_tabs'=>$secondarys_tabs]);?>
+</div>
+<?php echo $secondary_tabs;?>
+<?php echo $secondary_tabs->content;?>

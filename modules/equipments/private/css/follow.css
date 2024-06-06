@@ -1,0 +1,34 @@
+ul.follow {
+	color: #333;
+	text-align: center;
+}
+
+ul.follow li {
+	margin: 0px;
+	float: left;
+	padding: 0 40px;
+	border-right: 1px solid #EDEFF2;
+}
+
+ul.follow li:first-child {
+	padding-left: 0;
+}
+
+ul.follow .up .num {
+	font-size: 30px;
+	color: var(--basiccolor);
+}
+
+ul.follow .down .unit {
+	font-size: 14px;
+	color: #999;
+}
+
+ul.follow .down {
+	font-size: 14px;
+	color: #333;
+}
+
+ul.follow li.last {
+	border-right: 0px;
+}

@@ -1,0 +1,22 @@
+<style>
+    .banstatus_tag {
+        color: var(--basiccolor);
+        padding: 2px 24px;
+        height: 18px;
+        line-height: 18px;
+        font-size: 14px;
+        border: 1px solid var(--basiccolor);
+        border-radius: 0px;
+        display: inline-block;
+        margin-right: .5rem;
+    }
+    .banstatus_tag_current{
+        background-color: var(--basiccolor);
+        color: #FFF;
+    }
+</style>
+<div>
+    <a href="<?php echo URI::url('', 'unsealing=0'); ?>" class="status_tag banstatus_tag <?php echo (!isset($form['unsealing']) || !$form['unsealing']) ? 'banstatus_tag_current' : '';?>"><?php echo I18N::HT('eq_ban', '封禁中'); ?></a>
+    <a href="<?php echo URI::url('', 'unsealing=1'); ?>" class="status_tag banstatus_tag <?php echo (isset($form['unsealing']) && $form['unsealing']) ? 'banstatus_tag_current' : '';?>"><?php echo I18N::HT('eq_ban', '已解封'); ?></a>
+</div>
+<div class="interval_6"></div>

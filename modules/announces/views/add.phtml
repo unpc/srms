@@ -1,0 +1,142 @@
+<?php $require = (string)V('form_require')?>
+<div class="form">
+	<form method="post" action="">
+		<?php echo V('form_error', ['form'=>$form]);?>
+		<table class="form flexible">
+			<tbody>
+				<tr>
+					<td class="label left nowrap top" width="80"><span class="lpadding_1"></span><?php echo I18N::T('announces', '发布范围'); ?></td>
+					<td class="top">
+                        <div class="clearfix">
+                            <div class="top nowrap title">
+                                <?php echo Form::radio('receivers_type', 'all', ($form['receivers_type'] == 'all') ? TRUE : FALSE, I18N::T('announces', '所有人'), 'class="monitor radio"'); ?>
+                            </div>
+                        </div>
+						<div class="interval_12"></div>
+                        <div class="clearfix">
+                            <div class="top nowrap title">
+                                <?php echo Form::radio('receivers_type', 'group', ($form['receivers_type'] == 'group') ? TRUE : FALSE, I18N::T('announces', '组织机构'), 'class="monitor radio"'); ?>
+                            </div>
+                            <div class="top">
+                                <div class="toggle:receivers_type show_on:group hidden">
+									<div class="interval_12"></div>
+                                    <?php
+                                        echo Widget::factory('application:multi_tag_selector', [
+                                                'value' => $form['receiver_group'],
+                                                'autocomplete' => URI::url('!announces/autocomplete/group'),
+                                                'name' => 'receiver_group',
+                                                'size' => '40'
+                                        ]);
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
+						<div class="interval_12"></div>
+
+                        <div class="clearfix">
+                            <div class="top nowrap title">
+                                <?php echo Form::radio('receivers_type', 'role', ($form['receivers_type'] == 'role') ? TRUE : FALSE, I18N::T('announces', '角色'), 'class="monitor radio"'); ?>
+                            </div>
+                            <div class="top">
+                                <div class=" toggle:receivers_type show_on:role hidden">
+									<div class="interval_12"></div>
+                                    <?php
+                                    if (true) {
+                                        echo Widget::factory('announces:tag_selector', [
+                                            'value' => $form['receiver_role'],
+                                            'autocomplete' => URI::url('!announces/autocomplete/role'),
+                                            'name' => 'receiver_role'
+                                        ]);
+                                    }
+                                    else {
+                                        $roles = Event::trigger('people.get.roles');
+                                        $roles = array_map(function ($val) { return H($val); }, $roles);
+                                        echo Form::dropdown('receiver_role', $roles, $form['receiver_role'] ? : $roles->name, 'class="middle "', 'class="middle dropdown"');
+                                    }
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
+						<div class="interval_12"></div>
+
+                        <div class="clearfix">
+                            <div class="top nowrap title">
+                                <?php echo Form::radio('receivers_type', 'user', ($form['receivers_type'] == 'user' || !isset($form['receivers_type'])) ? TRUE : FALSE, I18N::T('announces', '个别用户'), 'class="monitor radio"'); ?>
+                            </div>
+                            <div class="top">
+                                <div class="toggle:receivers_type show_on:user hidden">
+									<div class="interval_12"></div>
+                                    <?php
+                                    echo Widget::factory('multi_user_selector',
+                                        [
+                                        'name'=>'receiver_users',
+                                        'autocomplete'=>URI::url('autocomplete/user'),
+                                        'value'=> $receiver_users ? json_encode($receiver_users) :$form['receiver_users'],
+                                        'extra'=>'token_verify middle',
+                                        'size'=>'40',
+                                        ]);
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
+					</td>
+				</tr>
+                <?php if (Config::get('announces.send_sms', FALSE)) :?>
+                <tr>
+                    <td>&#160;</td>
+                    <td class="label nowrap top">
+                        <?php echo Form::checkbox('send_sms', FALSE, I18N::T('announces', '同时通过短信发送'), 'class="middle"', 'class="middle"');?>
+                    </td>
+                </tr>
+                <?php endif;?>
+
+				<tr><td colspan="4"><div class="interval_24"></div></td></tr>
+
+				<tr>
+					<td class="label left nowrap middle"><?php echo $require;?><?php echo I18N::T('announces', '标题'); ?></td>
+					<td class="label nowrap top">
+						<input name="title" class="text" value="<?php echo H($form['title'])?>" />
+					</td>
+				</tr>
+				<tr><td colspan="4"><div class="interval_24"></div></td></tr>
+
+				<tr>
+					<td class="label left nowrap middle"><?php echo $require;?><?php echo I18N::T('announces', '内容'); ?></td>
+					<td class="label top">
+						<textarea name="content" class="text autogrow" rows="5"><?php echo H($form['content']);?></textarea>
+					</td>
+				</tr>
+				<tr><td colspan="4"><div class="interval_20"></div></td></tr>
+                <tr>
+                    <td class="label left nowrap middle"><span class="lpadding_21"></span><?php echo I18N::T('announces', '附件'); ?></td>
+                    <td class="label top">
+                        <?php
+                            echo V('announces:attachments',['announce'=>$announce->id?$announce:O('announce')])
+                        ?>
+                    </td>
+                </tr>
+				<tr><td colspan="4"><div class="interval_24"></div></td></tr>
+                <tr>
+                    <td class="label right nowrap top"></td>
+                    <td class="label top">
+                        <?php echo Form::checkbox('must_read', $form['must_read'], I18N::T('announces', '登录时必读'), 'class="monitor checkbox"'); ?>
+                        <div class="toggle:must_read show_on:on hidden">
+							<div class="interval_24"></div>
+                            <?php echo I18N::T('announces', '有效期'); ?>
+                            <input name="dtstart" autocomplete="off" class="text date" date_type="date" value="<?php echo H($form['dtstart']?:time()) ?>" />&#160;&#160;-&#160;&#160;<input name="dtend" class="text date" date_type="date" autocomplete="off" value="<?php echo H($form['dtend'] ? 0 : strtotime('+7 day') ) ?>" />
+                        </div>
+                    </td>
+                </tr>
+				<tr><td colspan="4"><div class="interval_24"></div></td></tr>
+                <tr><td><div class="interval_40"></div></td></tr>
+				<tr>
+					<td></td>
+					<td>
+                        <input type="submit" name="submit" class=" float_right font-button-save" value="<?php echo I18N::T('announces', '发布'); ?>" />
+					</td>
+				</tr>
+
+			</tbody>
+		</table>
+	</form>
+</div>

@@ -1,0 +1,148 @@
+<style>
+    .ttt{
+        width: 180px !important;
+    }
+</style>
+<?php echo (string) Event::trigger('labs.index.panel'); ?>
+<?php
+$uniqid = uniqid();
+$select_all_id = 'select_all_' . $uniqid;
+$batch_form_id = 'batch_form_' . $uniqid;
+$delete_selected = 'delete_selected_' . $uniqid;
+$form_token = 'form_token_' . $uniqid;
+$me    = L('ME');
+$table = Widget::factory('table');
+
+$table->name     = 'labs_list';
+
+$enable_show_creator = $me->is_allowed_to('查看建立者', 'lab');
+$enable_show_auditor = $me->is_allowed_to('查看审批者', 'lab');
+
+$add_columns_arr = [
+    'checkbox' => [
+        'type' => 'checkbox',
+        'id' => $select_all_id,
+        'align' => 'center'
+    ],
+    'lab_name'    => [
+        'title'    => I18N::T('labs', '名称'),
+        'sortable' => true,
+        'filter'   => [
+            'form'  => V('labs:labs_table/filters/lab_name', ['lab_name' => $form['lab_name']]),
+            'value' => $form['lab_name'] ? H($form['lab_name']) : null,
+        ],
+        'nowrap'   => true,
+        'weight'   => 0,
+    ],
+    'group'       => [
+        'title'  => I18N::T('labs', '组织机构'),
+        'input_type' => 'select',
+        'filter' => [
+            'form'  => V('labs:labs_table/filters/group', [
+                'name' => 'group_id',
+                'tag'  => $group,
+                'root' => $group_root,
+            ]),
+            'value' => $group->id ? H($group->name) : null,
+            'field' => 'group_id',
+        ],
+        'nowrap' => true,
+        'weight' => 10,
+    ],
+    'description' => [
+        'title'  => I18N::T('labs', '介绍'),
+        'extra_class' => 'ttt',
+        'weight' => 20,
+    ],
+    'incharge' => [
+        'title'  => I18N::T('labs', '负责人'),
+        'filter' => [
+            'form' => V('labs:labs_table/filters/incharge', [
+                'incharge' => $form['incharge']
+            ])
+        ],
+        'align'  => 'center',
+        'nowrap' => true,
+        'weight' => 30,
+    ],
+    'ctime' => [
+        'algin'  => 'left',
+        'nowrap' => true,
+        'title'  => I18N::T('labs', '创建时间'),
+        'input_type' => 'date',
+        'filter' => [
+            'form' => V('labs:labs_table/filters/ctime', [
+                'form' => $form
+            ])
+        ],
+        'weight' => 50,
+    ]
+];
+
+/*
+ * BUG #966::课题组页面显示问题。
+ * 解决：去掉description的nowrap属性。
+ * 正常情况下中英文显示不会有问题，但很长的字母串就不会换行了。
+ * TODO 是否有必要对上述情况进行限制。(kai.wu@2011.09.01)
+ */
+$table->add_columns($add_columns_arr);
+
+$add_columns_arr['rest']  = ['title'  => I18N::T('labs', '操作'), 'algin' => 'left', 'nowrap' => true, 'weight' => 100];
+$columns = new ArrayObject($add_columns_arr);
+Event::trigger('lab.table_list.columns', $form, $columns);
+
+$table->add_columns((array) $columns);
+
+$table->empty_message = I18N::T('labs', '无符合条件的实验室');
+
+if (count($labs) > 0) {
+    foreach ($labs as $lab) {
+        $links = $lab->links('dashboard');
+
+        $add_row_arr = [
+            'checkbox'    => V('labs:labs_table/data/selector', ['lab' => $lab, 'select_all_id' => $select_all_id]),
+            'lab_name'    => V('labs:labs_table/data/lab_name', ['lab' => $lab,'not_tag' => 1]),
+            'group'       => V('labs:labs_table/data/last_group', ['lab' => $lab, 'root' => $group_root]),
+            'description' => V('labs:labs_table/data/description', ['lab' => $lab]),
+            'incharge'    => V('labs:labs_table/data/incharge', ['lab' => $lab]),
+            'ctime'       => V('labs:labs_table/data/ctime', ['lab' => $lab]),
+            'rest'        => Widget::factory('application:links', ['links' => $links]),
+        ];
+
+        $row = new ArrayObject($add_row_arr);
+        Event::trigger('lab.table_list.row', $row, $lab);
+        $table->add_row((array) $row);
+    }
+}
+
+$param = [
+    'top_input_arr' => ['lab_name', 'group', 'incharge', 'ctime'],
+    'columns'       => $columns,
+];
+
+echo V('application:search_box', $param);
+?>
+
+<form 
+    q-object="batch_lab"
+    q-event="submit"
+    q-src="<?= H(URI::url("!labs/approval")); ?>"
+    id="<?= H($batch_form_id) ?>"
+    method="post"
+    autocomplete="off"
+>
+<div class="panel clearfix">
+    <div class="float_right">
+        <input class="font-button-delete" type="submit" name="reject" value="<?= I18N::T('application', '批量驳回') ?>">
+        <input class="font-button-save" type="submit" name="pass" value="<?= I18N::T('application', '批量通过') ?>">
+    </div>
+</div>
+<div class="interval_16"></div>
+<?php echo $table; ?>
+</form>
+<div style="text-align: right"><?php echo $pagination; ?></div>
+<div class="interval_10"></div>
+
+<?php
+echo JS::load('people:index_operate', ['select_all_id'=>$select_all_id, 'batch_form_id' => $batch_form_id]);
+?>

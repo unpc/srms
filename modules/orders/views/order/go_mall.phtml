@@ -1,0 +1,10 @@
+<div class="hr_1">&#160;</div>
+<div class="center mall_list padding_1">
+    <div class="nowrap center mall padding_1">
+    	<?php echo I18N::T('orders', sprintf('该订单关联%s商城，确认该订单必须在商城中进行', $data['title'])) ?>
+    </div>
+    <div class="center">
+    	<a target="_blank" href="<?php echo H($url ) ?>" class="button prevent_default"><?php echo I18N::T('orders','进入商城'); ?></a>
+    </div>
+</div>
+<?php echo CSS::load_async('orders:mall');?>

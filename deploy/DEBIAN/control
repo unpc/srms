@@ -1,0 +1,12 @@
+Package: lims2
+Version: %VERSION%
+Architecture: all
+Maintainer: Genee Developers
+Installed-Size: 134217728
+Depends: php5-fpm, php5-cli, php5-memcache, php5-mysql, php5-gd, php5-xcache, php5-curl, php5-ldap, mysql-server, memcached, xinetd, liblua5.2-0, clamav, daemon, sphinxsearch
+Recommends: msmtp-mta
+Section: web
+Priority: optional
+Homepage: http://www.geneegroup.com
+Description: LabScout LIMS-CF
+ Laboratary Information Management System - Core Facility

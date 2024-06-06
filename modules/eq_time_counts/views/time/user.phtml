@@ -1,0 +1,91 @@
+<table class="form lmaigin_1e5">
+    <tr><td><div class="interval_6"></div></td></tr>
+    <tr>
+        <td class="left nowrap middle"><?php echo I18N::T('eq_time_counts', '单次预约时长限制阈值') ?>&nbsp;&nbsp;&nbsp;</td>
+        <td class="left nowrap middle" colspan="3">
+            <input name="per_reserv_time[<?php echo $flexform_index ?>]" class="text number"
+                   value="<?= $per_reserv_time ?>"/>
+            <span>&nbsp;<?= I18N::T('eq_time_counts', '单位(小时), 填0不限制') ?></span>
+        </td>
+    </tr>
+    <tr style="display: none">
+        <td class="left nowrap middle"><?php echo I18N::T('eq_time_counts', '预约总时长限制阈值') ?>&nbsp;&nbsp;&nbsp;</td>
+        <td class="left nowrap middle" colspan="3">
+            <input name="total_reserv_time[<?php echo $flexform_index ?>]" class="text number"
+                   value="<?= $total_reserv_time ?>"/>
+            <span>&nbsp;<?= I18N::T('eq_time_counts', '单位(小时), 填0不限制') ?></span>
+        </td>
+    </tr>
+    <tr><td><div class="interval_6"></div></td></tr>
+    <tr>
+        <td class="left nowrap middle"><?php echo I18N::T('eq_time_counts', '预约总次数限制阈值') ?>&nbsp;&nbsp;&nbsp;</td>
+        <td class="left nowrap middle" colspan="3">
+            <input name="total_reserv_counts[<?php echo $flexform_index ?>]" class="text number"
+                   value="<?= $total_reserv_counts ?>"/>
+            <span>&nbsp;<?= I18N::T('eq_time_counts', '单位(次), 填0不限制') ?></span>
+        </td>
+    </tr>
+    <tr><td><div class="interval_10"></div></td></tr>
+</table>
+<h4><?php echo I18N::T('eq_time_counts', '设置受限用户'); ?></h4>
+<div class="interval_6"></div>
+<div class="lmaigin_1e5">
+    <?= Form::radio("time_counts_controlall[{$flexform_index}]", 1, $controlall, I18N::T('announces', '所有用户'), 'class="monitor middle radio"', 'class="middle rmargin_10"'); ?>
+    &nbsp;&nbsp;
+    <?= Form::radio("time_counts_controlall[{$flexform_index}]", 0, $controlall, I18N::T('announces', '个别用户'), 'class="monitor middle radio"', 'class="middle"'); ?>
+</div>
+<div class="lmaigin_1e5 toggle:time_counts_controlall[<?= $flexform_index ?>] show_on:0">
+    <table class="form" style="width: 100%">
+        <tr><td><div class="interval_6"></div></td></tr>
+        <tr>
+            <td class="left nowrap top" style="width:100px">
+                <?= Form::checkbox("time_counts_select_user_mode_user[{$flexform_index}]", !!$controluser,
+                    I18N::T('eq_time_counts', '个别用户'), 'class="middle checkbox monitor"', 'class="middle monitor"') ?>
+            </td>
+            <td>
+                <div class="toggle:time_counts_select_user_mode_user[<?= $flexform_index ?>] show_on:on" style="display:none">
+                    <?= Widget::factory('eq_time_counts:selector', [
+                        'name' => "time_counts_user[{$flexform_index}]",
+                        'autocomplete' => URI::url('autocomplete/user'),
+                        'value' => $controluser ? $controluser : null,
+                    ]); ?>
+                </div>
+            </td>
+        </tr>
+        <tr><td><div class="interval_6"></div></td></tr>
+        <?php if (!$GLOBALS['preload']['people.multi_lab'] && Module::is_installed('labs')): ?>
+            <tr>
+                <td class="left nowrap top">
+                    <?= Form::checkbox("time_counts_select_user_mode_lab[{$flexform_index}]", $controllab,
+                        I18N::T('eq_time_counts', '课题组'), 'class="middle checkbox monitor"', 'class="middle monitor"') ?>
+                </td>
+                <td>
+                    <div class="toggle:time_counts_select_user_mode_lab[<?= $flexform_index ?>] show_on:on" style="display:none">
+                        <?= Widget::factory('eq_time_counts:selector', [
+                            'name' => "time_counts_lab[{$flexform_index}]",
+                            'autocomplete' => URI::url('!eq_time_counts/autocomplete/labs'),
+                            'value' => $controllab ? $controllab : null,
+                        ]); ?>
+                    </div>
+                </td>
+            </tr>
+        <?php endif ?>
+        <tr><td><div class="interval_6"></div></td></tr>
+        <tr>
+            <td class="left nowrap top">
+                <?= Form::checkbox("time_counts_select_user_mode_group[{$flexform_index}]", $controlgroup,
+                    I18N::T('eq_time_counts', '组织机构'), 'class="middle checkbox monitor"', 'class="middle monitor"') ?>
+            </td>
+            <td>
+                <div class="toggle:time_counts_select_user_mode_group[<?= $flexform_index ?>] show_on:on" style="display:none">
+                    <?= Widget::factory('eq_time_counts:tag_selector', [
+                        'name' => "time_counts_group[{$flexform_index}]",
+                        'autocomplete' => URI::url('autocomplete/groups'),
+                        'value' => $controlgroup ? $controlgroup : null,
+                    ]); ?>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="interval_24"></div>

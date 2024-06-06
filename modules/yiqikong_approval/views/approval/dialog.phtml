@@ -1,0 +1,37 @@
+<div class="padding_2">
+    <?= V('approval:approval/reserv', ['reserv' => $reserv, 'approval' => $approval])?>
+
+    <?php
+    if ($approved) echo V('time_line_v1', ['object'=>$approved]);
+    ?>
+    <div class="label left nowrap">
+        <div style="margin-left: 50px" class="left">
+            <span><?= $approval->source->description ? H(T('备注: ')) : ''; ?></span>
+            <span><?= H(T($approval->source->description)); ?></span>
+        </div>
+    </div>
+    <div class="label right top nowrap">
+        <div class="lpadding_3 padding_2">
+            <?php
+            $flow = Config::get('flow.eq_reserv');
+            $me = L('ME');
+            $is_incharge = Equipments::user_is_eq_incharge($me, $approval->equipment);
+            if ($is_incharge && $me->is_allowed_to('机主审核', 'approval') && count($flow[$approval->flag]['action'])): ?>
+                <a q-object="pass"
+                   q-event="click"
+                   q-src="<?= H(URI::url('!yiqikong_approval/index'))?>"
+                   q-static="<?= H(['approval_id'=>$approval->id])?>"
+                   class="font-button-save">
+                    <?php echo I18N::HT('yiqikong_approval', '通过');?>
+                </a>
+                <a q-object="reject"
+                   q-event="click"
+                   q-src="<?= H(URI::url('!yiqikong_approval/index'))?>"
+                   q-static="<?= H(['approval_id'=>$approval->id])?>"
+                   class="font-button-default">
+                    <?php echo I18N::HT('yiqikong_approval', '驳回');?>
+                </a>
+            <?php endif;?>
+        </div>
+    </div>
+</div>

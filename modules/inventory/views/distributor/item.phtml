@@ -1,0 +1,13 @@
+<tr class="check_hover">
+	<td class="nowrap"><?php echo H($object->company); ?></td>
+	<td class="nowrap"><?php echo H($object->contact); ?></td>
+	<td class="nowrap"><?php echo H($object->email); ?></td>
+	<td class="nowrap"><?php echo H($object->phone); ?></td>
+	<td class="nowrap"><?php echo H($object->note); ?></td>
+	<td class="nowrap">
+	<?php 
+		$links = $object->links(); 
+		echo Widget::factory('application:links', ['links' => $links]);
+	?>
+	</td>
+</tr>

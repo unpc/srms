@@ -1,0 +1,6 @@
+<?php
+echo Form::dropdown('status',
+  ['-1' => '--'] + I18N::T('research', Research_Record_Model::$charge_status),
+  $form['status'] ?? -1,
+  'class="dropdown"'
+); ?>

@@ -1,0 +1,27 @@
+<?php if (is_object($form) && $form->no_error === false): ?>
+    <div id="form_error_box" class="message message_error" style="z-index:1000;margin-bottom: 1rem;">
+        <i class="message_icon icon_error"></i>
+        <ul>
+            <?php
+            $inputs = [];
+            $errors = [];
+
+            foreach ($form->errors as $input => $errs) {
+                foreach ($errs as $err) {
+                    if (strpos($err, '@') === 0) {
+                        continue;
+                    }
+
+                    $errors[$err] = $err;
+                }
+                $inputs[] = $input;
+            }
+            echo '<li>' . implode('</li><li>', $errors) . '</li>';
+            ?>
+        </ul>
+    </div>
+    <?php echo JS::load('form_error', [
+        'input_errors' => $inputs,
+        'errors' => $errors,
+    ]); ?>
+<?php endif; ?>

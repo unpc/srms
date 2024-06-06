@@ -1,0 +1,12 @@
+<a	q-event="click"
+	q-object='view_announce'
+	q-static="<?php echo H(['a_id'=>$announce->id])?>"
+	q-src="<?php echo H(URI::url('!equipments/announce')) ?>"
+	href="#"
+>
+	<?php if ($is_read) : ?>
+		<?php echo H($announce->title) ?>
+	<?php else: ?>
+		<strong><?php echo H($announce->title) ?></strong>
+	<?php endif; ?>
+</a>

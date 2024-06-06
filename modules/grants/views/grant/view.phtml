@@ -1,0 +1,52 @@
+<div class="hr_1">&#160;</div>
+<div class="clearfix">
+<table class="form">
+<tbody>
+<tr>
+	<td class="top icon tight">
+		<?php echo $grant->icon('64'); ?>
+	</td>
+	<?php $is_admin = L('ME')->is_allowed_to('修改', $grant); ?>
+	<td class="top">
+		<h2>
+		<a href="<?php echo H($grant->url() ) ?>"><?php echo H($grant->project); ?></a>
+		<small>(<?php echo H($grant->source) . ' ' . H($grant->ref) ?>)</small>
+		</h2>
+		<p>
+			<?php echo I18N::HT('grants', '负责人')?>: <?php $grant->user->render(); ?>
+		</p>
+		<div class="hr_2">&#160;</div>
+        <p>
+            <?php echo I18N::T('grants', '有效期')?>:
+            <?php
+            //结束时间超过当前时间，则已过期
+            if (($grant->dtend - Date::time()) < 0) $class = 'over';
+            elseif (($grant->dtend - Date::get_day_end()) <= $grant->remind_time * 86400) $class = 'near';
+            else $class = 'far_away';
+            ?>
+            <span class="<?php echo H($class) ?>">
+                <?php echo Date::format($grant->dtstart, 'Y/m/d');?> - <?php echo Date::format($grant->dtend, 'Y/m/d');?>
+            </span>
+        </p>
+		<div class="hr_2">&#160;</div>
+		<?php echo I18N::HT('grants', '总金额 %num', ['%num'=>Number::currency($grant->amount)]); ?>
+		(
+		<?php if ($grant->balance >= 0): ?>
+		<span class="text_portion_balance"><?php echo H(Number::currency($grant->balance)) ?></span>
+		/
+		<span class="text_portion_used"><?php echo H(Number::currency($grant->amount - $grant->balance)) ?></span>
+		<?php else: ?>
+		<span class="text_portion_deficit"><?php echo H(Number::currency($grant->balance)) ?></span>
+		<?php endif; ?>
+		)
+		<?php echo V('grants:grant/simple_portion', ['portion'=>$grant, 'width'=>500]); ?>
+		<div class="hr_2">&#160;</div>
+		<?php echo Widget::factory('application:links', ['links' => $grant->links('view'), 'separator'=>' ']) ?>
+		<div class="hr_2">&#160;</div>
+	</td>
+</tr>
+</tbody>
+</table>
+</div>
+<?php echo $secondary_tabs ?>
+<?php echo $secondary_tabs->content ?>

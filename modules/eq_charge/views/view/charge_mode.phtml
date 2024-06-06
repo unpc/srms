@@ -1,0 +1,16 @@
+<?php 
+
+switch($charge_mode) {
+case EQ_Charge::CHARGE_MODE_DURATION:
+	echo I18N::T('eq_charge', '按时');
+	break;
+case EQ_Charge::CHARGE_MODE_TIMES:
+	echo I18N::T('eq_charge', '按次');
+	break;
+case EQ_Charge::CHARGE_MODE_SAMPLES:
+	echo I18N::T('eq_charge', '按样品');
+	break;
+case EQ_Charge::CHARGE_MODE_CUSTOMIZE:
+	echo I18N::T('eq_charge', '自定义');
+	break;
+}

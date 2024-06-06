@@ -1,0 +1,180 @@
+/*编号样式*/
+.order_id {
+    background-color: #7498E0;
+    color: #FFF;
+    padding: 2px 4px;
+    border-radius: 2px;
+}
+
+div.order_qrcode {
+    float: right;
+    margin: 2px;
+    img {
+        width: 147px;
+        height: 147px;
+    }
+}
+
+/*搜索框样式*/
+span.order_search {
+    float: right;
+    margin-top: -6px;
+    *margin-top: -1px; /*IE6*/
+}
+
+.status_tag.status_requesting {
+	background-color: #F93;
+}
+.status_tag.status_confirmed {
+	background-color: #e46558;
+}
+.status_tag.status_not_received {
+	background-color: #3AF;
+}
+.status_tag.status_returning {
+	background-color: #9c6bb5;
+}
+.status_tag.status_received {
+	background-color: #6C9;
+}
+.status_tag.status_canceled {
+	background-color: #888;
+}
+
+.light_panel .status_tag {
+	border: 1px solid #eee;
+}
+
+.inventory_info {
+
+	padding: 5px 0px 5px 10px;
+
+	.product_name {
+		font-weight: bold;
+		font-size: 16px;
+	}
+	
+	.manufacturer, .catalog_no {
+		font-size: 14px;
+		color: #999;
+	}
+
+	.product_info li {
+		margin: 0;
+		width: 200px;
+		float: left;
+
+		.label {
+			font-weight: bold;
+			color: #666;
+		}
+        .value a {
+            color: #36c;
+        }
+	}
+
+	.status_tag.requesting {
+		background-color: #F93;
+	}
+	.status_tag.not_received {
+		background-color: #3AF;
+	}
+	.status_tag.received {
+		background-color: #6C9;
+	}
+	.status_tag.canceled {
+		background-color: #888;
+	}
+}
+
+.order_track {
+	ol li {
+		background-repeat: no-repeat;
+		padding-left: 18px;
+		margin-bottom: 5px;
+
+		@css-define statuses:["new","ok","canceled"];
+		@css-foreach(status in statuses) {
+			&.$status {
+				background-image: url(!orders/images/$status.png);
+			}
+		}
+
+		h4 {
+			font-weight: normal;
+
+			a {
+				color: #36c;
+				font-weight: bold;
+			}
+
+			em {
+				color: #666;
+				font-weight: bold;
+			}
+
+		}
+
+	}
+}
+
+.order_form {
+    .title {
+        margin-right: 20px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+	.label {
+		text-align: right;
+		font-weight: bold;
+		margin-right: 5px;
+	}
+	.kv {
+		margin-bottom: 5px;
+		float:left;
+	}
+	.order_submit{
+		padding-left: 90px;
+	}
+}
+
+.inventory_tag {
+	color: #fff;
+	background-color: #abd;
+	text-decoration: none;
+	padding: 1px 2px;
+
+	&:hover {
+		text-decoration: none;
+		color: #fff;
+		background-color: #7498E0;
+	}
+}
+
+.source_tag {
+	text-decoration: none;
+	background-color: #888888;
+    border-radius: 2px 2px 2px 2px;
+    color: #FFFFFF;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.231;
+    padding: 2px 4px;
+    text-align: center;
+    text-decoration: none;
+    text-transform: capitalize;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.mall_tag {
+	color:#fff;
+	background-color:#888;
+	padding:3px;
+	border-radius:2px;
+}
+
+a:hover {
+	text-decoration: none;
+}

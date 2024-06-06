@@ -1,0 +1,38 @@
+<div class="padding_1">
+  <form autocomplete="off" q-object="add_approved_tag" 
+	q-event="submit" q-static="<?= H(['meeting_id' => $meeting_id]) ?>">
+	<table class="form">
+	  <tr>
+		<td class="left middle nowrap"><?php echo I18N::T('meeting', '已通过授权的用户') ?></td>
+		<td class="left middle padding_1">
+        <?php
+        echo Widget::factory('equipments:tag_selector', [
+            'name' => 'approved_tag',
+            'autocomplete'=> URI::url("!meeting/autocomplete/user_tags.{$meeting_id}"),
+            'value' => '',
+        ]);
+        ?>
+		</td>
+	  </tr>
+	  <tr>
+		<td class="left middle nowrap"><?= I18N::T('meeting', '过期时间') ?></td>
+		<td class="left middle padding_1">
+			<?php
+			echo Form::radio('atime', 0, 0, I18N::T('meeting', '不过期'), 'class="monitor middle"', 'class="middle"');
+			echo '&#160;&#160;';
+			echo Form::radio('atime', 1, 0, NULL, 'class="monitor middle"', 'class="middle"'); 
+			?>
+		<span class="toggle_status:atime enable_on:1">
+			<input name="deadline" class="text date" q-date_format="<?= HT('$year/$month/$day')?>"/>
+		</span>
+		</td>
+	  </tr>
+	</table>
+	<div class="button_container">
+        <div class="float_right">
+            <input type="button" name="cancel" id="cancel" class="font-button-default sm rmargin_2e4" value="取消">
+            <input type="submit" name="submit" class="font-button-save" value="<?= H(I18N::T('meeting', '添加') ) ?>">
+        </div>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,10 @@
+<?php
+$user = $component->organizer;
+$equipment = $component->calendar->parent;
+?>
+<p>
+<?php if ($component->type == Cal_Component_Model::TYPE_VEVENT): ?>
+<a class="prevent_default" href="<?php echo $user->url(); ?>"><?php echo H($user->name) ?></a> /
+<?php endif; ?>
+ <a class="prevent_default" href="<?php echo $equipment->url(); ?>"><?php echo H($equipment->name) ?></a>
+</p>

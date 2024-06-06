@@ -1,0 +1,25 @@
+<div class="hr_1">&#160;</div>
+<div class="hr_1">&#160;</div>
+<?php 
+	$str = implode(', ',$categories); 
+	$base_url = Config::get('system.base_url');
+	$url = $base_url."/admin/preferences.mail";
+	$admin = URI::anchor($url, 'Newsletter center');
+	$lims_url = URI::anchor($base_url, 'LabScout LIMS');
+	if (count($categories)):
+?>
+<div style="font-size:14px;padding:2px">
+※ <?php echo strtr('You can receive more updates from %categories, please log in %admin to set ', ['%categories'=>$str, '%admin'=>$admin]);?>
+</div>
+<?php else: ?>
+<div style="font-size:14px;padding:2px">
+※ <?php echo strtr('If you are willing to change the newsletter content, please log in %admin to set up', ['%admin'=>$admin]);?>
+</div>
+<?php endif; ?>
+<div style="font-size:14px;padding:2px">
+	※ For more information, please log in: <?php echo $lims_url; ?>
+</div>
+<p></p>
+<div style="font-size:14px;padding:2px">
+	Sincerely, yours!
+</div>

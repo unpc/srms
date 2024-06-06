@@ -1,0 +1,10 @@
+<span class="description">
+    <?php 
+        if (mb_strlen($keep->description) > 20) {
+            echo mb_substr($keep->description, 0, 20) . '...';
+        }
+        else {
+            echo $keep->description;
+        }
+    ?>
+</span>

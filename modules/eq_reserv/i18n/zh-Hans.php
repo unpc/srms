@@ -1,0 +1,25 @@
+<?php
+$lang['在实验室成员预约仪器使用时给负责人发送提醒'] = '在课题组成员预约仪器使用时给负责人发送提醒';
+$lang['查看本实验室成员的预约情况'] = '查看本课题组成员的预约情况';
+$lang['查看负责实验室成员的预约情况'] = '查看负责课题组成员的预约情况';
+$lang['查看负责实验室成员的预约'] = '查看负责课题组成员的预约';
+$lang['查看本实验室成员的预约'] = '查看本课题组成员的预约';
+$lang['实验室'] = '课题组';
+$lang['管理 (实验室)'] = '管理 (课题组)';
+$lang['提醒，您实验室的成员预约了仪器'] = '提醒，您课题组的成员预约了仪器';
+$lang['实验室P.I.姓名'] = '课题组P.I姓名';
+$lang['实验室成员姓名'] = '课题组成员姓名';
+$lang['实验室成员预约相关的消息提醒'] = '课题组成员预约相关的消息提醒';
+$lang['设置用户预约仪器成功发送给实验室PI的通知信息'] = '设置用户预约仪器成功发送给课题组PI的通知信息';
+$lang['提醒: 您实验室的成员预约了仪器%equipment'] = '提醒: 您课题组的成员预约了仪器%equipment';
+$lang['%pi, 您好:\n\n您实验室中的用户 %user 预约了仪器 %equipment.\n\n预约时间为 %dtstart - %dtend.\n\n备注信息:\n%description\n\n如需查看,详细地址链接如下:\n%link\n\n用户 %user 的联系方式:\n电话: %user_phone\nEmail: %user_email\n'] = '%pi, 您好:\n\n您课题组中的用户 %user 预约了仪器 %equipment.\n\n预约时间为 %dtstart - %dtend.\n\n备注信息:\n%description\n\n如需查看,详细地址链接如下:\n%link\n\n用户 %user 的联系方式:\n电话: %user_phone\nEmail: %user_email\n';
+$lang['设置用户修改预约后送给实验室PI的通知信息'] = '设置用户修改预约后送给课题组PI的通知信息';
+$lang['提醒: 您实验室中的用户%user在仪器%equipment中的预约被修改'] = '提醒: 您课题组中的用户%user在仪器%equipment中的预约被修改';
+$lang['%pi, 您好:\n\n您实验室中的用户 %user 在仪器 %equipment 中的预约于 %time 被 %edit_user 修改, 修改信息如下:\n%edit_content.\n\n备注信息:\n%description\n\n如需查看, 详细地址链接如下:\n%link'] = '%pi, 您好:\n\n您课题组中的用户 %user 在仪器 %equipment 中的预约于 %time 被 %edit_user 修改, 修改信息如下:\n%edit_content.\n\n备注信息:\n%description\n\n如需查看, 详细地址链接如下:\n%link';
+$lang['设置用户删除预约发送给实验室PI的通知信息'] = '设置用户删除预约发送给课题组PI的通知信息';
+$lang['提醒: 您实验室中的用户%user在仪器%equipment中的预约被删除'] = '提醒: 您课题组中的用户%user在仪器%equipment中的预约被删除';
+$lang['%pi, 您好:\n\n您实验室中的用户 %user 在仪器 %equipment中的预约于 %time 被 %edit_user 删除.\n\n原预约时间为 %old_dtstart - %old_dtend.\n\n备注信息:\n%description'] = '%pi, 您好:\n\n您课题组中的用户 %user 在仪器 %equipment中的预约于 %time 被 %edit_user 删除.\n\n原预约时间为 %old_dtstart - %old_dtend.\n\n备注信息:\n%description';
+$lang['实验室'] = '课题组';
+$lang['在仪器无人使用情况下, 允许用户使用该仪器'] = NULL;
+$lang['您所在实验室未激活!'] = '您所在课题组未激活!';
+$lang['"实验室" 不能为空!'] = '"课题组" 不能为空!';

@@ -1,0 +1,1113 @@
+<?php echo CSS::load_async('eq_reserv:calendar');?>
+<?php echo CSS::load_async('calendars:common'); ?>
+<style>
+	.calendar_week .block_1, .calendar_month .block_1 {
+		background-color: grey;
+		border-color: grey;
+	}
+	.overlay {
+		width: 100%;
+		height: 100%;
+		top: 0px;
+		left: 0px;
+		z-index: 10001;
+		filter:alpha(opacity=60);
+		opacity: 0.5;
+		-moz-opacity: 0.5;
+		cursor: pointer;
+	}
+</style>
+  <div class="overlay" id="fake">
+   <div class="hr_1">
+    &nbsp;
+   </div>
+   <div class="right" style="position:relative;"> 
+    <div class="tabs_container_wrapper secondary_tabs"> 
+     <div class="tabs_container"> 
+      <span class="tabs"> <span class="tabs_body"> <span class="tabs_content"> <span class="calendar_content"> 
+          <div class="reserv_status"> 
+           <span class="late"> <?= T('迟到') ?></span> 
+           <span class="overtime"><?= T('超时') ?></span> 
+           <span class="miss"><?= T('爽约') ?></span> 
+           <span class="leave_early"><?= T('早退') ?></span> 
+           <span class="clearfix">&nbsp;</span> 
+          </div> </span> <span class="tab_wrapper"> <span class="tab active_tab"><?= T('周') ?></span> </span>  <a  class="middle"> <span class="tab_wrapper"> <span class="tab"> <?= T('月') ?> </span> </span> </a> <a  class="middle"> <span class="tab_wrapper"> <span class="tab"> <?= T('列表') ?> </span> </span> </a> </span> </span> </span> 
+     </div> 
+    </div> 
+   </div> 
+   <div class="hr_1">
+    &nbsp;
+   </div> 
+   <table class="calendar_week_header" style="z-index: 499; visibility: hidden; position: fixed; top: -10000px; width: 1229px;">
+    <thead class="header"> 
+     <tr> 
+      <td colspan="8"> 
+       <div class="panel padding_1 clearfix"> 
+        <div class="float_right"> 
+         <a  class="button" style="margin:0!important;margin:0 2px;"> <span>&laquo; <?= T('上周') ?></span> </a> 
+         <a  class="button" style="margin:0!important;margin:0 2px;"> <span><?= T('下周') ?> &raquo;</span> </a> 
+        </div> 
+        <div class="float_left"> 
+         <a class="middle button button_add reserv_calendar_left_nav_anchor prevent_default" q-object="just_show_insert_component" q-event="click" ><?= T('添加') ?></a> 
+         <a class="middle button button_save reserv_calendar_left_nav_anchor prevent_default" type="csv"><?= T('导出Excel') ?></a> 
+         <a class="middle button button_print reserv_calendar_left_nav_anchor prevent_default" type="print"><?= T('打印') ?></a> 
+        </div> 
+        <h1 class="center"> <?php echo Date::format($dtstart, I18N::T('calendars', 'Y/m/d'))?> - <?php echo Date::format(Date::prev_time($dtnext), I18N::T('calendars', 'Y/m/d'))?> </h1> 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <th style="width: 35px;">&nbsp;</th> 
+      <th class="header" q-static="wday=0&amp;calendarid=1&amp;dtstart=1554566400" style="width: 157px;"> <small>2019/04/07</small> <h2>周日 </h2> </th> 
+      <th class="header" q-static="wday=1&amp;calendarid=1&amp;dtstart=1554566400" style="width: 157px;"> <small>2019/04/08</small> <h2>周一 </h2> </th> 
+      <th class="header today" q-static="wday=2&amp;calendarid=1&amp;dtstart=1554566400" style="width: 157px;"> <small>2019/04/09</small> <h2>周二 </h2> </th> 
+      <th class="header" q-static="wday=3&amp;calendarid=1&amp;dtstart=1554566400" style="width: 157px;"> <small>2019/04/10</small> <h2>周三 </h2> </th> 
+      <th class="header" q-static="wday=4&amp;calendarid=1&amp;dtstart=1554566400" style="width: 155px;"> <small>2019/04/11</small> <h2>周四 </h2> </th> 
+      <th class="header" q-static="wday=5&amp;calendarid=1&amp;dtstart=1554566400" style="width: 157px;"> <small>2019/04/12</small> <h2>周五 </h2> </th> 
+      <th class="header" q-static="wday=6&amp;calendarid=1&amp;dtstart=1554566400" style="width: 158px;"> <small>2019/04/13</small> <h2>周六 </h2> </th> 
+     </tr> 
+    </thead>
+   </table>
+   <table id="calweek_5cac63cb1e8bd" class="calendar_week flexible datetime:1554566400" cellpadding="0" cellspacing="0"> 
+    <thead class="header"> 
+     <tr> 
+      <td colspan="8"> 
+       <div class="panel padding_1 clearfix"> 
+        <div class="float_right" id="calendar_right_nav_5cac63cb20e0a"> 
+         <a  class="button" style="margin:0!important;margin:0 2px;"> <span>&laquo; 上周</span> </a> 
+         <a  class="button" style="margin:0!important;margin:0 2px;"> <span>下周 &raquo;</span> </a> 
+        </div> 
+        <div class="float_left" id="calendar_left_nav_5cac63cb209ba"> 
+         <a class="middle button button_add reserv_calendar_left_nav_anchor prevent_default" q-object="just_show_insert_component" q-event="click" >添加</a> 
+         <a class="middle button button_save reserv_calendar_left_nav_anchor prevent_default" type="csv">导出Excel</a> 
+         <a class="middle button button_print reserv_calendar_left_nav_anchor prevent_default" type="print">打印</a> 
+        </div> 
+        <h1 class="center"> 2019/04/07 - 2019/04/13 </h1> 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <th>&nbsp;</th> 
+      <th class="header" q-static="wday=0&amp;calendarid=1&amp;dtstart=1554566400"> <small>2019/04/07</small> <h2>周日 </h2> </th> 
+      <th class="header" q-static="wday=1&amp;calendarid=1&amp;dtstart=1554566400"> <small>2019/04/08</small> <h2>周一 </h2> </th> 
+      <th class="header today" q-static="wday=2&amp;calendarid=1&amp;dtstart=1554566400"> <small>2019/04/09</small> <h2>周二 </h2> </th> 
+      <th class="header" q-static="wday=3&amp;calendarid=1&amp;dtstart=1554566400"> <small>2019/04/10</small> <h2>周三 </h2> </th> 
+      <th class="header" q-static="wday=4&amp;calendarid=1&amp;dtstart=1554566400"> <small>2019/04/11</small> <h2>周四 </h2> </th> 
+      <th class="header" q-static="wday=5&amp;calendarid=1&amp;dtstart=1554566400"> <small>2019/04/12</small> <h2>周五 </h2> </th> 
+      <th class="header" q-static="wday=6&amp;calendarid=1&amp;dtstart=1554566400"> <small>2019/04/13</small> <h2>周六 </h2> </th> 
+     </tr> 
+    </thead> 
+    <tbody class="hr"> 
+     <tr>
+      <td colspan="8"></td>
+     </tr> 
+    </tbody> 
+    <tbody> 
+     <tr> 
+      <td></td> 
+      <td colspan="7"> 
+		<div class="hour_components">
+		<div class="block block_default block_1 block_top block_bottom" onclick="void(0)" style="overflow: hidden; z-index: 67; left: 1012px; top: 666px; width: 151px; height: 254px;">
+		<div class="block_bottom_resizer">
+			&nbsp;
+		</div>
+		<div class="block_top_resizer">
+			&nbsp;
+		</div>
+		<div class="content">
+			<div style="padding:0 2px" class=""> 
+			<span> </span> 
+			<span></span> 
+			<div q-preview="#" q-static="component_id=2410&amp;current_calendar_id=29"> 
+			<div>
+			<p><a class="prevent_default" ><?= T('学生XX预约')?> </a></p>
+			</div> 
+			</div> 
+			<p></p> 
+			</div> 
+		</div>
+		</div>
+		<div class="block block_default block_1 block_top block_bottom" onclick="void(0)" style="overflow: hidden; z-index: 66; left: 843px; top: 534px; width: 150px; height: 196px;">
+		<div class="block_bottom_resizer">
+			&nbsp;
+		</div>
+		<div class="block_top_resizer">
+			&nbsp;
+		</div>
+		<div class="content">
+			<div style="padding:0 2px" class=""> 
+			<span> </span> 
+			<span></span> 
+			<div q-preview="" q-static="component_id=2409&amp;current_calendar_id=29"> 
+			<div>
+			<p><a class="prevent_default" ><?= T('学生XX预约')?> </a></p>
+			</div> 
+			</div> 
+			<p></p> 
+			</div> 
+		</div>
+		</div>
+		<div class="block block_default block_1 block_top block_bottom" onclick="void(0)" style="overflow: hidden; z-index: 65; left: 676px; top: 889px; width: 148px; height: 227px;">
+		<div class="block_bottom_resizer">
+			&nbsp;
+		</div>
+		<div class="block_top_resizer">
+			&nbsp;
+		</div>
+		<div class="content">
+			<div style="padding:0 2px" class=""> 
+			<span> </span> 
+			<span></span> 
+			<div q-preview="#" q-static="component_id=2408&amp;current_calendar_id=29"> 
+			<div>
+			<p><a class="prevent_default" ><?= T('学生XX预约')?> </a></p>
+			</div> 
+			</div> 
+			<p></p> 
+			</div> 
+		</div>
+		</div>
+		<div class="block block_default block_1 block_top block_bottom" onclick="void(0)" style="overflow: hidden; z-index: 64; left: 676px; top: 471px; width: 148px; height: 279px;">
+		<div class="block_bottom_resizer">
+			&nbsp;
+		</div>
+		<div class="block_top_resizer">
+			&nbsp;
+		</div>
+		<div class="content">
+			<div style="padding:0 2px" class=""> 
+			<span> </span> 
+			<span></span> 
+			<div q-preview="#" q-static="component_id=2407&amp;current_calendar_id=29"> 
+			<div>
+			<p><a class="prevent_default" ><?= T('学生XX预约')?> </a></p>
+			</div> 
+			</div> 
+			<p></p> 
+			</div> 
+		</div>
+		</div>
+		<div class="block block_default block_1 block_top block_bottom" onclick="void(0)" style="overflow: hidden; z-index: 63; left: 676px; top: 247px; width: 148px; height: 158px;">
+		<div class="block_bottom_resizer">
+			&nbsp;
+		</div>
+		<div class="block_top_resizer">
+			&nbsp;
+		</div>
+		<div class="content">
+			<div style="padding:0 2px" class=""> 
+			<span> </span> 
+			<span></span> 
+			<div q-preview="#" q-static="component_id=2406&amp;current_calendar_id=29"> 
+			<div>
+			<p><a class="prevent_default" ><?= T('学生XX预约')?> </a></p>
+			</div> 
+			</div> 
+			<p></p> 
+			</div> 
+		</div>
+		</div>
+		<div class="block block_default block_1 block_top block_bottom" onclick="void(0)" style="overflow: hidden; z-index: 62; left: 507px; top: 881px; width: 150px; height: 172px;">
+		<div class="block_bottom_resizer">
+			&nbsp;
+		</div>
+		<div class="block_top_resizer">
+			&nbsp;
+		</div>
+		<div class="content">
+			<div style="padding:0 2px" class=""> 
+			<span> </span> 
+			<span></span> 
+			<div q-preview="#" q-static="component_id=2405&amp;current_calendar_id=29"> 
+			<div>
+			<p><a class="prevent_default" ><?= T('学生XX预约')?> </a></p>
+			</div> 
+			</div> 
+			<p></p> 
+			</div> 
+		</div>
+		</div>
+		<div class="block block_default block_1 block_top block_bottom" onclick="void(0)" style="overflow: hidden; z-index: 61; left: 507px; top: 621px; width: 150px; height: 193px;">
+		<div class="block_bottom_resizer">
+			&nbsp;
+		</div>
+		<div class="block_top_resizer">
+			&nbsp;
+		</div>
+		<div class="content">
+			<div style="padding:0 2px" class=""> 
+			<span> </span> 
+			<span></span> 
+			<div q-preview="#" q-static="component_id=2404&amp;current_calendar_id=29"> 
+			<div>
+			<p><a class="prevent_default" ><?= T('学生XX预约')?> </a></p>
+			</div> 
+			</div> 
+			<p></p> 
+			</div> 
+		</div>
+		</div>
+		<div class="block block_default block_1 block_top block_bottom" onclick="void(0)" style="overflow: hidden; z-index: 60; left: 507px; top: 387px; width: 150px; height: 143px;">
+		<div class="block_bottom_resizer">
+			&nbsp;
+		</div>
+		<div class="block_top_resizer">
+			&nbsp;
+		</div>
+		<div class="content">
+			<div style="padding:0 2px" class=""> 
+			<span> </span> 
+			<span></span> 
+			<div q-preview="#" q-static="component_id=2403&amp;current_calendar_id=29"> 
+			<div>
+			<p><a class="prevent_default" ><?= T('学生XX预约')?> </a></p>
+			</div> 
+			</div> 
+			<p></p> 
+			</div> 
+		</div>
+		</div>
+		<div class="block block_default block_1 block_top block_bottom" onclick="void(0)" style="overflow: hidden; z-index: 59; left: 338px; top: 465px; width: 150px; height: 120px;">
+		<div class="block_bottom_resizer">
+			&nbsp;
+		</div>
+		<div class="block_top_resizer">
+			&nbsp;
+		</div>
+		<div class="content">
+			<div style="padding:0 2px" class=""> 
+			<span> </span> 
+			<span></span> 
+			<div q-preview="#" q-static="component_id=2402&amp;current_calendar_id=29"> 
+			<div>
+			<p><a class="prevent_default" ><?= T('学生XX预约')?> </a></p>
+			</div> 
+			</div> 
+			<p></p> 
+			</div> 
+		</div>
+		</div>
+		<div class="block block_default block_1 block_top block_bottom" onclick="void(0)" style="overflow: hidden; z-index: 58; left: 338px; top: 216px; width: 150px; height: 174px;">
+		<div class="block_bottom_resizer">
+			&nbsp;
+		</div>
+		<div class="block_top_resizer">
+			&nbsp;
+		</div>
+		<div class="content">
+			<div style="padding:0 2px" class=""> 
+			<span> </span> 
+			<span></span> 
+			<div q-preview="#" q-static="component_id=2401&amp;current_calendar_id=29"> 
+			<div>
+			<p><a class="prevent_default" ><?= T('学生XX预约')?> </a></p>
+			</div> 
+			</div> 
+			<p></p> 
+			</div> 
+		</div>
+		</div>
+		<div class="block block_default block_1 block_top block_bottom" onclick="void(0)" style="overflow: hidden; z-index: 57; left: 169px; top: 945px; width: 150px; height: 153px;">
+		<div class="block_bottom_resizer">
+			&nbsp;
+		</div>
+		<div class="block_top_resizer">
+			&nbsp;
+		</div>
+		<div class="content">
+			<div style="padding:0 2px" class=""> 
+			<span> </span> 
+			<span></span> 
+			<div q-preview="#" q-static="component_id=2400&amp;current_calendar_id=29"> 
+			<div>
+			<p><a class="prevent_default" ><?= T('学生XX预约')?> </a></p>
+			</div> 
+			</div> 
+			<p></p> 
+			</div> 
+		</div>
+		</div>
+		<div class="block block_default block_1 block_top block_bottom" onclick="void(0)" style="overflow: hidden; z-index: 56; left: 169px; top: 748px; width: 150px; height: 159px;">
+		<div class="block_bottom_resizer">
+			&nbsp;
+		</div>
+		<div class="block_top_resizer">
+			&nbsp;
+		</div>
+		<div class="content">
+			<div style="padding:0 2px" class=""> 
+			<span> </span> 
+			<span></span> 
+			<div q-preview=“#” q-static="component_id=2399&amp;current_calendar_id=29"> 
+			<div>
+			<p><a class="prevent_default" href=“#”><?= T('学生XX预约')?> </a></p>
+			</div> 
+			</div> 
+			<p></p> 
+			</div> 
+		</div>
+		</div>
+		<div class="block block_default block_1 block_top block_bottom" onclick="void(0)" style="overflow: hidden; z-index: 55; left: 169px; top: 476px; width: 150px; height: 225px;">
+		<div class="block_bottom_resizer">
+			&nbsp;
+		</div>
+		<div class="block_top_resizer">
+			&nbsp;
+		</div>
+		<div class="content">
+			<div style="padding:0 2px" class=""> 
+			<span> </span> 
+			<span></span> 
+			<div q-preview=“#” q-static="component_id=2398&amp;current_calendar_id=29"> 
+			<div>
+			<p><a class="prevent_default" href=“#”><?= T('学生XX预约')?> </a></p>
+			</div> 
+			</div> 
+			<p></p> 
+			</div> 
+		</div>
+		</div>
+		<div class="block block_default block_1 block_top block_bottom" onclick="void(0)" style="overflow: hidden; z-index: 54; left: 169px; top: 252px; width: 150px; height: 182px;">
+		<div class="block_bottom_resizer">
+			&nbsp;
+		</div>
+		<div class="block_top_resizer">
+			&nbsp;
+		</div>
+		<div class="content">
+			<div style="padding:0 2px" class=""> 
+			<span> </span> 
+			<span></span> 
+			<div q-preview=“#” q-static="component_id=2397&amp;current_calendar_id=29"> 
+			<div>
+			<p><a class="prevent_default" href=“#”><?= T('学生XX预约')?> </a></p>
+			</div> 
+			</div> 
+			<p></p> 
+			</div> 
+		</div>
+		</div>
+		<div class="block block_default block_1 block_top block_bottom" onclick="void(0)" style="overflow: hidden; z-index: 53; left: 0px; top: 897px; width: 150px; height: 103px;">
+		<div class="block_bottom_resizer">
+			&nbsp;
+		</div>
+		<div class="block_top_resizer">
+			&nbsp;
+		</div>
+		<div class="content">
+			<div style="padding:0 2px" class=""> 
+			<span> </span> 
+			<span></span> 
+			<div q-preview=“#” q-static="component_id=2396&amp;current_calendar_id=29"> 
+			<div>
+			<p><a class="prevent_default" href=“#”><?= T('学生XX预约')?> </a></p>
+			</div> 
+			</div> 
+			<p></p> 
+			</div> 
+		</div>
+		</div>
+		<div class="block block_default block_1 block_top block_bottom" onclick="void(0)" style="overflow: hidden; z-index: 52; left: 0px; top: 748px; width: 150px; height: 111px;">
+		<div class="block_bottom_resizer">
+			&nbsp;
+		</div>
+		<div class="block_top_resizer">
+			&nbsp;
+		</div>
+		<div class="content">
+			<div style="padding:0 2px" class=""> 
+			<span> </span> 
+			<span></span> 
+			<div q-preview=“#” q-static="component_id=2395&amp;current_calendar_id=29"> 
+			<div>
+			<p><a class="prevent_default" href=“#”><?= T('学生XX预约')?> </a></p>
+			</div> 
+			</div> 
+			<p></p> 
+			</div> 
+		</div>
+		</div>
+		<div class="block block_default block_1 block_top block_bottom" onclick="void(0)" style="overflow: hidden; z-index: 51; left: 0px; top: 452px; width: 150px; height: 283px;">
+		<div class="block_bottom_resizer">
+			&nbsp;
+		</div>
+		<div class="block_top_resizer">
+			&nbsp;
+		</div>
+		<div class="content">
+			<div style="padding:0 2px" class=""> 
+			<span> </span> 
+			<span></span> 
+			<div q-preview=“#” q-static="component_id=2394&amp;current_calendar_id=29"> 
+			<div>
+			<p><a class="prevent_default" href=“#”><?= T('学生XX预约')?> </a></p>
+			</div> 
+			</div> 
+			<p></p> 
+			</div> 
+		</div>
+		</div>
+		<div class="block block_default block_1 block_top block_bottom" onclick="void(0)" style="overflow: hidden; z-index: 50; left: 0px; top: 309px; width: 150px; height: 89px;">
+		<div class="block_bottom_resizer">
+			&nbsp;
+		</div>
+		<div class="block_top_resizer">
+			&nbsp;
+		</div>
+		<div class="content">
+			<div style="padding:0 2px" class=""> 
+			<span> </span> 
+			<span></span> 
+			<div q-preview=“#” q-static="component_id=2393&amp;current_calendar_id=29"> 
+			<div>
+			<p><a class="prevent_default" ><?= T('学生XX预约')?> </a></p>
+			</div> 
+			</div> 
+			<p></p> 
+			</div> 
+		</div>
+		</div> 
+		</div>
+	  </td> 
+     </tr> 
+    </tbody> 
+    <tbody class="hour_grid"> 
+     <tr class=" off_hour half_hour_line"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         <?= T('午夜') ?> 
+       </div> </td> 
+      <td class="hour_cell past R0C0"></td> 
+      <td class="hour_cell past R0C1"></td> 
+      <td class="hour_cell today R0C2"></td> 
+      <td class="hour_cell R0C3"></td> 
+      <td class="hour_cell R0C4"></td> 
+      <td class="hour_cell R0C5"></td> 
+      <td class="hour_cell R0C6"></td> 
+     </tr> 
+     <tr class=" off_hour"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         &nbsp; 
+       </div> </td> 
+      <td class="hour_cell past R1C0"></td> 
+      <td class="hour_cell past R1C1"></td> 
+      <td class="hour_cell today R1C2"></td> 
+      <td class="hour_cell R1C3"></td> 
+      <td class="hour_cell R1C4"></td> 
+      <td class="hour_cell R1C5"></td> 
+      <td class="hour_cell R1C6"></td> 
+     </tr> 
+     <tr class=" off_hour half_hour_line"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         <?= T('1:00') ?> 
+       </div> </td> 
+      <td class="hour_cell past R2C0"></td> 
+      <td class="hour_cell past R2C1"></td> 
+      <td class="hour_cell today R2C2"></td> 
+      <td class="hour_cell R2C3"></td> 
+      <td class="hour_cell R2C4"></td> 
+      <td class="hour_cell R2C5"></td> 
+      <td class="hour_cell R2C6"></td> 
+     </tr> 
+     <tr class=" off_hour"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         &nbsp; 
+       </div> </td> 
+      <td class="hour_cell past R3C0"></td> 
+      <td class="hour_cell past R3C1"></td> 
+      <td class="hour_cell today R3C2"></td> 
+      <td class="hour_cell R3C3"></td> 
+      <td class="hour_cell R3C4"></td> 
+      <td class="hour_cell R3C5"></td> 
+      <td class="hour_cell R3C6"></td> 
+     </tr> 
+     <tr class=" off_hour half_hour_line"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+	   <?= T('2:00') ?> 
+       </div> </td> 
+      <td class="hour_cell past R4C0"></td> 
+      <td class="hour_cell past R4C1"></td> 
+      <td class="hour_cell today R4C2"></td> 
+      <td class="hour_cell R4C3"></td> 
+      <td class="hour_cell R4C4"></td> 
+      <td class="hour_cell R4C5"></td> 
+      <td class="hour_cell R4C6"></td> 
+     </tr> 
+     <tr class=" off_hour"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         &nbsp; 
+       </div> </td> 
+      <td class="hour_cell past R5C0"></td> 
+      <td class="hour_cell past R5C1"></td> 
+      <td class="hour_cell today R5C2"></td> 
+      <td class="hour_cell R5C3"></td> 
+      <td class="hour_cell R5C4"></td> 
+      <td class="hour_cell R5C5"></td> 
+      <td class="hour_cell R5C6"></td> 
+     </tr> 
+     <tr class=" off_hour half_hour_line"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+	   <?= T('3:00') ?> 
+       </div> </td> 
+      <td class="hour_cell past R6C0"></td> 
+      <td class="hour_cell past R6C1"></td> 
+      <td class="hour_cell today R6C2"></td> 
+      <td class="hour_cell R6C3"></td> 
+      <td class="hour_cell R6C4"></td> 
+      <td class="hour_cell R6C5"></td> 
+      <td class="hour_cell R6C6"></td> 
+     </tr> 
+     <tr class=" off_hour"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         &nbsp; 
+       </div> </td> 
+      <td class="hour_cell past R7C0"></td> 
+      <td class="hour_cell past R7C1"></td> 
+      <td class="hour_cell today R7C2"></td> 
+      <td class="hour_cell R7C3"></td> 
+      <td class="hour_cell R7C4"></td> 
+      <td class="hour_cell R7C5"></td> 
+      <td class="hour_cell R7C6"></td> 
+     </tr> 
+     <tr class=" off_hour half_hour_line"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+	   <?= T('4:00') ?> 
+       </div> </td> 
+      <td class="hour_cell past R8C0"></td> 
+      <td class="hour_cell past R8C1"></td> 
+      <td class="hour_cell today R8C2"></td> 
+      <td class="hour_cell R8C3"></td> 
+      <td class="hour_cell R8C4"></td> 
+      <td class="hour_cell R8C5"></td> 
+      <td class="hour_cell R8C6"></td> 
+     </tr> 
+     <tr class=" off_hour"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         &nbsp; 
+       </div> </td> 
+      <td class="hour_cell past R9C0"></td> 
+      <td class="hour_cell past R9C1"></td> 
+      <td class="hour_cell today R9C2"></td> 
+      <td class="hour_cell R9C3"></td> 
+      <td class="hour_cell R9C4"></td> 
+      <td class="hour_cell R9C5"></td> 
+      <td class="hour_cell R9C6"></td> 
+     </tr> 
+     <tr class=" off_hour half_hour_line"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+	   <?= T('5:00') ?> 
+       </div> </td> 
+      <td class="hour_cell past R10C0"></td> 
+      <td class="hour_cell past R10C1"></td> 
+      <td class="hour_cell today R10C2"></td> 
+      <td class="hour_cell R10C3"></td> 
+      <td class="hour_cell R10C4"></td> 
+      <td class="hour_cell R10C5"></td> 
+      <td class="hour_cell R10C6"></td> 
+     </tr> 
+     <tr class=" off_hour"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         &nbsp; 
+       </div> </td> 
+      <td class="hour_cell past R11C0"></td> 
+      <td class="hour_cell past R11C1"></td> 
+      <td class="hour_cell today R11C2"></td> 
+      <td class="hour_cell R11C3"></td> 
+      <td class="hour_cell R11C4"></td> 
+      <td class="hour_cell R11C5"></td> 
+      <td class="hour_cell R11C6"></td> 
+     </tr> 
+     <tr class=" half_hour_line"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+	   <?= T('6:00') ?> 
+       </div> </td> 
+      <td class="hour_cell past R12C0"></td> 
+      <td class="hour_cell past R12C1"></td> 
+      <td class="hour_cell today R12C2"></td> 
+      <td class="hour_cell R12C3"></td> 
+      <td class="hour_cell R12C4"></td> 
+      <td class="hour_cell R12C5"></td> 
+      <td class="hour_cell R12C6"></td> 
+     </tr> 
+     <tr class=""> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         &nbsp; 
+       </div> </td> 
+      <td class="hour_cell past R13C0"></td> 
+      <td class="hour_cell past R13C1"></td> 
+      <td class="hour_cell today R13C2"></td> 
+      <td class="hour_cell R13C3"></td> 
+      <td class="hour_cell R13C4"></td> 
+      <td class="hour_cell R13C5"></td> 
+      <td class="hour_cell R13C6"></td> 
+     </tr> 
+     <tr class=" half_hour_line"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+	   <?= T('7:00') ?> 
+       </div> </td> 
+      <td class="hour_cell past R14C0"></td> 
+      <td class="hour_cell past R14C1"></td> 
+      <td class="hour_cell today R14C2"></td> 
+      <td class="hour_cell R14C3"></td> 
+      <td class="hour_cell R14C4"></td> 
+      <td class="hour_cell R14C5"></td> 
+      <td class="hour_cell R14C6"></td> 
+     </tr> 
+     <tr class=""> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         &nbsp; 
+       </div> </td> 
+      <td class="hour_cell past R15C0"></td> 
+      <td class="hour_cell past R15C1"></td> 
+      <td class="hour_cell today R15C2"></td> 
+      <td class="hour_cell R15C3"></td> 
+      <td class="hour_cell R15C4"></td> 
+      <td class="hour_cell R15C5"></td> 
+      <td class="hour_cell R15C6"></td> 
+     </tr> 
+     <tr class=" half_hour_line"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+	   <?= T('8:00') ?> 
+       </div> </td> 
+      <td class="hour_cell past R16C0"></td> 
+      <td class="hour_cell past R16C1"></td> 
+      <td class="hour_cell today R16C2"></td> 
+      <td class="hour_cell R16C3"></td> 
+      <td class="hour_cell R16C4"></td> 
+      <td class="hour_cell R16C5"></td> 
+      <td class="hour_cell R16C6"></td> 
+     </tr> 
+     <tr class=""> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         &nbsp; 
+       </div> </td> 
+      <td class="hour_cell past R17C0"></td> 
+      <td class="hour_cell past R17C1"></td> 
+      <td class="hour_cell today R17C2"></td> 
+      <td class="hour_cell R17C3"></td> 
+      <td class="hour_cell R17C4"></td> 
+      <td class="hour_cell R17C5"></td> 
+      <td class="hour_cell R17C6"></td> 
+     </tr> 
+     <tr class=" half_hour_line"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+	   <?= T('9:00') ?> 
+       </div> </td> 
+      <td class="hour_cell past R18C0"></td> 
+      <td class="hour_cell past R18C1"></td> 
+      <td class="hour_cell today R18C2"></td> 
+      <td class="hour_cell R18C3"></td> 
+      <td class="hour_cell R18C4"></td> 
+      <td class="hour_cell R18C5"></td> 
+      <td class="hour_cell R18C6"></td> 
+     </tr> 
+     <tr class=""> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         &nbsp; 
+       </div> </td> 
+      <td class="hour_cell past R19C0"></td> 
+      <td class="hour_cell past R19C1"></td> 
+      <td class="hour_cell today R19C2"></td> 
+      <td class="hour_cell R19C3"></td> 
+      <td class="hour_cell R19C4"></td> 
+      <td class="hour_cell R19C5"></td> 
+      <td class="hour_cell R19C6"></td> 
+     </tr> 
+     <tr class=" half_hour_line"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+	   <?= T('10:00') ?> 
+       </div> </td> 
+      <td class="hour_cell past R20C0"></td> 
+      <td class="hour_cell past R20C1"></td> 
+      <td class="hour_cell today R20C2"></td> 
+      <td class="hour_cell R20C3"></td> 
+      <td class="hour_cell R20C4"></td> 
+      <td class="hour_cell R20C5"></td> 
+      <td class="hour_cell R20C6"></td> 
+     </tr> 
+     <tr class=""> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         &nbsp; 
+       </div> </td> 
+      <td class="hour_cell past R21C0"></td> 
+      <td class="hour_cell past R21C1"></td> 
+      <td class="hour_cell today R21C2"></td> 
+      <td class="hour_cell R21C3"></td> 
+      <td class="hour_cell R21C4"></td> 
+      <td class="hour_cell R21C5"></td> 
+      <td class="hour_cell R21C6"></td> 
+     </tr> 
+     <tr class=" half_hour_line"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+	   <?= T('11:00') ?> 
+       </div> </td> 
+      <td class="hour_cell past R22C0"></td> 
+      <td class="hour_cell past R22C1"></td> 
+      <td class="hour_cell today R22C2"></td> 
+      <td class="hour_cell R22C3"></td> 
+      <td class="hour_cell R22C4"></td> 
+      <td class="hour_cell R22C5"></td> 
+      <td class="hour_cell R22C6"></td> 
+     </tr> 
+     <tr class=""> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         &nbsp; 
+       </div> </td> 
+      <td class="hour_cell past R23C0"></td> 
+      <td class="hour_cell past R23C1"></td> 
+      <td class="hour_cell today R23C2"></td> 
+      <td class="hour_cell R23C3"></td> 
+      <td class="hour_cell R23C4"></td> 
+      <td class="hour_cell R23C5"></td> 
+      <td class="hour_cell R23C6"></td> 
+     </tr> 
+     <tr class=" half_hour_line"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+	   <?= T('中午') ?> 
+       </div> </td> 
+      <td class="hour_cell past R24C0"></td> 
+      <td class="hour_cell past R24C1"></td> 
+      <td class="hour_cell today R24C2"></td> 
+      <td class="hour_cell R24C3"></td> 
+      <td class="hour_cell R24C4"></td> 
+      <td class="hour_cell R24C5"></td> 
+      <td class="hour_cell R24C6"></td> 
+     </tr> 
+     <tr class=""> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         &nbsp; 
+       </div> </td> 
+      <td class="hour_cell past R25C0"></td> 
+      <td class="hour_cell past R25C1"></td> 
+      <td class="hour_cell today R25C2"></td> 
+      <td class="hour_cell R25C3"></td> 
+      <td class="hour_cell R25C4"></td> 
+      <td class="hour_cell R25C5"></td> 
+      <td class="hour_cell R25C6"></td> 
+     </tr> 
+     <tr class=" half_hour_line"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+	   <?= T('13:00') ?> 
+       </div> </td> 
+      <td class="hour_cell past R26C0"></td> 
+      <td class="hour_cell past R26C1"></td> 
+      <td class="hour_cell today R26C2"></td> 
+      <td class="hour_cell R26C3"></td> 
+      <td class="hour_cell R26C4"></td> 
+      <td class="hour_cell R26C5"></td> 
+      <td class="hour_cell R26C6"></td> 
+     </tr> 
+     <tr class=""> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         &nbsp; 
+       </div> </td> 
+      <td class="hour_cell past R27C0"></td> 
+      <td class="hour_cell past R27C1"></td> 
+      <td class="hour_cell today R27C2"></td> 
+      <td class="hour_cell R27C3"></td> 
+      <td class="hour_cell R27C4"></td> 
+      <td class="hour_cell R27C5"></td> 
+      <td class="hour_cell R27C6"></td> 
+     </tr> 
+     <tr class=" half_hour_line"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+	   <?= T('14:00') ?>  
+       </div> </td> 
+      <td class="hour_cell past R28C0"></td> 
+      <td class="hour_cell past R28C1"></td> 
+      <td class="hour_cell today R28C2"></td> 
+      <td class="hour_cell R28C3"></td> 
+      <td class="hour_cell R28C4"></td> 
+      <td class="hour_cell R28C5"></td> 
+      <td class="hour_cell R28C6"></td> 
+     </tr> 
+     <tr class=""> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         &nbsp; 
+       </div> </td> 
+      <td class="hour_cell past R29C0"></td> 
+      <td class="hour_cell past R29C1"></td> 
+      <td class="hour_cell today R29C2"></td> 
+      <td class="hour_cell R29C3"></td> 
+      <td class="hour_cell R29C4"></td> 
+      <td class="hour_cell R29C5"></td> 
+      <td class="hour_cell R29C6"></td> 
+     </tr> 
+     <tr class=" half_hour_line"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+	   <?= T('15:00') ?> 
+       </div> </td> 
+      <td class="hour_cell past R30C0"></td> 
+      <td class="hour_cell past R30C1"></td> 
+      <td class="hour_cell today R30C2"></td> 
+      <td class="hour_cell R30C3"></td> 
+      <td class="hour_cell R30C4"></td> 
+      <td class="hour_cell R30C5"></td> 
+      <td class="hour_cell R30C6"></td> 
+     </tr> 
+     <tr class=""> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         &nbsp; 
+       </div> </td> 
+      <td class="hour_cell past R31C0"></td> 
+      <td class="hour_cell past R31C1"></td> 
+      <td class="hour_cell today R31C2"></td> 
+      <td class="hour_cell R31C3"></td> 
+      <td class="hour_cell R31C4"></td> 
+      <td class="hour_cell R31C5"></td> 
+      <td class="hour_cell R31C6"></td> 
+     </tr> 
+     <tr class=" half_hour_line"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+	   <?= T('16:00') ?> 
+       </div> </td> 
+      <td class="hour_cell past R32C0"></td> 
+      <td class="hour_cell past R32C1"></td> 
+      <td class="hour_cell today R32C2"></td> 
+      <td class="hour_cell R32C3"></td> 
+      <td class="hour_cell R32C4"></td> 
+      <td class="hour_cell R32C5"></td> 
+      <td class="hour_cell R32C6"></td> 
+     </tr> 
+     <tr class=""> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         &nbsp; 
+       </div> </td> 
+      <td class="hour_cell past R33C0"></td> 
+      <td class="hour_cell past R33C1"></td> 
+      <td class="hour_cell today R33C2"></td> 
+      <td class="hour_cell R33C3"></td> 
+      <td class="hour_cell R33C4"></td> 
+      <td class="hour_cell R33C5"></td> 
+      <td class="hour_cell R33C6"></td> 
+     </tr> 
+     <tr class=" half_hour_line"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+	   <?= T('17:00') ?> 
+       </div> </td> 
+      <td class="hour_cell past R34C0"></td> 
+      <td class="hour_cell past R34C1"></td> 
+      <td class="hour_cell today R34C2"></td> 
+      <td class="hour_cell R34C3"></td> 
+      <td class="hour_cell R34C4"></td> 
+      <td class="hour_cell R34C5"></td> 
+      <td class="hour_cell R34C6"></td> 
+     </tr> 
+     <tr class=""> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         &nbsp; 
+       </div> </td> 
+      <td class="hour_cell past R35C0"></td> 
+      <td class="hour_cell past R35C1"></td> 
+      <td class="hour_cell today R35C2"></td> 
+      <td class="hour_cell R35C3"></td> 
+      <td class="hour_cell R35C4"></td> 
+      <td class="hour_cell R35C5"></td> 
+      <td class="hour_cell R35C6"></td> 
+     </tr> 
+     <tr class=" half_hour_line"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+	   <?= T('18:00') ?> 
+       </div> </td> 
+      <td class="hour_cell past R36C0"></td> 
+      <td class="hour_cell past R36C1"></td> 
+      <td class="hour_cell today R36C2"></td> 
+      <td class="hour_cell R36C3"></td> 
+      <td class="hour_cell R36C4"></td> 
+      <td class="hour_cell R36C5"></td> 
+      <td class="hour_cell R36C6"></td> 
+     </tr> 
+     <tr class=""> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         &nbsp; 
+       </div> </td> 
+      <td class="hour_cell past R37C0"></td> 
+      <td class="hour_cell past R37C1"></td> 
+      <td class="hour_cell today R37C2"></td> 
+      <td class="hour_cell R37C3"></td> 
+      <td class="hour_cell R37C4"></td> 
+      <td class="hour_cell R37C5"></td> 
+      <td class="hour_cell R37C6"></td> 
+     </tr> 
+     <tr class=" half_hour_line"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+	   <?= T('19:00') ?> 
+       </div> </td> 
+      <td class="hour_cell past R38C0"></td> 
+      <td class="hour_cell past R38C1"></td> 
+      <td class="hour_cell today R38C2"></td> 
+      <td class="hour_cell R38C3"></td> 
+      <td class="hour_cell R38C4"></td> 
+      <td class="hour_cell R38C5"></td> 
+      <td class="hour_cell R38C6"></td> 
+     </tr> 
+     <tr class=""> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         &nbsp; 
+       </div> </td> 
+      <td class="hour_cell past R39C0"></td> 
+      <td class="hour_cell past R39C1"></td> 
+      <td class="hour_cell today R39C2"></td> 
+      <td class="hour_cell R39C3"></td> 
+      <td class="hour_cell R39C4"></td> 
+      <td class="hour_cell R39C5"></td> 
+      <td class="hour_cell R39C6"></td> 
+     </tr> 
+     <tr class=" off_hour half_hour_line"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+	   <?= T('20:00') ?> 
+       </div> </td> 
+      <td class="hour_cell past R40C0"></td> 
+      <td class="hour_cell past R40C1"></td> 
+      <td class="hour_cell today R40C2"></td> 
+      <td class="hour_cell R40C3"></td> 
+      <td class="hour_cell R40C4"></td> 
+      <td class="hour_cell R40C5"></td> 
+      <td class="hour_cell R40C6"></td> 
+     </tr> 
+     <tr class=" off_hour"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         &nbsp; 
+       </div> </td> 
+      <td class="hour_cell past R41C0"></td> 
+      <td class="hour_cell past R41C1"></td> 
+      <td class="hour_cell today R41C2"></td> 
+      <td class="hour_cell R41C3"></td> 
+      <td class="hour_cell R41C4"></td> 
+      <td class="hour_cell R41C5"></td> 
+      <td class="hour_cell R41C6"></td> 
+     </tr> 
+     <tr class=" off_hour half_hour_line"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+	   <?= T('21:00') ?> 
+       </div> </td> 
+      <td class="hour_cell past R42C0"></td> 
+      <td class="hour_cell past R42C1"></td> 
+      <td class="hour_cell today R42C2"></td> 
+      <td class="hour_cell R42C3"></td> 
+      <td class="hour_cell R42C4"></td> 
+      <td class="hour_cell R42C5"></td> 
+      <td class="hour_cell R42C6"></td> 
+     </tr> 
+     <tr class=" off_hour"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         &nbsp; 
+       </div> </td> 
+      <td class="hour_cell past R43C0"></td> 
+      <td class="hour_cell past R43C1"></td> 
+      <td class="hour_cell today R43C2"></td> 
+      <td class="hour_cell R43C3"></td> 
+      <td class="hour_cell R43C4"></td> 
+      <td class="hour_cell R43C5"></td> 
+      <td class="hour_cell R43C6"></td> 
+     </tr> 
+     <tr class=" off_hour half_hour_line"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+	   <?= T('22:00') ?> 
+       </div> </td> 
+      <td class="hour_cell past R44C0"></td> 
+      <td class="hour_cell past R44C1"></td> 
+      <td class="hour_cell today R44C2"></td> 
+      <td class="hour_cell R44C3"></td> 
+      <td class="hour_cell R44C4"></td> 
+      <td class="hour_cell R44C5"></td> 
+      <td class="hour_cell R44C6"></td> 
+     </tr> 
+     <tr class=" off_hour"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         &nbsp; 
+       </div> </td> 
+      <td class="hour_cell past R45C0"></td> 
+      <td class="hour_cell past R45C1"></td> 
+      <td class="hour_cell today R45C2"></td> 
+      <td class="hour_cell R45C3"></td> 
+      <td class="hour_cell R45C4"></td> 
+      <td class="hour_cell R45C5"></td> 
+      <td class="hour_cell R45C6"></td> 
+     </tr> 
+     <tr class=" off_hour half_hour_line"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+	   <?= T('23:00') ?> 
+       </div> </td> 
+      <td class="hour_cell past R46C0"></td> 
+      <td class="hour_cell past R46C1"></td> 
+      <td class="hour_cell today R46C2"></td> 
+      <td class="hour_cell R46C3"></td> 
+      <td class="hour_cell R46C4"></td> 
+      <td class="hour_cell R46C5"></td> 
+      <td class="hour_cell R46C6"></td> 
+     </tr> 
+     <tr class=" off_hour"> 
+      <td class="tick rpadding_1"> 
+       <div class="right">
+         &nbsp; 
+       </div> </td> 
+      <td class="hour_cell past R47C0"></td> 
+      <td class="hour_cell past R47C1"></td> 
+      <td class="hour_cell today R47C2"></td> 
+      <td class="hour_cell R47C3"></td> 
+      <td class="hour_cell R47C4"></td> 
+      <td class="hour_cell R47C5"></td> 
+      <td class="hour_cell R47C6"></td> 
+     </tr> 
+    </tbody> 
+   </table> 
+  </div> 
+  <script>
+		$(function(){
+			setTimeout(function(){
+		 		Q.trigger({
+		 			url: '<?php echo URI::url('!eq_reserv/')?>',
+            		object: 'tab_content',
+					event: 'click',
+					success: function(data) {
+                    	window.location.reload();
+                	}
+				});
+			},1500);
+		})
+  </script>

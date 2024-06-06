@@ -1,0 +1,29 @@
+<div>
+	<table class="clearfix header_content_padding">
+		<tr>
+			<td class="top icon rpadding_3">
+				<?php echo $department->icon('104'); ?>
+			</td>
+			<td class="top flexible">
+				<h2 class="tpadding_6" style="color: #333333"><?php echo H($department->name)?></h2>
+                <div class="interval_20"></div>
+				<span class="description bpadding_9"><?php echo $department->group_path() ?></span>
+				<div class="description small">
+					<?php echo I18N::T('billing', '负责人') ?>:
+					<?php $users = Q("{$department} user"); ?>
+					<?php foreach ($users as $user): ?>
+						<a href="<?php echo H($user->url() ) ?>"><?php echo H($user->name) ?></a>&#160;
+					<?php endforeach; ?>
+				</div>
+			</td>
+            <td class="right top">
+                <div class="float_right" style="width:300px;">
+                    <?php
+                    $links = $department->links('view');
+                    echo Widget::factory('application:links', ['links' => $links, 'separator'=>' ']);
+                    ?>
+                </div>
+            </td>
+		</tr>
+	</table>
+</div>

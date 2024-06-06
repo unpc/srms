@@ -1,0 +1,39 @@
+<div class="form ">
+    <?php if ($type == 'csv'): ?>
+    <form action="<?= $url ?>" q-object="<?= $q_object ?>" q-src="<?= $url ?>"
+          q-static="<?php echo H(['form_token' => $form_token, 'type' => $type]) ?>"
+          target="<?= $type == 'csv' ? '_self' : '_blank' ?>" q-event="<?= $q_event ?: 'submit' ?>"
+          class="prevent_default" method="post">
+        <?php else: ?>
+        <form action="<?= $url ?>"
+              target="<?= $type == 'csv' ? '_self' : '_blank' ?>" class="prevent_default" method="post">
+            <?php endif; ?>
+            <ul class="ep_triple">
+                <?php
+                foreach ($columns as $p => $p_name) :?>
+                    <?php
+                    $required = is_array($p_name) ? $p_name['required'] : TRUE;
+                    $p_name = is_array($p_name) ? $p_name['name'] : $p_name;
+                    ?>
+                    <?php if ($p < 0): ?>
+                        <div class="clear">&#160;</div>
+                        <h4 class="ep_title"><?php echo I18N::HT('technical_service', $p_name) ?></h4>
+                    <?php else: ?>
+                        <li class="nowrap">
+                            <?php echo Form::checkbox("columns[{$p}]", $required, I18N::T('technical_service', $p_name), 'class="middle monitor checkbox"', 'class="middle"'); ?>
+                        </li>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </ul>
+            <div class="button_container">
+                <div class="float_right">
+                    <input name="cancel" id="cancel" type='reset' class="font-button-default"
+                           value="<?php echo I18N::HT('eq_sample', '取消'); ?>"/>
+                    <input name="submit" type='submit' class="font-button-save"
+                           value="<?php echo I18N::HT('equipment', '保存'); ?>"/>
+                </div>
+            </div>
+        </form>
+</div>
+
+

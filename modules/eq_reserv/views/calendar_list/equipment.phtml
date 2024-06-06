@@ -1,0 +1,22 @@
+<strong class="name middle">
+	<?php if($equipment->id): ?>
+		<a href="<?php echo H($equipment->url() ) ?>" class="prevent_default"><?php echo H($equipment->name) ?></a>
+	<?php else: ?>
+		<?php echo H($equipment->name) ?>
+	<?php endif; ?>
+</strong>
+<?php if ($equipment->model_no): ?>
+<small>
+	<?php echo I18N::T('equipments', '(%model)', ['%model'=>$equipment->model_no]); ?>
+</small>
+<?php endif; ?>
+
+<?php /* BUG #1038::之前可以送样和预约的仪器进行报废，在废弃仪器列表中不建议显示送样和预约。(kai.wu@2011.08.22) */ ?>
+<?php if ($equipment->status != EQ_Status_Model::NO_LONGER_IN_SERVICE): ?>
+	<?php $status_tags = (string) $equipment->status_tags(); ?>
+	<?php if ($status_tags): ?>
+	<div class="clearfix">
+		<?php echo $status_tags ?>
+	</div>
+	<?php endif; ?>
+<?php endif; ?>

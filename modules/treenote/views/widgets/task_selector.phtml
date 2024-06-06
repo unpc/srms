@@ -1,0 +1,29 @@
+<?php 
+if (is_object($this->task)) {
+	$task = $this->task;
+}
+else {
+	$task = O('tn_task', (int)$this->task);
+}
+if ($current_task->id) {
+    $autocomplete = URI::url('!treenote/autocomplete/task.'. $current_task->id);
+}
+else {
+    $autocomplete = URI::url('!treenote/autocomplete/task');
+}
+
+$uniqid = 'task_' . uniqid();
+$name = ($this->name ?: 'task_id');
+$size = $this->size ?: 40;
+?>
+<input 
+	id="<?php echo H($uniqid) ?>" 
+	name="<?php echo H($name ) ?>" 
+	type="hidden" value="<?php echo H($task->id) ?>" />
+<input 
+	id="<?php echo $uniqid?>_name" 
+	class="text middle select_on_focus 
+		autocomplete:<?php echo H($autocomplete) ?> autocomplete_alt:#<?php echo $uniqid?>"
+		value="<?php echo H($task->title) ?>" size="<?php echo H($size)?>"
+		/>
+<div class="description" style="margin-top:3px">* <?php echo I18N::HT('treenote', '请输入关键字并选择') ;?></div>

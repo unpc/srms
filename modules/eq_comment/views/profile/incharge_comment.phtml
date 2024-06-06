@@ -1,0 +1,37 @@
+<?php
+$tip = Config::get('comment.rate')['tip'];
+$table = Widget::factory('table');
+$table->name = 'eq_comment_incharge';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+$table->add_columns((array) $columns);
+$table->empty_message = I18N::T('eq_comment', '没有评价信息');
+
+$table->comments = $comments;
+
+if ($comments->total_count()) {
+    foreach ($comments as $comment) {
+        $key = 'comment_' . $comment->id;
+
+        $row = [
+            'serial_number' => V('eq_comment:comments_table/data/serial_number', ['id' => $comment->id]),
+            'equipment_name' => V('eq_comment:comments_table/data/equipment_name', ['comment' => $comment]),
+            'user_attitude' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->user_attitude]),
+            'test_understanding' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->test_understanding]),
+            'user_proficiency' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->user_proficiency]),
+            'user_cleanliness' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->user_cleanliness]),
+            'test_importance' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->test_importance]),
+            'test_purpose' => V('eq_comment:comments_table/data/text', ['text' => $comment->test_purpose]),
+            'test_method' => V('eq_comment:comments_table/data/text', ['text' => $comment->test_method]),
+            'test_result' => V('eq_comment:comments_table/data/text', ['text' => $comment->test_result]),
+            'test_fit' => V('eq_comment:comments_table/data/text', ['text' => $comment->test_fit]),
+            'test_remark' => V('eq_comment:comments_table/data/text', ['text' => $comment->test_remark]),
+        ];
+        $table->add_row_withkey($row, $key);
+    }
+}
+?>
+<div class="pages"><?= $pagination ?></div>
+<?php echo $table;?>
+<div class="pages"><?= $pagination ?></div>

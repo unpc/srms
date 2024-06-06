@@ -1,0 +1,51 @@
+<div class="form padding_2 <?php echo $hidden?>">
+	<h4><?php echo I18N::T('eq_reserv', '时间对齐设置')?></h4>
+	<div class="padding_2">
+		<?php echo Form::checkbox('accept_block_time', $equipment->accept_block_time, I18N::T('eq_reserv', '需要时间对齐'), 'class="middle checkbox monitor" disabled="disabled"', 'class="middle"'); ?>
+		<div class="tpadding_2 <?php echo $equipment->accept_block_time ? '' : 'hidden';?>">
+			<table class="form">
+				<tbody>
+					<tr>
+						<td class="nowrap middle">
+							<?php list($interval_time, $interval_time_format) = Date::format_interval($equipment->reserv_interval_time, 'ih')?>
+							<span class="middle rpadding_12"><?php echo I18N::T('eq_reserv', '时间长度对齐间距')?></span>
+							<input class="text number middle" name="interval_time" size="2" value="<?php echo $interval_time ?: 1 ; ?>" disabled="disabled"/>	
+							<?php echo Form::dropdown('interval_time_format',Date::units('ih'),$interval_time_format,'class="middle" disabled="disabled"');?>
+						</td>
+					</tr>
+					<tr>
+						<td class="nowrap middle">
+							<?php list($align_time, $align_time_format) = Date::format_interval($equipment->reserv_align_time, 'ih')?>
+							<span class="middle rpadding_12"><?php echo I18N::T('eq_reserv', '时间起始对齐间距')?></span>
+							<input class="text number middle" name="align_time" size="2" value="<?php echo H($align_time ?: 1) ?>" disabled="disabled"/>	
+							<?php echo Form::dropdown('align_time_format',Date::units('ih'),$align_time_format,'class="middle" disabled="disabled"');?>
+						</td>
+					</tr>
+                    <tr>
+                        <td class="nowrap middle">
+                            <span class="description">
+                                <?php echo I18N::T('eq_reserv', '* 时间段不允许跨天设置');?>
+                            </span>
+                        </td>
+					</tr>
+					<tr><td><div class="interval_20"></div></td></tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div>
+	<?php if($equipment->reserv_block_data):
+		echo Widget::factory('flexform_readonly', [
+			'title' => I18N::T('eq_reserv', '个别时间段时间对齐设置'),
+			'description' => '(' . I18N::T('eq_reserv', '个别时间段之间的预约不能合并') . ')'. (Config::get('eq_reserv.block_day_cross') ? '时间段区间不能交叉' : ''),
+			'template_data' => ['disabled'=>TRUE],
+			'existing_data' => $equipment->reserv_block_data,
+			'item_view' => 'eq_reserv:edit/reserv_block_item_readonly',
+			'extra_vars' => [
+				'equipment' => $equipment,
+			],
+		]);
+	?>
+	</div>
+	<?php endif;?>
+</div>

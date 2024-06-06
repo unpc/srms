@@ -1,0 +1,15 @@
+<?php if ($has_parent): ?>
+	<div class="orgchart_child_line">&#160;</div>
+<?php endif ?>
+<div class="orgchart_node_body">
+	<h4>Test</h4>
+	<p>alksj dasdaj askdjalskdj aksd  asd a </p>
+</div>
+<?php if ($has_children): ?>
+<div class="orgchart_node_children">
+	<div class="orgchart_parent_line"><div class="orgchart_line_left">&#160;</div></div>
+	<?php foreach ($children as $child): ?>
+		<?php echo V('treenote:project/node', ['node'=>$node]) ?>
+	<?php endforeach ?>
+</div>
+<?php endif; 

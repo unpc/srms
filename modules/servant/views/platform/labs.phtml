@@ -1,0 +1,77 @@
+<div class="hr_1">&#160;</div>
+<div class="panel clearfix">
+    <div class="float_left padding_1 nowrap" style="line-height:24px">
+        <?php if (count($buttons)) : ?>
+        <span>
+        <?= Widget::factory('application:links', ['links' => $buttons, 'separator' => '&#160;']);?>
+        </span>
+        <?php endif; ?>
+    </div>
+</div>
+<?php 
+echo $pagination;
+
+$table = Widget::factory('table');
+
+$table->name = 'pf_labs';
+
+$table->add_columns([
+    '@' => NULL,
+    'lab_name' => [
+        'title' => I18N::T('labs', '课题组名称'),
+        'filter' => [
+            'form' => V('labs:labs_table/filters/lab_name', ['lab_name'=>$form['lab_name']]),
+            'value' => $form['lab_name'] ? H($form['lab_name']) : NULL
+        ],
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'group' => [
+        'title' => I18N::T('labs', '组织机构'),
+        'filter' => [
+            'form' => V('labs:labs_table/filters/group', [
+                'name' => 'group_id', 
+                'tag' => $group,
+                'root' => $group_root,
+            ]),
+            'value' => $group->id ? H($group->name): NULL,
+            'field'=>'group_id'
+        ],
+        'align' => 'center',
+        'nowrap' => TRUE,
+    ],
+    'description' => [
+        'title' => I18N::T('labs', '介绍'),
+        'align' => 'left',
+    ],
+    'rest' => [
+        'align' => 'right',
+        'nowrap' => TRUE,
+        'extra_class' => 'flexible'
+    ],
+]);
+
+$table->empty_message = I18N::T('labs', '无符合条件的仪器');
+
+foreach ($labs as $lab) {
+    $links['delete'] = [
+        'text' => I18N::HT('labs', '删除'),
+        'url' => '#',
+        'extra' => 'class="blue" q-object="lab_delete" q-event="click" q-static="'.H(['pf_id' => $pf->id, 'lab_id' => $lab->id]).'"',
+    ];
+    $row = [
+        '@' => [
+            'view' => $lab->icon('32', 'style="display:block"'),
+            'extra' => 'style="padding:4px" align="right"',
+        ],
+        'lab_name' => V('labs:labs_table/data/lab_name', ['lab' => $lab]),
+        'group' => V('labs:labs_table/data/group', ['lab' => $lab,'root' => $group_root]),
+        'description' => V('labs:labs_table/data/description', ['lab' => $lab]),
+        'rest' => Widget::factory('application:links', ['links' => $links]),
+    ];
+    $table->add_row($row);
+}
+
+echo $table;
+echo $pagination;
+?>

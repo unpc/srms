@@ -1,0 +1,1 @@
+<?= Form::dropdown('confirm', I18N::T('eq_charge_confirm', ['-1' => '--'] + EQ_Charge_Confirm_Model::conforms()), (isset($form['confirm']) && $form['confirm'] != -1) ? $form['confirm'] : -1, 'class="dropdown"'); ?>

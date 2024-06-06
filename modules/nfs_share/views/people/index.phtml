@@ -1,0 +1,33 @@
+<?php echo $search_box?>
+<?php
+/*
+	NO. TASK#258 (Cheng.Liu@2010.11.19)
+	nfs people分区查看转换成 table widget
+ */
+$table = Widget::factory('table');
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+$table->name = 'nfs_users';
+
+$table->empty_message = I18N::T('nfs_share', '无符合条件的成员');
+
+$table->add_columns($columns);
+
+if (count($users) > 0 ) {
+	foreach ($users as $user) {
+		$table->add_row([
+//			'@'=>[
+//				'view'=>$user->icon(32, 'style="display:block"'),
+//				'extra'=>'style="padding:4px" align="right"'
+//			],
+			'user'=>V('users_table/data/user', ['user'=>$user]),
+			'used'=>V('users_table/data/used', ['user'=>$user]),
+			'mtime'=>V('users_table/data/date', ['user'=>$user]),
+			'rest'=>V('users_table/data/rest', ['user'=>$user])
+		]);		
+	}
+}
+
+echo $table;
+?>
+<div class="pages"><?= $pagination ?></div>

@@ -1,0 +1,75 @@
+<div class="hr_1">&#160;</div>
+<div class="padding_1 form lpadding_3">
+<form method="post">
+<?php echo V('form_error', ['form'=>$form]); ?>
+<?php $require = (string) V('form_require'); ?>
+<table class="form">
+	<tr>
+		<td class="label nowrap"><?php echo I18N::HT('accounts', '实验室名称') ?></td>
+		<td>
+			<input class="text" size="40" name="lab_name" value="<?php echo H($form['lab_name'])?>" /><?php echo $require?>
+		</td>
+	</tr>
+	<tr>
+		<td class="label nowrap"><?php echo I18N::HT('accounts', '实验室ID') ?></td>
+		<td>
+			<input class="text" name="lab_id" value="<?php echo H($form['lab_id'])?>" /><?php echo $require?>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="hr_1">
+			&#160;
+		</td>
+	</tr>
+	<tr>
+		<td class="label nowrap"><?php echo I18N::HT('accounts', 'P.I. 姓名') ?></td>
+		<td>
+			<input class="text" name="pi_name" size="40" value="<?php echo H($form['pi_name'])?>" /><?php echo $require?>
+		</td>
+	</tr>
+	<tr>
+		<td class="label nowrap"><?php echo I18N::HT('accounts', 'P.I. ID') ?></td>
+		<td>
+			<input class="text" name="pi_id" value="<?php echo H($form['pi_id'])?>"/><?php echo $require?>
+		</td>
+	</tr>
+	<tr>
+		<td class="label nowrap"><?php echo I18N::HT('accounts', 'P.I. Email') ?></td>
+		<td>
+			<input class="text" name="pi_email" value="<?php echo H($form['pi_email'])?>"/><?php echo $require?>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="hr_1">
+			&#160;
+		</td>
+	</tr>
+	<tr>
+		<td class="label nowrap"><?php echo I18N::HT('accounts', '开通模块')?></td>
+		<td class="top">
+			<?php foreach($mod_available as $mod): ?>
+				<span class="nowrap"><?php echo Form::checkbox("mod_enable[{$mod}]", !!$form['mod_enable'][$mod], I18N::HT('accounts', $mod),'class="middle"', 'class="middle"');?></span>&#160;&#160;
+			<?php endforeach; ?>
+		</td>
+	</tr>
+	<tr>
+		<td class="label nowrap"><?php echo I18N::HT('accounts', '到期时间') ?></td>
+		<td>
+			<?php echo Form::checkbox('etime_check', $form['etime_check'], NULL, 'class="middle monitor"', 'class="middle"')?>
+			<input class="text date toggle_status:etime_check enable_on:on" disabled="disabled" name="etime" value="<?php echo H($form['etime'])?>"/>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="hr_1">
+			&#160;
+		</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td>
+			<input type="submit" class="button button_save" name="submit" value="<?php echo I18N::HT('accounts', '添加') ?>" />
+		</td>
+	</tr>
+</table>
+</form>
+</div>

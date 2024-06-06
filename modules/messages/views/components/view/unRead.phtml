@@ -1,0 +1,27 @@
+<div style="padding: 10px">
+  <table>
+    <thead>
+      <th align="left" width="100%"><?= I18N::T('message', '标题') ?></th>
+      <th align="left">
+        <span style="white-space: nowrap;"><?= I18N::T('message', '操作') ?></span>
+      </th>
+    </thead>
+    <tbody>
+      <?php if ($messages) foreach ($messages as $message) : ?>
+      <tr>
+        <td width="100%">
+          <h5>
+            <?= H($message->title) ?><br />
+          </h5>
+        </td>
+        <td style="width: 50px">
+          <a class="btn btn-primary btn-xs" target="_blank"
+          href="<?= "{$sys_url}!messages/message/index.{$message->id}" ?>">
+            <?= I18N::T('message', '查看') ?>
+          </a>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+    </tbody>
+  </table>
+</div>

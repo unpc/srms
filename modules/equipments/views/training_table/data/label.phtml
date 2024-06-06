@@ -1,0 +1,34 @@
+<?php
+$user = $training->user;
+switch ($training->status) {
+    case UE_Training_Model::STATUS_APPLIED:
+        $text = '初次申请';
+        $color = '#7296E3';
+        break;
+    case UE_Training_Model::STATUS_APPROVED:
+        $text = '已批准';
+        $color = '#66CC99';
+        break;
+    case UE_Training_Model::STATUS_REFUSE:
+        $text = '已拒绝';
+        $color = '#F9C365';
+        break;
+    case UE_Training_Model::STATUS_OVERDUE:
+        $text = '已过期';
+        $color = '#888888';
+        break;
+    case UE_Training_Model::STATUS_AGAIN:
+        $text = '再次申请';
+        $color = '#2FCBCB';
+        break;
+    case UE_Training_Model::STATUS_DELETED:
+        $text = '已删除';
+        $color = '#E46558';
+        break;
+    default:
+        break;
+}
+echo '<span class="panel panel_uniqid" style="background-color:' . $color .'; color: #FFF;">';
+echo I18N::HT('equipment', $text);
+echo '</span>';
+?>

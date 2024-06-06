@@ -1,0 +1,8 @@
+<?php
+	$users = Q("{$equipment} user.contact");
+	$contacts = [];
+	foreach ($users as $user) {
+		$contacts[] = '<span class="nowrap">'.URI::anchor($user->url(), H($user->name)).'</span>';
+	}
+	echo join(', ', $contacts);
+?>

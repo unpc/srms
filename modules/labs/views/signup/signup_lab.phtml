@@ -1,0 +1,463 @@
+<?php echo CSS::load_async('labs:common');?>
+<?php //echo JS::load_async('labs:setStep');?>
+<?php 
+	$token = Auth::token();
+	$form_config = Config::get('form.lab_signup');
+	$requires = (array)$form_config['requires'];
+    $remarks = (array)$form_config['remarks'];
+
+	$_require = function($key) use ($requires,$remarks) {
+        echo $requires[$key] ? V('form_require') : '';
+        // echo $remarks[$key] ? V("signup/remark/{$key}") : '';
+	}
+?>
+<div>
+<!--    <div style="width: 450px;text-align: center"><img src="--><?php //echo H(_C('images/login_logo.png')) ?><!--" /></div>-->
+    <div class="form signup_body clearfix">
+        <div class="padding_3">
+            <p style="text-align: center; font-size: 16px;">
+                <span>注册</span>
+            </p>
+            <div style="width: 360px; margin: auto; margin-top: 30px;">
+                <a href="<?php echo URI::url('!labs/signup');?>" class="float_left signup_change" style="margin-right: 15px;">
+                    <i class="icon-user"></i>
+<!--                    <input type="checkbox" class="checkbox" disabled="disabled" />-->
+                    <i style="font-size: 14px; display: unset" class="icon-selected"></i>
+                    <p>注册新用户</p>
+                </a>
+                <a href="<?php echo URI::url('!labs/signup/lab');?>" class="float_left signup_change_active blue">
+                    <i class="icon-task"></i>
+<!--                    <input type="checkbox" class="checkbox" checked="checked" disabled="disabled" />-->
+                    <i style="font-size: 14px; display: unset" class="icon-selected"></i>
+                    <p>注册新课题组</p>
+                </a>
+            </div>
+        </div>
+        <form method="post" autocomplete="off" action="<?php echo H(URI::url()) ?>" style="width: 400px; margin: auto;">
+            <?php $_SESSION['verify_token'] = 'cf_signuplab_'.uniqid(); ?>
+            <input class="hide" type="hidden" name="verify_token" value="<?= md5($_SESSION['verify_token']) ?>" />
+            <?php echo V('form_error', ['form'=>$form]);?>
+            <!-- 菜单及分页容器-->
+            <div class="stepCont stepCont3">
+                <!-- 菜单导航显示-->
+                <div class='ystep-container ystep-lg ystep-blue'></div>
+                <!-- 分页容器-->
+                <div class="pageCont">
+                    <div id="page1" class="stepPage">
+                        <table class="form" style="margin: auto">
+                            <tbody>
+<!--                            <tr>-->
+<!--                                <th class="legend">--><?php //echo I18N::T('labs', '登录信息') ?><!--</td>-->
+<!--                            </tr>-->
+                            <tr>
+                                <td><div class="interval_20"></div> </td>
+                            </tr>
+                            <tr>
+                                <td class="label right nowrap middle">
+                                    <?php
+                                    $me = L('ME');
+                                    if (!$token) :?>
+                                    <?php $_require('pi_token');?>
+                                    <?php endif;?>
+                                    <?php echo I18N::T('people', '登录帐号') ?>
+                                </td>
+                                <td class="sinup_table_interval"></td>
+                                <td class="middle signup-lab-login-token">
+<!--                                    <i class="icon-user login_icon"></i>-->
+                                    <?php
+                                    $me = L('ME');
+                                    if (!$token) :?>
+                                        <?php echo Widget::factory('login_token', [
+                                            'name' => 'pi_token',
+                                            'token' => H($form['pi_token']),
+                                            'backend' => H($form['pi_token_backend']),
+                                            'size' => 18,
+                                            'backend_extra_class'=>'monitor',
+                                            'skip_backends'=> Config::get('labs.signup_user_skip_backends', []) + Config::get('labs.signup_remote_lab_skip_backends', []),
+                                        ]);
+                                        ?>
+                                    <?php else :?>
+                                        <?php list($token, $backend) = Auth::parse_token($token);
+                                        $backends = Config::get('auth.backends');
+                                        $title = $backends[$backend]['title'];
+                                        ?>
+                                        <div class="text_like" style="background-color:#E7E7E7;color:#999999">
+                                            <?php echo H($token); ?>
+                                            <span class="separator">@</span>
+                                            <?php echo I18N::HT('people', $title) ?>
+                                        </div>
+                                    <?php endif;?>
+                                </td>
+                            </tr>
+                            <tr class="info_sync">
+                                <?php
+                                $backends = (array) Config::get('auth.backends');
+                                $scope = $backends[$backend]['rpc.scope'];
+                                if (in_array('lab', (array)$scope)) :?>
+                                    <td></td>
+                                    <td>
+                                        <input name="info_sync" type="button" class="button button_remote info_sync" value="<?php echo H(I18N::T('labs', '同步远程信息')) ?>" />
+                                    </td>
+                                <?php endif;?>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td class="middle description nowrap"><?php echo V('form_filter',['error'=>$form->errors['pi_token'][0]])?></td>
+                            </tr>
+                            <tr>
+                                <td><div class="interval_20"></div> </td>
+                            </tr>
+                            <?php if(!$token):?>
+                                <?php
+                                $backends = Config::get('auth.backends');
+                                if (count($backends) > 1) {
+                                    $hide_backend = [];
+                                    foreach($backends as $key=>$backend) {
+                                        if ($backend['readonly']) {
+                                            $hide_backend[] = $key;
+                                        }
+                                    }
+
+                                    if (count($hide_backend)) {
+                                        $class = 'toggle:pi_token_backend hide_on:'.join(' hide_on:', $hide_backend);
+                                    }
+                                }
+                                else {
+                                    if (!$backends[0]['readonly']) {
+                                        $class = '1';
+                                    }
+                                }
+                                ?>
+                                <tr class="<?php echo H($class ?: 'hidden') ?>">
+                                    <td class="label right nowrap middle"> <?php $_require('passwd'); ?><?php echo I18N::T('people', '密码')?></td>
+                                    <td class="sinup_table_interval"></td>
+                                    <td class="middle">
+<!--                                        <i class="icon-lock login_icon"></i>-->
+                                        <input name="passwd" type="password" placeholder="密码" class="text" size="40" value="" />
+                                    </td>
+                                </tr>
+                                <tr class="<?php echo H($class ?: 'hidden') ?> description">
+                                    <td colspan="2"></td>
+                                    <td><span style="font-size: 12px"><?= H(T('8-24个字符，必须包含数字和大小写字母')) ?></span></td>
+                                </tr>
+                            <?php endif;?>
+                            <tr>
+                                <td><div class="interval_20"></div> </td>
+                            </tr>
+                            <tr>
+                                <td class="label right nowrap middle"><?php $_require('pi_name'); ?><?php echo I18N::T('labs', '姓名') ?></td>
+                                <td class="sinup_table_interval"></td>
+                                <td class="middle">
+<!--                                    <i class="icon-user login_icon"></i>-->
+                                    <input class="text pi_name" name="pi_name" placeholder="<?php echo I18N::T('labs', '姓名') ?>" value="<?php echo H($form['pi_name']);?>" size="40" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td class="middle description nowrap"><?php echo V('form_filter',['error'=>$form->errors['pi_name'][0]])?></td>
+                            </tr>
+                            <tr><td><div class="interval_20"></div> </td></tr>
+                            <tr>
+                                <td class="label right nowrap middle" ><?php $_require('pi_email'); ?><?php echo I18N::T('labs', '邮箱') ?></td>
+                                <td class="sinup_table_interval"></td>
+                                <td class="middle">
+<!--                                    <i class="icon-mail login_icon"></i>-->
+                                    <input class="text pi_email" name="pi_email" placeholder="<?php echo I18N::T('labs', '邮箱') ?>" value="<?php echo H($form['pi_email'])?>" size="40" />
+                                </td>
+                            </tr>
+                            <?php if ($requires['pi_email'] && Module::is_installed('login_plus') && Config::get('vfcode.signup_email_switch', TRUE)){
+                                    echo V('login_plus:vfcode/signup/email', [
+                                        'key' => 'pi_email',
+                                        'form' => $form,
+                                        'uniqid' => H($uniqid)
+                                    ]);
+                            }?>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td class="middle description nowrap"><?php echo V('form_filter',['error'=>$form->errors['pi_email'][0]])?></td>
+                            </tr>
+                            <tr>
+                                <td><div class="interval_20"></div></td>
+                            </tr>
+                            <tr>
+                                <td class="label right nowrap middle"><?php  $_require('pi_phone'); ?><?php echo I18N::T('labs', '联系电话') ?></td>
+                                <td class="sinup_table_interval"></td>
+                                <td class="middle">
+<!--                                    <i class="icon-mobile login_icon"></i>-->
+                                    <input class="text pi_phone" placeholder="<?php echo I18N::T('labs', '联系电话') ?>" name="pi_phone" value="<?php echo H($form['pi_phone'])?>" size="40" />
+                                </td>
+                            </tr>
+                            <?php if ($requires['pi_phone'] && Module::is_installed('login_plus') && Config::get('vfcode.signup_phone_switch', TRUE)){
+                                    echo V('login_plus:vfcode/signup/phone', [
+                                        'key' => 'pi_phone',
+                                        'form' => $form,
+                                        'uniqid' => H($uniqid)
+                                    ]);
+                            }?>
+
+
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td class="middle description nowrap"><?php echo V('form_filter',['error'=>$form->errors['pi_phone'][0]])?></td>
+                            </tr>
+                            <tr><td><div class="interval_20"></div> </td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="page2" class="stepPage">
+                        <table class="form" style="margin: auto;">
+                            <tbody>
+<!--                            <tr><th class="legend">--><?php //echo I18N::T('labs', '实验室基本信息') ?><!--</th></tr>-->
+                            <tr><td><div class="interval_20"></div> </td></tr>
+                            <tr>
+                                <td class="label right nowrap middle"><?php $_require('name'); ?><?php echo I18N::T('labs', '实验室名称') ?></td>
+                                <td class="sinup_table_interval"></td>
+                                <td class="middle">
+<!--                                    <i class="icon-user login_icon"></i>-->
+                                    <input class="text lab_name" placeholder="<?php echo I18N::T('labs', '实验室名称') ?>" name="name" value="<?php echo H($form['name'])?>" size="40" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td class="middle description nowrap"><?php echo V('form_filter',['error'=>$form->errors['name'][0]])?></td>
+                            </tr>
+                            <tr>
+                                <td><div class="interval_20"></div></td>
+                            </tr>
+                            <tr>
+                                <td class="label right nowrap middle"><?php $_require('lab_contact'); ?><?php echo I18N::T('labs', '联系方式') ?></td>
+                                <td class="sinup_table_interval"></td>
+                                <td class="middle">
+<!--                                    <i class="icon-mobile login_icon"></i>-->
+                                    <input class="text lab_contact" placeholder="<?php echo I18N::T('labs', '联系方式') ?>" name="lab_contact" value="<?php echo H($form['lab_contact'])?>" size="40" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td class="middle description nowrap"><?php echo V('form_filter',['error'=>$form->errors['lab_contact'][0]])?></td>
+                            </tr>
+                            <tr>
+                                <td><div class="interval_20"></div></td>
+                            </tr>
+                            <?php if($_SESSION['remote_lab_group']):?>
+                                <?php
+                                $form_config = Config::get('form.lab_signup');
+                                //同步过数据，用户提交信息错误，显示用户修改的信息
+                                echo V('labs:signup/remote_info/lab_group', ['group'=>$_SESSION['remote_lab_group'], 'form'=>$form, 'form_config'=>$form_config]);
+                                ?>
+                            <?php else:?>
+                                <tr class="lab_group">
+                                    <td class="label right nowrap middle"><?php echo I18N::T('labs', '组织机构') ?></td>
+                                    <td class="sinup_table_interval"></td>
+                                    <td>
+<!--                                        <i class="icon-user login_icon"></i>-->
+                                        <?php if($token) : ?>
+                                            <div class="remote_group">
+                                                <?php echo I18N::T('labs', '等待远程信息')?>
+                                            </div>
+                                        <?php else :?>
+                                            <?php
+                                            $group_root = Tag_Model::root('group');
+                                            $group = O('tag', $form['group_id']);
+                                            echo Widget::factory('application:tag_selector', [
+                                                'tag'=>$group,
+                                                'root'=>$group_root,
+                                                'name'=>'group_id',
+                                                'ajax'=> TRUE,
+                                            ]);
+                                            ?>
+                                        <?php endif?>
+                                        <?php $_require('group_id');?>
+                                    </td>
+                                </tr>
+                            <?php endif;?>
+                            <tr><td><div class="interval_20"></div> </td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="page3" class="stepPage">
+                        <table class="form" style="margin: auto;width: 100%">
+                            <tbody>
+<!--                            <tr><th class="legend">--><?php //echo I18N::T('labs', '实验室项目信息') ?><!--</th></tr>-->
+                            <tr><td><div class="interval_20"></div> </td></tr>
+                            <tr>
+                                <td class="middle description nowrap" style="padding-left: 95px;"><?php echo V('form_filter',['error'=>$form->errors['project'][0]])?></td>
+                            </tr>
+                            <tr><td>
+                                    <div class="projects" name="project">
+                                        <?php
+                                        $types = Lab_Project_Model::$types;
+                                        foreach ($types as $type => $name):
+                                            ?>
+                                            <?php
+                                            $item_view = null;
+                                            switch($type){
+                                                case Lab_Project_Model::TYPE_EDUCATION:
+                                                    //echo V('labs:signup/lab/teaching_project',['form'=>$form]);
+                                                    $item_view = 'labs:signup/lab/teaching_project';
+                                                    break;
+                                                case Lab_Project_Model::TYPE_RESEARCH:
+                                                    //echo V('labs:signup/lab/research_project',['form'=>$form]);
+                                                    $item_view = 'labs:signup/lab/research_project';
+                                                    break;
+                                                case Lab_Project_Model::TYPE_SERVICE:
+                                                    //echo V('labs:signup/lab/service_project',['form'=>$form]);
+                                                    $item_view = 'labs:signup/lab/service_project';
+                                                    break;
+                                            }
+                                            if ($item_view):?>
+                                                <div class="clearfix">
+                                                    <?php
+                                                    $existing_data = (array)$form['project'][$type];
+                                                    echo Widget::factory('flexform', [
+                                                        'title' => I18N::T('labs', $name),
+                                                        'title_class' => "section_title_span",
+                                                        'template_data' => ['disabled'=>TRUE, 'type'=>$type],
+                                                        'existing_data' => $existing_data,
+                                                        'item_view' => $item_view,
+                                                        'extra_vars' => [
+                                                            'type' => $type,
+                                                            'form' => $form,
+                                                            'require' => $require,
+                                                            'hidden_delete_button' => true,
+                                                        ]
+                                                    ]);
+                                                    ?>
+                                                </div>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
+                                        <div>
+                                </td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div style="text-align: center"><p class="tmargin_3" style="color: #ffffff">已有账号? &#160;<a style="color: #ffffff;text-decoration: underline" href="<?= URI::url('/') ?>">点击登录</a></p></div>
+</div>
+
+
+
+<script>
+	jQuery(function($){
+        var step3=new SetStep({
+            content:'.stepCont3',
+            steps:['登录信息','实验室基本信息','实验室项目信息']
+        })
+
+		var $token = "<?php echo H($token) ?>";
+		var $form = "<?php echo H($form ? TRUE : FALSE) ?>";
+
+		//如果有token则抓取远程用户信息，否则当输入完登录信息后尝试登录
+		if($token) {
+			if(!$form){
+				$('input.text').attr('disabled', 'disabled');
+				$('span.signup_button').hide();
+				get_remote_info();
+			}
+		}
+		else{
+			$('input[name="pi_token"],input[name="passwd"],select[name="pi_token_backend"]').change(function(){
+				try_login();
+			});
+		}
+
+		function try_login(){
+			var $user_name = $('input[name="pi_token"]').val();
+			var $backend = $('select[name="pi_token_backend"]').val();
+			var $passwd = $('input[name="passwd"]').val();
+			if($user_name && $passwd && $backend!='database'){
+				var $user_token = $user_name + '|' + $backend;
+
+				Q.trigger({
+					object: 'try_login',
+					event: 'click',
+					data: {'token':$user_token, 'passwd':$passwd},
+				});
+			}
+		}
+
+		function get_remote_info(){
+			var $user_name = $('input[name="pi_token"]').val();
+			var $backend = $('select[name="pi_token_backend"]').val();
+			var $user_token = $user_name + '|' + $backend;
+			Q.trigger({
+				object: 'get_remote_lab',
+				event: 'click',
+				data: {'token':$user_token},
+				success: function(data){
+					var $lab_info = data.lab_info;
+					var $user_info = data.user_info;
+					if($lab_info){
+						$('input.lab_name').val($lab_info.name);
+						$('input.lab_contact').val($lab_info.contact);
+
+
+						$('input.pi_name').val($user_info.name);
+						$('input.pi_email').val($user_info.email);
+						$('input.pi_phone').val($user_info.phone);
+					}
+					$('input.text').removeAttr('disabled');
+					$('span.signup_button').show();
+				}
+			});
+		};
+
+		function backend_change() {
+			var $backend = $('select[name="pi_token_backend"]').val();
+			Q.trigger({
+				object: 'backend',
+				event: 'change',
+				data: {'backend':$backend},
+			});
+		}
+		
+		// 当backend改变时，如果是远程认证用户，则出现同步按钮
+		$('select[name="pi_token_backend"]').change(function(){
+			backend_change();
+		});
+		// backend_change();
+
+	});
+
+    //检测表单
+    function check_register_values(current_step, _that){
+        if (current_step == 3) {
+            return ;
+        }
+
+        var selector = '#page' + current_step;
+        var form_data = [];
+        $(selector + ' input').each(function () {
+            form_data[$(this).attr('name')] = $(this).val();
+        });
+        $(selector + ' select').each(function () {
+            form_data[$(this).attr('name')] = $(this).val();
+        });
+        form_data['current_step'] = current_step;
+
+        Q.trigger({
+            object: 'check_register_lab_values',
+            event: 'click',
+            data: form_data,
+            success: function(data){
+                if (data.no_error){
+                    _that.opt.animating=true;
+                    _that.opt.curStep++;
+                    _that.setProgress(_that.stepContainer,_that.opt.curStep,_that.opt.stepCounts);
+                }else {
+                    $(selector).html($(data.result).find(selector).html());
+                    $('input[name="verify_token"]').val($(data.result).find('input[name="verify_token"]').val());
+                }
+            }
+        });
+    }
+</script>

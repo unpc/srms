@@ -1,0 +1,96 @@
+<div class="interval_30"></div>
+<div class="form padding_1">
+<form method="post" class="edit" autocomplete="off" action="">
+<table class="form">
+	<tbody>
+	<tr>
+		<td class="icon top">
+            <div class="short_container">
+                <div class="img_icon" style="position: relative;">
+                    <?php echo $building->icon('104','icon_none_border'); ?>
+                    <div class="icon_cover" style="display: none;">
+                        <div class="modify_icon">+</div>
+                        <div class="interval_12"></div>
+                        <div class="modify_font">修改图标</div>
+                    </div>
+                </div>
+                <input class="upload_icon" name="file" type="file" class="file" style="display: none;" />
+
+                <div class="interval_24"></div>
+            </div>
+            <script>
+                $.upload_icon(<?php echo '"'.URI::url().'"'; ?>);
+            </script>
+<!--			<a href="--><?php //echo H($building->url('photo',NULL,NULL,'edit') ) ?><!--"><img class="icon" src="--><?php //echo H($building->icon_url('100')) ?><!--" /></a>-->
+		</td>
+		<td class="top lpadding_30">
+        <div class="interval_12"></div>
+
+		<?php 
+			echo V('form_error', ['form'=>$form]);
+			$require = (string) V('form_require');
+		?>
+		<table class="form flexible">
+			<tbody>
+	        <tr>
+		        <td class="left nowrap middle lpadding_21 label_width" style="width: 100px;"><?php echo I18N::T('gismon', '组织机构')?></td>
+		        <td class="top"><div class="gray_tag_container">
+		        <?php
+		        echo Widget::factory('application:tag_selector', [
+		        	'tag'=>$form['group_id'] ? O('tag_group', $form['group_id']) : $building->group,
+		        	'root'=>$group_root,
+		        	'name'=>'group_id',
+		        	'ajax'=>true,
+		        ]);
+		        ?>
+		        </div>
+                </td>
+                <td class="table_interval"></td>
+                <td class="left nowrap middle label_width"  style="width: 100px;">
+                    <?php echo $require; ?><?php echo I18N::HT('gismon','楼宇名称'); ?>
+                    <br>
+                    <?php echo V('form_filter',['error'=>$form->errors['name'][0]]); ?>
+                </td>
+                <td class="top"><input class="text" name="name"  value="<?php echo H($form['name'] ?: $building->name) ?>" /></td>
+	        </tr>
+            <tr><td><div class="interval_20"></div> </td></tr>
+			<tr>
+				<td class="left nowrap middle lpadding_21"><?php echo I18N::HT('gismon', '经度[°]'); ?></td>
+				<td class="middle"><input class="text middle number" name="longitude" value="<?php echo H($form['longitude'] ?: $building->longitude) ?>" /></td>
+                <td class="table_interval"></td>
+                <td><span class="middle lpadding_21"><?php echo I18N::HT('gismon', '纬度[°]'); ?></span></td>
+                <td><input class="text number middle" name="latitude" value="<?php echo H($form['latitude'] ?: $building->latitude) ?>" /></td>
+            </tr>
+            <tr><td><div class="interval_20"></div> </td></tr>
+            <tr>
+                <td class="left nowrap middle lpadding_21"><?php echo I18N::HT('gismon', '长度[m]'); ?></td>
+                <td class="middle"><input class="text middle number" name="width" value="<?php echo H($form['width'] ?: $building->width) ?>" /></td>
+                <td class="table_interval"></td>
+                <td><span class="middle lpadding_21"><?php echo I18N::T('gismon', '宽度[m]'); ?></span></td>
+                <td><input class="text number middle" name="height" value="<?php echo H($form['height'] ?: $building->height) ?>" /></td>
+			</tr>
+            <tr><td><div class="interval_20"></div> </td></tr>
+			<tr>
+				<td class="left nowrap middle lpadding_21"><?php echo I18N::HT('gismon', '楼层'); ?></td>
+				<td class="middle">
+				<input class="text number" name="floors" value="<?php echo H($form['floors'] ?: $building->floors ) ?>" />
+				</td>
+			</tr>
+			<tr><td><div class="interval_60"></div> </td></tr>
+			</tbody>
+		</table>
+            <div class="float_right">
+                <input type="reset" class="font-button-default rmargin_16" name="cancel" value="<?php echo H(T('取消') ) ?>" />
+                <a class="font-button-delete rmargin_16" href="<?php echo H($building->url(NULL,NULL,NULL,'delete') ) ?>" confirm="<?php echo H(I18N::T('gismon','您确定删除吗?删除后不可恢复!') ) ?>" >
+                    <?php echo I18N::T('gismon','删除') ?>
+                </a>
+                <input type="submit" name="submit" class="font-button-save" value="<?php echo H(T('更新') ) ?>" />
+            </div>
+
+		</form>
+		</td>
+	</tr>
+	</tbody>
+</table>
+</div>
+

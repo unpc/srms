@@ -1,0 +1,32 @@
+<table class="form" style="margin-right: 100px;">
+    <tbody>
+        <tr>
+            <td class="label right top nowrap"">
+                <?= I18N::T('test_project', '项目名称'); ?>
+                <input name="<?= "test_project[$flexform_index][name]" ?>" type="text" class="text" value="<?= $form['test_project'][$flexform_index]['name'] ? : $result->name ?>">
+            </td>
+            <td class="small_text"></td>
+            <td class="label right top nowrap">
+                <?php $default_cats = count($test_project_cats) ? array_keys($test_project_cats)[0] : 0 ?>
+                <?= I18N::T('test_project', '项目分类'); ?>
+                <?= Form::dropdown("test_project[$flexform_index][cat]",
+                    I18N::T('test_project', $test_project_cats),
+                    $form['test_project'][$flexform_index]['cat'] ?: ($result->id ? $result->test_project_cat_id : $default_cats),
+                    'class="monitor dropdown" style="width: 100px;"');?>
+            </td>
+            <td class="small_text"></td>
+            <td class="label right middle nowrap">
+                <?= Form::checkbox("test_project[$flexform_index][enable_use]",
+                    isset($form['test_project'][$flexform_index]['enable_use']) ? $form['test_project'][$flexform_index]['enable_use'] : ($result->id ? $result->enable_use : true),
+                    I18N::T('test_project','支持预约'),
+                    'class="middle checkbox"', 'class="middle"'); ?>
+                <?= Form::checkbox("test_project[$flexform_index][enable_sample]",
+                    isset($form['test_project'][$flexform_index]['enable_sample']) ? $form['test_project'][$flexform_index]['enable_sample'] : ($result->id ? $result->enable_sample : true),
+                    I18N::T('test_project','支持送样'),
+                    'class="middle checkbox"', 'class="middle"'); ?>
+            </td>
+            <input name="<?= "test_project[$flexform_index][id]" ?>" type="hidden" value="<?= $result->id ?>">
+        </tr>
+    </tbody>
+</table>
+<div class="interval_20"></div>

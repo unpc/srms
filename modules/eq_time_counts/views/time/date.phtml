@@ -1,0 +1,23 @@
+<table class="form">
+    <tr>
+        <td class="left nowrap middle middle_text"><?php echo I18N::T('eq_time_counts', '规则起止日期') ?></td>
+        <td name="<?php echo H('time_counts_working_date[' . $flexform_index . ']') ?>" class="left nowrap middle" colspan="3">
+            <input size="20"  name="time_counts_startdate[<?php echo $flexform_index ?>]" date_type="date" class="text date" value="<?php echo H($startdate)?:time() ?>"/>
+            -
+            <input size="20"  name="time_counts_enddate[<?php echo $flexform_index ?>]" date_type="date" class="text date" value="<?php echo H($enddate)?:time() ?>"/>
+        </td>
+    </tr>
+    <tr style="display: none">
+        <td class="left nowrap middle"><?php echo I18N::T('eq_time_counts', '起止时间') ?></td>
+        <td name="<?php echo H('working_time[' . $flexform_index . ']') ?>" class="left nowrap middle" colspan="3">
+            <input name="starttime[<?php echo $flexform_index ?>]" class="text date"
+                   value="<?php echo H(is_null($starttime) ? mktime(8, 0, 0, 1, 1, 1971) : $starttime) ?>"
+                   q-date_format="<?php echo HT('$hour:$min:$sec') ?>"/>
+            -
+            <input name="endtime[<?php echo $flexform_index ?>]" class="text date"
+                   value="<?php echo H(is_null($endtime) ? mktime(17, 0, 0, 1, 1, 1971) : $endtime) ?>"
+                   q-date_format="<?php echo HT('$hour:$min:$sec') ?>"/>
+        </td>
+    </tr>
+</table>
+

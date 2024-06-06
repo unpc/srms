@@ -1,0 +1,16 @@
+<div class="form">
+    <form q-src="<?= URI::url('!achievements/'.$url) ?>" q-object="export" q-event="submit" q-static="<?php echo H(['type' => $type, 'form_token'=>$form_token])?>" target="_self" class="prevent_default" method="post">
+        <div class="interval_24"></div>
+		<ul class="ep_triple">
+			<?php foreach ($columns as $p => $p_name): ?>
+				<li><?php echo Form::checkbox("columns[{$p}]", TRUE, I18N::T('achievements', $p_name), 'class="middle monitor checkbox"', 'class="middle"');?></li>
+			<?php endforeach;?>
+		</ul>
+		<div class="button_container">
+		<div class="float_right">
+		<input name="cancel" id="cancel" type='reset' class="font-button-default rmargin_16" value="<?php echo I18N::HT('achievements', '取消');?>" />
+		<input name="submit" type='submit' class="font-button-save" value="<?php echo I18N::HT('achievements', '提交');?>" />
+		</div>
+		</div>
+	</form>
+</div>

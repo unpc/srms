@@ -1,0 +1,141 @@
+/**
+ * input 公共样式定义文件
+ */
+
+.required {
+    color: #F5222D;
+    width: 10px;
+    height: 22px;
+    font-size: 20px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-top: -2px;
+    line-height: 30px;
+    overflow: hidden;
+    padding-right: 6px;
+}
+
+.checkbox, .radio, .checkboxdisable {
+    width: 16px;
+    height: 16px;
+    border: 1px solid #E5E5E5;
+    margin-top: -2.74px;
+    margin-right: 8px;
+}
+
+.checkbox:checked::after{
+    content: "\2713";
+    cursor: default;
+    appearance: auto;
+    padding-top: 1px;
+    background: var(--basiccolor);
+    color: white;
+    width: 16px;
+    height: 16px;
+    text-align: center;
+    line-height: 16px;
+}
+
+ul.radio_group, ul.check_group{
+    li{
+        float: left;
+        width:148px;
+    }
+}
+ul.weekday{
+    height: 15px;
+     li{
+        float: left;
+        width:10%;
+    }
+}
+tr.check_group{
+    td{
+        padding-right:50px;
+    }
+}
+
+input.text {
+    width: 280px;
+    min-width:35px;
+    height: 28px;
+    line-height: 28px;
+    border: 1px solid #E5E5E5;
+    border-radius: 3px;
+    outline: none;
+    padding: 0 10px;
+}
+
+textarea.text {
+    padding: 6px 10px;
+    width: 100%;
+    box-sizing:border-box;
+    -moz-box-sizing:border-box; /* Firefox */
+    -webkit-box-sizing:border-box; /* Safari */
+}
+select.dropdown {width: 300px;}
+.text_like {cursor: pointer;width: 300px;overflow: hidden;}
+
+.checkbox_list, .checkbox_list_diolog{
+    display: block;
+    float: left;
+    height: 30px;
+    line-height: 30px;
+    white-space: nowrap;
+}
+
+.checkbox_list{
+    min-width: 188px;
+}
+
+.checkbox_list_diolog {
+    min-width: 178px;
+}
+
+input.button {
+    padding: 0 10px;
+    outline: none;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 3px;
+}
+
+.text, textarea {color: #333;}
+form, table, input, select, textarea, button, label {font-size: 14px;}
+input.text:disabled, select:disabled, textarea:disabled {
+	color: #333;
+	background-color: rgba(231,231,231,0.2);
+}
+input.readonly {background:#EEE;color: #999;}
+
+select {display: none;}
+
+.set_time_value {
+    width: 30px !important;
+}
+.set_time_format {
+    width: 180px !important;
+}
+.set_time_format_80 {
+    width: 80px !important;
+}
+
+.form-bottons {
+    padding-top: 48px;
+    .font-button {
+        margin-left: 8px;
+        height: 32px;
+        line-height: 30px;
+        padding: 0 17px;
+        font-size: 14px;
+    }
+}
+.div_disabled {
+    border: 1px solid #E5E5E5;
+    height: 27px;
+    line-height: 25px;
+    padding: 0 10px;
+    border-radius: 3px;
+    color: #E5E5E5;
+    background-color: rgba(231,231,231,0.2);
+}

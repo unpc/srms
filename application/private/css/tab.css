@@ -1,0 +1,508 @@
+div.tabs_container_wrapper {
+    margin-bottom: 1px solid #edeff2;
+    .tabs_container {
+        max-height: 48px;
+        box-sizing: border-box;
+        /*border-bottom: 1px solid #EAEBF5;*/
+        padding-left: 16px;
+    }
+}
+
+.equipment_charge .tabs_container_wrapper .tabs_container {
+    border-bottom: none;
+}
+
+.body>.tabs_container_wrapper {
+    background-color: #FFF;
+}
+
+div.tabs_container {
+    line-height: 40px;
+    background-color: #FEFFFF;
+    position: relative;
+}
+
+div.tabs_container .tabs {
+    display: block;
+    position: relative;
+    height: 48px;
+    line-height: 48px;
+    white-space: nowrap;
+    *width: 100%;
+    text-transform: capitalize;
+    .tabs_body {
+        height: 48px;
+        line-height: 48px;
+        display: block;
+        position: relative;
+        *width: 100%;
+        z-index: 1;
+        box-sizing: border-box;
+        .tabs_content {
+            a {
+                vertical-align: baseline;
+            }
+        }
+    }
+    .tab_wrapper {
+        position: relative;
+        display: inline-block;
+        cursor: default;
+    }
+    .tab {
+        white-space: nowrap;
+        color: #4D4D4D;
+        float: left;
+        font-weight: normal;
+        text-decoration: none;
+        cursor: pointer;
+        height: 48px;
+        line-height: 48px;
+        font-size: 14px;
+        display: inline-block;
+        padding: 0 24px;
+        *z-index: -1;
+        .line {
+            width: 0px;
+            height: 2px;
+            background-color: var(--basiccolor);
+            margin: 0 auto;
+            position: absolute;
+            bottom: 0;
+            left: 0px;
+            right: 0px;
+            transition: width .2s linear;
+        }
+    }
+    .tab:hover {
+        color: var(--basiccolor);
+        height: 48px;
+        line-height: 48px;
+        /* border-bottom: 2px solid var(--basiccolor); */
+        .line {
+            width: 100%;
+        }
+    }
+    .active_tab, .active_tab:hover {
+        color: var(--basiccolor);
+        height: 46px;
+        line-height: 48px;
+        border-bottom: 2px solid var(--basiccolor);
+    }
+    .num_notif {
+        top: 2;
+        right: -4px;
+        z-index: 10;
+    }
+    a, a:hover {
+        text-decoration: none;
+    }
+}
+
+div.mini_primary_tabs .tabs .tab {
+    padding: 0 12px;
+}
+
+div.secondary_tabs {
+    margin-bottom: 0;
+    display: inline-block;
+}
+
+div.secondary_tabs .tabs_container {
+    top: 0;
+    padding-top: 0;
+    height: 36px;
+    padding: 0;
+}
+
+div.secondary_tabs .tabs {
+    padding-top: 0;
+    border-bottom: none;
+    background-color: #fff;
+    white-space: normal;
+    height: 36px;
+    line-height: 36px;
+    .tabs_body {
+        border: none;
+        height: 36px;
+    }
+    .tabs_content {
+        padding-left: 0;
+        height: 36px;
+        white-space: nowrap;
+    }
+    .tab_wrapper {
+        height: 36px;
+    }
+    /**
+	2018 8-27
+	刘宏
+	二级导航栏
+	*/
+    .tab {
+        border: none;
+        background-color: rgba(43, 160, 127, 0.08);
+        position: relative;
+        min-width: 42px;
+        height: 36px;
+        font-size: 14px;
+        line-height: 36px;
+        text-align: center;
+        margin-bottom: 0;
+        color: var(--basiccolor);
+    }
+    .active_tab, .active_tab:hover {
+        background-color: var(--basiccolor);
+        color: #fff;
+        font-size: 14px;
+        text-align: center;
+        a {
+            color: #fff;
+        }
+    }
+    .tab:hover {
+        color: #FFF;
+        background-color: var(--basiccolor);
+        height: 36px;
+        line-height: 36px;
+        border-bottom: 2px solid var(--basiccolor);
+    }
+    .num_notif {
+        top: -5px;
+        right: -5px;
+    }
+}
+
+
+/***列表和日历tab**/
+
+div.fourth_tabs {
+    margin-bottom: 0;
+    display: inline-block;
+}
+
+div.fourth_tabs .tabs_container {
+    top: 0;
+    padding-top: 8px;
+    padding-left: 0;
+    height: 24px;
+    .tabs {
+        height: 24px;
+        line-height: 48px;
+    }
+}
+
+div.fourth_tabs .tabs {
+    padding-top: 0;
+    border-bottom: none;
+    background-color: #fff;
+    .tabs_body {
+        border: none;
+        height: 20px;
+    }
+    .tabs_content {
+        margin-right: 2px;
+        padding-left: 0;
+        height: 20px;
+    }
+    .tab_wrapper {
+        margin-left: -4px;
+        height: 22px;
+    }
+    .tab, .tab:hover {
+        border: none;
+        background-color: #fff;
+        position: relative;
+        width: 68px;
+        height: 20px;
+        font-size: 14px;
+        line-height: 20px;
+        text-align: center;
+        margin-bottom: 0;
+        color: #a3a8ad;
+        border: 1px solid #a3a8ad;
+        padding: 0px;
+        position: relative;
+        top: -10px;
+        border-radius: 0 !important;
+        background: white !important;
+        color: #a3a8ad !important;
+        margin-left: -1px !important;
+        height: 30px !important;
+        margin-top: -4px !important;
+        line-height: 29px !important;
+    }
+    .tabs_content a:first-child {
+        .tab {
+            border-radius: 4px 0px 0px 4px;
+        }
+    }
+    .tabs_content a:first-child+a {
+        .tab {
+            border-radius: 0px 4px 4px 0px;
+        }
+    }
+    .active_tab, .active_tab:hover {
+        background-color: var(--basiccolor);
+        border: 1px solid var(--basiccolor);
+        color: #fff;
+        font-size: 14px;
+        text-align: center;
+        border-radius: 0 !important;
+        background: white !important;
+        color: var(--basiccolor) !important;
+        border-left: 1px solid var(--basiccolor) !important;
+        a {
+            color: #fff;
+        }
+    }
+}
+
+
+/** 三级tab **/
+
+div.third_tabs {
+    position: relative;
+    background-color: #fff;
+    /* height: 26px; */
+}
+
+div.third_tabs .tabs_container {
+    top: 0;
+    padding-top: 0;
+    padding-left: 0;
+    border: none;
+}
+
+div.third_tabs .tabs {
+    border-bottom: none;
+    background-color: #FFF;
+    white-space: normal;
+    text-align: left;
+    height: 26px;
+    line-height: 26px;
+    .tabs_body {
+        border: none;
+        height: 26px;
+        line-height: 26px;
+    }
+    .tabs_content {
+        padding-left: 0;
+        height: 26px;
+    }
+    .tab {
+        color: #b8b8b8;
+        padding: 2px 16px;
+        height: 22px;
+        line-height: 22px;
+        font-size: 14px;
+        border: 1px solid #e0e0e0;
+        border-radius: 2px;
+        margin-right: 8px;
+        display: inline-block;
+    }
+    .active_tab, .tab:hover {
+        height: 22px;
+        line-height: 22px;
+        font-size: 14px;
+        padding: 2px 16px;
+        border: 1px solid var(--basiccolor);
+        background-color: var(--basiccolor);
+        color: #FFF;
+        display: block;
+        a {
+            color: #FFF;
+        }
+    }
+    .num_notif {
+        top: -5px;
+        right: -5px;
+    }
+}
+
+div.third_tabs_content {
+    margin-left: 74px
+}
+
+.interval_36 {
+    height: 36px;
+}
+
+.module_search {
+    .filter_panel {
+        display: none;
+        padding-left: 45px;
+        margin-top: 10px;
+        .form {
+            margin-bottom: 0;
+            background: none;
+            td {
+                padding: 0;
+                height: 30px;
+                line-height: 28px;
+                .tag_selector {
+                    padding: 0;
+                    height: 28px;
+                }
+                .text, .token_box {
+                    height: 28px;
+                    padding: 0;
+                    outline: none;
+                    padding-left: 8px;
+                    width: 150px;
+                    .token {
+                        margin-top: 4px;
+                        /* line-height: 20px; */
+                    }
+                    input {
+                        margin-top: 5px;
+                    }
+                }
+            }
+            .interval {
+                height: 10px;
+            }
+             :list-child {
+                height: 0;
+            }
+        }
+    }
+}
+
+#new_search {
+    height: 30px;
+    background-color: #FEFFFF;
+    width: 100%;
+    .search_icon {
+        vertical-align: middle;
+        font-size: 18px;
+        padding-right: 8px;
+    }
+    .header_search {
+        background-image: url(/lims/images/icons/search.png);
+        _background-image: url(/lims/images/icons/search.gif);
+        background-repeat: no-repeat;
+        background-position: 4px center;
+        padding-left: 26px;
+        padding-right: 16px;
+        white-space: nowrap;
+    }
+    .search_div {
+        position: relative;
+        padding-right: 16px;
+        height: 30px;
+        line-height: 30px;
+    }
+    .filter_search {
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        color: var(--basiccolor);
+        cursor: pointer;
+        span {
+            margin-right: 10px;
+        }
+        span.angle {
+            vertical-align: middle;
+            color: var(--basiccolor);
+            font-size: 14px;
+        }
+        span:hover {
+            color: var(--basiccolor);
+        }
+    }
+}
+
+#toggle_button {
+    height: 30px;
+    z-index: 100;
+    top: 16px;
+    right: 16px;
+    ul {
+        span {
+            display: block;
+            height: 0;
+        }
+        li, a.button {
+            overflow: hidden;
+            float: left;
+            display: block;
+            height: 30px;
+            width: auto;
+            border-radius: 2px;
+            background-color: #ffffff;
+            margin: 0 5px;
+            cursor: pointer;
+            padding: 0 10px;
+            text-align: center;
+            line-height: 30px;
+            color: var(--basiccolor);
+            text-decoration: none;
+            &:hover {
+                opacity: 93%;
+                background-color: var(--basiccolor);
+                color: #FFF;
+            }
+        }
+         :hover {
+            opacity: 93%;
+            background-color: var(--basiccolor);
+            color: #FFF;
+        }
+        a:last-child {
+            margin: 0 0 0 5px;
+        }
+        li.active {
+            background-color: var(--basiccolor);
+        }
+    }
+}
+
+div.fifth_tabs {
+    .tabs_container {
+        padding-left: 0;
+        padding-top: 0;
+        height: 100%;
+        line-height: 32px !important;
+    }
+    .tab_wrapper {
+        width: 100% !important;
+    }
+    div.tabs_container .tabs .tab {
+        height: 32px !important;
+        line-height: 32px !important;
+        /*color: #666666 !important;*/
+        width: 90px;
+        font-size: 14px;
+        padding: 0 32px;
+        color: #4D4D4D;
+    }
+    div.tabs_container .tabs .active_tab, div.tabs_container .tabs .active_tab:hover {
+        height: 32px !important;
+        border-bottom: none !important;
+        line-height: 30px !important;
+        background-color: rgba(43, 160, 127, 0.08) !important;
+    }
+    .tab:hover {
+        height: 32px !important;
+        border-bottom: none !important;
+        line-height: 30px !important;
+        background-color: rgba(43, 160, 127, 0.08) !important;
+    }
+}
+
+
+div.font_16_tabs {
+
+    div.tabs_container .tabs .tab {
+        font-size: 16px;
+    }
+
+}
+.equipment_charge div.fifth_tabs {
+    margin-top: 30px;
+}
+
+.equipment_charge a {
+    display: flex;
+}

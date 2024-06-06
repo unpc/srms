@@ -1,0 +1,17 @@
+<div class="hr_1">&#160;</div>
+<form autocomplete="off" method="post" action="<?php echo H(URI::url() ) ?>">
+<?php echo V('form_error', ['form'=>$form])?>
+<div class="form padding_2">
+    <?php
+        echo Widget::factory('flexform', [
+            'template_data' => ['disabled'=>TRUE],
+            'existing_data' => $times,
+            'item_view' => 'eq_sample_time:time/item',
+        ]);
+    
+    ?>
+</div>
+<div class="form padding_2">
+    <input type="submit" name="submit" class="button button_save" value="<?php echo H(T('更新')) ?>" />
+</div>
+</form>

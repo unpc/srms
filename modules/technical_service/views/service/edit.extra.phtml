@@ -1,0 +1,59 @@
+<?php $me = L('ME'); ?>
+<style>
+    .relate_view_btn{
+        float: left !important;
+        margin-left: 11px !important;
+    }
+    .delete_field:hover{
+        color:red !important;
+    }
+    .icon-trash:hover{
+        color:red !important;
+    }
+</style>
+<div class="form">
+    <form method="post" action="<?php echo H(URI::url()) ?>">
+        <table class="form" style="width: 100%;">
+            <tbody>
+            <tr>
+                <td class="top equipments_icon" width="130" rowspan="2">
+                    <div class="short_container">
+                        <div class="img_icon" style="position: relative;">
+                            <?php echo $service->icon('104'); ?>
+                        </div>
+                    </div>
+
+                    <div class="interval_24"></div>
+
+                </td>
+
+                <td class="top">
+                    <?= V('form_error', ['form' => $form]); ?>
+                    <?php
+                    $no_error = ($form->no_error !== FALSE);
+                    $require = trim((string)V('form_require', ['extra_class' => 'top']));
+                    ?>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="top">
+                    <?php if (Module::is_installed('extra')) : ?>
+                        <div class="interval_12"></div>
+                        <div class="form">
+                            <h2 class="section_title">
+                                <span class="border"></span>
+                                <span class="black_title"><?php echo I18N::T('technical_service', '预约表单') ?></span>
+                            </h2>
+                            <div class="interval_12"></div>
+                            <?php $extra = Extra_Model::fetch($service, 'apply'); ?>
+                            <div class="lmaigin_1e5" src="<?php echo H($extra->url()) ?>"></div>
+                            <div class="interval_24"></div>
+                        </div>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+</div>

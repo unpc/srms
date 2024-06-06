@@ -1,0 +1,34 @@
+<?php 
+$base_url = Config::get('system.base_url');
+if (count($results)) {
+    $str = I18N::T('envmon', $template);
+    $pi_token = Config::get('lab.pi');
+	$pi = O('user',['token'=>$pi_token]);
+    //此处许判断pi是否是英文环境，若是则需对传感器进行英文拼接
+    if ( $pi->locale=='en_US' ) {
+	    foreach ($results as $result) {
+	  		$sensor = O("env_sensor", $result->sensor_id);
+	        $url = $base_url.'!envmon/node/index.'.$sensor->node->id;
+	        $node_name = URI::anchor($url, $sensor->node->name);
+	        $sensor_name = $sensor->name;
+	        $arr[] = $sensor_name . ' from ' . $node_name;
+	     }
+    }
+    else {
+	    foreach ($results as $result) {
+	  		$sensor = O("env_sensor", $result->sensor_id);
+	        $url = $base_url.'!envmon/node/index.'.$sensor->node->id;
+	        $node_name = URI::anchor($url, $sensor->node->name);
+	        $sensor_name = $sensor->name;
+	        $arr[] = $node_name."的".$sensor_name;
+	     }
+    }
+	    
+    
+    $str .= implode(', ', $arr); 
+}
+else {
+    $str = I18N::T('envmon', '所有监控环境状态都已恢复正常');
+}
+?>
+<li>➡ &#160;&#160;&#160;<?php echo $str; ?></li>

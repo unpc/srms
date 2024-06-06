@@ -1,0 +1,26 @@
+table .show_collection {
+	
+	cursor: pointer;
+
+	.collection_name {
+		font-weight: bold;
+	}
+	
+	a {
+		
+		text-decoration: none;
+	}
+}
+
+.inventory_tag {
+	color: #fff;
+	background-color: #abd;
+	text-decoration: none;
+	padding: 1px 2px;
+
+	&:hover {
+		text-decoration: none;
+		color: #fff;
+		background-color: #7498E0;
+	}
+}

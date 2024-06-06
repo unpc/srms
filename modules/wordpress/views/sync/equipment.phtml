@@ -1,0 +1,12 @@
+<p>
+	<a href="<?php echo H($equipment->url('reserv')) ?>"><?php echo I18N::T('wordpress', '预约%name', ['%name'=>$equipment->name]); ?></a>
+</p>
+<h3><?php echo I18N::T('wordpress', '主要规格及技术指标')?></h3>
+<?php echo H($equipment->tech_specs);?>
+<h3><?php echo I18N::T('wordpress', '主要功能及特色')?></h3>
+<?php echo H($equipment->features);?>
+<br />
+<h3><?php echo I18N::T('wordpress', '主要附件及配置')?></h3>
+<?php echo H($equipment->configs);?>
+<br />
+

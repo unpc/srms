@@ -1,0 +1,20 @@
+<?php
+$portion_used = $portion->amount - $portion->balance;
+$portion_balance = $portion->balance;
+$used_tip = I18N::T('grants', '已支出 %num', ['%num'=>Number::currency($portion_used)]);
+$balance_tip = I18N::T('grants', '余额 %num', ['%num'=>Number::currency($portion_balance)]);
+$grant = $portion->grant;
+$width = floor(($portion->amount / $grant->amount) * $grant_width);
+$tmp_left = 0;
+?>
+<?php foreach ($tree as $p):
+$tmp_width = floor(($p->amount / $grant->amount) * $grant_width);
+$tmp_left += floor(($p->tmp_prev_amount / $grant->amount) * $grant_width);
+?>
+<div class="portion_bar_background" style="width:<?php echo $tmp_width;?>px; margin-left: <?php echo $tmp_left;?>px">&#160;</div>
+<?php endforeach; ?>
+<div class="portion_bar inline_block" style="width:<?php echo $width;?>px; margin-left: <?php echo $tmp_left?>px;"><div class="portion_real_bar">
+<?php if ($portion_balance>0): ?>
+	<div class="part part_balance tooltip:<?php echo H(E($balance_tip))?>" style="width:<?php echo round(100 * $portion_balance/$portion->amount); ?>%">&#160;</div><?php endif; if ($portion_used>0): ?><div class="part part_used tooltip:<?php echo H(E($used_tip))?>" style="width:<?php echo round(100 * $portion_used/$portion->amount); ?>%">&#160;</div>
+<?php endif; ?>
+</div></div>

@@ -1,0 +1,30 @@
+<form method="post" action="<?= URI::url('!roles/index/perms.' . $role->id) ?>" autocomplete="off" class="clearfix">
+    <div class="role_title_d_1"><?= HT($role->name). HT('权限设置') ?>
+        <div class="role_title_d_2_2">
+            <div style="margin-top: -2rem;float: right">
+                <?php
+                $access = isset($access) ? $access : [];
+                foreach ($access as $aid => $access): ?>
+                    <div style="float:left;<?= $aid == 1 ? 'margin-right: 32px;' : '' ?>font-size: 14px;font-family: PingFangSC-Regular, PingFang SC;font-weight: 400;color: #333333;">
+                        <?= Form::checkbox("perms[{$role->id}][{$aid}]",
+                            in_array($aid, $select_perms) || in_array($access, $default_perms),
+                            HT($access), ' data-rid=' . $role->id . ' class="rlist middle checkbox"'); ?>
+
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php
+        $modules = Q("module:sort(weight)");
+
+        echo V('role_perms', [
+            'modules' => $modules,
+            'role' => $role,
+            'select_perms' => $select_perms,
+            'default_perms' => $default_perms,
+        ]);
+
+        ?>
+        <div class="float_right"></div>
+    </div>
+</form>

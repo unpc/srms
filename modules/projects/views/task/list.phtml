@@ -1,0 +1,29 @@
+<div class="hr_1">&#160;</div>
+
+<div class="panel padding_1 clearfix">
+	<div class="float_left">
+	</div>
+</div>
+
+<?php echo $pagination; ?>
+
+<table class="sticky flexible">
+<thead>
+<tr>
+	<th class="left nowrap filter check_hover"><?php echo I18N::T('projects', '名称'); ?></th>
+	<th class="left nowrap filter check_hover"><?php echo I18N::T('projects', '状态'); ?></th>
+	<th class="left nowrap filter check_hover"><?php echo I18N::T('projects', '进度'); ?></th>
+	<th class="left nowrap filter check_hover"><?php echo I18N::T('projects', '开始时间'); ?></th>
+	<th class="left nowrap filter check_hover"><?php echo I18N::T('projects', '结束时间'); ?></th>
+	<th class="left nowrap filter check_hover"><?php echo I18N::T('projects', '摘要'); ?></th>
+	<th class="left nowrap filter check_hover"><?php echo I18N::T('projects', '负责人'); ?></th>
+	<th class="center nowrap filter check_hover"><?php echo I18N::T('projects', '操作'); ?></th>
+	
+</tr>
+</thead>
+<tbody>
+	<?php foreach ($tasks as $task) { $task->render('task/list_item'); } ?>
+</tbody>
+</table>
+
+

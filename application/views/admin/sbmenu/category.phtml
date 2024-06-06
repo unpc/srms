@@ -1,0 +1,38 @@
+<li class="category">
+	<div class="category_title clearfix">
+		<?php if ($name !== '@others'): ?>
+			<div class="float_right">
+				<a class="pointer button_delete" style="color: #F5222D;">
+                    <span class="icon-trash icon-lg"></span>
+                    <?php echo T('删除')?>
+                </a>
+			</div>
+
+            <input type="text" class="text" name="categories[<?php echo $index;?>][name]" value="<?php echo H($name);?>" />
+
+		<?php else: ?>
+			<input type="hidden" name="categories[@others][name]" value="@others" />
+			<h2 class="section_title"><?php echo T('其他模块');?></h2>
+		<?php endif;?>
+	</div>
+    <div class="interval_12"></div>
+	<ul id="items_<?php echo $index; ?>" class="items category_id:<?php echo $index;?> clearfix">
+		<?php
+            foreach ((array) $items as $id => $item) {
+                $checked = $item['#checked'];
+                $mid     = $item['#module'] ?: $id;
+                $item    = $item['desktop'];
+                if (!$item['i18n']) {
+                    $item['i18n'] = $mid;
+                }
+
+                echo V('application:admin/sbmenu/item', [
+                    'index'   => $index,
+                    'item_id' => $id,
+                    'checked' => $checked,
+                    'item'    => $item,
+                ]);
+            }
+        ?>
+	</ul>
+</li>

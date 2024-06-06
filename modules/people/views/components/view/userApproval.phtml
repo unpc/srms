@@ -1,0 +1,44 @@
+<div style="padding: 10px">
+  <table>
+    <thead>
+      <th align="left" width="30%"><?= I18N::T('people', '姓名') ?></th>
+      <th align="left" width="70%"><?= I18N::T('people', '联系方式') ?></th>
+      <th align="left">
+        <span style="white-space: nowrap;"><?= I18N::T('people', '操作') ?></span>
+      </th>
+    </thead>
+    <tbody>
+      <?php foreach ($people as $person) : ?>
+      <tr>
+        <td width="30%">
+          <h4>
+            <?= H($person->name) ?><br />
+            <?php if ($GLOBALS['preload']['people.multi_lab']) :?>
+              <small><?= H(Q("{$person} lab")->current()->name) ?></small>
+            <?php endif;?>
+          </h4>
+        </td>
+        <td width="70%">
+          <h4>
+            <small><?= H($person->phone) ?></small><br />
+            <small><?= H($person->email) ?></small>
+          </h4>
+        </td>
+        <td style="width: 50px">
+          <button class="btn btn-primary btn-xs" g-click="approval-<?= H($person->id) ?>">
+            <?= I18N::T('people', '审批通过') ?>
+          </button>
+          <g-active data-id="approval-<?= H($person->id) ?>" method='post'>
+            <g-param name="jsonrpc" value="2.0"></g-param>
+            <g-param name="id" value="<?= uniqid() ?>"></g-param>
+            <g-param name="method" value="<?= H('people_com/userApproval') ?>"></g-param>
+            <g-param name="params">
+              <g-param name="id" value="<?= H($person->id) ?>"></g-param>
+            </g-param>
+          </g-active>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+    </tbody>
+  </table>
+</div>

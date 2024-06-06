@@ -1,0 +1,30 @@
+<div class="clearfix" style="line-height:1; margin-bottom:3px;">
+<?php foreach ((array) $modes as $mode => $title): ?>
+<a class="push_button middle mode:<?php echo $mode?> push_button_<?php echo $mode ?><?php echo $curr_mode == $mode ?' push_button_checked':''?>" href="#" title="<?php echo HT($title)?>">&#160;</a>
+<?php endforeach ?>
+</div>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('a.push_button').bind('click', function() {
+        var mode = $(this).classAttr('mode');
+        Q.trigger({
+            event: 'click',
+            object: 'sbmenu_mode',
+            url: '<?php echo URI::url('index')?>',
+            data: {
+                mode: mode
+            },
+            success: function(d) {
+                var $container = $('#<?php echo $container_id?>');
+                $container.children().remove();
+
+                //ie等浏览器会从标准流中删除notif, 故需要从document下查找, 然后尝试删除
+                $(document).find('span.sidebar_notif').remove();
+
+                $container.html(d.view);
+            }
+        });
+        return false;
+    });
+});
+</script>

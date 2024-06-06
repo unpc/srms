@@ -1,0 +1,53 @@
+<?php 
+$multi_lab = (bool)(count($projects) > 1);
+if ($multi_lab) :?>
+<tr>
+  <td class="middle right label nowrap">
+    <?php echo $check_project ? '*' : '' ?><?php echo I18N::T('labs', '实验室');?>
+  </td>
+  <td class="top">
+  <?php
+  $lab_options = [ 0 => I18N::T('labs', '请选择此次仪器服务的实验室')];
+  $lab_options += array_column($projects, 'lab_name', 'lab_id');
+  echo Form::dropdown('project_lab', $lab_options, (int)$lab_id, 'class="monitor"');
+  ?>
+  </td>
+</tr>
+<?php endif;?>
+<tr>
+  <td class="middle right label nowrap">
+    <?php echo $check_project ? '*' : '' ?><?php echo I18N::T('equipments', '关联项目');?>
+  </td>
+  <td class="top">
+  <?php if ($multi_lab) :?>
+    <div class="toggle:project_lab show_on:0">
+        <?php // echo Form::dropdown('project', ['--'], 0, 'class="toggle_status:project_lab enable_on:0"'); ?>
+        <select id="glogon_logout_project" name="project" class="project">
+            <option value="0" selected>--</option>
+        </select>
+    </div>
+  <?php endif;?>
+  <?php foreach ($projects as $project) :
+    if ($multi_lab) {
+      $divClass = ' class="toggle:project_lab show_on:'.$project['lab_id'].'"';
+      $dropClass = ' class="toggle_status:project_lab enable_on:'.$project['lab_id'].'"';
+    }
+    $project_options = [ 0 => I18N::T('equipments', '请选择此次仪器服务的项目')];
+    $project_options += $project['lab_projects'];
+    // 如果离线状态登录，联网状态登出，而且必须关联项目。为了能正常退出，加个临时选项 
+    if (count($project['lab_projects']) == 0 && $check_project && !$user->id) {
+      $project_options += [ -1 => I18N::T('equipments', '临时')];
+    }
+    $project_id = array_key_exists($project_id, $project_options) ? $project_id : 0;
+    ?>
+    <div id="show_project_lab" <?=$divClass?> >
+        <select id="project" name="project" class="project">
+            <?php foreach ($project_options as $k => $v) : ?>
+                <option value="<?= $k ?>" <?php if ($project_id == $k): ?>selected<?php endif; ?>><?= $v ?></option>
+            <?php endforeach; ?>
+        </select>
+      <?php // echo Form::dropdown('project', $project_options, $project_id, $dropClass);?>
+    </div>
+  <?php endforeach;?>
+  </td>
+</tr>

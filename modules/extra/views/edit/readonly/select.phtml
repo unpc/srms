@@ -1,0 +1,20 @@
+<?php
+$add_select = 'add_select_'. uniqid();
+$selects_uniqid = 'selects_'. uniqid();
+?>
+<div class="<?php echo $class;?>">
+    <div id="<?php echo H($selects_uniqid) ?>">
+        <?php if (count($field['params'])) :?>
+            <?php $subprefix = 0;?>
+            <?php foreach($field['params'] as $item) :?>
+                <?php echo V('extra:edit/readonly/select_item', [
+                    'prefix'=> $prefix,
+                    'item'=> $item,
+                    'subprefix'=> $subprefix,
+                    'options_confirm'=>I18N::T('extra', '删除该选项, 将导致关联该字段的数据丢失, 您确定要删除吗?'),
+                ]);?>
+                <?php ++ $subprefix;?>
+            <?php endforeach;?>
+        <?php endif;?>
+    </div>
+</div>

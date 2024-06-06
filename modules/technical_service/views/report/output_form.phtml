@@ -1,0 +1,31 @@
+<div class="form">
+<div class="interval_24"></div>
+    <?php if ($type == 'csv'): ?>
+        <form id="sample_form" method="POST" q-object="export_<?= $object_name?>" q-src="<?= URI::url('!technical_service/index') ?>" q-static="<?php echo H(['form_token'=>$form_token, 'type' => $type])?>" q-event="submit" autocomplete="off" class="prevent_default">
+    <?php else: ?>
+        <form action="<?php echo H(URI::url('!technical_service/export_'.$object_name, ['type'=>$type, 'form_token'=>$form_token])) ?>" target="<?=$type == 'csv' ? '_self' : '_blank' ?>"  class="prevent_default" method="post">
+    <?php endif; ?>
+		<ul class="ep_triple" style="width:375px;">
+			<?php
+            $nonecolumns = Event::trigger($object_name.'_export.extra.display_none', $form_token);
+			foreach ($columns as $p => $p_name) :?>
+				<?php if($p < 0): ?>
+				<div class="clear">&#160;</div>
+				<h4><?php echo I18N::HT('technical_service', $p_name) ?></h4>
+				<?php else: ?>
+				<li class="nowrap">
+                    <?php $display = in_array($p, $nonecolumns) ? FALSE : TRUE; ?>
+					<?php echo Form::checkbox("columns[{$p}]", $display, I18N::T('eq_sample', $p_name), 'class="middle checkbox monitor"', 'class="middle"');?>
+				</li>
+				<?php endif; ?>
+			<?php endforeach;?>
+		</ul>
+		<div class="button_container">
+		<div class="float_right">
+		<input name="cancel" id="cancel" type='reset' class="font-button-default sm rmargin_2e4" value="<?php echo I18N::HT('apply_export', '取消');?>" />
+		<input name="submit" type='submit' class="font-button-save sm" value="<?php echo I18N::HT('eq_sample', '提交');?>" />
+		</div>
+		</div>
+	</form>
+</div>
+	

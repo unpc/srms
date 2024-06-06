@@ -1,0 +1,35 @@
+span.status_missed {
+    color: #A978FD;
+    font-size: 12px;
+    padding: 4px 8px;
+    background: rgba(169, 120, 253, 0.1);
+    border-radius: 4px;
+    border: 1px solid rgba(169, 120, 253, 0.5);
+}
+
+span.status_leave_early {
+    color: #52A6E3;
+    font-size: 12px;
+    padding: 4px 8px;
+    background: rgba(82, 166, 227, 0.1);
+    border-radius: 4px;
+    border: 1px solid rgba(82, 166, 227, 0.5);
+}
+
+span.status_late {
+    color: #FF9B37;
+    font-size: 12px;
+    padding: 4px 8px;
+    background: rgba(254, 197, 84, 0.1);
+    border-radius: 4px;
+    border: 1px solid rgba(254, 197, 84, 0.8);
+}
+
+span.status_overtime {
+    color: #FF575F;
+    font-size: 12px;
+    padding: 4px 8px;
+    background: rgba(255, 87, 95, 0.1);
+    border-radius: 4px;
+    border: 1px solid rgba(255, 87, 95, 0.5);
+}

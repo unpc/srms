@@ -1,0 +1,39 @@
+<div class="nowrap">
+<form method="post" autocomplete="off">
+		<?php
+		echo Widget::factory('application:tag_selector', [
+			'root' => $group_root,
+			'tag' => $group,
+			'name' => 'group_id',
+			'ajax' => TRUE,
+		]);
+		?>
+		<div class="interval_20">&#160;</div>
+		<input name="location" class="text middle hint:<?php echo I18N::HT('gismon', '地址...'); ?>" size="10" value="<?php echo H($form['location']); ?>"/>
+		<input name="name" class="text middle hint:<?php echo I18N::HT('gismon', '仪器...'); ?>" size="10" value="<?php echo H($form['name']); ?>"/>
+		<input type="submit" class="button button_search middle" name="search" value="<?php echo I18N::HT('gismon', '搜索')?>" />
+</form>
+</div>
+<div class="float_right">
+    <?php echo $pagination ?>
+</div>
+
+<table class="sticky flexible">
+<thead>
+<tr>
+	<th>&#160;</th>
+	<th class="left nowrap"><?php echo I18N::T('gismon', '仪器名称'); ?></th>
+	<th class="left nowrap"><?php echo I18N::T('gismon', '放置地点')?></th>
+	<th class="flexible">&#160;</th>
+</tr>
+</thead>
+<tbody>
+<?php if ($equipments->total_count() > 0): ?>
+	<?php foreach($equipments as $equipment) { $equipment->render('gismon:building/equipment'); } ?>
+<?php else: ?>
+	<td class="center description" colspan="4">
+		<?php echo I18N::T('gismon', '无符合条件的仪器'); ?>
+	</td>
+<?php endif; ?>
+</tbody>
+</table>

@@ -1,0 +1,22 @@
+<tr>
+	<td class="label right nowrap"><strong class="description"><?php echo H($properties['label']) ?></strong></td>
+	<td>
+		<?php 
+		switch($component->subtype) {
+			case '0' :
+				echo I18N::T('schedule', '组会');
+				break;
+			case '1' :
+				echo I18N::T('schedule', '文献讨论');
+			 	break;
+			case '2' :
+				echo I18N::T('schedule', '其他');
+				break;
+			case '3' :
+				echo I18N::T('schedule', '学术报告');
+				break;
+			  
+		}
+		?>
+	</td>
+</tr>

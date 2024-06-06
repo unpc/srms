@@ -1,0 +1,45 @@
+<div class="">
+  <form autocomplete="off" q-object="add_approved_user" q-event="submit" q-static="<?php echo H(['equipment_id' => $equipment_id]) ?>">
+	<table class="form">
+	  <tr>
+		<td class="left middle nowrap"><?php echo I18N::T('equipments', '已通过培训的用户') ?></td>
+		<td class="left middle padding_1">
+		  <?php
+echo Widget::factory('multi_user_selector', [
+    'name' => 'approved_users',
+    'autocomplete' => URI::url('autocomplete/user'),
+    'value' => '',
+]);
+?>
+		</td>
+	  </tr>
+	  <tr>
+	  	<td>
+		  是否过期
+		</td>
+	  	<td>			<?php
+echo Form::radio('atime', 0, 0, I18N::T('equipments', '否'), 'class="monitor middle radio"', 'class="middle"');
+echo '&#160;&#160;&#160;&#160;';
+echo Form::radio('atime', 1, 0, I18N::T('equipments', '是'), 'class="monitor middle radio"', 'class="middle"');
+?></td>
+	  </tr>
+	  <tr>
+		<td class="left middle nowrap"><?php echo I18N::T('equipments', '过期时间') ?></td>
+		<td class="left middle">
+
+		<span class="toggle_status:atime enable_on:1">
+			<input name="deadline" date_type="date" class="text date small_search_text" value="<?php echo time() ?>"/>
+		</span>
+		</td>
+	  </tr>
+
+
+	</table>
+	<div class="button_container">
+	  <div class="float_right">
+	  <input name="cancel" id="cancel" type='reset' class="font-button-default sm rmargin_2e4" value="<?php echo I18N::HT('equipments', '取消'); ?>" />
+	  <input name="submit" type='submit' class="font-button-save sm" value="<?php echo I18N::HT('equipments', '提交'); ?>" />
+	  </div>
+	  </div>
+  </form>
+</div>

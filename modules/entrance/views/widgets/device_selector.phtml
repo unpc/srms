@@ -1,0 +1,12 @@
+<?php
+$uniqid = 'device_'.uniqid();
+
+$autocomplete = $this->autocomplete ?: URI::url('!entrance/autocomplete/devices');
+
+$size = $this->size ?: 40;
+
+$name = $device->id ? $device->name : '';
+
+?>
+<input id="<?php echo $uniqid?>_device" name="<?php echo H($this->name ) ?>" type="hidden" value="<?php echo H($device->id) ?>" />
+<input placeholder="请输入" id="<?php echo $uniqid?>_device_name" class="text middle select_on_focus autocomplete:<?php echo H($autocomplete) ?> autocomplete_alt:#<?php echo $uniqid?>_device" size="<?php echo H($size) ?>" value="<?php echo H($name) ?>" />

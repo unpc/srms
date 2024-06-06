@@ -1,0 +1,61 @@
+<?php
+$control_uniqid = 'control_id_'. uniqid();
+if ($equipment->status != EQ_Status_Model::NO_LONGER_IN_SERVICE):
+	$control_class = '';
+	switch ($equipment->control_mode){
+	case 'power':
+		$control_class = 'power';
+		$control_class .= $equipment->is_using ? '_on':'_off';
+		if (preg_match('/^gmeter/', $equipment->control_address)) {
+			$control_class .= $equipment->connect ? '':'_disconnected';
+		}
+		else {
+			$control_class .= $equipment->is_monitoring ? '':'_disconnected';
+		}
+		break;
+	case 'computer':
+	case 'veronica':
+		$control_class = 'computer';
+		$control_class .= $equipment->is_using ? '_on' : '_off';
+		$control_class .= $equipment->connect ? '' : '_disconnected';
+		break;
+	case 'ultron':
+		$control_class = 'computer';
+		$control_class .= $equipment->is_using ? '_on' : '_off';
+		$control_class .= $equipment->connect ? '' : '_disconnected';
+		break;
+    case 'bluetooth':
+        $control_class = 'bluetooth';
+        $control_class .= $equipment->is_using ? '_on' : '_off';
+        break;
+	case 'agent':
+		if (preg_match('/^ble/', $equipment->control_address)) {
+			$control_class = 'bluetooth';
+			$control_class .= $equipment->is_using ? '_on' : '_off';
+		} else {
+			$control_class = 'computer';
+			$control_class .= $equipment->is_using ? '_on' : '_off';
+			$cache = Cache::factory('redis');
+			$control_class .= $cache->get("equipment_online_".$equipment->id) ? '' : '_disconnected';
+		}
+		break;
+	default:
+		$control_class = 'nocontrol';
+	}
+$tooltip = Equipments::get_tool_tip($control_class, 3);
+?>
+<div id="<?php echo H($control_uniqid) ?>" class="inline_block">
+<?php if ($control_class == 'nocontrol'): ?>
+<span class="control_status middle <?php echo $control_class ?>">--</span>
+<?php else: ?>
+<span class="control_status middle <?php echo $control_class ?>" q-tooltip="<?php echo H($tooltip) ?>">&#160;</span>
+<?php endif; ?>
+<?php else: ?>
+--
+<?php endif;?>
+<script type="text/javascript">
+       jQuery(function() {
+           Q.heartbeat.one('equipment_control', [<?php echo JS::quote($equipment->id) ?>, <?php echo JS::quote($control_uniqid) ?>]);
+       });
+</script>
+</div>

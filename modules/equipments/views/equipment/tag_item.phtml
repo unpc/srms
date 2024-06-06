@@ -1,0 +1,22 @@
+<table class="form">
+	<tbody>
+	<tr>
+		<td class="label middle right nowrap"><?php echo I18N::T('equipments', '标签')?></td>
+		<td>
+			<input class="text" name="tag[]" value="<?php echo H($error ? $form['tag'] : $tag)?>" />
+		</td>
+	</tr>
+	<tr>
+		<td class="label right nowrap top"><?php echo I18N::T('equipments', '实验室')?></td>
+		<td >
+			<?php
+				echo Widget::factory('equipments:tag_selector', [
+	   					'autocomplete'=> URI::url('!equipments/autocomplete/labs'),  
+	   					'name'=>'labs[]', 
+	   					'value'=>($error ? $form['labs'] : H(@json_encode($labs))),
+	   			]); 
+			?>
+		</td>
+	</tr>
+	</tbody>
+</table>

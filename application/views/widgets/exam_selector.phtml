@@ -1,0 +1,30 @@
+<?php
+$uniqid = 'lm_exam_'.uniqid();
+$autocomplete = $this->url ?: URI::url('!exam/autocomplete/exams');
+$name=$this->name?:'lm_exam';
+$id=$this->id?:0;
+$value=$this->value?:'';
+$size=$this->size?:40;
+?>
+<input  id="<?php echo $uniqid?>_id"  value="<?php echo $id;?>"  name="lm_exam_id" hidden/>
+<input id="<?php echo $uniqid?>_name" name="<?php echo H($name);?>"  value="<?php echo H($value); ?>" type="hidden"   />
+
+<input size="<?php echo H($size);?>" id="<?php echo $uniqid?>_exam_name" class="text middle select_on_focus" value="<?php echo H($this->text); ?>" placeholder='考试' q-tooltip="
+<?php echo H(I18N::T('exam', '考试') ) ?>"  name="exam_title"/>
+
+ <script>
+
+$(function() {
+        var autocomplete="<?php echo $autocomplete;?>"
+        $("#<?php echo $uniqid?>_exam_name").autocomplete({
+            ajax: autocomplete,
+            alt:"#<?php echo $uniqid?>_name",
+        });
+})
+function autocomplete_callback(val){
+     var li=val.parentNode
+     var data=$.data(li,"originalObject")
+
+     $('input[name='+data.flag+'_id]').val(data.id);
+ }
+ </script>

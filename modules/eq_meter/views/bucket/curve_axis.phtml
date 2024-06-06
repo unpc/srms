@@ -1,0 +1,28 @@
+<?php 
+$axis_options = [
+	'y1' => 'Y-Axis 1',
+	'y2' => 'Y-Axis 2',
+	'no' => I18N::T('eq_meter', '不显示'),
+];
+?>
+<form method="post" action="<?php echo H(URI::url('')) ?>">
+<div class="lpadding_1 drop_list">
+	<table class="form">
+		<tr>
+			<td class="middle"><span class="legend_color" style="background-color:#C5B570"></span></td>
+			<td class="nowrap middle"><h4 class="middle"><?php echo I18N::T('eq_meter','功率')?></h4></td>
+			<td class="middle"><?php echo Form::dropdown('item[watt]', $axis_options,'y1', 'data="0"' ); ?></td>
+		</tr>
+		<tr>
+			<td class="middle"><span class="legend_color" style="background-color:#7ACC3C"></span></td>
+			<td class="nowrap middle"><h4 class="middle"><?php echo I18N::T('eq_meter','电流')?></h4></td>
+			<td class="middle"><?php echo Form::dropdown('item[amp]', $axis_options,'no', 'data="1"' ); ?></td>
+		</tr>
+		<tr>
+			<td class="middle"><span class="legend_color" style="background-color:#8D3581"></span></td>
+			<td class="nowrap middle"><h4 class="middle"><?php echo I18N::T('eq_meter','电压')?></h4></td>
+			<td class="middle"><?php echo Form::dropdown('item[voltage]', $axis_options,'no', 'data="2"' ); ?></td>
+		</tr>
+	</table>
+</div>
+</form>

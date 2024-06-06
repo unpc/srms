@@ -1,0 +1,23 @@
+<div class="hr_1">&#160;</div>
+<p>
+	<strong><?php echo I18N::T('accounts', '开启站点时, 默认开通以下模块：');?></strong>
+</p>
+<p>
+	<?php
+	$mod_enable = $account->mod_enable;
+	for ($i = 0, $n = count($mod_enable); $i < $n; $i++) {
+		printf("%s%s", $mod_enable[$i], ($i + 1) % 4 ? ',' : '<br/>');
+	}
+	?>
+</p>
+<p>
+	<strong><?php echo I18N::T('accounts', '如需修改, 应联系运维(但模块修改后不会在此显示).');?></strong>
+</p>
+<div>
+<?php if ($can_sync) :?>
+<?php
+// 开通模块, 到期时间, etc
+echo V('application:widgets/links', ['links'=>Accounts_Sync::get_sync_links($account, 'edit'), 'separator'=>'&#160;&#160;']);
+?>
+<?php endif;?>
+</div>

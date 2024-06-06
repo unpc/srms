@@ -1,0 +1,18 @@
+<?php 
+$root = $equipment->get_root();
+//tags_list=>当前仪器root下tag与实验室关联的集合数组
+$tags_list = [];
+if ($root->id) {
+	$tags = Q("tag[root={$root}]");
+	foreach ($tags as $k => $tag) {
+		$labs = Q("$tag lab");
+		$tags_list[$k]['tag'] = $tag->name;
+		foreach ($labs as $lab) {
+			$tags_list[$k]['labs'][$lab->id] = $lab->name;
+		}
+	}
+}
+echo CSS::load_async('equipments:relate_list');
+$keys = array_keys($tags_list);
+$default_id = $keys[0] ?: 0;
+echo V('equipments:equipment_tags/tags', ['tags_list'=>$tags_list, 'default_id'=>$default_id, 'eid'=>$equipment->id]);?>

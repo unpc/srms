@@ -1,0 +1,22 @@
+<div class="padding_1 middle center calendar_fail" >
+	<img src="<?php echo H(_C('images/sorry.png')) ?>"/>
+	<div class="hr_2"></div>
+	<h1 class="middle center title"><?= I18N::T('calendars', '抱 歉') ?></h1>
+	<?php if($errorMsg): ?>
+		<p class="center content"><?= $errorMsg ?></p>
+	<?php else: ?>
+	    <p class="center content"><?= I18N::T('calendars', '您没有预约到此时段')?></p>
+	    <p class="center content"><?= I18N::T('calendars', '请尝试其他时段')?></p>
+	<?php endif; ?>
+    <div class="hr_2"></div>
+	<?php
+		$links = new ArrayIterator;
+		$links['re_select'] = [
+			'text'  => I18N::T('calendars', '重新选择'),
+			'url' => '#',
+			'extra' => 'class="select" onclick="(function($){Dialog.close()})();return false;"'
+		];
+		Event::trigger('cal_component.add_failed_link', $parent, $links);
+		echo Widget::factory('links', ['links' => $links, 'separator' => ' ']);
+	?>
+</div>

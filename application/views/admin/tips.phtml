@@ -1,0 +1,11 @@
+<div class="form margin-left-half">
+	<form class="edit" method="post" action="<?php echo H(URI::url('')) ?>">
+        <h2 class="section_title"><?php echo I18N::T('people', '提示')?></h2>
+        <div class="interval_16"></div>
+        <?php echo Form::checkbox('hide_all_tips', L('ME')->hide_all_tips, T('隐藏在每个页面的提示信息'), 'class="checkbox margin-left-1"') ?>
+        <div class="interval_30"></div>
+        <div>
+               <input type="submit" name="submit" class="font-button-save" value="<?php echo HT('保存修改')?>" />
+        </div>
+	</form>
+</div>

@@ -1,0 +1,6 @@
+<?php list($time, $format) = Date::format_interval($equipment->training_expire_time, 'md');?>
+&#160;
+<input type="text" name="training_expire_time" class="number text" size="10" value="<?php echo $time ? : 0;?>" />
+&#160;
+<?php echo Form::dropdown('training_expire_format', Date::units('md'), in_array($format, ['m', 'd']) ? $format : 'm', 'class="middle"') ;?>
+&#160;

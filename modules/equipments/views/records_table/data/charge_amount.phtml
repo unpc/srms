@@ -1,0 +1,14 @@
+<?php
+$source = Event::trigger('sample_form.charge_get_source', $record) ?: $record;
+$charge = O("eq_charge", ['source' => $source]);
+$amount = $charge->amount;
+// 20200624 高级自定义计了两个就都显示
+if (!$charge->id || !$charge->charge_type || $charge->charge_type == 'reserv' || $record->equipment->charge_template['reserv']) {
+    $reserv_charge = O('eq_charge', ['source' => $record->reserv]);
+}
+
+if ($reserv_charge->id) {
+    $amount += $reserv_charge->amount;
+}
+echo Number::currency($amount);
+?>

@@ -1,0 +1,1 @@
+<a class="send_message font-button-send" href="<?php echo H(Event::trigger('db_sync.transfer_to_master_url', '!messages/index/add.'.$user->id) ?: URI::url('!messages/index/add.'.$user->id)) ?>"><?php echo I18N::T('messages', '发送消息')?></a>

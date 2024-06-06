@@ -1,0 +1,33 @@
+<div class="hr_1">&#160;</div>
+<table class="form flexible">
+<tbody>
+  <tr>
+    <td class="top icon" style="position: relative;">
+      <?= $research->icon('64'); ?>
+    </td>
+    <td class="top flexible">
+      <h2>
+        <a href="<?php echo H($research->url() ) ?>">
+          <?php echo H($research->ref_no . ' ' . $research->name); ?>
+        </a>
+      </h2>
+      <p><?php echo I18N::T('research', '联系人')?>:
+        <?php echo V('research:research_table/data/contacts', ['research'=>$research]);?>
+      </p>
+      <p>
+        <?php echo I18N::T('research', '电话')?>&nbsp;:&nbsp;<?php echo H($research->phone);?>
+      </p>
+      <p>
+        <?php echo I18N::T('research', '邮箱')?>&nbsp;:&nbsp;<?php echo URI::mailto($research->email)?>
+      </p>
+      <div class="hr_1">&#160;</div>
+      <?php echo V('application:tag/path', ['tag'=>$research->group, 'tag_root'=>$research->group->root, 'url_template'=>URI::url('!research/index','group_id=%tag_id')]) ?>
+      <div class="hr_2">&#160;</div>
+      <?php echo Widget::factory('application:links', ['links' => $research->links('view'), 'separator'=>' ']) ?>
+      <div class="hr_2">&#160;</div>
+    </td>
+  </tr>
+</tbody>
+</table>
+<?php echo $secondary_tabs ?>
+<?php echo $secondary_tabs->content ?>

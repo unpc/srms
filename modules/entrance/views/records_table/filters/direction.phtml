@@ -1,0 +1,2 @@
+<?php if (!$this->direction && $this->direction !== 0 && $this->direction !== '0') $this->direction = '-1'; ?>
+<?php echo Form::dropdown('direction', ['-1' => '--'] + I18N::T('entrance', DC_Record_Model::$direction), $this->direction, 'class="dropdown autosubmittable middle"'); ?>

@@ -1,0 +1,24 @@
+<div class="form">
+<div class="padding_1">
+	<h3><?php echo T('附件管理') ?></h3>
+</div>
+<hr/>
+<table>
+	<tr>
+		<td id="attachment_dir" class="top">
+			<?php echo $dir_view; ?>
+		</td>
+		<td id="attachment_list" class="flexible top">
+			<?php echo $list_view; ?>
+		</td>
+	</tr>
+</table>
+<div class="bottom_form padding_1">
+	<form method="post" action="" autocomplete="off"class="view object:attachment nowrap">
+		<strong><?php echo T('上传新附件')?></strong>
+		<input id="attachment_base" name="base" type="hidden" />
+		<input name="attachment" type="file" class="file" />
+		<input class="button button_import" name="upload" type="submit" value="<?php echo H(T('上传')) ?>" />
+	</form>
+</div>
+</div>

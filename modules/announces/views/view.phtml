@@ -1,0 +1,55 @@
+<style>
+    .announce_readonly{
+        background-image:none !important;
+        padding-left:10px !important;
+        border: #E7E7E7;
+    }
+</style>
+<?php $read_id = 'announce_'. uniqid();?>
+<?php $submit_id = 'announce_submit_'. uniqid();?>
+<link rel="stylesheet" href="<?php echo H(CSS::cache_file('announces:announce')) ?>" />
+<div class="announce_view">
+	<div class="center announce_title">
+		<?php echo new Markup(stripslashes($announce->title), TRUE); ?>
+	</div>
+	<div class="announce_content">
+		<?php echo H($announce->content, TRUE) ?>
+	</div>
+	<div>
+		<?php
+        $path_type = 'attachments';
+        $full_path = NFS::get_path($announce, '', $path_type, TRUE);
+        if (file_exists($full_path)) {
+            echo V('announces:attachments',['announce'=>$announce->id ? $announce:O('announce')]);
+        }
+	    ?>
+	</div>
+	<form method="post" autocomplete="off" q-src="<?php echo H(URI::url('!announces/index')) ?>" q-event="submit" q-object="view_and_close_announce" q-static="<?php echo H(['ua_id'=>$user_announce->id])?>" class="center">
+        <div>
+            <?php echo Form::checkbox('has_read', FALSE, I18N::T('announces', '我已阅读此公告'), 'class="middle checkbox monitor" id="'. $read_id. '"', 'class="middle"'); ?>
+        </div>
+        <div class="tmargin_1">
+            <input type="submit" id="<?php echo H($submit_id) ?>" name="submit" class="announce_readonly toggle_status:has_read enable_on:on button button_edit font-button-save" value="<?php echo H(I18N::T('announces', '确认')) ?>" />
+        </div>
+	</form>
+</div>
+<script type="text/javascript">
+jQuery(function($) {
+
+    $(Dialog).bind('before_close',function(){
+        return false;
+    });
+
+    var $submit = $('#<?php echo $submit_id;?>');
+
+    $('#<?php echo $read_id?>').bind('click', function() {
+
+        if ($(this).is(':checked')) {
+            $submit.removeAttr('disabled').removeClass('announce_readonly');
+        }
+        else {
+            $submit.attr('disabled', 'disabled').addClass('announce_readonly');
+        }
+    });
+});
+</script>

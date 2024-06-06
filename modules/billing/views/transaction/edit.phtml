@@ -1,0 +1,69 @@
+<div class="form">
+<form autocomplete="off" class="view object:edit_transaction src:<?php echo URI::url('!billing/transaction')?>">
+<?php
+	echo V('form_error', ['form'=>$form]);
+	$no_error = ($form->no_error!==FALSE);
+?>
+	<table class="form">
+		<tbody>
+            <?php if ($transaction->income) :?>
+			<tr>
+				<td class="label left nowrap">
+                    <span class="rmargin_16"><?php echo I18N::T('billing', '收入'); ?></span>
+                    <input type="text" class="text currency" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" name="income" value="<?php echo H($no_error?$transaction->income:$form['income']); ?>" />
+                </td>
+                <td></td>
+			</tr>
+            <?php endif;?>
+            <?php if ($transaction->outcome) : ?>
+			<tr>
+				<td class="label left nowrap">
+                    <span class="rmargin_16"><?php echo I18N::T('billing', '支出'); ?></span>
+                    <input type="text" class="text currency" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" name="outcome" value="<?php echo H($no_error?$transaction->outcome:$form['outcome']); ?>" />
+                </td>
+				<td></td>
+			</tr>
+            <?php endif;?>
+			<tr>
+				<td class="label left nowrap">
+                    <span style="margin-right: 5px"><?php echo I18N::T('billing', '凭证号'); ?></span>
+                    <input type="text" class="text right" name="certificate" value="<?php echo H($no_error?$transaction->certificate:$form['certificate']); ?>" />
+                </td>
+				<td></td>
+			</tr>
+            <?php if($transaction->income && !$transaction->transfer): ?>
+            <?php echo V('account/extra_fields', ['form' => $form, 'transaction' => $transaction, 'edit' => '1']) ?>
+            <?php endif; ?>
+			<tr>
+				<td colspan="2" class="nowrap left top label"><?php echo I18N::T('billing', '备注'); ?></td>
+			</tr>
+            <tr>
+                <td colspan="2" class="description">
+                    <?php
+                    /*
+                        不属于其他transation的明细，因为存在系统默认的description值，所以需要进行匹配来显示。
+                        而其他附属的transaction备注都属于自己填写，所以不需要进行判断，该怎么显示还是怎么显示的，后台处理也一样。
+                        TODO 美中不足的是该处的正则匹配语句没有那么完美，望有能力者补充！
+                    */
+                    // if (!$transaction->reference->id) {
+                    // 	preg_match('/([^-\<]*)(\<br\>-----\<br\>)?(.*)/', $transaction->description, $match);
+                    // 	$description = $match[3];
+                    // }
+                    // else {
+                    // 	$description = $transaction->description;
+                    // }
+                    ?>
+                    <textarea name="description" type="text" cols="82" rows="4" class="text autogrow"><?php echo $no_error ? $transaction->description['amend'] : $form['description']?></textarea>
+                </td>
+            </tr>
+		</tbody>
+	</table>
+    <div class="button_container">
+        <div class="float_right">
+            <input type="hidden" name="id" value="<?php echo $transaction->id; ?>" />
+            <input name="cancel" id="cancel" type="reset" class="font-button-default sm rmargin_2e4" value="<?php echo H(I18N::T('billing', '取消') ) ?>">
+            <input name="submit" type="submit" class="font-button-save sm" value="<?php echo H(I18N::T('billing', '提交')) ?>">
+        </div>
+    </div>
+</form>
+</div>

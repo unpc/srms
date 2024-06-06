@@ -1,0 +1,20 @@
+<div class="padding_2">
+<form method="post" q-static="id=<?= $sample->id?>" q-src="<?= URI::url('!eq_sample/index')?>" q-event="submit" q-object="send_report">
+<?php echo V('form_error', ['form' => $form]); ?>
+<table>
+<tr>
+	<td class="label nowrap">
+		<span class="padding_1"><?= I18N::T('eq_sample', '邮箱') ?></span>
+	</td>
+	<td class="label nowrap">
+		<input name="receiver" class="text" size="25" type="test" value="<?= $form['receiver'] ?: $sample->sender->email;?>"/>
+	</td>
+	<td class="label nowrap">
+		<span class="padding_1">
+		<input type="submit" name="submit" class="font-button-save" value="<?= I18N::T('eq_sample', '发送')?>">
+		</span>
+	</td>
+</tr>
+</table>
+</form>
+</div>

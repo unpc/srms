@@ -1,0 +1,6 @@
+<?php $me = L('ME'); ?>
+<?php if ($me->id && $me->is_active()) : ?>
+<?php if (Q("{$me}<incharge equipment")->total_count() > 0 && (!Module::is_installed('summary') || $me->access("[大数据体系]查看负责仪器的送样情况"))) : ?>
+<a href="<?php echo URI::url('!equipments/extra/sample'); ?>" class="blue"><?php echo I18N::T('eq_sample', '您负责的所有仪器的送样情况'); ?></a>
+<?php endif; ?>
+<?php endif; ?>

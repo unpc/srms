@@ -1,0 +1,24 @@
+<div class="interval_24"></div>
+<div class="form" style="padding-left: 130px;" >
+    <h2 class="section_title">
+        <span class="border"></span>
+        <span class="black_title"><?php echo I18N::T('equipment', '使用评价')?></span>
+    </h2>
+    <div class="interval_10"></div>
+    <div class="lmaigin_1e5">
+    <table class="form">
+            <tbody>
+                <tr>
+                    <td class="label middle">
+                        <input type="checkbox" name="allow_evaluate" class="middle monitor checkbox" <?php echo $equipment->allow_evaluate ? 'checked="checked"': NULL;?> />
+                    </td>
+                    <td class="label middle">
+                        <label class="middle">
+                            <?php echo I18N::T('equipments', '允许仪器的负责人查看仪器的使用评价');?>
+                        </label>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

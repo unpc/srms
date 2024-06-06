@@ -1,0 +1,271 @@
+<!DOCTYPE html PUBLIC "-//W3C/DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+		<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+        <meta name="renderer" content="webkit" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1" />
+		<title><?php echo I18N::T('eq_sample', '送样情况报表'); ?></title>
+		<base href="<?php echo H(Config::get('system.base_url') ) ?>" />
+		<link type="text/css" rel="stylesheet" href="<?php echo H(URI::url('css', ['f'=>'core'])) ?>" />
+		<style>
+			a {
+			color:blue;
+			text-decoration:underline;
+			}
+			table.report {
+
+			font-size: 14px;
+			margin:auto;
+			}
+			table .time {
+			font-size: 16px;
+			}
+
+			thead{
+			border-top:2px solid  #000;
+			border-bottom:1px solid #000;
+			}
+
+			tbody{
+			border-bottom:2px solid #000;
+			}
+
+			thead#stat{
+			font-size: 10px;
+			border:none;
+			}
+
+			table.report caption {
+			font-size: 150%;
+			margin-bottom: 10px;
+			}
+
+			table.report tbody td {
+			vertical-align: top;
+			border-bottom: 1px dotted #CCC;
+			}
+			table.report .referred_charge {
+			background-color: #eee;
+			border:1px dotted #CCC;
+			}
+            table.report .info,table.report .note {
+                min-width: 150px;
+                white-space: normal;
+                word-break: break-word;
+            }
+		</style>
+		<style media="print">
+			.buttons{
+			display:none;
+			}
+		</style>
+	</head>
+
+	<body>
+        <?php if ($samples->count() > 500): ?>
+        <h1 style="text-align: center">您选择数据超过500条，不适合打印，请选择导出Excel或调整您的搜索条件</h1>
+        <?php else: ;?>
+		<div class="buttons">
+			<a href="#" onclick="window.print(); return false;"><?php echo I18N::T('eq_sample', '打印'); ?></a>
+			<a href="#" onclick="window.close(); return false;"><?php echo I18N::T('eq_sample', '关闭'); ?></a>
+		</div>
+		<table class="report" cellpadding="5" cellspacing="5" style="border-collapse:collapse;">
+			<caption><?php echo I18N::T('eq_sample', '送样记录报表'); ?></caption>
+			<thead id="stat">
+				<tr>
+					<td colspan="<?php echo H(count($valid_columns) / 3) ?>" class="time">
+						<?php
+						$dtsubmit_dtstart = $form['dtsubmit_dtstart_check'] ? Date::format($form['dtsubmit_dtstart'], T('Y/m/d')) : I18N::T('eq_sample','最初');
+						$dtsubmit_dtend = $form['dtsubmit_dtend_check'] ? Date::format($form['dtsubmit_dtend'], T('Y/m/d')) : I18N::T('eq_sample','最末');
+						echo I18N::T('eq_sample', '送样时间: ');
+						echo $dtsubmit_dtstart . ' - ' . $dtsubmit_dtend;
+						?>
+					</td>
+					<td colspan="<?php echo H(count($valid_columns) / 3) ?>" class="time">
+						<?php
+						$dtrial_dtstart = $form['dtrial_dtstart_check'] ? Date::format($form['dtrial_dtstart'], T('Y/m/d')) : I18N::T('eq_sample','最初');
+						$dtrial_dtend = $form['dtrial_dtend_check'] ? Date::format($form['dtrial_dtend'], T('Y/m/d')) : I18N::T('eq_sample','最末');
+						echo I18N::T('eq_sample', '测样时间: ');
+						echo $dtrial_dtstart . ' - ' . $dtrial_dtend;
+						?>
+                    </td>
+					<td colspan="<?php echo H(count($valid_columns) / 3) ?>" class="time">
+						<?php
+						$dtpickup_dtstart = $form['dtpickup_dtstart_check'] ? Date::format($form['dtpickup_dtstart'], T('Y/m/d')) : I18N::T('eq_sample','最初');
+						$dtpickup_dtend = $form['dtpickup_dtend_check'] ? Date::format($form['dtpickup_dtend'], T('Y/m/d')) : I18N::T('eq_sample','最末');
+						echo I18N::T('eq_sample', '取样时间: ');
+						echo $dtpickup_dtstart . ' - ' . $dtpickup_dtend;
+						?>
+					</td>
+				</tr>
+			</thead>
+			<thead>
+				<tr>
+					<?php foreach ($valid_columns as $key => $value) :?>
+                        <th class="left nowrap"><?php echo I18N::T('eq_sample', $value); ?></th>
+					<?php endforeach; ?>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach ($samples as $sample) : ?>
+				<tr>
+					<?php if (array_key_exists('equipment', $valid_columns)): ?>
+					<td class="left nowrap"><?php echo H($sample->equipment->name.Event::trigger('extra.equipment.name', $sample->equipment)); ?></td>
+					<?php endif; ?>
+					<?php if (array_key_exists('eq_ref_no', $valid_columns)): ?>
+					<td class="left nowrap"><?php echo H($sample->equipment->ref_no); ?></td>
+					<?php endif; ?>
+					<?php if (array_key_exists('eq_cf_id', $valid_columns)): ?>
+					<td class="left nowrap"><?php echo H($sample->equipment->id); ?></td>
+					<?php endif; ?>
+					<?php if (array_key_exists('eq_group', $valid_columns)): ?>
+					<td class="left nowrap"><?php echo H($sample->equipment->group->name); ?></td>
+					<?php endif; ?>
+					<?php if (array_key_exists('user', $valid_columns)): ?>
+					<td class="left nowrap"><?php echo H($sample->sender->name); ?></td>
+					<?php endif; ?>
+					<?php if (array_key_exists('user_email', $valid_columns)): ?>
+					<td class="left nowrap"><?php echo H($sample->sender->email); ?></td>
+					<?php endif; ?>
+					<?php if (array_key_exists('user_phone', $valid_columns)): ?>
+					<td class="left nowrap"><?php echo H($sample->sender->phone); ?></td>
+					<?php endif; ?>
+					<?php if (array_key_exists('lab', $valid_columns)): ?>
+					<td class="left nowrap"><?php echo H($sample->lab->name);?></td>
+					<?php endif; ?>
+					<?php if (array_key_exists('phone', $valid_columns)): ?>
+					<td class="left nowrap"><?php echo H($sample->phone);?></td>
+					<?php endif; ?>
+					<?php if (array_key_exists('user_group', $valid_columns)): ?>
+					<td class="right nowrap"><?php echo H($sample->sender->group->name); ?></td>
+					<?php endif; ?>
+					<?php if (array_key_exists('sample_ref_no', $valid_columns)): ?>
+					<td class="right nowrap"><?php echo Number::fill($sample->id, 6); ?></td>
+					<?php endif; ?>
+					<?php if (array_key_exists('dtctime', $valid_columns)): ?>
+					<td class="left nowrap"><?php echo V('eq_sample:incharge/print/dtctime', ['sample'=>$sample])?></td>
+					<?php endif; ?>
+					<?php if (array_key_exists('dtsubmit', $valid_columns)): ?>
+					<td class="left nowrap"><?php echo V('eq_sample:incharge/print/dtsubmit', ['sample'=>$sample])?></td>
+					<?php endif; ?>
+					<?php if (array_key_exists('dtstart', $valid_columns)): ?>
+					<td class="left nowrap">
+                        <?php
+                        $records = Q("$sample eq_record");
+                        if ($records->total_count()) {
+                            foreach ($records as $record) {
+                                echo V('eq_sample:incharge/print/dtime', ['time'=>$record->dtstart]);
+                            }
+                        }else {
+                            echo V('eq_sample:incharge/print/dtime', ['time'=>$sample->dtstart]);
+                        }
+                        ?>
+                    </td>
+					<?php endif; ?>
+					<?php if (array_key_exists('dtend', $valid_columns)): ?>
+					<td class="left nowrap">
+                        <?php
+                        $records = Q("$sample eq_record");
+                        if ($records->total_count()) {
+                            foreach ($records as $record) {
+                                echo V('eq_sample:incharge/print/dtime', ['time'=>$record->dtend]);
+                            }
+                        }else {
+                            echo V('eq_sample:incharge/print/dtime', ['time' => $sample->dtend]);
+                        }
+                        ?>
+                    </td>
+					<?php endif; ?>
+					<?php if (array_key_exists('dtpickup', $valid_columns)): ?>
+					<td class="left nowrap"><?php echo V('eq_sample:incharge/print/dtpickup', ['sample'=>$sample]);?></td>
+                    <?php endif; ?>
+                    
+                    <?php if (array_key_exists('reason', $valid_columns)): ?>
+                    <?php
+                        $charge = O('eq_charge', ['source' => $sample]);
+                        $charge_reason = Q("charge_reason[charge=$charge]:sort(ctime D)")->current();
+                    ?>
+					<td class="left nowrap"><?php echo $charge_reason->reason ?: '--'; ?></td>
+					<?php endif; ?>
+					<?php if (array_key_exists('status', $valid_columns)): ?>
+                    <td class="left nowrap">
+                        <?php echo V('eq_sample:incharge/print/status', ['sample'=> $sample]);?>
+                    </td>
+					<?php endif; ?>
+					<?php if (array_key_exists('samples', $valid_columns)): ?>	
+					<td class="center nowrap"><?php echo $sample->count; ?></td>
+					<?php endif; ?>
+					<?php if (array_key_exists('success_samples', $valid_columns)): ?>
+					<td class="center nowrap"><?php echo ($sample->status == EQ_Sample_Model::STATUS_TESTED) ? $sample->success_samples : ''; ?></td>
+					<?php endif; ?>
+					<?php if (array_key_exists('handlers', $valid_columns)): ?>
+					<td class="left nowrap"><?php echo H($sample->operator->name); ?></td>
+					<?php endif; ?>
+					<?php if (array_key_exists('amount', $valid_columns)): ?>
+                    <td class="right nowrap"><?php
+                    $charge = O('eq_charge', ['source'=> $sample]);
+                    if ($charge->id && $charge->amount) {
+                        echo Number::currency($charge->amount);
+                    }
+                    else {
+                        echo '--';
+                    }
+                    ?></td>
+					<?php endif; ?>
+                    <?php if (array_key_exists('material_amount', $valid_columns)): ?>
+                        <td class="right nowrap"><?php
+                            $charge = O('eq_charge', ['source'=> $sample]);
+                            if ($charge->id && $charge->material_amount) {
+                                echo Number::currency($charge->material_amount);
+                            }
+                            else {
+                                echo '--';
+                            }
+                            ?></td>
+                    <?php endif; ?>
+					<?php if (array_key_exists('info', $valid_columns)): ?>
+					<td class="left info"><?php echo $sample->description ? H($sample->description) : '--'; ?></td>
+					<?php endif; ?>
+					<?php if (array_key_exists('note', $valid_columns)): ?>
+					<td class="left note"><?php echo $sample->note ? H($sample->note, TRUE) : '--'; ?></td>
+					<?php endif; ?>
+                    <?php if (array_key_exists('duty_teacher', $valid_columns)): ?>
+                        <td class="left nowrap"><?php echo H($sample->duty_teacher->name); ?></td>
+                    <?php endif; ?>
+					<?php if (array_key_exists('site', $valid_columns)): ?>
+					<td class="left nowrap"><?php echo H(Config::get('site.map')[$sample->equipment->site]); ?></td>
+					<?php endif; ?>
+					<?php if (Lab::get('eq_sample.response_time')): ?>
+						<?php if (array_key_exists('ctime', $valid_columns)): ?>
+						<td class="left nowrap"><?php echo $sample->ctime ? Date::format($sample->ctime, 'Y/m/d H:i:s') : '--'; ?></td>
+						<?php endif; ?>
+						<?php if (array_key_exists('response_time', $valid_columns)): ?>
+						<td class="left nowrap">
+						<?php 
+							$response_time = (string)V('eq_sample:samples_table/data/response_time', ['sample' => $sample]);
+							$response_time = empty($response_time) || $response_time == '0' ? $response_time = '0小时' : $response_time;
+							echo $response_time; 
+						?>
+						</td>
+						<?php endif; ?>
+					<?php endif; ?>
+					<?php
+					//自定义的输出项
+					$data_custom = Event::trigger('eq_sample.export_list_csv', $sample, $data, $valid_columns);
+					if(is_array($data_custom)) foreach ($data_custom as $key => $value) :?>
+						<td class="left nowrap">
+							<?php echo $value;?>
+						</td>
+					<?php endforeach;?>
+                    <?php if(array_key_exists('university', $valid_columns)): ?>
+                    <td class="right nowrap">
+                        <?php echo Config::get('university.list')[$sample->source_name];?>
+                    </td>
+                    <?php endif; ?>
+				</tr> 
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+        <?php endif; ?>
+	</body>
+</html>

@@ -1,0 +1,47 @@
+<?php $disabled = L('ME')->is_allowed_to('修改计费设置', $equipment) ? '' : 'disabled="disabled"'; ?>
+<form method="post" autocomplete="off" action="<?php echo H(URI::url()) ?>">
+    <div class="form">
+        <table class="form flexible">
+            <tbody>
+            <tr>
+                <td class="top lpadding_30">
+                    <?php if (Eq_Charge_Timezone::allow_timezone($equipment)): ?>
+                        <?php $timezone = $equipment->timezone(); ?>
+                        <div class="interval_30">&nbsp;</div>
+                        <h2 class="section_title"><?php echo I18N::T('eq_charge', '仪器前置&后置工作时间要求'); ?></h2>
+                        <div class="interval_30">&#160;</div>
+                        <div>
+                            <?php echo Form::checkbox('need_lead_time', $equipment->need_lead_time, I18N::T('eq_charge', '需前置时间'), 'class="middle checkbox"' . $disabled, 'class="middle"'); ?>
+                            <span class="description"><?= I18N::T('eq_charge', '(设置后每次预约/使用计费时均会扣除如下时间的费用)') ?></span>
+                            <div style="margin: .5rem 1.5rem">
+                                <?= I18N::T('eq_charge', '扣除时间') ?>&nbsp;&nbsp;<input style="width: 7rem;"
+                                                                                      name="lead_time"
+                                                                                      class="text number" size="10"
+                                                                                      value="<?php echo H($timezone['lead_time'] ?? $form['lead_time']) ?>" <?php echo $disabled ?>/>&nbsp;&nbsp;<?= I18N::T('eq_charge', "分钟") ?>
+                                <span class="description"><?= I18N::T('eq_charge', '请输入大于0的整数') ?>
+                            </div>
+                        </div>
+                        <div>
+                            <?php echo Form::checkbox('need_post_time', $equipment->need_post_time, I18N::T('eq_charge', '需后置时间'), 'class="middle checkbox"' . $disabled, 'class="middle"'); ?>
+                            <span class="description"><?= I18N::T('eq_charge', '(设置后每次预约/使用计费时均会扣除如下时间的费用)') ?></span>
+                            <div style="margin: .5rem 1.5rem">
+                                <?= I18N::T('eq_charge', '扣除时间') ?>&nbsp;&nbsp;<input style="width: 7rem;"
+                                                                                      name="post_time"
+                                                                                      class="text number" size="10"
+                                                                                      value="<?php echo H($timezone['post_time'] ?? $form['post_time']) ?>" <?php echo $disabled ?>/>&nbsp;&nbsp;<?= I18N::T('eq_charge', "分钟") ?>
+                                <span class="description"><?= I18N::T('eq_charge', '请输入大于0的整数') ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="interval_60">&#160;</div>
+    <?php if (!$disabled): ?>
+        <div class="form float_right">
+            <input type="submit" name="submit" class="font-button-save" value="<?php echo H(T('保存修改')) ?>"/>
+        </div>
+    <?php endif; ?>
+</form>

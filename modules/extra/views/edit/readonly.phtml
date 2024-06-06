@@ -1,0 +1,53 @@
+<?php
+$fields_uniqid = 'fields_'. uniqid();
+$add_field_uniqid = 'add_field_'. uniqid();
+?>
+<div class="relate_view">
+<div class="message_view"></div>
+<form method="post" autocomplete="off" id="relate_content_form">
+    <input class="hidden text" value="<?php echo H($category) ?>" name="category" />
+    <div class="extra_hr">&#160;</div>
+    <ul class="form extra-fields-sortable" id="<?php echo H($fields_uniqid) ?>">
+        <?php if (count($extra->get_fields($category))) :?>
+            <?php
+                $types = Extra_Model::$types;
+                $prefix = 0;
+            ?>
+            <?php foreach($extra->get_fields($category) as $uniqid => $field) : ?>
+            <li>
+                <table class="field flexible" style="border-spacing: 0px;">
+                    <tr>
+                      
+                        <td>
+                            <div class="padding_1">
+                            <?php 
+                            if ($field['adopted']) {
+                                echo Form::hidden("field[$prefix][title]", $field['title']);
+                                echo Form::hidden("field[$prefix][adopted]", TRUE);
+                                echo Event::trigger("extra.settings.adopted_view[{$extra->object->name()}.{$extra->type}]", 
+                                $uniqid, $field, $extra->object, $prefix);
+                            }
+                            else {
+                                echo V('extra:edit/readonly_field', [
+                                    'prefix'=> $prefix, 
+                                    'field'=> $field, 
+                                    'uniqid'=>$uniqid,
+                                ]);
+                            }
+                            ?>
+                            <?php 
+                            if ($uniqid) {
+                            	echo Form::hidden("field_uniqid[{$prefix}]", $uniqid);
+                            }
+                            ++ $prefix;
+                            ?>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </li>
+            <?php endforeach;?>
+        <?php endif;?>
+    </ul>
+</form>
+</div>

@@ -1,0 +1,6 @@
+<?php
+$links = [];
+foreach($users as $user) {
+	$links[] = $user->render(NULL, TRUE);
+}
+echo implode(' | ', $links);

@@ -1,0 +1,13 @@
+<!--maybe todo-->
+<div>
+    <?php
+    $calendar_content = Event::trigger('calendar.calendar_left_content.get', $calendar, $fourth_tabs);
+    if ( $calendar_content )  echo $calendar_content;
+    ?>
+</div>
+<div>
+	<?php echo $fourth_tabs; ?>
+</div>
+<div class="interval_30"></div>
+<div class="interval_16"></div>
+<?php echo $fourth_tabs->content; ?>

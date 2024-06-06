@@ -1,0 +1,55 @@
+<form class="" action="<?= H(URI::url()) ?>" method="POST">
+    <table class="form flexible">
+        <tbody>
+        <tr>
+            <td class="top icon" width="130px">
+                <?php echo $equipment->icon('104'); ?>
+            </td>
+            <td>
+            <?php echo V('form_error', ['form' => $form]); ?>
+            <?php if(L('ME')->is_allowed_to('锁定预警设置', $equipment)) :?>
+                <h2 class="section_title">
+                    <span class="border"></span>
+                    <span class="black_title">
+                    <?php echo I18N::T('eq_warning', '锁定预警设置'); ?>
+                    </span>
+                </h2>
+                <div class="interval_15"></div>
+                <table class="form td_padding_2" width="80%">
+                    <tr>
+                        <td class="right nowrap label middle" style="width: 5%;"></td>
+                        <td>
+                            <div class="lmaigin_1e5"><?php echo Form::checkbox('warning_lock',  $equipment->warning_lock, I18N::T('eq_charge', '锁定仪器负责人对该仪器的预警设置'), 'class="middle checkbox"', 'class="middle"');?></div>
+                        </td>
+                    </tr>
+                </table>
+            <?php endif;?>
+            <div class="interval_30"></div>
+                <?php
+                    $readonly = $equipment->warning_lock == 'on' && !L('ME')->is_allowed_to('锁定预警设置',$equipment);
+
+                    echo Widget::factory('flexform'.($readonly ? '_readonly' : ''), [
+                        'title' => I18N::T('material', '预警设置'),
+                        'template_data' => ['disabled' => TRUE],
+                        'existing_data' => $rule_settings,
+                        'item_view' => 'eq_warning:equipment/specific_setting'.($readonly ? '_readonly' : ''),
+                        'equipment' => $equipment,
+                        'extra_vars'=> [
+                            'form' => $form,
+                            'equipment' => $equipment,
+                        ],
+                    ]);
+                ?>
+            
+            <?php if(!$readonly):?>
+                <div class="form float_right">
+                    <div class="form">
+                        <input type="submit" name="submit" class="font-button-save" value="<?php echo H(I18N::T('material', '保存修改')) ?>" />
+                    </div>
+                <div>
+            <?php endif?>
+            <div class="interval_30"></div>
+            </td>
+        </tbody>
+    </table>
+</form>

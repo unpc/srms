@@ -1,0 +1,55 @@
+<div class="form padding_1">
+    <form method="post" autocomplete="off" q-event="submit" q-object="credit_edit">
+        <?php echo V('form_error', ['form'=>$form, 'show_list'=>true]);?>
+        <?php $require = (string) V('form_require'); ?>
+        <table class="form flexible">
+            <tbody>
+                <tr>
+                    <td class="label right nowrap middle"><?php echo I18N::T('credit', '计分类型')?></td>
+                    <td class="top middle">
+                        <?php
+                            echo Form::radio(
+                                'type',
+                                Credit_Rule_Model::STATUS_ADD,
+                                $form['type'],
+                                I18N::T('credit', '加分'),
+                                ' class="middle monitor radio"',
+                                'class="middle"'
+                            ) . '&#160;' . "&nbsp;&nbsp;" .
+                            Form::radio(
+                                'type',
+                                Credit_Rule_Model::STATUS_CUT,
+                                $form['type'],
+                                I18N::T('credit', '扣分'),
+                                ' class="middle monitor radio""',
+                                'class="middle"'
+                            );
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="top label right nowrap"><?php echo I18N::T('credit', '计分事件')?></td>
+                    <td class="top nowrap" colspan="2">
+                        <textarea name="name" rows="3" cols="40"
+                            class="textarea autogrow padding_1"><?php echo $form['name'] ?></textarea>
+                        <?php echo $require; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="top label right nowrap"><?php echo I18N::T('credit', '计分值')?></td>
+                    <td class="top nowrap" colspan="2">
+                        <input class="text" type="text" name="score" value="<?php echo $form['score'] ?>">
+                        <?php echo $require; ?>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td>
+                        <input type="submit" name="submit" class="button font-button-save"
+                            value="<?php echo H(I18N::T('credit', '添加规则')) ?>" />
+                    </td>
+                </tr>
+        </table>
+    </form>
+</div>

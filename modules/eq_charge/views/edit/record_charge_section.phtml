@@ -1,0 +1,162 @@
+<?php
+	$me = L('ME');
+	$equipment = $record->equipment;
+	/*如果没有相关计费脚本，不显示以下内容*/
+	if($equipment->charge_script['record']) :
+?>
+<tr>
+	<td colspan="2"><hr/></td>
+</tr>
+<?php endif;?>
+<?php
+$charge_tags = (array) $equipment->charge_tags['record'];
+if (count($charge_tags) > 0 && $equipment->charge_template['record'] == 'custom_record'):
+?>
+<tr>
+	<td class="label top right nowrap"><?php echo I18N::T('eq_charge', '使用计费标签'); ?></td>
+	<td class="nowrap">
+		<div class="form" style="padding:4px" align="right" align="right">
+			<table class="form">
+				<?php
+					$charge = O('eq_charge', ['source'=>$record]);
+					$tags = (array) $charge->charge_tags;
+					$eq_tags = (array) $record->equipment->charge_tags['record'];
+					$i = 0;
+					foreach ($eq_tags as $label) :
+						$input_prefix = 'charge_tags['.rawurlencode($label).']';	
+						$checked = $form['charge_tags'] ? $form['charge_tags'][$label]['checked'] == 'on' : isset($tags[$label]);
+						$value = $tags[$label];
+						if ($i == 0) echo '<tr>';
+				?>
+				<td class="nowrap">
+					<?php echo Form::checkbox($input_prefix.'[checked]', $checked, H($label), 'class="middle monitor"', 'class="middle nowrap"'); ?>
+				</td>
+				<td>
+				
+                    <input name="<?php echo $input_prefix ?>[value]" type="input" class="text number toggle_status:<?php echo $input_prefix ?>[checked] enable_on:on" value="<?php echo H($value)?>" size="10" />
+                </td>
+				<?php
+					if ($i % 2 == 1) echo '</tr>';
+					else echo '<td>&#160&#160;</td>';
+					$i++;	
+					endforeach; 
+				?>
+			</table>
+		</div>
+	</td>
+</tr>
+<?php endif;?>
+
+<?php 
+	/*如果没有相关计费脚本，不显示以下内容*/
+	if($equipment->charge_script['record']) :
+	$record_id = 'custom_charge_' . uniqid();
+?>
+<tr>
+    <td class="label nowrap"><?php echo I18N::T('eq_charge', '使用收费金额'); ?></td>
+</tr>
+<tr>
+	<td class="nowrap">
+		<input name="record_amount" type="text" class="text currency <?= $record_id?>" style="width: 112px;" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo $charge->amount; ?>" 
+		<?php if(!$charge->custom || !$me->is_allowed_to('修改使用计费', $record)) echo 'disabled';?> />
+        <?php if ($record->id && $me->is_allowed_to('修改使用计费', $record)) : ?>
+		    <a href="#" class="font-button-save record_button_calculate prevent_default"><?php echo I18N::T('eq_charge', '重新计算') ?></a>
+		<?php endif; ?>
+	</td>
+</tr>
+<tr <?= $me->is_allowed_to('修改使用计费', $record) ? : 'style="display: none;"' ?>>
+	<td colspan="2">
+		<?php echo Form::checkbox('record_custom_charge', $charge->custom, I18N::T('eq_charge', '自定义使用收费金额'), 'class="middle monitor custom_charge checkbox" id="'.$record_id.'"', 'class="middle"');?>
+	</td>
+</tr>
+<?php echo Event::trigger('record_extra_charge', $charge, $record, $record_id) ?>
+<?php 
+	endif;
+?>
+
+
+<?php
+	if($equipment->charge_script['reserv'] && $record->reserv->id) :
+?>
+<tr>
+	<td colspan="2"><hr/></td>
+</tr>
+<?php endif;?>
+
+
+<?php
+$reserv = $record->reserv;
+$reserv_charge_tags = (array) $equipment->charge_tags['reserv'];
+if ($reserv->id && (count($reserv_charge_tags) > 0 && $equipment->charge_template['reserv'] == 'custom_reserv')):
+?>
+
+<tr>
+	<td class="label top right nowrap"><?php echo I18N::T('eq_charge', '预约计费标签'); ?></td>
+	<td class="nowrap">
+		<div class="form" style="padding:4px" align="right" align="right">
+			<table class="form">
+				<?php
+					$charge = O('eq_charge', ['source'=>$reserv]);
+					$tags = (array) $charge->charge_tags;
+					$eq_tags = (array) $equipment->charge_tags['reserv'];
+					$i = 0;
+					foreach ($eq_tags as $label) :
+						$input_prefix = 'reserv_charge_tags['.rawurlencode(H($label)).']';	
+						$checked = $form['reserv_charge_tags'] ? $form['reserv_charge_tags'][$label]['checked'] == 'on' : isset($tags[$label]);
+						$value = $tags[$label];
+						if ($i == 0) echo '<tr>';
+				?>
+				<td class="nowrap">
+					<?php echo Form::checkbox($input_prefix.'[checked]', $checked, H($label), 'class="middle monitor"', 'class="middle nowrap"'); ?>
+				</td>
+				<td>
+					<input name="<?php echo $input_prefix ?>[value]" type="input" class="text number toggle_status:<?php echo $input_prefix ?>[checked] enable_on:on" value="<?php echo H($value)?>" size="10" />
+				</td>
+				<?php
+					if ($i % 2 == 1) echo '</tr>';
+					else echo '<td>&#160&#160;</td>';
+					$i++;	
+					endforeach; 
+				?>
+			</table>
+		</div>
+	</td>
+</tr>
+<?php endif;?>
+<?php 
+	/*如果没有相关计费脚本，不显示以下内容*/
+	$reserv_charge = O('eq_charge', ['source'=>$reserv]);
+	if($equipment->charge_script['reserv'] && $reserv->id) :
+	$reserv_id = 'custom_charge_' . uniqid();
+?>
+<tr>
+    <td colspan="2" class="label top left nowrap"><?php echo I18N::T('eq_charge', '预约收费金额'); ?></td>
+</tr>
+<tr>
+	<td colspan="2" class="nowrap left">
+		<input name="reserv_amount" type="text" class="text currency <?= $reserv_id?>" style="*position:relative;*bottom:3px; width: 112px;" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo $reserv_charge->amount; ?>" <?php if(!$reserv_charge->custom) echo 'disabled';?>/>
+        &#160;
+        <?php if($record->id): ?>
+		<a href="#" class="font-button-default reserv_button_calculate button_calculate prevent_default"><?php echo I18N::T('eq_charge', '重新计算') ?></a>
+		<?php endif; ?>
+	</td>
+</tr>
+<tr>
+	<td colspan="2" class="left nowrap">
+		<?php echo Form::checkbox('reserv_custom_charge', $reserv_charge->custom, I18N::T('eq_charge', '自定义预约收费金额'), 'class="middle monitor custom_charge" id="'.$reserv_id.'"', 'class="middle"');?>
+	</td>
+</tr>
+<?php endif;?>
+<?php
+	if($equipment->charge_script['record'] || $equipment->charge_script['reserv']) :
+?>
+<tr>
+	<td colspan="2"><hr/></td>
+</tr>
+<?php endif;?>
+<?php
+echo JS::load('eq_charge:edit_charge', [
+	'trigger_url' => URI::url('!eq_charge/charge/'),
+	'record_id' => $record->id ?: '',
+	'reserv_id' => $reserv->id ?: '',
+]);

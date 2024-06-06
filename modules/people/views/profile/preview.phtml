@@ -1,0 +1,87 @@
+<?php 
+    $me = L('ME');
+    $show_privacy = $me->is_allowed_to('查看联系方式', $user);
+	$token_and_backend = Auth::parse_token($user->token);
+	$token = $token_and_backend[0];
+?>
+<div class="clearfix" style="padding: 10px">
+<table class="form">
+<tr>
+	<td class="top icon rpadding_12">
+		<?php echo $user->icon('64') ?>
+		<div style="padding-left:10px;"></div>
+		<?php 
+			$items = Event::trigger('people.preview.short.picture', $user) ?: [];
+			if (count($items)): 
+		?>
+		<div class="short_info">
+			<?php foreach ($items as $key => $item){
+				echo $item;
+			}?>
+		</div>
+		<?php endif; ?>
+	</td>
+	<td class="top nowrap">
+		<h2>
+		<a href="<?php echo H($user->url() ) ?>"><?php echo H($user->name) ?></a>
+			<?php if(Module::is_installed('labs')):?>
+				<?php 
+				$lab_url = [];
+				foreach (Q("$user lab") as $lab) {
+					$str = '<a class="blue normal" href="'.H($lab->url()).'">'.H($lab->name).'</a>';
+					$lab_url[] = $str;
+				}?>
+				<small><?php echo join(', ',$lab_url);?></small>
+			<?php endif; ?>
+
+			<?php if($user->id == $me->id): ?>
+			<br/>
+			<small class= "normal"><?php echo I18N::T('people', '登录名') .' '. $token?></small>
+			<?php endif; ?>
+		</h2>
+		<p>					
+			<?php
+			$roles = L('ROLES');
+			$user_roles = $user->roles();
+			$roles_arr = [];
+			if (count($user_roles) > 0) {
+				foreach ($user_roles as $rid) {
+					if ($roles[$rid]) {
+						$role = $roles[$rid];
+                        if ($role->id < 0 || $me->is_allowed_to('查看', $role)) {
+						    $roles_arr[] = H($role->name);
+                        }
+					}
+				}
+				if (count($roles_arr)) echo implode(', ', $roles_arr);
+			}
+			?>
+		</p>
+		<p>
+			<?php if($user->email && $show_privacy): ?>
+				<span class="email"><?php echo URI::mailto(H($user->email)) ?></span><br/>    
+			<?php endif; ?>
+			<?php if ($GLOBALS['preload']['people.enable_member_date']): ?>
+				<span class="date"><?php echo Date::fuzzy_date_format($user->dfrom, $user->dto, 'Y/m/d') ?></span>
+			<?php endif; ?>
+		</p>
+		<?php 
+		//没有地方(add/edit)设置institude属性，暂时注释掉 （xiaopei.li@2010.11.15)
+		//echo I18N::T('people', '学校'); 
+		//echo H($user->institute); ?>
+		<?php if ($user->group->id): ?>
+            <p><?php echo I18N::T('people', '组织机构'); ?>: <?php echo V('application:tag/path', ['tag'=>$user->group, 'url_template'=>URI::url('!people/list', 'group_id=%tag_id')]); ?></p>
+        <?php endif ?>
+        <?php if ($user->organization) : ?>
+            <p><?php echo I18N::T('people', '单位名称');?>: <?php echo H($user->organization);?></p>
+        <?php endif;?>
+        <?php if ($show_privacy):?> 
+	        <?php if ($user->phone ) :   ?>
+                <p><?php echo I18N::T('people', '联系电话');?>:<?php echo H($user->phone);?></p>
+		    <?php endif; ?>
+	        <?php echo Event::trigger('show_user_other_privacy', $user, true); ?>
+        <?php endif;?>
+	</td>
+</tr>
+</table>
+</div>

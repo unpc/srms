@@ -1,0 +1,38 @@
+<?php
+	$me = L('ME');
+	$tip_path = 'tips.nfs_share.'.$sub_path;
+ 	if ($me->hidden_tips[$tip_path] || $me->hide_all_tips) {
+ 		$extra_class = 'hidden';
+ 	}
+?>
+<div class="tip <?php echo $extra_class ?>">
+	<div class="description">
+		<span><?php echo I18N::T('nfs_share', "您可以上传、下载、删除文件。您可以创建文件夹，在文件夹中上传、下载、删除文件。") ?></span>
+		<p><?php echo I18N::T('nfs_share', '您可以根据文件名和上传时间对文件进行搜索。') ?></p>
+	</div>
+	<div class="links nowrap rpadding_1 right">
+		<a href="#" id="notip" class="blue"><?php echo I18N::T('nfs_share', '我知道了'); ?></a>
+		<span class="separator">•</span>
+		<a href="<?php echo H(URI::url('admin/preferences.tips')) ?>" class="blue" target="_blank"><?php echo I18N::T('nfs_share', '设置') ?></a>
+	</div>
+	<?php $path = 'tips.nfs_share.'.$sub_path ?>
+	<script>
+		jQuery(function($){
+			var $notip = $("a#notip");
+			$notip.click( function() {
+				var $this = $(this);
+				var $tip = $this.parents(".tip");
+				$tip.hide();
+				Q.trigger({
+					object: "notip",
+					event: "click",
+					data: {
+						"path": "<?php echo H($path ) ?>"
+					},
+					url: "<?php echo URI::url('/index'); ?>"
+				});
+				return false;
+			});
+		});
+	</script>
+</div>

@@ -1,0 +1,112 @@
+<?php 
+    $labs = Q("$me lab");
+    $lab = $labs->current();
+?>
+<div id="profile_dashboard" class="profile_dashboard clearfix">
+    <div class="user_info">
+
+        <!-- user_card -->
+        <div class="user_card">
+            <div class="basic_info">
+                <div class="icon float_left"><a href="<?= H($me->url()) ?>"><?= $me->icon('58.7') ?></a></div>
+                <div class="my_info float_left">
+                    <p class="my_name">尊敬的 <span class="name"><?= $me->name ?></span>,欢迎登录系统</p>
+                    <p class="my_lab"><a href="<?= $lab->url() ?>"><?= $lab->name ?></a></p>
+                </div>
+            </div>
+
+            <div class="billing_info">
+                <div class="billing_item balance">
+                    <p class="amount"><?= Number::currency(23400.56) ?></p>
+                    <p class="amount_info">课题组余额</p>
+                </div>
+                <div class="billing_item credit">
+                    <p class="amount"><?= Number::currency(2100.32) ?></p>
+                    <p class="amount_info">信用额度</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- message -->
+        <div class="messages">
+            <div class="message_title">
+                <div class="title float_left">消息中心</div>
+                <div class="more float_left">
+                    <a href="<?= URI::url('!messages') ?>">更多<i class="icon-right"></i></a>
+                </div>
+            </div>
+            <div class="message_body">
+                <div class="message_item">
+                    <div class="message_type">
+                        <span>系统</span>
+                        <i class="message_tips"></i>
+                    </div>
+                    <div class="message_content">
+                        <div class="title float_left">课题组成员送样记录删除提醒</div>
+                        <div class="message_time float_right">2018/03/24 15:36</div>
+                        <div class="clearfix"></div>
+                        <div class="message_info">
+                            <span>您好：您实验室成员Support对仪器激光热导仪您实验室成员Support对仪器激光热导仪您实验室成员Support对仪器激光热导仪</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="message_item">
+                    <div class="message_type">
+                        <span>系统</span>
+                        <!-- <i class="message_tips"></i> -->
+                    </div>
+                    <div class="message_content">
+                        <div class="title float_left">课题组成员送样记录删除提醒</div>
+                        <div class="message_time float_right">2018/03/24 15:36</div>
+                        <div class="clearfix"></div>
+                        <div class="message_info">
+                            <span>您好：您实验室成员Support对仪器激光热导仪您实验室成员Support对仪器激光热导仪您实验室成员Support对仪器激光热导仪</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- violation -->
+        <div class="violation">
+            <div class="violation_title"><div class="title float_left">违规情况</div></div>
+            <div class="violation_body">
+                <div class="violation_total float_left">
+                    <div class="total">32</div>
+                    <div class="total_tips">违规总次数</div>
+                </div>
+
+                <div class="sub_violations float_left">
+                    <div class="violation_line">
+                        <div class="sub_violation float_left">
+                            <div class="count">11</div>
+                            <div class="count_tips"><i class="sign later"></i>迟到</div>
+                        </div>
+                        <div class="sub_violation float_right">
+                            <div class="count">13</div>
+                            <div class="count_tips"><i class="sign over_time"></i> 超时</div>
+                            
+                        </div>
+                    </div>
+
+                    <div class="violation_line">
+                        <div class="sub_violation float_left">
+                            <div class="count">3</div>
+                            <div class="count_tips"><i class="sign miss_check"></i>爽约</div>
+                        </div>
+                        <div class="sub_violation float_right">
+                            <div class="count">5</div>
+                            <div class="count_tips"><i class="sign leave_early"></i>早退</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="tab_pagination">
+    <?php echo $secondary_tabs ?>
+</div>
+<?php echo $secondary_tabs->content ?>

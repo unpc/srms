@@ -1,0 +1,34 @@
+<?php
+$userinfo = O('user_info',['user'=>$user]);
+?>
+<div class="form margin-left-half">
+	<form method="post" class="edit" autocomplete="off" action="<?php echo H(URI::url()) ?>">
+	<table class="form" width="100%">
+		<tbody>
+            <tr>
+                <h2 class="section_title"><?php echo I18N::T('people', '您的隐私信息')?></h2>
+                <div class="interval_16"></div>
+            </tr>
+			<tr>
+                <td class="nowrap" style="padding-left: 1rem" width="300"><?php
+                        $privacy = User_Model::$privacy;
+                        echo Form::dropdown('privacy', I18N::T('people', $privacy), (int)$userinfo->privacy);
+                    ?>
+                </td>
+			</tr>
+            <tr>
+                <td>
+                    <div class="interval_6"></div>
+                    <span style="display: inline;padding-left: 1rem" class="require error"><span class="required">*</span><?php echo I18N::T('people', '隐私信息包括电话号码、邮箱地址');?></span>
+                </td>
+            </tr>
+			<tr>
+                <td>
+                    <div class="interval_36"></div>
+					<input type="submit" name="submit" class="font-button-save" value="<?php echo H(I18N::T('people', '保存修改')) ?>" />
+                </td>
+			</tr>
+		</tbody>
+	</table>
+	</form>
+</div>

@@ -1,0 +1,125 @@
+<?php 
+    /**
+     * 产品要改回原先方式，该文件先备份一下
+     */
+    $me = L('ME');
+    $labs = Q("$me lab");
+    
+    $billing_labs = [];
+    if($GLOBALS['preload']['billing.single_department']) {
+        $billing_department = Billing_Department::get();
+        foreach ($labs as $lab) {
+            $billing_account = Q("$lab billing_account[department={$billing_department}]")->current();
+            $billing_labs[$lab->id][] = [
+                'lab_title' => H($lab->name),
+                'lab_id' => $lab->id,
+                'balance' => $billing_account->balance,
+                'credit_line' => $billing_account->credit_line,
+                'department_name' => $billing_department->name,
+            ];
+        }
+    } else {
+        foreach ($labs as $lab) {
+            $billing_accounts = Q("$lab billing_account");
+            foreach ($billing_accounts as $account) {
+                $billing_labs[$lab->id][] = [
+                    'lab_title' => H($lab->name),
+                    'balance' => $account->balance,
+                    'lab_id' => $lab->id,
+                    'credit_line' => $account->credit_line,
+                    'department_name' => $account->department->name,
+                ];
+            }
+        }
+    }
+    
+    $billing_labs[100][] = [
+        'lab_title' => '张三课题组',
+        'balance' => 1000000,
+        'lab_id' => O('lab', 216)->id,
+        'credit_line' => 1000000,
+        'department_name' => '财务部门1',
+    ];
+    
+    $billing_labs[200][] = [
+        'lab_title' => '李四课题组',
+        'balance' => 1000000,
+        'lab_id' => O('lab', 908)->id,
+        'credit_line' => 1000000,
+        'department_name' => '财务部门1',
+    ];
+
+    // $first_billing_lab = array_shift($billing_labs);
+    $first_billing_lab = current($billing_labs);
+    $first_billing_basic_info = current($first_billing_lab);
+
+    $billing_lab_count = count($billing_labs);
+?>
+
+<div class="user_card">
+    <div class="basic_info">
+        <div class="icon float_left"><a href="<?= H($me->url()) ?>"><?= $me->icon('58.7') ?></a></div>
+        <div class="my_info float_left">
+            <p class="my_name">尊敬的 <span class="name"><?= $me->name ?></span>,欢迎登录系统</p>
+            <p class="my_lab">
+                <a href="<?php // echo $first_billing_lab['lab']->url() ?>"><?php // echo $first_billing_lab['lab_title'] ?></a>
+                <a class="lab_title" href="javascript:void(0);"><?= $first_billing_basic_info['lab_title'] ?></a>
+                <?php if ($billing_lab_count > 0): ?>
+                    <i class="icon-drop_down02"></i>
+                <?php endif; ?>
+            </p>
+
+            <?php if ($billing_lab_count > 0): ?>
+            <ul id="lab_list" class="lab_list">
+                <?php foreach($billing_labs as $billing_lab): ?>
+                    <?php $billing_info = current($billing_lab) ?>
+                    <li lab_id="<?= $billing_info['lab_id'] ?>"><?= $billing_info['lab_title'] ?></li>
+                <?php endforeach; ?>
+            </ul>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- <ul class="department_list" lab_id="<?= $first_billing_basic_info['lab_id'] ?>" title="<?= $first_billing_basic_info['department_name'] ?>">
+        <?php foreach ($first_billing_lab as $billing_lab): ?>
+            <li class="department_item <?= $billing_lab !== current($first_billing_lab) ? 'hidden' : 'active' ?>">
+                <div class="billing_info">
+                    <div class="billing_item balance">
+                        <p class="amount"><?= Number::currency($billing_lab['balance']) ?></p>
+                        <p class="amount_info">课题组余额</p>
+                    </div>
+                    <div class="billing_item credit">
+                        <p class="amount"><?= Number::currency($billing_lab['credit_line']) ?></p>
+                        <p class="amount_info">信用额度</p>
+                    </div>
+                </div>
+            </li>
+        <?php endforeach; ?>
+        <div class="slideDepartment slideLeft"><i class="icon-left"></i></div>
+        <div class="slideDepartment slideRight"><i class="icon-right"></i></div>
+    </ul> -->
+
+    <?php if ($billing_lab_count > 0): ?>
+        <?php foreach ($billing_labs as $departments): ?>
+            <?php $billing_info = current($departments); ?>
+        <ul class="department_list <?= $departments !== $first_billing_lab ? 'hidden' : 'active' ?>" lab_id="<?= $billing_info['lab_id'] ?>" title="<?= $billing_info['department_name'] ?>">
+            <?php foreach($departments as $department): ?>
+            <li class="department_item <?= $department !== current($departments) ? 'hidden' : 'active' ?>">
+                <div class="billing_info">
+                    <div class="billing_item balance">
+                        <p class="amount"><?= Number::currency($department['balance']) ?></p>
+                        <p class="amount_info">课题组余额</p>
+                    </div>
+                    <div class="billing_item credit">
+                        <p class="amount"><?= Number::currency($department['credit_line']) ?></p>
+                        <p class="amount_info">信用额度</p>
+                    </div>
+                </div>
+            </li>
+            <?php endforeach; ?>
+            <div class="slideDepartment slideLeft disabled"><i class="icon-left"></i></div>
+            <div class="slideDepartment slideRight <?= count($departments) == 1 ? 'disabled' : '' ?>"><i class="icon-right"></i></div>
+        </ul>
+        <?php endforeach; ?>
+    <?php endif; ?>
+</div>

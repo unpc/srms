@@ -1,0 +1,61 @@
+<?= JS::load_sync('widgets/rateit'); ?>
+<?= JS::load_sync('json2'); ?>
+<?= CSS::load_async('widgets/rateit'); ?>
+
+<style>
+    .rateit {
+        position: relative;
+        top: 2px;
+        left: 5px;
+    }
+
+    .no_dropdown {
+        display: none;    
+    }
+
+    .rateit-reset {
+        display: none !important;
+    }
+</style>
+<?php
+
+$min_value = 0;
+$max_value = 5;
+$step = 1;
+$resetable = FALSE;
+$rateit_uniqid = 'rateit_' . uniqid();
+$rateit_input_uniqid = 'rateit_input_' . uniqid();
+$rateit_tip_uniqid = 'rateit_tip_' . uniqid();
+
+?>
+
+<select class="no_dropdown" name="<?php echo $name; ?>" id="<?php echo $rateit_input_uniqid; ?>">
+<?php
+    for ($value = $min_value; $value <= $max_value; $value += $step):
+        echo strtr('<option value="%value" data-tip="%tip">%value</option>', array(
+                       '%value' => $value,
+                       '%tip' => $tip[$value],
+                    ));
+    endfor;
+?>
+</select>
+<span id="<?php echo $rateit_uniqid; ?>" class="rateit" data-rateit-value="<?php echo $rateit_value; ?>" data-rateit-backingfld="<?php echo '#' . $rateit_input_uniqid; ?>" <?php if (!$resetable) echo 'data-rateit-resetable="false"'; ?>></span>
+<span style="position: relative; left: 10px; bottom: 1px;" class="description" id="<?php echo $rateit_tip_uniqid; ?>"><?php echo $tip[$rateit_value - 1]; ?></span>
+
+<script>
+$(function() {
+    <?php if ($rateit_value): ?>
+        $('#' + '<?php echo $rateit_input_uniqid; ?>' + ' option').each(function(index, value) {
+            if ($(value).val() == '<?php echo $rateit_value; ?>') {
+                $(value).attr('selected', 'selected');
+            }
+        });
+
+    <?php endif; ?>
+
+    <?php if ($rateit_tip): ?>
+        $('#' + '<?php echo $rateit_uniqid; ?>').bind('rated', function (event, value) { $('#' + '<?php echo $rateit_tip_uniqid; ?>').text($('#' + '<?php echo $rateit_input_uniqid; ?>' + ' option').eq(value -1).data('tip')); });
+        // $('#' + '<?php echo $rateit_uniqid; ?>').bind('over', function (event, value) { $('#' + '<?php echo $rateit_tip_uniqid; ?>').text($('#' + '<?php echo $rateit_input_uniqid; ?>' + ' option').eq(value -1).data('tip')); });
+    <?php endif; ?>
+})
+</script>

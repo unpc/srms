@@ -1,0 +1,93 @@
+<?php 
+	$me = L('ME');
+	$time = $order->ctime ? : time();
+	if ($order->id) 	$checked = json_decode($order->foods, TRUE);
+?>
+<div class="hr_1">&#160;</div>
+<div class="padding_2 food_header">
+	<h1 class="center" style="color:#FFF;"><?php echo I18N::T('food', H(date('Y年 m月 d日', $time)));?></h1>
+</div>
+<div class="form padding_2">
+	<form action="<?php URI::url();?>" method="post">
+		<?php echo V('form_error', ['form'=>$form]); ?>
+		<?php if ($me->is_allowed_to('指定人员', 'food')) {
+				echo I18N::T('food', '请选择订餐人员:');
+				echo Widget::factory('user_selector', [
+								'name'=>'user', 
+								'autocomplete'=>URI::url('autocomplete/user'), 
+								'user'=> $order->user? : $me
+								]);
+		} ?>
+		<div class="hr_1">&#160;</div>
+		<?php if (!count($suppliers)) :?>
+			<h1 class="center"><?php echo I18N::T('food', '抱歉，今天没有可预订菜式！')?></h1>	
+		<?php else :
+			//按照供应商显示菜式
+			foreach($suppliers as $supplier) : ?>
+				<h1><?php echo H($supplier)?></h1>
+				<div class="hr_2">&#160;</div>
+				<div class="bpadding_2 food">
+					<?php 
+						//显示供应商所提供的菜式
+						foreach($foods->filter("[supplier=$supplier]") as $food) :?>
+							<div class="food_unit">
+								<div q-preview="<?php echo H(URI::url('!food/index')) ?>" 
+									q-static="<?php echo H(['id'=>$food->id]); ?>">
+									<div class="food_img"><?php echo $food->icon('128');?></div>
+									<div class="food_name">
+										<?php echo Form::checkbox("fd_id[$food->id]",  array_key_exists($food->id, $checked) ? 1 : 0 , I18N::T('food', $food->name), 'class="middle"' . (time() > $lock_time ? 'disabled="disabled"' : ''), 'class="middle"');?>
+									</div>
+								</div>
+							</div>
+					<?php endforeach;?>
+				</div>
+				<br />
+			<?php endforeach;?>
+			<div class="nowrap addition">
+					<h1><?php echo I18N::T('food', '如果您有特殊需求，请填写备注信息:') . '<br />'; ?></h1>
+					<textarea name="remarks"><?php echo H($order->remarks); ?></textarea>
+					<input name="submit" type="submit" class="button button_add" value="<?php echo I18N::T('food', '订餐'); ?>" />
+					<input type="reset" class="button button_cancel" value="<?php echo I18N::T('food', '重置'); ?>" />
+			</div>
+		<?php endif;?>	
+	</form>
+</div>
+<script type="text/javascript">
+	jQuery(function($) {
+		$('.food_img').bind('click', function($e) {
+			var $input = $(this).next('.food_name').find(':checkbox');
+			if (!$input.attr('checked') && !$input.attr('disabled')) {
+				$input.attr('checked', 'checked');
+			}
+			else {
+				$input.attr('checked', '');
+			}
+			return true;
+		});
+		
+		<?php if ($me->is_allowed_to('指定人员', 'food')) : ?>
+			var $name = $('form').find('[name=user]');
+			$name.bind('change', function($e) {	
+			
+				//全部勾选去掉，防止出现勾选遗留问题
+				$food = $('.food_img').next('.food_name').find(':checkbox').attr('checked', '');
+				
+				Q.trigger({
+					object: 'change_user',
+					event: 'change', 
+					data: {user_id: $(this).val()},
+					success: function($data) {
+						var value = $data.value;
+						$food = $('.food_img').next('.food_name');
+						for (var key in value){
+							var selector = ':checkbox[name*='+key+']';
+							$food.find(selector).attr('checked', 'checked');
+						}
+					}
+				}); 
+		
+			});
+		<?php endif; ?>
+		
+	});
+</script>

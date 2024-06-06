@@ -1,0 +1,17 @@
+<div class="float_left">
+<table class="mini_user_card form">
+<tr>
+	<td class="icon top"><?php echo $object->icon('48') ?></td>
+	<td class="top">
+		<span class="name"><a class="link" href="<?php echo H($object->url() ) ?>"><?php echo H($object->name) ?></a></span>
+		<br/>
+		<span class="description"> &#187;
+	  		<a class="blue link" href="<?php echo H($task->url(NULL, 'uid='.$object->id, NULL, 'alert') ) ?>">
+				<?php echo I18N::T('projects', '发消息')?>
+			</a>
+		</span>
+	</td>
+	<td class="nowrap">&#160;&#160;&#160;<td>
+</tr>
+</table>
+</div>

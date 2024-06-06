@@ -1,0 +1,18 @@
+<?php 
+$uniqid = 'stock_'.uniqid();
+
+//$stock = $this->stock;
+$autocomplete = $this->autocomplete ?: URI::url('autocomplete/stock');
+
+$size = $this->size ?: 40;
+
+if ($stock->id) {
+	$name = $stock->product_name;
+}
+else {
+	$name = '';
+}
+?>
+<input id="<?php echo $uniqid?>_stock" name="<?php echo H($this->name ) ?>" type="hidden" value="<?php echo H($stock->id) ?>" />
+<input id="<?php echo $uniqid?>_stock_name" class="text middle select_on_focus autocomplete:<?php echo H($autocomplete) ?> autocomplete_alt:#<?php echo $uniqid?>_stock" size="<?php echo H($size) ?>" value="<?php echo H($name) ?>" />
+<div class="description" style="margin-top: 2px;">* <?php echo I18N::T('orders', '请输入关键字并选择') ;?></div>

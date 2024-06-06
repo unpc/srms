@@ -1,0 +1,7 @@
+<?php
+$me = L('ME');
+$group = $me->group;
+if ($me->is_active() && $group->id && $me->access('管理下属机构仪器的使用评价') ):
+?>
+    <a href="<?php echo H(URI::url('!equipments/extra/evaluate_group')) ?>" class="blue"><?php echo I18N::T('equipments', '%group所有仪器的评价记录', ['%group'=>H($group->name)]);?></a>
+<?php endif;?>

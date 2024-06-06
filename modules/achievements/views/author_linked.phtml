@@ -1,0 +1,21 @@
+<?php 
+if (!is_null($author_id)) {
+	$user_id = $user->id;
+	$user_icon = $user->icon_url('32');
+}
+?>
+<div class="padding_1 aumap_user_selected">
+	<input type="hidden" 
+		name="authors[<?php echo $author_id?>]" class="author_user_id" 
+		value="<?php echo H($user_id) ?>" />
+	<div class="float_right">
+		<a class="delete_author remove_button">
+			&#160;
+		</a>
+	</div>
+	<span>
+		<img class="author_img middle" src="<?php echo H($user_icon) ?>" />
+		<span class="author_name middle"><?php echo H($author_name);?></span>
+	</span>
+</div>
+

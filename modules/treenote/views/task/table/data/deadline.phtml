@@ -1,0 +1,10 @@
+<?php
+$now = strtotime('tomorrow midnight', Date::time());
+$week_time = $now + 604800;
+if (!$task->is_complete && $task->deadline < $now) :?>
+<span style="background-color:#f00;color:#fff;padding:2px"><?php echo Date::fuzzy($task->deadline); ?></span>
+<?php elseif (!$task->is_complete && $task->deadline < $week_time): ?>
+<span style="background-color:#cc0;color:#fff;padding:2px"><?php echo Date::fuzzy($task->deadline); ?></span>
+<?php else: ?>
+<?php echo Date::fuzzy($task->deadline); ?>
+<?php endif;	

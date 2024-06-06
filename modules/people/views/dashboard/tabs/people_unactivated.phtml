@@ -1,0 +1,159 @@
+<?php
+$uniqid = uniqid();
+$select_all_id = 'select_all_' . $uniqid;
+$batch_form_id = 'batch_form_' . $uniqid;
+$delete_selected = 'delete_selected_' . $uniqid;
+$form_token = 'form_token_' . $uniqid;
+$me = L('ME');
+?>
+<?php
+$table = Widget::factory('table');
+
+$table->name = 'people_users';
+$table->form = $form;
+$enable_show_creator = $me->is_allowed_to('查看建立者', 'user');
+$enable_show_auditor = $me->is_allowed_to('查看审批者', 'user');
+
+if ($GLOBALS['preload']['tag.group_limit'] >= 0) {
+	$table->add_column('group', [
+		'title' => I18N::T('people', '组织机构'),
+		'invisible' => TRUE,
+		'nowrap'=>TRUE,
+        'input_type'=>'select'
+	]);
+
+}
+$members_type = [];
+foreach(User_Model::get_members() as $key => $value){
+    foreach($value as $k=>$v) {
+        $members_type[$k] = $v;
+    }
+}
+
+$table->add_columns([
+	//  '@'=>NULL,
+    'checkbox' => [
+        'type' => 'checkbox',
+        'id' => $select_all_id,
+        'align' => 'center'
+    ],
+    'member_type'=> [
+        'title' => I18N::T('people', '人员类型'),
+        'invisible'=> TRUE,
+        'weight'=> 10,
+    ],
+	'name'=>[
+		'title'=>I18N::T('people', '姓名'),
+		'nowrap'=>TRUE,
+        'filter'=>[
+            'form'=>V('people:users_table/filters/name', ['name'=>$form['name']])
+        ],
+		'weight'=> 20,
+    ],
+    'contact_info'=>[
+        'title'=>I18N::T('people', '联系方式'),
+        'nowrap'=>TRUE,
+        'weight'=> 40,
+    ],
+    'backends'=> [
+        'title' => I18N::T('people', '账户来源'),
+        'nowrap'=> TRUE,
+        'weight'=> 90,
+    ],
+]);
+
+if ($me->is_allowed_to('查看联系方式', 'user')) {
+    $table->add_column('email', [
+        'title'=>I18N::T('people', '邮箱'),
+        'invisible' => TRUE,
+        'filter'=>[
+            'form'=>V('people:users_table/filters/email', ['email'=>$form['email']])
+        ],
+        'nowrap'=>TRUE,
+        'weight'=> 70,
+    ]);
+
+    $table->add_column('phone', [
+        'title'=>I18N::T('people', '电话'),
+        'invisible' => TRUE,
+        'filter'=>[
+            'form'=>V('people:users_table/filters/phone', ['phone'=>$form['phone']])
+        ],
+        'nowrap'=>TRUE,
+        'weight'=> 80,
+    ]);
+}
+
+if ($enable_show_creator) {
+	$table->add_column('creator', [
+		'title'=>I18N::T('people', '建立者'),
+		'align'=>'center',
+		'nowrap'=>TRUE,
+		'weight'=> 90,
+	]);
+}
+
+
+$table->add_column('rest', ['title'=>I18N::T('people', '操作'), 'align'=>'left', 'nowrap'=>TRUE, 'weight'=> 120,]);
+
+$table->empty_message = I18N::T('people', '无符合条件的成员');
+
+Event::trigger("{$table->name}_table.prerender table.prerender", $table);
+
+$table->users = $users;
+
+foreach ($users as $user) {
+	$links = $user->links('dashboard');
+
+	$add_row_arr = [
+		'checkbox'=>V('people:users_table/data/selector', ['user'=>$user, 'select_all_id' => $select_all_id]),
+		'name'=>V('people:users_table/data/name', ['user'=>$user,'not_tag' => 1]),
+        'contact_info'=>V('people:users_table/data/contact_info', ['user'=>$user]),
+		'date'=>V('people:users_table/data/date', ['user'=>$user]),
+		'creator'=>V('people:users_table/data/creator', ['user'=>$user]),
+		'backends'=>V('people:users_table/data/backends', ['user'=>$user]),
+		'rest'=>Widget::factory('application:links', ['links'=>$links])
+	];
+
+	$table->add_row($add_row_arr);
+}
+
+$columns = (array)$table->columns;
+
+unset($columns['lab']);
+unset($columns['role']);
+
+$param = [
+    'top_input_arr' => ['name', 'email', 'phone'],
+    'columns'       => $columns,
+];
+
+echo V('application:search_box', $param);
+
+?>
+
+
+<form
+    q-object="batch_people"
+    q-event="submit"
+    q-src="<?= H(URI::url("!people/approval")); ?>"
+    id="<?= H($batch_form_id) ?>"
+    method="post"
+    autocomplete="off"
+>
+<div class="panel clearfix">
+    <div class="float_right">
+        <input class="font-button-delete" type="submit" name="reject" value="<?= I18N::T('application', '批量驳回') ?>">
+        <input class="font-button-save" type="submit" name="pass" value="<?= I18N::T('application', '批量通过') ?>">
+    </div>
+</div>
+<div class="interval_16"></div>
+<?php 
+    echo $table;
+?>
+</form>
+<div style="text-align: right"><?php echo $pagination; ?></div>
+<div class="interval_10"></div>
+<?php
+echo JS::load('people:index_operate', ['select_all_id'=>$select_all_id, 'batch_form_id' => $batch_form_id]);
+?>

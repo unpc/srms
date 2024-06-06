@@ -1,0 +1,7 @@
+<?php
+
+$status = array_map(function($v) {
+    return I18N::T('eq_ban', $v);
+}, EQ_Banned_Model::$status);
+
+echo Form::dropdown('unsealing', $status, isset($form['status']) ? $form['status'] : 0);

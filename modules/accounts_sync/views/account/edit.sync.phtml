@@ -1,0 +1,10 @@
+<div class="hr_1">&#160;</div>
+<div class="padding_2 form">
+	<a class="button button_refresh" 
+		q-object="sync" 
+		q-event="click" 
+		q-static="id=<?php echo $account->id?>" 
+		q-src="<?php echo H(URI::url('!accounts/account')) ?>">
+		<?php echo I18N::HT('accounts', '同步账号') ?>
+	</a>
+</div>

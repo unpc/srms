@@ -1,0 +1,156 @@
+.timeline_view{
+	position:relative;
+	border-left:1px solid #DDDDDD;
+	border-bottom:1px solid #DDDDDD;
+}
+
+.timeline_view .timeline_contextmenu{
+	position:absolute;
+	display:none;
+	background:white;
+	padding:0;
+	border:1px solid #ddd;
+	min-width:80px;
+	box-shadow:#666 0 2px 2px;
+}
+
+.timeline_view .timeline_contextmenu li {
+	margin: 0;
+	padding: 0;
+}
+
+.timeline_view .timeline_contextmenu a {
+	text-decoration: none;
+	display: block;
+	padding: 2px 4px 2px 20px;
+}
+
+.timeline_view .timeline_contextmenu a:hover {
+	background-color: #36C;
+	color: #fff;
+}
+
+.timeline_view .timeline_node{
+	height:20px;
+	border-top:1px solid #FFFFFF;
+	border-bottom:1px solid #FFFFFF;
+	cursor:pointer;
+}
+
+.timeline_view .timeline_node_list{
+	position: absolute;
+	background:#FAFAFA;
+	width:200px;
+}
+
+.timeline_view .timeline_node_list .timeline_node {
+	padding-left:10px;
+}
+
+.timeline_view .timeline_node_view{
+	position:relative;
+	background:#FCFCFC;
+	margin-left:200px;
+	overflow:hidden;    /* node的长度超过node_view的宽度之后隐藏 */
+}
+
+.timeline_view .timeline_node_view .timeline_header{
+	position:relative;
+	background:#EFEFEF;
+	width:100%;
+	border-right:1px solid #DDDDDD;
+}
+
+.timeline_view .timeline_node_view .timeline_header table th{
+	border:1px solid #FFFFFF;
+}
+
+.timeline_view .timeline_node_view .timeline_header table th.first{
+	border-left:1px solid #DDDDDD;
+}
+
+.timeline_view .timeline_node_view .timeline_header table th.last{
+	border-right:1px solid #DDDDDD;
+}
+
+.timeline_view .timeline_node_view .timeline_header table th.today {
+	background:#7498E0;
+	color:#fff;
+}
+
+.timeline_view .timeline_node_view .block{
+	white-space:nowrap;
+	overflow:hidden;
+	position:absolute;
+	cursor:default;
+	text-align:center;
+	background:#CACACA;
+}
+
+.timeline_view .timeline_node_view .block .handler{
+	position:absolute;
+	width:10px;
+	background:#EAEAEA;
+	cursor:col-resize;
+	height:inherit;
+	top:0;
+}
+
+.timeline_view .timeline_node_view .block .handler_left{
+	left:0;
+}
+
+.timeline_view .timeline_node_view .block .handler_right{
+	right:0;
+}
+
+.timeline_view .timeline_node_view .timeline_node_moved_failed {
+	background:red;
+}  
+
+.timeline_view .timeline_node_view table td.timeline_block {
+	border-right:solid 1px #ddd;
+	border-top:solid 1px #ddd;
+}
+
+.timeline_view .timeline_node_view table td.first {
+	border-left:solid 1px #ddd;
+}
+
+.timeline_view .timeline_node_view table td.today {
+	background:#FFFFCC;
+}
+
+.move_left {
+	position:absolute;
+	width:10px;
+	height:22px;
+	background:url(images/token/left_arrow.png);	
+}
+
+.move_right {
+	position:absolute;
+	width:10px;
+	height:22px;
+	background:url(images/token/right_arrow.png);	
+}
+
+.timeline_view .timeline_contextmenu a.link {
+	display:inline;
+	padding-bottom:2px;
+	padding-left:4px;
+	padding-right:4px;
+	padding-top:2px;
+	text-decoration:none;
+}
+
+.timeline_view .timeline_contextmenu .container .left .block,
+.timeline_view .timeline_contextmenu .container .right .block {
+	width:80px;
+}
+
+.timeline_view .timeline_contextmenu .container .middle .block {
+	width:150px;
+}
+
+

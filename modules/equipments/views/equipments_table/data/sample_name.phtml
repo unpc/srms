@@ -1,0 +1,9 @@
+<div q-preview="<?php echo H(URI::url('!equipments/index')) ?>" q-static="<?php echo H(['id'=>$equipment->id]); ?>">
+    <strong class="name middle">
+        <?php if($equipment->id): ?>
+            <a href="<?php echo H($equipment->url() ) ?>"><?php echo H($equipment->name) ?></a>
+        <?php else: ?>
+            <?php echo H($equipment->name) ?>
+        <?php endif; ?>
+    </strong>
+</div>

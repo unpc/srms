@@ -1,0 +1,29 @@
+<script>
+jQuery(function($){
+	var $center = $('#center');
+	$center.css('vertical-align', 'middle');
+	$center.find('.center_content').css({width: '600px', margin: 'auto'});
+});
+</script>
+<?php
+    $login_url = Config::get('gapper.login_url');
+    $signup_url = Config::get('gapper.signup_url');
+?>
+<div style="background: linear-gradient(-30deg, rgba(43, 160, 127, 0.38), rgba(87, 239, 196, 0.38));padding: 40px;height: 100%;">
+    <div style="width: 400px;text-align: center;margin: 0 auto;"><img src="<?php echo H(_C('images/login_logo.png')) ?>" /></div>
+
+
+<div class="center">
+	<div style="margin-top:50px">
+		<a href="<?= H($login_url) ?>">
+			<input type="button" style="width: 200px;text-align:center;background-color: var(--basiccolor);color: #fff;font-size:13px;padding: 6px 0px;height: 35px;border: 1px solid var(--basiccolor);cursor: pointer;" value="登录">
+		</a>
+	</div>
+	<br>
+	<div>
+		<a
+		href="<?php echo H($signup_url ? : URI::url('!labs/signup')) ?>">
+		<input type="button" style="width: 200px;text-align:center;background-color: #fff;color: var(--basiccolor);font-size:13px;padding: 6px 0px;height: 35px;border: 1px solid var(--basiccolor);cursor: pointer;" value="注册">
+		</a>
+	</div>
+</div>

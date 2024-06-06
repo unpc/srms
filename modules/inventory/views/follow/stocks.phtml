@@ -1,0 +1,81 @@
+<?php echo $pagination; ?>
+<?php
+$table = Widget::factory('table');
+$table->name = 'inventory_stocks';
+
+$table->add_columns([
+	'status' => [
+		'nowrap'=>TRUE,
+	],
+	'product_name'=>[
+		'title'=>I18N::T('inventory', '产品名称'),
+		'sortable'=>TRUE,
+		'nowrap'=>TRUE
+	],
+	'manufacturer'=>[
+		'title'=>I18N::T('inventory', '生产商'),
+		'sortable'=>TRUE,
+		'nowrap'=>TRUE
+	],
+	'catalog_no'=>[
+		'title'=>I18N::T('inventory', '目录号'),
+		'nowrap'=>TRUE
+	],
+	'vendor'=>[
+		'title'=>I18N::T('inventory', '供应商'),
+		'sortable'=>TRUE,
+		'nowrap'=>TRUE
+	],
+	'quantity'=>[
+		'title'=>I18N::T('inventory', '数量'),
+		'nowrap'=>TRUE
+	],
+	'location'=>[
+		'title'=>I18N::T('inventory', '存放位置'),
+		'nowrap'=>TRUE,
+	],
+/*
+	'barcode'=>array(
+		'title'=>I18N::T('inventory', '条形码'),
+		'invisible' => TRUE,
+		'filter'=>array(
+			'form'=>V('inventory:stocks_table/filters/barcode', array('barcode'=>$form['barcode'])),
+			'value' => $form['barcode'] ? H($form['barcode']) : NULL
+		),
+		'nowrap'=>TRUE
+	),
+*/
+
+	'rest'=>[
+		'align'=>'right',
+		'nowrap'=>TRUE,
+	]
+]);
+
+$table->empty_message = I18N::T('inventory', '没有符合条件的存货');
+
+if (count($follows) > 0) {
+	foreach ($follows as $follow) {
+		$stock = $follow->object;
+		/* only difference between views/stocks */
+
+		$links = L('ME')->follow_links($stock) + $stock->links();
+
+        if ($stock->spec) $quantity = H($stock->quantity.'*'.$stock->spec);
+        else $quantity = H($stock->quantity);
+
+		$table->add_row([
+			'status'=>V('inventory:stocks_table/data/status', ['stock'=>$stock]),
+			'product_name'=> V('inventory:follow/product_name', ['stock'=>$stock]),
+			'manufacturer'=>H($stock->manufacturer),
+			'catalog_no'=>H($stock->catalog_no),
+			'vendor'=>H($stock->vendor),
+			'quantity'=>$quantity,
+			'location'=>H($stock->location),
+			// 'barcode'=>H($stock->barcode),
+			'rest'=>Widget::factory('application:links', ['links'=>$links])
+		]);
+	}
+}
+
+echo $table;

@@ -1,0 +1,12 @@
+<div>
+<p><?php echo I18N::HT('eq_sample', '存在%num条相关送样记录', ['%num' => $samples->total_count()]); ?></p>
+<div class="quote">
+<?php foreach ($samples as $sample): ?>
+<p>
+	<?php $sample->sender->render(); ?>
+	(<strong><?php echo H($sample->count); ?></strong>)
+	<span class="description">@ <?php echo Date::format($sample->dtstart, 'Y/m/d H:i'); ?></span>
+</p>
+<?php endforeach; ?>
+</div>
+</div>

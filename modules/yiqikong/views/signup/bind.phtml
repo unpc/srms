@@ -1,0 +1,166 @@
+<div id="header">
+	<div class="header_content">
+		<div id="top_menu" class="float_right">
+			<?php echo V('top_menu') ?>
+		</div>
+		<a href="<?php echo H(URI::url('/')) ?>">
+			<img class="float_left" src="<?php echo H(_C('images/logo.png')) ?>" usemap="#logo_map"/>
+		</a>
+	</div>
+</div>
+<?php
+	$group_root = Tag_Model::root('group');
+?>
+<div id="body">
+	<form class="form" method="post" autocomplete="off" action="<?= URI::url() ?>">
+	<div class="signup_body" style="position: relative;margin: 20px auto;width: 900px;">
+		<div class="signup_new" style="width: 450px;position: absolute;">
+			<div style="text-align: center; padding: 10px; font-size: 18px; border-bottom: 1px solid #DFDFDF; background: #989898; color: white;">
+				<?= I18N::T('yiqikong', '请继续完成后续注册操作进行账号绑定')?>
+			</div>
+			<div class="form padding_1">
+				<?= $form['submit'] ? V('form_error', ['form' => $form]) : ''; ?>
+				<table class="form">
+				<tbody>
+					<tr>
+						<th colspan="2" class="legend"><?= I18N::T('yiqikong', '1. 登录信息') ?></th>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle" width="70px"><?= I18N::T('yiqikong', '登录帐号') ?></td>
+						<td class="middle">
+							<input class="text" name="token" size="40" value="<?= H($form->no_error ? $user->email : $form['token']) ?>" />
+							<?= V('form_require') ?>
+						</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td class="middle description">
+							<?php 
+							$message = Config::get('auth.enable_cn_token') ? 
+							Config::get('people.signup.label.cn') : Config::get('people.signup.label.en'); ?>
+			                <?= I18N::T('yiqikong', $message);?>
+						</td>
+					</tr>
+					<tr><td colspan="2" class="hr_2">&#160;</td></tr>
+					<tr>
+					  <th colspan="2" class="legend"><?= I18N::T('yiqikong', '2. 个人信息') ?></td>
+					</tr>
+					<tr class="nowrap">
+						<td class="label right nowrap"><?= I18N::T('yiqikong', '姓名')?></td>
+						<td class="middle">
+							<input name="name" class="text name" size="40" value="<?= H($form->no_error ? $user->name : $form['name'])?>" />
+							<?= V('form_require') ?>
+						</td>
+					</tr>
+					<tr class="nowrap">
+						<td class="label right nowrap"><?php echo I18N::T('yiqikong', '性别')?></td>
+						<td class="middle">
+							<span class="gender readonly" style="display:block">
+								<?= Form::dropdown('gender',
+                            		I18N::T('people', User_Model::$genders), isset($form['gender']) ? $form['gender'] : -1, 'class="middle dropdown"'); ?>
+                            </span>
+                        </td>
+					</tr>
+					<tr class="group">
+						<td class="right nowrap middle"><?= I18N::T('yiqikong', '组织机构')?></td>
+						<td class="top nowrap">
+							<span class="remote_group">
+								<?php
+									echo Widget::factory('application:tag_selector', [
+										'tag'=> O('tag_group', $form['group_id']),
+										'root'=>$group_root,
+										'name'=>'group_id',
+										'ajax'=>true,
+									]);
+								?>
+							</span>
+						</td>
+					</tr>
+					<tr class="nowrap">
+						<td class="label right nowrap"><?= I18N::T('yiqikong', '单位名称')?></td>
+						<td class="middle"><input name="organization" class="text organization" size="40" value="<?= H($form->no_error ? $user->organization : $form['organization']) ?>" />
+						</td>
+					</tr>
+					<tr><td colspan="2" class="hr_2">&#160;</td></tr>
+					<tr class="nowrap">
+					  <th colspan="2" class="legend"><?= I18N::T('yiqikong', '3. 联系方式')?></td>
+					</tr>
+                    <tr class="nowrap">
+						<td class="label right nowrap"><?= I18N::T('yiqikong', '电子邮箱')?></td>
+						<td class="middle"><input name="email" class="text email" size="40" value="<?= H($form->no_error ? $user->email : $form['email']) ?>" />
+							<?= V('form_require') ?>
+						</td>
+					</tr>
+					<tr class="nowrap">
+						<td class="label right nowrap middle"><?= I18N::T('yiqikong', '联系电话')?></td>
+						<td class="middle"><input name="phone" class="text phone" size="40" value="<?= H($form->no_error ? $user->phone : $form['phone']) ?>" />
+							<?= V('form_require') ?>
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle"><?= I18N::T('yiqikong', '地址')?></td>
+						<td class="middle"><input name="address" class="text address" size="40" value="<?= H($form->no_error ? $user->address : $form['address']) ?>" />
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2" class="hr_1">&#160;</td>
+					</tr>
+					<tr class="nowrap">
+						<td></td>
+						<td>
+							<span class="signup_button">
+								<input type="submit" name="submit" class="button button_signup" value="<?= H(I18N::T('yiqikong', '注册')) ?>" />
+							</span>
+						</td>
+					</tr>
+				</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="bind_new" style="margin-left: 500px;">
+			<div style="text-align: center; padding: 10px; font-size: 18px; border-bottom: 1px solid #DFDFDF; background: #989898; color: white;">
+				<?= I18N::T('yiqikong', '已有用户账号? 直接绑定')?>
+			</div>
+			<div class="form padding_1">
+			<?= $form['bind'] ? V('form_error', ['form' => $form]) : ''; ?>
+			<table class="form">
+				<tbody>
+					<tr>
+					<td class="top lpadding_1">
+						<table class="form">
+						<tbody>
+							<tr>
+								<td class="right nowrap label"><?= I18N::T('yiqikong', '用户名')?></td>
+								<td>
+									<?php 
+										echo Widget::factory('login_token', [
+												'name' => 'bind_token',
+												'token' => $form['bind_token'],
+												'backend' => $form['bind_token_backend'],
+												'size' => 20,
+		                                        'backend_extra_class'=>'monitor'
+										]);
+										echo V('form_require');
+									?>
+								</td>
+							</tr>
+							<tr>
+								<td class="right nowrap label"><?= I18N::T('yiqikong', '密码')?></td>
+								<td><input class="text" type="password" size="20" name="bind_password" />
+								<?= V('form_require') ?></td>
+							</tr>
+							<tr>
+								<td ></td>
+								<td><input class="button button_bind" type="submit" name="bind"  value="<?= I18N::T('yiqikong', '绑定')?>" /></td>
+							</tr>
+						</tbody>
+						</table>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+			</div>
+		</div>
+	</div>
+	</form>
+</div>

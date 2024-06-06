@@ -1,0 +1,74 @@
+<?php
+
+$user_roles = $user->roles();
+$roles = L('ROLES');
+$me = L('ME');
+$my_perms = $me->perms();
+$legal_perms = (array) Q("perm")->to_assoc('name', 'id');
+
+$is_admin = $me->access('管理所有内容') || $me->access('管理分组');
+?>
+<div class="form">
+<table class="form" width="100%">
+	<tbody>
+	<tr>
+		<td class="left top icon" style="width: 100px;">
+            <div class="short_container">
+                <div class="img_icon" style="position: relative;">
+                    <?php echo $user->icon('104', 'class="icon_none_border"');?>
+                </div>
+            </div>
+		</td>
+		<td class="top lpadding_30">
+            <div class="interval_12"></div>
+			<?php if(!$uneditable): ?>
+			<form class="edit" method="post" action="<?php echo H(URI::url() ) ?>" autocomplete="off">
+				<h2 class="section_title"><?php echo I18N::T('roles', '请选择所属分组'); ?></h2>
+                <div class="interval_30"></div>
+				<?php foreach($roles as $role):
+					// 此处不应该将默认的角色屏蔽掉，不让管理员能够查看，暂时将默认的角色disable掉
+					$role_perms = (array) Q("{$role} perm")->to_assoc('name', 'id');
+					$role_perms = array_intersect_key((array)$role_perms, $legal_perms);
+					if (!$is_admin && count(array_diff_key($role_perms, $my_perms)) > 0) continue;
+					/*
+					 * TASK #1510::LIMS-CF-未激活用户应该清除所有角色(kai.wu@2011.10.12)
+					 * enable checkboxes if activated.
+					 */
+					$disable = Event::trigger('role.available', $role) ? '' : 'disabled="disabled"';
+					?>
+
+					<?php echo Form::checkbox("roles[{$role->id}]", isset($user_roles[$role->id]), I18N::HT('roles', $role->name),'class="middle checkbox" '. $disable, 'class="middle"');?>
+                    <div class="interval_12"></div>
+
+				<?php endforeach; ?>
+				<div class="interval_60"></div>
+                <div class="float_right">
+                    <input type="reset" name="reset" class="font-button-default rmargin_16" value="<?php echo H(I18N::T('people', '取消') ) ?>"/>
+                    <input type="submit" confirm="<?php echo I18N::T('people', '你确定要更新此用户的分组信息吗?请谨慎操作!'); ?>" name="submit" class="font-button-save" value="<?php echo H(I18N::T('people', '保存修改')) ?>" />
+                </div>
+			</form>
+			<?php else: ?>
+			<h2 class="section_title"><?php echo I18N::T('roles', '所属分组'); ?>:</h2>
+			<div class="interval_30"></div>
+			<ul>
+				<?php
+				if ( count($user_roles) > 0) {
+					foreach ($user_roles as $rid) {
+						if ($roles[$rid]) {
+							$role = $roles[$rid];
+							echo '<span class="rpadding_2">'. H($role->name).'</span>';
+							// echo '<li><div class="interval_20"></div> </li>';
+						}
+					}
+				}
+				else {
+					echo '<li>'.I18N::T('roles', '暂无分组信息。').'</li>';
+				}
+				?>
+			</ul>
+			<?php endif; ?>
+		</td>
+	</tr>
+	</tbody>
+</table>
+</div>

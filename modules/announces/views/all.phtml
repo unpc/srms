@@ -1,0 +1,99 @@
+<?php
+$uniqid = uniqid();
+$select_all_id = 'select_all_' . $uniqid;
+$batch_form_id = 'batch_form_' . $uniqid;
+$delete_selected = 'delete_selected_' . $uniqid;
+$form_token = 'form_token_' . $uniqid;
+?>
+<?php
+echo JS::load('announces:delete', [
+		'form' => $form,
+        'delete_selected' => $delete_selected,
+        'no_checked' => I18N::T('announces', '请选择要删除的公告!')
+	]);
+?>
+
+<?php
+$table = Widget::factory('table');
+$table->name = "announces";
+$table->add_columns([
+	'check'=>[
+		'align' => 'left',
+	],
+	'name'=>[
+		'title'=>I18N::T('announces', '标题'),
+		'nowrap'=>FALSE,
+		'filter' => [
+			'form' => V('announces:search_filter/index', ['name'=>$form['query']]),
+			'value' => $form['query'] ? H($form['query']) : NULL,
+            'field'=>'query'
+        ]
+	],
+	'sender'=>[
+		'title'=>I18N::T('announces', '发布人'),
+        'nowrap'=>TRUE,
+        'align'=>'left',
+	],
+	'ctime'=>[
+		'title'=>I18N::T('announces', '发布时间'),
+		'nowrap'=>TRUE,
+	],
+	'rest'=>[
+		'nowrap'=>TRUE,
+		'align'=>'right',
+	]
+]);
+
+if($form['query']) {
+	$table->empty_message = I18N::T('announces', '没有符合条件的公告');
+}
+else {
+	$table->empty_message = I18N::T('announces', '暂无公告');
+}
+
+
+foreach ($announces as $announce) {
+	$links = $announce->links();
+	$table->add_row([
+		'check'=>V('announces:announces_table/data/select', ['announce'=>$announce, 'select_all_id'=>$select_all_id]),
+		'name'=>V('announces:announces_table/data/name', ['announce'=>$announce]),
+		'sender'=>V('announces:announces_table/data/sender', ['announce'=>$announce]),
+		'ctime'=>Date::format($announce->ctime, 'Y/m/d H:i'),
+		'rest'=>Widget::factory('application:links', ['links' => $links]),
+	]);
+}
+
+?>
+<?php
+// echo V('application:panel_buttons', ['panel_buttons' => $panel_buttons]);
+$param = [
+    // 'is_offset'     => true,
+    'top_input_arr' => ['name'],
+    'columns'       => (array)$table->columns,
+];
+echo V('application:search_box', $param);
+?>
+    <div class="clearfix">
+        <form method="post" action="<?php echo H(URI::url('!announces/index/batch_action') ) ?>" id="<?php echo H($batch_form_id ) ?>">
+            <div class="float_left"  style="color: #4D4D4D">
+                <?php echo Form::checkbox('', FALSE, I18N::T('announces', '全选'), 'id="'.$select_all_id.'" class="checkbox middle lmargin_10 rmargin_10" style="vertical-align: -2px;"',
+                    '');?>
+                <?php
+                foreach ($announces as $user_announce)
+                    echo Form::checkbox('select['.$user_announce->id.']', FALSE, NULL, 'class="hidden checkbox" value="'.$user_announce->id.'"'); ?>
+                &#160;&#160;
+                <a class="lmargin_10 font-button-delete font-button-color-red" id="<?php echo $delete_selected; ?>">
+                    <?php echo I18N::T('announces', '删除选中'); ?>
+                </a>
+            </div>
+        </form>
+    </div>
+<div class="interval_16"></div>
+
+<?php
+echo $table;
+?>
+<div class="pages"><?= $pagination ?></div>
+
+<?php
+echo JS::load('announces:index_operate', ['select_all_id'=>$select_all_id, 'batch_form_id' => $batch_form_id]);

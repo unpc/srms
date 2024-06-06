@@ -1,0 +1,79 @@
+<div class="hr_1">&#160;</div>
+<?php if (count($panel_buttons)) :?>
+	<div class="panel padding_1 clearfix">
+		<span><?= Widget::factory('application:links', ['links'=>$panel_buttons, 'separator'=>'&#160;']);?></span>
+	</div>
+<?php endif;?>
+<?= $pagination ?>
+<?php 
+
+$me = L('ME');
+
+$table = Widget::factory('table');
+$table->name = 'nirr_unit';
+$table->form = $form;
+$table->add_columns([
+	'@'=>NULL,
+	'unitname'=> [
+        'title' => I18N::T('nrii', '服务单元名称'),
+        'filter'=> [
+            'form'=> V('nrii:unit/filters/text', ['form'=> $form, 'name' => 'unitname']),
+            'value'=> H($form['unitname']),
+            'field' => 'unitname'
+        ],
+        'nowrap'=>TRUE
+    ],
+    'category'=> [
+        'title' => I18N::T('nrii', '服务单元类别'),
+        'filter'=> [
+            'form'=> V('nrii:unit/filters/category', ['form'=> $form]),
+            'value'=> H(Nrii_Unit_Model::$type_status[$form['category']]),
+        ],
+        'nowrap'=>TRUE
+    ],
+    'beginDate'=> [
+        'title' => I18N::T('nrii', '成立时间'),
+        'filter'=> [
+            'form'=> V('nrii:unit/filters/date', ['form'=> $form]),
+            'value'=> ($form['dateOn'] && ($form['beginDate1'] || $form['beginDate2'])) ? H(date('Y-m-d',$form['beginDate1']) . ' ~ ' . date('Y-m-d',$form['beginDate2']) ) : '',
+            'field' => 'dateOn,beginDate1,beginDate2'
+        ],
+        'nowrap'=>TRUE
+    ],
+    'contact1'=> [
+        'title' => I18N::T('nrii', '联系人'),
+        'filter'=> [
+            'form'=> V('nrii:unit/filters/text', ['form'=> $form, 'name' => 'contact1']),
+            'value'=> H($form['contact1']),
+        ],
+        'nowrap'=>TRUE
+    ],
+    'rest'=> [
+        'title' => I18N::T('nrii', '操作'),
+        'nowrap'=>TRUE
+    ]
+]);
+
+$table->empty_message = I18N::T('nrii', '没有查询到相应的服务单元!');
+
+
+if (count($units) > 0) {
+    foreach($units as $unit) {
+        $links = $unit->links('index');
+        $table->add_row([
+            '@'=>[
+                'view' => $unit->icon('32', 'style="display:block"'),
+                'extra' => 'style="padding:4px" align="right"',
+            ],
+            'unitname'=>HT($unit->unitname),
+            'category'=>HT(Nrii_Unit_Model::$type_status[$unit->category]),
+            'beginDate'=>date('Y-m-d', HT($unit->begin_date)),
+            'contact1'=>HT($unit->contact),
+            'rest'=>Widget::factory('application:links', ['links' => $links]),
+        ]);
+    }
+}
+
+echo $table;
+?>
+<?= $pagination ?>

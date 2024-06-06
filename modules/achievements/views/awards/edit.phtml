@@ -1,0 +1,131 @@
+<?php
+	$require = (string)V('form_require');
+	$me = L("ME");
+	$ac_authors = Q("ac_author[achievement=$award]");
+	$authors = [];
+	foreach ($ac_authors as $ac_author) {
+		if($ac_author->user->id) {
+			$authors[$ac_author->name] = [
+				'user_id'=>$ac_author->user->id,
+				'text'=>$ac_author->name,
+				'em'=>TRUE,
+			];
+		}
+		elseif($ac_author->name) {
+			$authors[$ac_author->name]=$ac_author->name;
+		}
+	}
+    echo $edit_title;
+
+?>
+<div class="interval_24"></div>
+<form method="post" action="" class="edit">
+<div class="form">
+	<?php echo V('form_error', ['form'=>$form]);?>
+	<table class="form message_form" style="margin: 0 auto;">
+		<tbody>
+			<?php
+				echo $GLOBALS['preload']['people.multi_lab'] ?
+                    V("awards/edit.mlab.info", ['form' => $form, 'award' => $award]):
+					V("awards/edit.lab.info", ['form' => $form, 'award' => $award, 'require'=>$require]);
+			?>
+            <tr><td><div class="interval_20"></div> </td></tr>
+            <tr>
+                <td class="label left nowrap middle lpadding_21" width="126"><?php echo I18N::T('achievements', '获奖日期'); ?></td>
+                <td >
+                    <input name="date" date_type="date" class="text date" value="<?php echo $award->date ?: ''; ?>" />
+                </td>
+                <?php if($GLOBALS['preload']['people.multi_lab']): ?>
+                <td class="table_interval"></td>
+                <td class="label left nowrap middle label_width">
+                    <?php echo $require;?><?php echo I18N::T('achievements', '获奖名称'); ?>
+                    <br>
+                    <?php echo V('form_filter',['error'=>$form->errors['name'][0]]); ?>
+                </td>
+                <td class="middle">
+                    <input name="name" class="text" value="<?php echo H(!$form->no_error ? $form['name'] : $award->name); ?>" />
+                </td>
+                <?php else: ?>
+                    <td colspan="3"></td>
+                <?php endif; ?>
+            </tr>
+            <tr><td colspan="5"><div class="interval_20"></div> </td></tr>
+			<tr>
+				<td class="label left nowrap top lpadding_21" width="126"><?php echo I18N::T('achievements', '获奖级别')?></td>
+				<?php
+				   	$root = Tag_Model::root('achievements_award');
+					$tags = (array) Q("$award tag_achievements_award[root=$root]")->to_assoc('id', 'name');
+					if(count($tags)) {
+						$tags = json_encode($tags,TRUE);
+					}
+					else{
+						$tags = '';
+					}
+				?>
+				<td class="middle" colspan="4">
+				<?php
+					echo Widget::factory('achievements:tag_selector', [
+							'autocomplete'=> URI::url('!achievements/awards/autocomplete/tags'),
+							'name'=>'tags',
+							'value'=> $form->no_error ? $tags : $form['tags']
+					]);
+				?>
+				</td>
+			</tr>
+
+
+            <tr><td><div class="interval_20"></div> </td></tr>
+			<tr>
+				<td class="label left nowrap top lpadding_21">
+				<?php echo I18N::T('achievements', '获奖人员'); ?>
+					<br>
+                    <br>
+                    <?php
+						$lab = $award->id ? $award->lab : 'lab';
+						if($me->is_allowed_to('添加成果', 'lab') && count($authors) > 0):?>
+						<input type="button" value="<?php echo H(I18N::T('achievements','对应人员')) ?>" class="font-button-save middle button view object:select_author event:click static:object=<?php echo $award->id?>&type=award  src:<?php echo URI::url('!achievements/index')?>" />
+						<?php endif;?>
+				</td>
+				<td class="middle" colspan="4">
+					<div class="nowrap middle">
+						<input name="people" class="middle text token" value="<?php echo !$form->no_error ? H($form['people']) : H(@json_encode($authors, TRUE))?>" q-token_tip='<?php echo I18N::T('achievements', '您可选择标签或按回车键输入获奖人员')?>' />
+						
+					</div>
+				</td>
+			</tr>
+            <tr><td><div class="interval_20"></div> </td></tr>
+			<tr>
+				<td class="label left top nowrap middle lpadding_21"><?php echo I18N::T('achievements', '备注'); ?></td>
+				<td colspan="4">
+					<textarea style="line-height: normal" class="text autogrow" rows="4"  name="description"><?php echo H($award->description);?></textarea>
+
+				</td>
+			</tr>
+			<?php if (Module::is_installed('nfs')) :?>
+                <tr><td><div class="interval_20"></div> </td></tr>
+				<tr>
+					<td class="left nowrap top label lpadding_21">
+						<?php echo I18N::T('things', '附件'); ?>
+					</td>
+					<td class="left nowrap" colspan="4">
+						<?php echo V('achievements:attachments', ['achievement'=> $award->id ? $award : O('award')]);?>
+					</td>
+				</tr>
+			<?php endif;?>
+            <tr><td><div class="interval_16"></div></td></tr>
+            <?= $view ?>
+        
+            <tr>
+                <td colspan="5">
+                    <div class="interval_60"></div>
+                        <div class="float_right">
+                            <input type="reset" name="reset" class="font-button-default rmargin_16" value="取消">
+                            <input type="submit" name="submit" class="font-button-save" value="<?php echo H(I18N::T('achievements','提交')) ?>">
+                        </div>
+                </td>
+            </tr>
+		</tbody>
+	</table>
+</div>
+
+</form>

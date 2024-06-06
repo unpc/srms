@@ -1,0 +1,53 @@
+<?php
+$now = Date::time();
+//仪器关注人员
+$followers = $equipment->get_followers_count();
+//仪器使用机时
+$time = Q("eq_record[equipment={$equipment}][dtstart<={$now}][dtend>0][dtstart<@dtend]")->SUM('dtend')- Q("eq_record[equipment={$equipment}][dtstart<={$now}][dtend>0][dtstart<@dtend]")->SUM('dtstart');
+
+$hour = (int) ($time / (60 * 60));
+//仪器使用人员数量
+$user_count = Q("{$equipment} eq_record user")->total_count();
+//仪器使用次数
+$record_count = Q("eq_record[equipment={$equipment}][dtstart<=$now]")->total_count();
+?>
+<div class="clearfix">
+    <ul class="follow" style="display: flex;">
+        <li>
+            <div class="up">
+                <span class="num"><?php echo H($followers); ?></span>
+            </div>
+            <div class="down">
+				<?php echo I18N::HT('equipments', '关注者|:follow'); ?>
+				<span class="unit"><?php echo I18N::HT('equipments', '(人)|:follow')?></span>
+			</div>
+        </li>
+        <li>
+            <div class="up">
+                <span class="num"><?php echo H($user_count); ?></span>
+            </div>
+            <div class="down">
+				<?php echo I18N::HT('equipments', '使用者|:follow'); ?>
+				<span class="unit"><?php echo I18N::HT('equipments', '(人)|:follow')?></span>
+			</div>
+        </li>
+        <li>
+            <div class="up">
+                <span class="num"><?php echo H($record_count); ?></span>
+            </div>
+            <div class="down">
+				<?php echo I18N::HT('equipments', '总次数|:follow'); ?>
+				<span class="unit"><?php echo I18N::HT('equipments', '(次)|:follow')?></span>
+			</div>
+        </li>
+        <li class="last">
+            <div class="up">
+                <span class="num"><?php echo H($hour); ?></span>
+            </div>
+            <div class="down">
+				<?php echo I18N::HT('equipments', '总时长|:follow'); ?>
+				<span class="unit"><?php echo I18N::HT('equipments', '(h)|:follow')?></span>
+			</div>
+        </li>
+    </ul>
+</div>

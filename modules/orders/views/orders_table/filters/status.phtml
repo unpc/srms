@@ -1,0 +1,7 @@
+<span><?= Form::checkbox('status[1]', $status[1], I18N::T('orders', '申购中'), 'class="middle checkbox"');?></span>
+<span style="margin-left:12px;"><?= Form::checkbox('status[2]', $status[2], I18N::T('orders', '已确认'), 'class="middle checkbox"');?></span>
+<span style="margin-left:12px;"><?= Form::checkbox('status[3]', $status[3], I18N::T('orders', '已订出'), 'class="middle checkbox"');?></span>
+<br>
+<span><?= Form::checkbox('status[4]', $status[4], I18N::T('orders', '已到货'), 'class="middle checkbox"');?></span>
+<span style="margin-left:12px;"><?= Form::checkbox('status[6]', $status[6], I18N::T('orders', '已取消'), 'class="middle checkbox"');?></span>
+<input class="hidden" name="status_filter" value="1" />

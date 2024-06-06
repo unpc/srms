@@ -1,0 +1,81 @@
+<?php
+$holiday = Lab::get('equipment.holiday');
+if (isset($form['dtstart_special1'])){
+    $holiday['tagged'] = $setting_tags;
+}
+?>
+<form method="post" autocomplete="off">
+    <div class="form padding_2">
+        <?php echo V('form_error', ['form'=>$form])?>
+        <table class="form td_padding_2">
+            <tr>
+                <td class="left nowrap middle"><?php echo I18N::T('eq_sample', '是否开启') ?></td>
+                <td class="middle">
+                    <?= Form::checkbox('has_setting', $holiday['has_setting'] == 'on', '', 'class="middle checkbox"') ?>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="left nowrap middle"><?php echo I18N::T('eq_sample', '假期区间') ?></td>
+                <td class="middle">
+                    <input type="text" class="text date middle" name="dtstart" id="dtstart"
+                           value="<?= $form['dtstart'] ?: ($holiday['dtstart'] ?? time()) ?>"
+                           q-date_format="$year/$month/$day $hour:$min:$sec" style="width: 112px;">~
+                    <input type="text" class="text date middle" name="dtend"
+                           value="<?= $form['dtend'] ?: ($holiday['dtend'] ?? time()) ?>"
+                           q-date_format="$year/$month/$day $hour:$min:$sec" style="width: 112px;">
+                </td>
+            </tr>
+            <tr>
+                <td>&#160;</td>
+                <td class="middle description nowrap" colspan="2"><?php echo I18N::HT('eq_sample', '* 勾选了"是否开启"，假期区间设置生效')?></td>
+            </tr>
+            <tr>
+                <td>&#160;</td>
+                <td class="middle description nowrap" colspan="2">
+                    <?php echo I18N::HT('eq_sample', '* 成功设置假期后，假期区间内所有仪器对应时段的预约将立即被删除，并向预约者发送通知');?>
+                </td>
+            </tr>
+            <tr>
+                <td>&#160;</td>
+                <td class="middle description nowrap" colspan="2">
+                    <?php echo I18N::HT('eq_sample', '* 同一台仪器属于多级/多个组织机构时，按最先匹配原则设置');?>
+                </td>
+            </tr>
+            <tr>
+                <td>&#160;</td>
+                <td class="middle description nowrap" colspan="2">
+                    <?php echo I18N::HT('eq_sample', '* 下列个别设置项无需开启，设置后即自行生效');?>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="form padding_2">
+        <?php
+
+        $specific = [];
+        $tagged = (array) $holiday['tagged'];
+        foreach ($tagged as $tag => $data) {
+            $key = md5($data['dtstart'].$data['dtend']);
+            if (!isset($specific[$key])) {
+                $specific[$key] = $data;
+            }
+            $specific[$key]['tags'][$data['tid']] = $tag;
+        }
+        $flexform = Widget::factory('flexform');
+        $flexform->title = I18N::T('eq_sample', '个别假期设置');
+        $flexform->template_data = ['disabled'=>TRUE];
+        $flexform->existing_data = array_values($specific);
+        $flexform->item_view = 'equipments:equipment/admin/holiday_specific_setting';
+
+        echo $flexform;
+
+        ?>
+    </div>
+    <div class="interval_60">&nbsp</div>
+    <div class="form float_right">
+        <input type="reset" name="reset" value="<?php echo T('取消'); ?>" class="font-button-default rmargin_16" />
+        <input type="submit" name="submit" value="<?php echo T('提交'); ?>" class="font-button-save" />
+    </div>
+    <div class="interval_60">&nbsp</div>
+</form>

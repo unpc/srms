@@ -1,0 +1,34 @@
+<tr>
+  <td class="label right top nowraps">
+  	* <?= I18N::T('eq_reserv', $properties['label'])?>
+  </td>
+  <td class="nowrap">
+	<input name="<?= H($name) ?>" type="text" class="text top" 
+        value="<?= H( $component->id ? $values['captcha']: $properties['default_value']);?>"/>
+    <a href="#" class="blue prevent_default refetch" style="display: inline-block; padding-top: 2px;"><?= T('换一张'); ?></a>
+    <br/>
+    <div class="captcha"></div>
+  </td>
+</tr>
+
+<script type="text/javascript">
+$(function() {
+    var get_captcha = function () {
+        Q.trigger({
+            url: '<?= URI::url('!eq_reserv/index') ?>',
+            object: 'get_captcha',
+            event: 'click',
+            success: function(res) {
+                $('.captcha').html(res.data);
+            }
+        });
+    }
+
+    get_captcha();
+
+    $('.refetch').click(function () {
+        get_captcha();
+        return false;
+    })
+})
+</script>

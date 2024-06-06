@@ -1,0 +1,4 @@
+# 固定的 usb 短信猫 (xiaopei.li@2012-05-21)
+# 参考: http://wammu.eu/docs/manual/faq/general.html#device-name-always-changes-on-linux-how-to-solve-that
+# idVendor, idProduct 由 lsusb -v 得来
+ACTION=="add", SUBSYSTEMS=="usb", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", SYMLINK+="phone"

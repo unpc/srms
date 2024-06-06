@@ -1,0 +1,8 @@
+<?php if ($organizer->id): ?>
+<a href="<?php echo $organizer->url(); ?>" class="prevent_default">
+<?php echo H($organizer->name); ?>
+</a>
+<?php else: ?>
+<span class="description"><?php echo H($organizer->name); ?>
+</span>
+<?php endif; ?>

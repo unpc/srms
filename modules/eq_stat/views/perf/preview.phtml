@@ -1,0 +1,44 @@
+<style>
+table.perf_list tr.border{
+	border-top:2px dotted #CCC;
+}
+</style>
+<?php 
+	$scores = (array)Perf::perf_score($equipment, $perf);
+?>
+<div class="hr_1">&#160;</div>
+<div class="padding_2 clearfix">
+	<table class="form perf_list">
+		<?php 
+			$options = Config::get('eq_stat.perf_opts');
+			foreach ($options as $key => $opts):
+			if (!is_array($opts)):
+		?>
+		<tr class="border">
+			<td class="left nowrap"><?php echo H($opts)?></td>
+			<td>&#160;</td>
+			<td class="left nowrap"><?php echo H($scores[$key])?></td>
+		</tr>
+		<?php 
+			else:	
+		?>
+		<tr class="border">
+			<td class="left nowrap"><?php echo H($opts['name'])?></td>
+			<td>&#160;</td>
+			<td class="left nowrap"></td>
+		</tr>
+		<?php
+			unset($opts['name']); 
+			foreach ($opts as $key => $opt):
+		?>
+		<tr>
+			<td>&#160;</td>
+			<td class="left nowrap"><?php echo H($opt)?></td>
+			<td class="left nowrap"><?php echo H($scores[$key])?></td>
+		</tr>
+		<?php endforeach; endif; endforeach;?>
+		<tr class="border">
+			<td colspan="3">&#160;</td>
+		</tr>
+	</table>
+</div>

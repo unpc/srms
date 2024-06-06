@@ -1,0 +1,1 @@
+<?php echo Date::relative($record->dtstart); ?> - <?php echo !$record->dtend ? I18N::T('equipments', '使用中') : Date::relative($record->dtend, $record->dtstart); ?>

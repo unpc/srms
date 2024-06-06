@@ -1,0 +1,140 @@
+<?php echo CSS::load_async('cers:cers'); ?>
+<div class="interval_30"></div>
+<div class="cers form">
+	<?php 
+		$no_error = $form->no_error ? TRUE : FALSE; 
+		echo V('form_error', ['form' => $form]);
+	?>
+	<form class="edit" autocomplete='off' method="POST">
+		<table class="form" style="width: 100%">
+			<tbody>
+				<tr>
+					<td colspan="4" class="description">
+						<h2 class="section_title"><?php echo I18N::T('cers', '大型仪器设备共享校级平台信息'); ?></h2>
+					</td>
+				</tr>
+                <tr>
+                    <td><div class="interval_30"></div> </td>
+                </tr>
+				<tr>
+					<td class="left"><?php echo I18N::T('cers', '学校代码')?></td>
+                    <td class="left"><?php echo I18N::T('cers', '学校名称')?></td>
+                </tr>
+                <tr><td><div class="interval_16"></div></td> </tr>
+                <tr>
+					<td><input placeholder="请输入学校代码" name="SchoolCode" size="60" class="text" value="<?php echo H($no_error ? $configs['SchoolCode'] : $form['SchoolCode'] ) ?>" /></td>
+					<td><input placeholder="请输入学校名称" name="SchoolName" size="60" class="text" value="<?php echo H($no_error ? $configs['SchoolName'] : $form['SchoolName'] ) ?>" /></td>
+				</tr>
+                <tr><td><div class="interval_20"></div> </td></tr>
+				<tr>
+					<td class="left"><?php echo I18N::T('cers', '学校类型代码')?></td>
+                    <td class="left"><?php echo I18N::T('cers', '学校性质代码')?></td>
+                </tr>
+                <tr><td><div class="interval_16"></div></td> </tr>
+                <tr>
+					<td><input placeholder="请输入学校类型代码" name="SchoolTypeCode" size="60" class="text" value="<?php echo H($no_error ? $configs['SchoolTypeCode'] : $form['SchoolTypeCode'] ) ?>" /></td>
+					<td><input placeholder="请输入学校性质代码" name="SchoolPropertyCode" size="60" class="text" value="<?php echo H($no_error ? $configs['SchoolPropertyCode'] : $form['SchoolPropertyCode'] ) ?>" /></td>
+				</tr>
+                <tr><td><div class="interval_20"></div> </td></tr>
+				<tr>
+					<td class="left"><?php echo I18N::T('cers', '办学单位代码')?></td>
+                    <td class="left"><?php echo I18N::T('cers', '校级平台电子邮件')?></td>
+                </tr>
+                <tr><td><div class="interval_16"></div></td> </tr>
+                <tr>
+					<td><input placeholder="请输入办学单位代码" name="SchoolHolderCode" class="text" size="60" value="<?php echo $no_error ? $configs['SchoolHolderCode'] : $form['SchoolHolderCode'] ?>" /></td>
+					<td><input placeholder="请输入校级平台电子邮件" name="Email" class="text" size="60" value="<?php echo H($no_error ? $configs['Email'] : $form['Email'] ) ?>" /></td>
+				</tr>
+                <tr><td><div class="interval_20"></div> </td></tr>
+				<tr>
+					<td class="left"><?php echo I18N::T('cers', '校级平台通讯地址')?></td>
+                    <td class="left"><?php echo I18N::T('cers', '校级平台邮政编码')?></td>
+                </tr>
+                <tr><td><div class="interval_16"></div></td> </tr>
+                <tr>
+					<td><input placeholder="请输入校级平台通讯地址" name="Address" size="60" class="text" value="<?php echo H($no_error ? $configs['Address'] : $form['Address'] ) ?>" /></td>
+					<td><input placeholder="请输入校级平台邮政编码" name="ZIPCode" size="60" class="text" value="<?php echo H($no_error ? $configs['ZIPCode'] : $form['ZIPCode'] ) ?>" /></td>
+				</tr>
+                <tr><td><div class="interval_20"></div> </td></tr>
+				<tr>
+					<td class="left"><?php echo I18N::T('cers', '校级平台电话')?></td>
+                    <td class="left"><?php echo I18N::T('cers', '校级平台传真')?></td>
+                </tr>
+                <tr><td><div class="interval_16"></div></td> </tr>
+                <tr>
+					<td><input placeholder="请输入校级平台电话" name="Telephone" size="60" class="text" value="<?php echo H($no_error ? $configs['Telephone'] : $form['Telephone'] ) ?>" /></td>
+					<td><input placeholder="请输入平台传真" name="Fax" size="60" class="text" value="<?php echo H($no_error ? $configs['Fax'] : $form['Fax'] ) ?>" /></td>
+				</tr>
+                <tr><td><div class="interval_20"></div> </td></tr>
+				<tr>
+					<td class="left top"><?php echo I18N::T('cers', '校级平台简介')?></td>
+                    <td class="left top"><?php echo I18N::T('cers', '校级平台备注')?></td>
+                </tr>
+                <tr><td><div class="interval_16"></div></td> </tr>
+                <tr>
+					<td>
+						<textarea placeholder="请输入校级平台简介" name="Introduction" cols="63" rows="3" class="text autogrow"><?php echo $no_error ? $configs['Introduction'] : $form['Introduction'] ?></textarea>
+					</td>
+                    <td>
+                        <textarea placeholder="请输入平台备注" name="OtherInfo" cols="63" rows="3" class="text autogrow"><?php echo $no_error ? $configs['OtherInfo'] : $form['OtherInfo'] ?></textarea>
+                    </td>
+				</tr>
+                <tr><td><div class="interval_20"></div> </td></tr>
+				<tr>
+					<td class="left"><?php echo I18N::T('cers', '校级平台网址')?></td>
+                    <td class="left"><?php echo I18N::T('cers', '校级平台介绍图片URL')?></td>
+                </tr>
+                <tr><td><div class="interval_16"></div></td> </tr>
+                <tr>
+					<td><input placeholder="请输入校级平台网址" name="WebSite" class="text" value="<?php echo H($no_error ? $configs['WebSite'] : $form['WebSite'] ) ?>" size="60" /></td>
+                    <td><input placeholder="请输入校级平台介绍图片URL" name="ImageURL" class="text" value="<?php echo H($no_error ? $configs['ImageURL'] : $form['ImageURL'] ) ?>" size="60" /></td>
+				</tr>
+                <tr><td><div class="interval_20"></div> </td></tr>
+				<tr>
+					<td class="left"><?php echo I18N::T('cers', '平台描述信息获取URL')?></td>
+                    <td class="left"><?php echo I18N::T('cers', '设备共享信息获取URL')?></td>
+                </tr>
+                <tr><td><div class="interval_16"></div></td> </tr>
+                <tr>
+					<td><input name="" disabled class="text" value="<?php echo H($configs['PlatformDescXmlURL'] ) ?>" size="60" /></td>
+                    <td><input name="" disabled class="text" value="<?php echo H($configs['InstrusShareXmlURL'] ) ?>" size="60" /></td>
+				</tr>
+				<tr>
+					<td class="description"><?php echo '* 全国平台自动提取本校级平台介绍信息的入口URL'?></td>
+                    <td class="description"><?php echo '* 全国平台自动提取校级平台大型科学仪器设备共享信息的URL'?></td>
+				</tr>
+                <tr><td><div class="interval_20"></div> </td></tr>
+				<tr>
+					<td class="left"><?php echo I18N::T('cers', '设备效益信息获取URL')?></td>
+                    <td class="left"><?php echo I18N::T('cers', 'XMLURL用户')?></td>
+				</tr>
+                <tr><td><div class="interval_16"></div></td> </tr>
+                <tr>
+                    <td><input name="" disabled class="text" value="<?php echo H($configs['InstrusShareEffectXmlURL'] ) ?>" size="60" /></td>
+                    <td><input name="" disabled class="text" value="<?php echo H($configs['api-username'] ) ?>" size="60" /></td>
+                </tr>
+				<tr>
+					<td colspan="3" class="description"><?php echo '* 全国平台自动提取校级平台大型科学仪器设备效益统计信息的URL'?></td>
+				</tr>
+<!--				<tr>-->
+<!--					<td class="right">--><?php //echo I18N::T('cers', 'XMLURL密码')?><!--</td>-->
+<!--					<td colspan="3"><input name="" disabled class="text" value="--><?php //echo H(md5($configs['api-password']) ) ?><!--" size="57" /></td>-->
+<!--				</tr>-->
+<!--				<tr>-->
+<!--					<td class="right">--><?php //echo I18N::T('cers', '平台入网仪器数')?><!--</td>-->
+<!--					<td colspan="3" class="description">--><?php //echo $configs['InstruAmount']; ?><!--</td>-->
+<!--				</tr>-->
+                <tr>
+                    <td><div class="interval_60"></div> </td>
+                </tr>
+				<tr>
+					<td class="right"></td>
+					<td>
+                        <input name="submit" class="float_right font-button-save" value="<?php echo H(I18N::T('cers', '保存设置')) ?>" type="submit"/>
+                        <input type="reset" class="font-button-default float_right rmargin_16" value="取消">
+                    </td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</div>

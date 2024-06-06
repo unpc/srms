@@ -1,0 +1,54 @@
+<?php
+$params = Config::get('system.controller_params');
+$id = $params[0];
+if($id === 'unactivated'): ?>
+	<div class="description">
+		<p>View inactive member information here.</p>
+		<p>Search by users of laboratories.</p>
+		<p>You may edit part of your information.</p>
+		<p>* Edit, delete or activate users here.</p>
+		<p>* You may view a user's sign-up schedule or equipment usage/charging history here by clicking the user's name.</p>
+		<p>* Administrators only.</p>
+	</div>
+<?php else: 
+	$id = (int)$id;
+	$role = O('role',$id);
+	
+	if($role->id == Q("role[name=超级管理员]")->id ): ?>
+	<div class="description">
+		<p>View administrators information here.</p>
+		<p>Search by users of laboratories.</p>
+		<p>You may edit part of your information.</p>
+		<p>* Edit, delete or block users here.</p>
+		<p>* You may view a user's sign-up schedule or equipment usage/charging history here by clicking the user's name.</p>
+		<p>* Administrators only.</p>
+	</div>
+	<?php elseif($role->id == Q("role[name=财务管理员]")->id ): ?>
+	<div class="description">
+		<p>View billing officers information here.</p>
+		<p>Search by users of laboratories.</p>
+		<p>You may edit part of your information.</p>
+		<p>* Edit, delete or block users here.</p>
+		<p>* You may view a user's sign-up schedule or equipment usage/charging history here by clicking the user's name.</p>
+		<p>* Administrators only.</p>
+	</div>
+	<?php elseif($role->id == Q("role[name=仪器管理员]")->id ): ?>
+		<p>View technicians information here.</p>
+		<p>Search by users of laboratories.</p>
+		<p>You may edit part of your information.</p>
+		<p>* Edit, delete or block users here.</p>
+		<p>* You may view a user's sign-up schedule or equipment usage/charging history here by clicking the user's name.</p>
+		<p>* Administrators only.</p>
+	<?php elseif($role->id == Q("role[name=实验室管理员]")->id ): ?>
+	<div class="description">
+		<p>View lab managers information here.</p>
+		<p>Search by users of laboratories.</p>
+		<p>You may edit part of your information.</p>
+		<p>* Edit, delete or block users here.</p>
+		<p>* You may view a user's sign-up schedule or equipment usage/charging history here by clicking the user's name.</p>
+		<p>* Administrators only.</p>
+	</div>
+	<?php endif; ?>
+<?php endif; 
+
+

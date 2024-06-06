@@ -1,0 +1,4 @@
+<?php
+$uids = $duty->user_id ? explode(',', $duty->user_id) : [];
+$uids = implode(',', array_unique($uids));
+echo Q("user[id={$uids}] lab")->total_count() ?: 0;

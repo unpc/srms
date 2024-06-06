@@ -1,0 +1,46 @@
+.general_title {
+	padding: 5px 2px;	
+}
+
+.publication_template {
+	
+	font-size: 14px;
+	
+	
+	ol.publications {
+		list-style: decimal inside;
+		margin: 0;
+		padding-left: 10px; 
+		
+		li.publication {
+			margin: 3px 0;
+			
+			span.authors {
+				a {
+					color: #3366CC;
+					font-weight: bold;
+					outline: none;
+				}
+			
+				a.same_author {
+					text-decoration: underline;
+				}
+			}
+			
+			span.title {
+				color: #000000;
+				cursor: pointer;
+				font-weight: bold;
+			}
+			
+			span.source {
+				font-style: italic;
+			}
+			
+			span.year {
+				color: #662222;
+				font-weight: bold;
+			}
+		}
+	}
+}

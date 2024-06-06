@@ -1,0 +1,29 @@
+<div class="interval_12"></div>
+<div class="message message_error clearfix nowrap">
+    <?= I18N::T('eq_glogon', '此密码仅限于登录大型仪器软件客户端，自行设置。'); ?>
+</div>
+<div class="interval_12"></div>
+<div class="form padding_1">
+    <form autocomplete="off" method="post" action="<?php echo H(URI::url() ) ?>">
+        <?php 
+        echo V('form_error', ['form' => $form]); 
+        $require = (string) V('form_require');
+        ?>
+        <table class="form">
+            <tbody>
+                <tr>
+                    <td class="right nowrap middle"><?php echo I18N::T('eq_glogon', '客户端密码')?></td>
+                    <td class="middle lpadding_30">
+                        <input type="password" name="glogon_pass" class="text" tabindex="1" />
+                        <?php echo $require; ?>
+                    </td>
+                </tr>
+                <tr><td colspan="2"><div class="interval_12"></div></td></tr>
+            </tbody>
+        </table>
+        <div class="float_right">
+            <input type="submit" name="submit" class="font-button-save" value="<?php echo I18N::T('eq_glogon', '更新'); ?>" />
+        </div>
+        <div class="clearfix"></div>
+    </form>
+</div>

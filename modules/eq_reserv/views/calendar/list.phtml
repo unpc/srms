@@ -1,0 +1,44 @@
+<?php 
+$left_id = 'calendar_left_nav_'.uniqid();
+?>
+<div class="pages"><?= $pagination ?></div>
+<div class="calendar_list">
+<?php 
+
+$table = Widget::factory('table');
+$table->extra_class = 'reserv';
+$table->name = 'calendar_list_view';
+$table->sort_by = $sort_by;
+$table->sort_asc = $sort_asc;
+$table->empty_message = $calendar->list_empty_message();
+
+$table->add_columns($columns);
+$table->form_url = Input::url();
+$odd = FALSE;
+$last_day = -1;
+$day_count = 0;
+$component_count = 0;
+
+foreach ($components as $component) {
+	if ($component->dtend < $component->dtstart) continue;
+	$day = date('z', $component->dtstart);
+
+	$row = $calendar->list_row($component);
+	if ($row) {
+		$table->add_row($row);
+	}
+	$component_count++;
+
+	$last_day = $day;
+}
+
+echo $table;
+?>
+
+<div class="pages"><?= $pagination ?></div>
+</div>
+
+<script type="text/javascript">
+    Q.globals.cal_week_rel = 'edit_week';
+    Q.globals.mode = 'list';
+</script>

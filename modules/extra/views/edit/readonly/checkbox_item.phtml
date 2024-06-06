@@ -1,0 +1,9 @@
+<?php
+    $size = L('ME')->locale == 'en_US' ? 49 : 46;
+?>
+<div class="checkbox_container nowrap bpadding_1">
+    <span class="holder">
+        <input name="field[<?php echo $prefix?>][checkbox][default_value][<?php echo $subprefix ? : 0;?>]" class="checkbox" type="checkbox" disabled="disabled" <?php echo $default ? 'checked' : '' ?>  style="vertical-align: middle;" />
+    </span>
+    <input name="field[<?php echo $prefix?>][checkbox][<?php echo $subprefix ? : 0;?>]" type="text" class="text" size="<?php echo $size; ?>" value="<?php echo H($item) ?>" disabled="disabled" />
+</div>

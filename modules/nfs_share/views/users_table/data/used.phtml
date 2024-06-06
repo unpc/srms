@@ -1,0 +1,16 @@
+<?php 
+//如果文件系统的空间限额为0，则认为该实验室没有开通文件系统
+if(!$user->nfs_size):
+    echo '<span class="color_gray">'.I18N::T('nfs', '暂未开通文件系统').'</span>';
+else: 
+	$percent = ceil($user->nfs_used*100/$user->nfs_size) . '%';
+?>
+<div class="left">
+	<span class="progress_bar middle" style="padding:0">
+		<span style="width:<?php echo $percent ?>; overflow:hidden;">&#160;</span>
+	</span>
+	<span class="description" style="padding:0">
+		<?php echo I18N::T('nfs', '已使用 %used', ['%used'=>File::bytes(ceil($user->nfs_used))]); ?>
+	</span>
+</div>
+<?php endif;

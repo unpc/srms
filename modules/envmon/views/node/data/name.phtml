@@ -1,0 +1,48 @@
+<h4>
+    <?php if (L('ME')->is_allowed_to('查看', $node)) : ?>
+    <a href="<?php echo H($node->url()) ?>"><?php echo H($node->name); ?></a></h4>
+<?php else : ?>
+    <?php echo H($node->name); ?>
+<?php endif; ?>
+</h4>
+<div class="description">
+    <?php
+
+    $location = [];
+    $location[] = H($node->location);
+    $location[] = H($node->location2);
+
+    echo implode(' ', $location);
+    ?>
+</div>
+<div class="hr_1">&#160;</div>
+<div class="sensors_brief clearfix">
+    <?php
+    $sensors = Q("env_sensor[node=$node]");
+
+    foreach ($sensors as $sensor) {
+        echo V('envmon:sensor/list_brief', ['sensor' => $sensor]);
+    }
+    ?>
+</div>
+<?php if (L('ME')->is_allowed_to('添加传感器', $node)): ?>
+    <?php if (Module::is_installed('db_sync') && Db_Sync::is_slave()) : ?>
+        <div class="sensor_panel padding_1">
+            <a class="button button_add" href="<?php echo
+            Event::trigger('db_sync.transfer_to_master_url', '', ['q_params' => [
+                'q-object' => 'add_sensor',
+                'q-event' => 'click',
+                'q-static' => ['node_id' => $node->id],
+                'q-src' => Event::trigger('db_sync.transfer_to_master_url', '!envmon/sensor', '', true),
+            ]])
+            ?>"><?php echo I18N::HT('envmon', '添加传感器'); ?></a>
+        </div>
+    <?php else: ?>
+        <div class="sensor_panel padding_1">
+            <a class="button button_add" href="#" q-object="add_sensor" q-event="click"
+               q-src="<?php echo H(URI::url('!envmon/sensor')) ?>"
+               q-static="<?php echo H(['node_id' => $node->id]) ?>"><?php echo I18N::HT('envmon', '添加传感器'); ?></a>
+        </div>
+    <?php endif; ?>
+<?php endif; ?>
+<div class="hr_1">&#160;</div>

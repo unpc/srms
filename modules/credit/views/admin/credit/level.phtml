@@ -1,0 +1,88 @@
+<style>
+.admin-credit-level .same_as_span {
+    border: none;
+    padding: 1px 0;
+    min-width: 0;
+    margin: 0 -2px;
+    vertical-align: middle;
+    width: 15px !important;
+}
+
+.admin-credit-level .width_24 {
+    width: 24px !important;
+}
+</style>
+<div class="form padding_2 admin-credit-level">
+    <?php echo '<h2 class="section_title">'. I18N::HT('credit', '信用等级设置').'</h2>'; ?>
+    <div class="interval_20">&#160;</div>
+    <form method="post" action="<?= H(URI::url()) ?>">
+        <?php echo V('form_error', ['form' => $form]); ?>
+        <table class="form margin-left-1">
+            <thead>
+                <tr>
+                    <th class="middle padding_2" style="width: 30%"><?= I18N::T('credit', '信用等级')?></th>
+                    <th class="middle padding_2" style="width: 30%"><?= I18N::T('credit', '信用排名占比')?></th>
+                    <th class="middle padding_2" style="width: 30%"><?= I18N::T('credit', '等级标识')?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php $count = 1; ?>
+                <?php $total_count = $credit_levels->total_count(); ?>
+                <?php foreach ($credit_levels as $credit_level) : ?>
+                <tr>
+                    <td class="top label left nowrap middle padding_2">
+                        <?php echo str_repeat('A', $credit_level->level) ?></td>
+                    <td class="top label left nowrap middle padding_2">
+                        <span class="middle tpadding_2 bpadding_2"><?= I18N::T('credit', '前')?></span>
+                        <input class="text number same_as_span" type="text"
+                            name="rank_start[<?= $credit_level->level ?>]"
+                            value="<?= $form["rank_start"][$credit_level->level] ?: $credit_level->rank_start ?>"
+                            onfocus="this.blur();">
+                        <span class="middle tpadding_2 bpadding_2"><?= I18N::T('credit', '% ~ 前')?></span>
+                        <input size="6" type="text" name="rank_end[<?= $credit_level->level ?>]"
+                            value="<?= $form["rank_end"][$credit_level->level] ?: $credit_level->rank_end ?>"
+                            <?= $total_count == $count ? 'onfocus="this.blur();" class="text number same_as_span width_24"' : 'class="text number"' ?>>
+                        <span class="middle"><?= I18N::T('credit', '%(含)')?></span>
+                    </td>
+                    <td class="top label left nowrap middle padding_2">
+                        <input autocomplete="off" class="text" type="text" name="name[<?= $credit_level->level ?>]" value="<?= $credit_level->name ?>">
+                    </td>
+                </tr>
+                <?php $count++; ?>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+        <div class="interval_30">&#160;</div>
+        <input type="submit" name="submit" class="font-button-save float_right" value="<?php echo H(T('保存修改')) ?>" />
+        <input type="reset" name="submit" class="font-button-default float_right rmargin_16"
+            value="<?php echo H(T('取消')) ?>" />
+        <button style="font-size: 14px;line-height: 30px;" type="submit" name="restore"
+            class="icon-refresh font-button-default float_right rmargin_16" value="1">
+            <div class="float_right" style="padding-left: 8px;font-size: 14px;"><?php echo HT('恢复为默认设置'); ?></div>
+        </button>
+        <div class="interval_30">&#160;</div>
+    </form>
+</div>
+
+<script type="text/javascript">
+$(function() {
+    // input根据文本自适应宽度
+    var fun = function() {
+        var $this = $(this);
+        var length = $this.val().length;
+        var width = parseInt(length) * 7;
+        $this.css("width", width + "px");
+    };
+    $('input[name^="rank_end"]').bind('input propertychange', function() {
+        var name = $(this).attr('name');
+        var start = name.indexOf('[');
+        var end = name.indexOf(']');
+        var key = name.substr(start + 1, end - start - 1);
+        key = parseInt(key);
+        var next_key = key - 1;
+        $('input[name="rank_start[' + next_key + ']"]').val($(this).val());
+        fun.apply($('input[name="rank_start[' + next_key + ']"]'))
+    })
+    $('input.same_as_span').each(fun);
+})
+</script>

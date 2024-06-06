@@ -1,0 +1,51 @@
+<?php
+$tr_grant_id = $tr_grant_id ?: 'tr_grant_' . uniqid();
+?>
+	<?php
+$me = L('ME');
+if (!$GLOBALS['preload']['people.multi_lab']) {
+    $organizer = $component->organizer;
+    $organizer_lab = Q("{$organizer} lab");
+
+    $lab = $lab->id ? $lab : ($organizer_lab->total_count() ? $organizer_lab->current() : Q("$me lab")->current());
+}
+
+$object = O('eq_reserv', ['component' => $component]);
+
+$grantSelect = $object->grant ?: 0;
+if (!$lab) {
+    $lab = O('lab'); //不做这步操作下面会变成空对象调用get_grants()方法
+}
+$grants = (array) $lab->get_grants();
+$canChangeUser = $me->is_allowed_to('修改预约', 'equipment') || $me->is_allowed_to('修改预约', $component->calendar->parent);
+if (($user->id && $user->id == $me->id) || !$user->id):
+?>
+	<td cid="<?php echo $tr_grant_id; ?>" style="padding-left: 25px;" class="label left top nowrap" valign="middle">
+	<div class="title">
+		<?php echo I18N::T('billing_later', '经费卡号'); ?>
+	</div>
+    	<?php echo Form::dropdown('grant', ['--'] + $grants, $grantSelect, 'style="width: 280px;"'); ?>
+    </td>
+	<?php endif;?>
+<?php if ($canChangeUser): ?>
+<script type="text/javascript">
+	$('input[name=organizer]')
+	.unbind('change')
+	.bind('change', function(e){
+		var $user_id = $(this).val()
+			, $curr_lab_id = '<?php echo $lab->id ?: 0 ?>'
+			, $component_id = '<?php echo $component->id ?: 0 ?>'
+		Q.trigger({
+	    	object: 'grants'
+			, event: 'change'
+			, data: {
+					'user_id': $user_id,
+					'curr_lab_id': $curr_lab_id,
+					'component_id': $component_id,
+					'tr_grant_id': '<?php echo $tr_grant_id ?>'
+				}
+			, url: "<?php echo URI::url('!billing_later'); ?>"
+		});
+	});
+</script>
+<?php endif;?>

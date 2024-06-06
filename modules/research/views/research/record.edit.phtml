@@ -1,0 +1,137 @@
+<?php
+$me = L('ME');
+$require = V('form_require');
+?>
+<div class="form padding_1 clearfix">
+<form class="view" q-object="edit_record" q-src="<?= H(URI::url('!research/research')) ?>" autocomplete="off">
+  <?= Form::hidden('record_id', $record->id); ?>
+  <?= Form::hidden('research_id', $record->research->id); ?>
+  <?= V('form_error', ['form'=>$form]);?>
+  <table class="form clearfix">
+    <tbody>
+      <tr>
+        <td class="label right top nowrap"><?= I18N::T('research', '科研服务编号'); ?></td>
+        <td class="top nowrap">
+            <input name="research_no" type="text" size="40" class="text" value="<?= H($form['research_no'] ? : $record->research_no);?>" />
+            <?php // echo $require ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label right top nowrap"><?= I18N::T('research', '使用者'); ?></td>
+        <td class="top nowrap">
+          <?php
+          if ($me->is_allowed_to('管理使用记录', $research)) {
+              echo Widget::factory('user_selector', [
+                  'name' =>'user_id',
+                  'user' => $form['user_id'] ? O('user', $form['user_id']) : $record->user,
+              ]);
+          }else{ ?>
+              <input class="text" style="text-align: right" name="user_name" value="<?= $me->name?>" disabled>
+              <input type="hidden" name="user_id" value="<?= $me->id?>">
+          <?php } ?>
+          <?= $require?>
+        </td>
+      </tr>
+      <tr>
+        <td class="label right top nowrap"><?= I18N::T('research', '服务数量'); ?></td>
+        <td colspan="2" class="top nowrap">
+          <input name="quantity" type="text" size="40" class="text autogrow" value="<?= H($form['quantity'] ? : $record->quantity);?>" />
+          <?= $require?>
+        </td>
+      </tr>
+      <tr>
+        <td class="label right top nowrap"><?= I18N::T('research', '收费单价'); ?></td>
+        <td class="top nowrap">
+          <input name="price" type="text" class="text currency"
+            sign="<?= H(Config::get('lab.currency_sign') ) ?>"
+            value="<?= $form['price'] ? : $record->price; ?>" />
+          <?= $require?>
+        </td>
+      </tr>
+      <tr>
+        <td class="label right top nowrap"><?= I18N::T('research', '服务总金额'); ?></td>
+        <td class="top nowrap">
+          <input name="amount" type="text" class="text currency"
+            sign="<?= H(Config::get('lab.currency_sign') ) ?>"
+            value="<?= $form['amount'] ? : $record->amount; ?>" />
+          <?= $require?>
+        </td>
+      </tr>
+      <tr>
+        <td class="label right top nowrap"><?= I18N::T('research', '折扣(%)'); ?></td>
+        <td class="top nowrap">
+          <input name="discount" type="text" class="text currency"
+            value="<?= $form['discount'] ? : $record->discount; ?>" />
+          <?= $require?>
+        </td>
+      </tr>
+      <tr>
+        <td class="label right top nowrap"><?= I18N::T('research', '应收金额'); ?></td>
+        <td class="top nowrap">
+          <input name="auto_amount" type="text" class="text currency" disabled="disabled" id="auto_amount"
+            sign="<?= H(Config::get('lab.currency_sign') ) ?>"
+            value="<?= $record->auto_amount() ?>" />
+          <?= $require?>
+        </td>
+      </tr>
+      <!-- <tr>
+        <td class="label right nowrap"><?php // echo I18N::T('research', '服务时间'); ?></td>
+        <td class="nowrap">
+          <input name="date" type="text" class="text date middle" value="<?php // echo $form['date'] ? : ($record->date ? : Date::time()); ?>" q-date_format="<?php // echo HT('$year/$month/$day')?>"/>
+          <?php // echo $require?>
+        </td>
+      </tr> -->
+      <tr>
+        <td class="label right nowrap"><?= I18N::T('research', '服务开始时间'); ?></td>
+        <td class="nowrap">
+          <input name="dtstart" type="text" class="text date middle" value="<?= $form['dtstart'] ? : ($record->dtstart ? : Date::time()); ?>" q-date_format="<?= HT('$year/$month/$day')?>"/>
+        </td>
+      </tr>
+      <tr>
+        <td class="label right nowrap"><?= I18N::T('research', '服务结束时间'); ?></td>
+        <td class="nowrap">
+          <input name="dtend" type="text" class="text date middle" value="<?= $form['dtend'] ? : ($record->dtend ? : Date::time()); ?>" q-date_format="<?= HT('$year/$month/$day')?>"/>
+          <?= $require?>
+        </td>
+      </tr>
+      <tr>
+        <td class="label right nowrap"><?= I18N::T('research', '收费状态'); ?></td>
+        <td class="nowrap">
+          <?= Form::dropdown('charge_status',
+            I18N::T('research', Research_Record_Model::$charge_status),
+            (int)$form['charge_status'] ? : (int)$record->charge_status,
+            'class="dropdown"'
+          ); ?>
+          <?= $require?>
+        </td>
+      </tr>
+      <tr>
+        <td class="label right nowrap"><?= I18N::T('research', '备注'); ?></td>
+        <td class="nowrap">
+            <textarea name="description" class="text autogrow" rows="3" cols="60"><?= H($form['description'] ?: $record->description) ?></textarea>
+        </td>
+      </tr>
+      <tr>
+        <td>&#160;</td>
+        <td>
+          <input type="submit" name="submit" class="button button_edit middle" value="<?= H(I18N::T('research', '提交')) ?>" />
+          <?php if ($record->id):?>
+            <input type="submit" name="delete" class="button button_delete middle" value="<?= H(I18N::T('research', '删除')) ?>" />
+          <?php endif;?>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</form>
+</div>
+<script type="text/javascript">
+var $auto_amount = $('input#auto_amount')
+  , $amount = $('input[name=amount]')
+  , $discount = $('input[name=discount]')
+  , auto_charge = function() {
+    $auto_amount.val(Math.round( $amount.val().replace('¥', '')) * $discount.val() / 100);
+  }
+
+  $amount.unbind('change').bind('change', auto_charge)
+  $discount.unbind('change').bind('change', auto_charge)
+</script>

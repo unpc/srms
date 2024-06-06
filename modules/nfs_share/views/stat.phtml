@@ -1,0 +1,155 @@
+<?php
+$user = L('ME');
+$total = Lab::get('nfs.total');
+$total['title'] = I18N::T('nfs_share', '总体使用情况');
+//$total['alink'] = '<a class="button">查看</a>';
+
+$public = Lab::get('nfs.public');
+$public['title'] = I18N::T('nfs_share', '公共分区');
+//$public['alink'] = '<a class="button">查看</a>';
+
+if($user->access('管理所有内容')){
+	$users = Lab::get('nfs.users');
+}else{
+	$users = [];
+	$sel = "user[atime>0]";
+    $pre_selectors = new ArrayIterator();
+	$new_sel = Event::trigger('sort.condition.selector', $sel, $pre_selectors, 'user');
+	if ($new_sel) {
+		$sel = $new_sel;
+	}
+    if (count($pre_selectors)) $sel = '('.implode(',', (array)$pre_selectors).') '.$sel;
+	$userall = Q($sel);
+	foreach($userall as $u){
+		$users['used']+=$u->nfs_used;
+		$users['size']+=$u->nfs_size;
+	}
+}
+
+$users = Lab::get('nfs.users');
+$users['title'] = I18N::T('nfs_share', '个人分区');
+$users['alink'] = URI::anchor(
+    URI::url('!nfs_share/people'),
+    I18N::T('nfs_share', '查看'),
+    'class="color_a_green_noc7"'
+);
+?>
+
+<table class="sticky flexible">
+    <thead>
+    <tr>
+        <th class="nowrap">
+        <span class="header middle left rpadding_2">
+            <strong><?= I18N::T('nfs_share', '名称') ?></strong>
+        </span>
+        </th>
+        <th class="nowrap" colspan="3">
+        <span class="header middle left rpadding_2">
+            <strong><?= I18N::T('nfs_share', '使用情况') ?></strong>
+        </span>
+        </th>
+        <th class="nowrap">
+        <span class="header middle right rpadding_2">
+            <strong><?= I18N::T('nfs_share', '操作') ?></strong>
+        </span>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php if($user->access('管理所有内容')): ?>
+    <tr>
+        <td class="nowrap color_gray" style="color: #333333"><?php echo $total['title']; ?></td>
+        <td class="nowrap" colspan="3">
+            <span class="progress_bar middle">
+                <span class="progress-done"
+                      style="width:<?php echo $total['size'] ? ceil($total['used'] * 100 / $total['size']) : 0; ?>%">&#160;</span>
+            </span>
+            <span class="middle left lmargin_2 color_gray" style="color: #666666">
+                <?php echo I18N::T('nfs_share', '已使用 %used', ['%used' => File::bytes($total['used'])]); ?>
+            </span>
+        </td>
+        <td class="nowrap">
+            <?php echo $total['alink']; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="nowrap middle left color_gray" style="color: #333333"><?php echo $public['title']; ?></td>
+        <td class="nowrap middle left" colspan="3">
+                <span class="progress_bar middle">
+                    <span class="progress-done"
+                          style="width:<?php echo $public['size'] ? ceil($public['used'] * 100 / $public['size']) : 0; ?>%">&#160;</span>
+                </span>
+            <span class="middle left lmargin_2 color_gray" style="color: #666666">
+                <?php echo I18N::T('nfs_share', '已使用 %used', ['%used' => File::bytes($public['used'])]); ?>
+            </span>
+        </td>
+        <td class="middle right rpadding_2">
+            <?php echo $public['alink']; ?>
+        </td>
+    </tr>
+    <?php endif; ?>
+    <?php if (Module::is_installed('labs') && $user->is_allowed_to('查看各实验室分区', 'nfs_share')) :
+        $labs = Lab::get('nfs.labs');
+        $labs['title'] = I18N::T('nfs_share', '各实验室分区');
+        $labs['alink'] = URI::anchor(
+            URI::url('!nfs_share/labs'),
+            I18N::T('nfs_share', '查看'),
+            'class="color_a_green_noc7"'
+        );
+        ?>
+        <tr>
+            <td class="nowrap middle left color_gray" style="color: #333333"><?php echo $labs['title']; ?></td>
+            <td class="nowrap middle left" colspan="3">
+                <span class="progress_bar middle">
+                    <span class="progress-done"
+                          style="width:<?php echo $labs['size'] ? ceil($labs['used'] * 100 / $labs['size']) : 0; ?>%">&#160;</span>
+                </span>
+                <span class="middle left lmargin_2 color_gray" style="color: #666666">
+                    <?php echo I18N::T('nfs_share', '已使用 %used', ['%used' => File::bytes($labs['used'])]); ?>
+                </span>
+            </td>
+            <td class="middle right rpadding_2">
+                <?php echo $labs['alink']; ?>
+            </td>
+        </tr>
+    <?php endif; ?>
+
+    <?php if($user->is_allowed_to('查看各实验室分区', 'nfs_share')): ?>
+    <tr>
+        <td class="nowrap middle left color_gray" style="color: #333333"><?php echo $users['title']; ?></td>
+        <td class="middle middle left" colspan="3">
+            <span class="progress_bar middle color_gray">
+                <span class="progress-done"
+                      style="width:<?php echo $users['size'] ? ceil($users['used'] * 100 / $users['size']) : 0; ?>%">&#160;</span>
+            </span>
+            <span class="middle left lmargin_2 color_gray" style="color: #666666">
+                <?php echo I18N::T('nfs_share', '已使用 %used', ['%used' => File::bytes($users['used'])]); ?>
+            </span>
+        </td>
+        <td class="middle right rpadding_2"><?php echo $users['alink']; ?></td>
+    </tr>
+    <?php endif; ?>
+
+    <?php if ($user->nfs_size):
+        ?>
+        <tr>
+            <td class="middle left color_gray" style="color: #333333"><?php echo I18N::T('nfs_share', '我的分区'); ?></td>
+            <td class="middle middle left" colspan="3">
+                <span class="progress_bar middle">
+                    <span class="progress-done"
+                          style="width:<?php echo L('ME')->nfs_used * 100 / L('ME')->nfs_size; ?>%">&#160;</span>
+                </span>
+                <span class="middle left lmargin_2 color_gray" style="color: #666666">
+                    <?php echo I18N::T('nfs_share', '已使用 %used', ['%used' => File::bytes(L('ME')->nfs_used)]); ?>
+                </span>
+            </td>
+            <td class="middle right rpadding_2"><?php echo URI::anchor(
+                    URI::url('!nfs_share/finder/' . $user->name() . '.' . $user->id),
+                    I18N::T('nfs_share', '查看'),
+                    'class="color_a_green_noc7"'
+                ); ?></td>
+        </tr>
+    <?php endif; ?>
+    </tbody>
+</table>

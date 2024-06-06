@@ -1,0 +1,165 @@
+<div class="interval_16"></div>
+<?php
+	echo CSS::load_async('eq_approval:common preview');
+	echo JS::load_async('preview');
+
+	$table = Widget::factory('table');
+	$table->name = 'eq_approval_user_voucher';
+	$field = [
+        'checkbox'=>NULL,
+        'equipment_name' => [
+			'title' => I18N::T('eq_approval', '仪器名称'),
+			'align' => 'left',
+			'nowrap' => TRUE,
+			'filter' => [
+				'form' => V('eq_approval:voucher_tables/filters/equipment_name', ['equipment_name' => $form['equipment_name']]),
+				'value' => $form['equipment_name'] ? H($form['equipment_name']) : NULL
+			]
+		],
+		'used_time' => [
+			'title' => I18N::T('eq_approval', '预计使用时长'),
+			'align' => 'center',
+
+			/*
+			'filter' => [
+				'form' => V('eq_approval:voucher_tables/filters/used_time', ['used_time' => $form['used_time']]),
+				'value' => $form['used_time'] ? H($form['used_time']) : NULL
+			],
+			*/
+			'nowrap' => TRUE
+		],
+		'samples' => [
+			'title' => I18N::T('eq_approval', '送样数'),
+			'align' => 'center',
+			'nowrap' => TRUE,
+			// 'filter' => [
+			// 	'form' => V('eq_approval:voucher_tables/filters/samples', ['samples' => $form['samples']]),
+			// 	'value' => $form['samples'] ? H($form['samples']) : NULL
+			// ],
+		],
+		'auto_amount' => [
+			'title' => I18N::T('eq_approval', '预计价格'),
+			'align' => 'center',
+			'nowrap' => TRUE
+		],
+		'user' => [
+			'title' => I18N::T('eq_approval', '申请人'),
+			'align' => 'left',
+			'nowrap' => TRUE
+		],
+		'type' => [
+			'title' => I18N::T('eq_approval', '预约类型'),
+			'align' => 'center',
+			'nowrap' => TRUE
+		],
+		'status' => [
+			'title' => I18N::T('eq_approval', '申请状态'),
+			'align' => 'center',
+			'nowrap' => TRUE
+		],
+		'ctime' => [
+			'title' => I18N::T('eq_approval', '申请时间'),
+			'align' => 'center',
+			'nowrap' => TRUE
+		],
+		'rest' => [
+			'align' => 'right',
+			'extra_class' => 'flexible',
+			'nowrap' => TRUE
+		],
+        'action' => [
+            'title' => NULL,
+            'align' => 'left',
+            'nowrap' => TRUE
+        ],
+	];
+	$table->add_columns($field);
+
+
+	$table->empty_message = I18N::T('eq_approval', '没有相关预约凭证!');
+
+    $param = [
+        'panel_buttons' => $panel_buttons,
+        'top_input_arr'=> ['equipment_name'],
+        'columns'=> $table->columns,
+    ];
+    echo V('application:search_box', $param);
+
+	foreach ($vouchers as $voucher) {
+		$equipment = $voucher->equipment;
+		$links = $voucher->links('lab_index');
+		$extra_class = $voucher->status != EQ_Voucher_Model::PENDDING ? 'disabled' : '';
+		$table->add_row([
+            'checkbox' => [
+                'view'=> Form::checkbox("select_voucher[{$voucher->id}]",  0, '', 'class="middle checkbox id:'.$voucher->id.'" ' . $extra_class, 'class="middle"')
+            ],
+            'equipment_name' => V('eq_approval:voucher_tables/data/lab_equipment_name', ['voucher' => $voucher]),
+			'used_time' => V('eq_approval:voucher_tables/data/used_time', ['voucher' => $voucher]),
+			'samples' => V('eq_approval:voucher_tables/data/sample', ['voucher' => $voucher]),
+			'auto_amount' => V('eq_approval:voucher_tables/data/auto_amount', ['voucher' => $voucher]),
+			'user' => V('eq_approval:voucher_tables/data/user', ['voucher' => $voucher]),
+			'type' => V('eq_approval:voucher_tables/data/type', ['voucher' => $voucher]),
+			'status' => V('eq_approval:voucher_tables/data/status', ['voucher' => $voucher]),
+			'ctime' => V('eq_approval:voucher_tables/data/ctime', ['voucher' => $voucher]),
+			'rest' => Widget::factory('application:links', ['links' => $links]),
+            'action' => V('eq_approval:voucher_tables/data/action', ['voucher' => $voucher]),
+		]);
+	}
+?>
+<div class="pages" ><?php echo $pagination; ?></div>
+<?php
+echo $table;
+?>
+<div class="pages" ><?php echo $pagination; ?></div>
+<script>
+jQuery(function($){
+	var $total_select = $('[name="select_all"]')
+		, $selectors = $('[name^="select_voucher"]:enabled')
+		, $batch_button = $('.batch_process')
+		, $actions = $('[class*="voucher_id\:"]:not(".disable")')
+
+	$actions.bind('click', function(e){
+		var me = $(this)
+			, id = me.classAttr('voucher_id')
+			, action = me.classAttr('action')
+		Q.trigger({
+			url: '<?= URI::url("!eq_approval/voucher") ?>',
+			object: 'voucher',
+			event: action,
+			global: false,
+			data: { id: id }
+		})
+		return false
+	})
+	$total_select.bind('click', function(e){
+		var me = $(this)
+		if ( me.is(':checked') ) {
+			$selectors.each(function(){ this.checked = true })
+		}
+		else {
+			$selectors.each(function(){ this.checked = false })
+		}
+	})
+
+	$batch_button.bind('click', function(e){
+		var $items = $('[name^="select_voucher"]:checked:enabled')
+			, ids = []
+		if (!$items.length) {
+			alert('<?= I18N::T("eq_approval", "请选择相应的凭证!") ?>')
+			return false
+		}
+
+		$items.each(function(e){
+			ids.push($(this).classAttr('id'))
+		})
+		Q.trigger({
+			url: '<?= URI::url("!eq_approval/voucher") ?>',
+			object: 'voucher',
+			event: 'batch_action',
+			global: false,
+			data: { ids: ids.join(', ') }
+		})
+		return false
+	})
+});
+</script>

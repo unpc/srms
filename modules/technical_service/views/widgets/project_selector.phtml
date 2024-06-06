@@ -1,0 +1,22 @@
+<?php
+if (!is_object($selected_project)) $selected_project = O('service_project', $selected_project);
+
+if ($this->projects):
+    $projects = $this->projects;
+    $projects = $this->no_project ? [0 => '-----'] + $projects : $projects;
+    $projects = $this->all_projects ? ['*' => I18N::T('technical_service', '--')] + $projects : $projects;
+    echo Form::dropdown($this->name, $projects, $selected_project->id, 'class="middle dropdown ' . ($this->is_autosubmit ? 'autosubmit ' : '') . '"');
+else:
+    $uniqid = 'projectsel_' . uniqid();
+    $size = $this->size ?: '';
+    $autocomplete = $this->autocomplete ?: URI::url('!technical_service/autocomplete/projects');
+    $lp = $this->lpadding;
+    ?>
+    <input id="<?php echo $uniqid ?>_project" name="<?php echo H($this->name) ?>" type="hidden"
+           value="<?php echo H($selected_project->id) ?>"/>
+    <input id="<?php echo $uniqid ?>_project_name" placeholder="<?php echo I18N::T('projects', '项目') ?>"
+           class="text middle <?php echo $lp ? 'lpadding_30' : '' ?> select_on_focus autocomplete:<?php echo H($autocomplete) ?> autocomplete_alt:#<?php echo $uniqid ?>_project"
+           size="<?php
+           echo $size ?>" value="<?php echo $selected_project->id ? H($selected_project->name) : '' ?>"
+           q-tooltip="<?php echo H(I18N::T('projects', '请输入关键字并选择')) ?>" <?php echo $extra ?> />
+<?php endif;

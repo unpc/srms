@@ -1,0 +1,14 @@
+<tr <?php if((Config::get('extra.fudan.equipment.usetype') != null) && Config::get('extra.fudan.equipment.usetype')) echo ' class="hidden toggle:extra_fields[usetype] show_on:0" ';?> >
+    <td class="label left top nowrap" colspan=2>
+		<div class="title "> <?php echo I18N::T('eq_sample', '相关送样记录');?>
+            <a class="font-button-save float_right autocomplete_more_confirm">确认</a>
+        </div>
+  
+		<input type="text" class="text token token_verify token_more"
+			name="sample_records"
+			size="45"
+			value="<?php echo H($form['sample_records']) ?>"
+			q-token_autocomplete="<?php echo H(URI::url('!eq_sample/autocomplete/approved_sample.'.$record->equipment->id)) ?>"
+			/>
+    </td>
+</tr>

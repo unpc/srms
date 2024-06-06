@@ -1,0 +1,57 @@
+<?php
+$me = L('ME');
+$sample = $result->sample;
+?>
+<table class="form">
+<tbody>
+    <tr>
+        <td class="label right top nowrap">
+            <?= H('样品编码') ?>
+        </td>
+        <td>
+            <input name="<?= "subname[$flexform_index]" ?>" type="text" class="text" size="30"
+            value="<?= $form['subname'][$flexform_index] ? : $result->subname ?>">
+        </td>
+    </tr>
+    <tr>
+        <td class="label right top nowrap">
+            <?= H('检测参数') ?>
+        </td>
+        <td>
+            <input name="<?= "parameter[$flexform_index]" ?>" type="text" class="text" size="30"
+            value="<?= $form['parameter'][$flexform_index] ? : $result->parameter ?>">
+        </td>
+    </tr>
+    <tr>
+        <td class="label right top nowrap">
+            <?= H('浓度范围') ?>
+        </td>
+        <td>
+            <input name="<?= "concentration[$flexform_index]" ?>" type="text" class="text" size="30"
+            value="<?= $form['concentration'][$flexform_index] ? : $result->concentration ?>">
+        </td>
+    </tr>
+    <tr>
+        <td class="label right top nowrap">
+            <?= H('结果要求等级') ?>
+        </td>
+        <td>
+            <input name="<?= "level[$flexform_index]" ?>" type="text" class="text" size="30"
+            value="<?= $form['level'][$flexform_index] ? : $result->level ?>">
+        </td>
+    </tr>
+    <?php if ($me->is_allowed_to('管理', $sample)): ?>
+    <tr>
+        <td class="label right top nowrap">
+            <?= H('测样结果') ?>
+        </td>
+        <td>
+            <input name="<?= "result[$flexform_index]" ?>" type="text" class="text" size="30"
+            value="<?= $form['result'][$flexform_index] ? : $result->result ?>">
+        </td>
+    </tr>
+    <?php endif; ?>
+    <input name="<?= "result_id[$flexform_index]" ?>" type="hidden" value="<?= $result->id ?>">
+    <input name="<?= "result_index[$flexform_index]" ?>" type="hidden" value="<?= $flexform_index ?>">
+</tbody>
+</table>

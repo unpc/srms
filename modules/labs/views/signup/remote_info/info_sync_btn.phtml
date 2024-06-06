@@ -1,0 +1,44 @@
+<tr class="info_sync">
+	<td></td>
+	<td>
+		<input name="info_sync" type="button" class="button button_remote info_sync" value="<?php echo H(I18N::T('labs', '同步远程信息')) ?>" />
+	</td>
+</tr>
+<script>
+	jQuery(function($){
+
+		function get_remote_info(){
+			var $user_name = $('input[name="pi_token"]').val();
+			var $backend = $('select[name="pi_token_backend"]').val();
+			var $user_token = $user_name + '|' + $backend;
+			Q.trigger({
+				object: 'get_remote_lab',
+				event: 'click',
+				data: {'token':$user_token},
+				success: function(data){
+					var $lab_info = data.lab_info;
+					var $user_info = data.user_info;
+					if($lab_info){
+						$('input.lab_name').val($lab_info.name);
+						$('input.lab_contact').val($lab_info.contact);
+
+
+						$('input.pi_name').val($user_info.name);
+						$('input.pi_email').val($user_info.email);
+						$('input.pi_phone').val($user_info.phone);
+					}
+					$('input.text').removeAttr('disabled');
+					$('span.signup_button').show();
+				}
+			});
+		};
+
+		$('input.info_sync').click(function(){
+			$('input.text').attr('disabled', 'disabled');
+			$('span.signup_button').hide();
+			get_remote_info();
+		});
+
+
+	});
+</script>

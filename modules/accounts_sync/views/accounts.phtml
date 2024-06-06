@@ -1,0 +1,57 @@
+<div class="hr_1">&#160;</div>
+<div class="panel padding_1">
+	<a class="button button_add" href="<?php echo H(URI::url('!accounts/account/add')) ?>"/><?php echo I18N::HT('accounts', '添加客户')?></a>
+</div>
+<?php
+
+echo $pagination;
+
+$table = Widget::factory('table');
+$table->name = 'accounts';
+$table->form = $form;
+$table->add_columns([
+	'@' => NULL,
+	'name' => [
+		'title' => I18N::T('accounts', '客户名称'),
+		'filter' => [
+			'form' => V('accounts:accounts_table/filters/name', ['lab_name'=>$form['lab_name']]),
+			'value' => $form['lab_name'] ? H($form['lab_name']) :NULL
+		],
+		'nowrap'=>TRUE,
+	],
+	'email' => [
+		'title' => I18N::T('accounts', 'P.I. Email'),
+		'nowrap'=>TRUE,
+	],
+	'mtime' => [
+		'title' => I18N::T('accounts', '更新时间'),
+		'nowrap'=> TRUE,
+		// 'extra_class' => 'tight',
+	],
+	'etime' => [
+		'title' => I18N::T('accounts', '到期时间'),
+		'nowrap' => TRUE,
+		// 'extra_class' => 'tight',
+	],
+	'links' => [
+		'nowrap' => TRUE,
+		'extra_class' => 'tight',
+	],
+]);
+
+$table->empty_message = I18N::T('accounts', '无符合条件的结果');
+
+foreach($accounts as $account) {
+
+	$table->add_row([
+		'name' => V('accounts:accounts_table/data/name', ['account'=>$account]),
+		'email' => V('accounts:accounts_table/data/email', ['account' => $account]),
+		'mtime' => Date::format($account->mtime),
+		'etime' => $account->etime ? Date::format($account->etime) : '--',
+		'links' => V('application:widgets/links', ['links'=>$account->links('index')]),
+	]);
+
+}
+
+
+echo $table;

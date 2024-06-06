@@ -1,0 +1,23 @@
+<tr>
+	<td class="label right nowrap top"><?php echo I18N::T('meeting', $properties['label']) ?></td>
+	<td>
+		<table class="form">
+
+			<tr>
+				<td class="top nowrap">
+				<?php
+					$meeting_room = $component->me_room;
+
+					echo Widget::factory('meeting:meeting_selector', [
+								'name' => 'connect_meeting',
+								'autocomplete' => URI::url('!meeting/autocomplete/meeting'), 
+								'extra' => 'token_verify middle',
+								'meeting' => $meeting_room,
+								'size' => 38
+							]); 
+				?>
+				</td>
+			</tr>
+		</table>
+	</td>
+</tr>

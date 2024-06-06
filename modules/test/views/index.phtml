@@ -1,0 +1,69 @@
+<div class="hr_1">&#160;</div>
+<div class="panel clearfix">
+			<div class="float_left padding_1 nowrap" style="line-height:24px">
+				<a href="<?php echo H(URI::url('!test/index/lists') ) ?>" class="button middle">根目录</a>
+				<?php
+					$path_names = explode('/',$path_dirs);
+					foreach($path_names as $path_name) {
+						if($path_name){
+							$path_pre .='.'.$path_name.'%F';
+				?>
+							<a href="<?php echo H(URI::url('!test/index/lists'.$path_pre) ) ?>" class="button middle"><?php echo $path_name;echo $form['name'];?></a>
+				<?php		
+					}}
+				?>
+			</div>
+			
+</div>
+<?php echo $pagination;?>
+<?php
+	$table = Widget::factory('table');
+	$table->name = 'test';
+   
+	$columns = [
+		'@' => NULL,
+	    'name' => [
+			'title' => I18N::T('test', '文件名称'),
+			'nowrap' => TRUE,
+			'filter' => [
+				'form' => V('test:search_filter/name', ['form' => $form]),
+				'value' => $form['name'] ? $form['name'] : NULL,
+	            'field' => 'name'
+	            ]
+		],
+		'mtime' => [
+			'title' => I18N::T('test', '更新时间'),
+			'nowrap' => TRUE,
+		],
+		'size' => [
+			'title' => I18N::T('test', '占用空间'),
+			'nowrap' => TRUE,
+		],
+		'execute' => [
+			'align' => 'right',
+			'nowrap' => TRUE,
+		],
+	];
+
+
+	$path['dir'] = $path_dirs;
+	foreach ($files as $file) { 
+
+			$path['file'] = $file['name'];
+			$table->add_row([
+			'@'=>[
+				'view'=>'<img class="icon icon_happyhour" height="16px" width="16px" src="!test/icons/16/test.png" style="display:block">',
+				'extra'=>'style="padding:4px" align="center"'
+			],
+			'name' => V('test:name',['file' => $file,'path' => $path]),
+			'mtime' => Date::relative($file['mtime']),
+			'size' => File::bytes($file['size']),
+			'execute' => V('test:execute',['file' => $file,'path' => $path]),
+				]);
+		}
+	    $table->add_columns($columns);
+	    $table->empty_message = I18N::T('test', '没有执行文件');
+	    echo $table;
+?>
+<?php echo $pagination;?>
+

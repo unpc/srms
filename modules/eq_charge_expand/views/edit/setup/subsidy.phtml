@@ -1,0 +1,66 @@
+<form method="post" autocomplete="off" action="<?php echo H(URI::url() ) ?>">
+<?php $setting = EQ_Charge_Expand::get_charge_subsidy_setting($equipment);?>
+<div class="form padding_1">
+<table class="form flexible">
+	<tbody>
+	<tr>
+		<td class="top icon tight">
+			<?php echo $equipment->icon('64'); ?>
+		</td>
+		<td class="top">
+			<h4><?php echo I18N::T('eq_charge', '机时补贴费参数设置');?></h4>
+			<div class="padding_2">
+                <table>
+                    <tr>
+                        <td class="label middle nowrap">
+                            <?php echo I18N::T('eq_charge', '每小时需要金额');?>
+                        </td>
+                        <td class="label middle nowrap">
+                            <input name="subsidy_hour" class="text currency" size="10" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo H($setting['*']['hour']) ?>" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label middle nowrap">
+                            <?php echo I18N::T('eq_charge', '每一样品需要金额');?>
+                        </td>
+                        <td class="label middle nowrap">
+                            <input name="subsidy_sample" class="text currency" size="10" sign="<?php echo H(Config::get('lab.currency_sign')) ?>" value="<?php echo H($setting['*']['sample']) ?>">
+                        </td>
+                    </tr>
+                </table>
+			</div>
+		</td>
+	</tr>
+	</tbody>
+</table>
+</div>
+<div class="form padding_2">
+<?php
+unset($setting['*']);
+$tags = $setting;
+if ($tags) foreach ($tags as $k => $tag) {
+    if ($tag) {
+        $key = serialize($tag);
+        if (!isset($specific[$key])) {
+            $specific[$key] = $tag;
+        }
+        $specific[$key]['special_tags'][] = $k;
+    }
+}
+$specific = (array)$specific;
+echo Widget::factory('flexform', [
+    'title' => I18N::T('eq_charge', '个别收费标准'),
+    'title_class' => "section_title_span",
+    'template_data' => ['disabled'=>TRUE],
+    'existing_data' => array_values($specific),
+    'item_view' => 'eq_charge_expand:edit/setup/subsidy/item',
+    'extra_vars' => [
+        'equipment' => $equipment,
+    ],
+]);
+?>
+</div>
+<div class="form padding_1">
+	<input type="submit" name="submit" class="button button_save" value="<?php echo H(T('更新')) ?>" />
+</div>
+</form>

@@ -1,0 +1,113 @@
+<?php $me = L('ME'); ?>
+<div class="form padding_1">
+<table class="form">
+	<tbody>
+	<tr>
+		<td class="top icon">
+			<a href="<?php echo H($equipment->url('photo', NULL, NULL, 'edit') ) ?>"><?php echo $equipment->icon('64'); ?></a>
+		</td>
+		<td class="top">
+			<form method="post" action="<?php echo H(URI::url() ) ?>" autocomplete="off">
+			<?php
+				echo V('form_error', ['form'=>$form]);
+				$no_error = ($form->no_error!==FALSE);
+			?>
+			<?php $require = (string) V('form_require'); ?>
+			<table class="form">
+				<tbody>
+					<tr>
+						<td class="label right nowrap middle"><?php echo I18N::T('cers', '仪器别名')?></td>
+						<td class="top">
+							<input name="Alias" class="text" size="40" value="<?php echo H($form['Alias'] ?: $equipment->Alias)?>" />
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle"><?php echo I18N::T('cers', '英文名称')?></td>
+						<td class="top">
+							<input name="ENGName" class="text" size="40" value="<?php echo H($form['ENGName'] ?: $equipment->ENGName)?>" />
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle"><?php echo I18N::T('cers', '共享分类编码')?></td>
+						<td class="top">
+							<input name="ClassificationCode" class="text" size="40" value="<?php echo H($form['ClassificationCode'] ?: $equipment->ClassificationCode)?>" /><?php echo $require; ?>
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle"><?php echo I18N::T('cers', '测试研究领域代码')?></td>
+						<td class="top">
+							<input name="ApplicationCode" class="text" size="40" value="<?php echo H($form['ApplicationCode'] ?: $equipment->ApplicationCode)?>" />
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle"><?php echo I18N::T('cers', '生产厂商资质')?></td>
+						<td class="top">
+							<input name="ManuCertification" class="text" size="40" value="<?php echo H($no_error ? $equipment->ManuCertification : $form['ManuCertification'] )?>" /><?php echo $require; ?>
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle"><?php echo I18N::T('cers', '产地国别（代码）')?></td>
+						<td class="top">
+							<?php 
+								$codes = [0=>'--'] + (array)Config::get('equipment.manucountrycode');
+								echo Form::dropdown('ManuCountryCode', $codes, $form->no_error ? $equipment->ManuCountryCode : $form['ManuCountryCode'], 'class="dropdown"');
+								echo $require;
+							?>
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle"><?php echo I18N::T('cers', '外币币种')?></td>
+						<td class="top">
+							<input name="PriceUnit" class="text" size="40" value="<?php echo H($form['PriceUnit'] ?: $equipment->PriceUnit)?>" />
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle"><?php echo I18N::T('cers', '外币原值')?></td>
+						<td class="top">
+							<input name="PriceOther" class="text number" value="<?php echo H($form['PriceOther'] ?: $equipment->PriceOther)?>" />
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle"><?php echo I18N::T('cers', '共享特色代码')?></td>
+						<td class="top">
+							<?php
+								$_CheckShareLevel = function($key) use ($equipment, $form){
+									if ($form->no_error) {
+										return (bool)in_array($key, array_keys($equipment->ShareLevel));
+									}
+									else {
+										return $form['ShareLevel'][$key];
+									}
+								};
+								foreach ((array)Config::get('equipment.ShareLevel') as $key => $name) {
+									echo Form::checkbox("ShareLevel[{$key}]", $_CheckShareLevel($key), $name, 'class="middle monitor"', 'class="middle"');
+									echo "&#160;";
+								}
+							?>
+                            <?php echo $require;?>
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle"><?php echo I18N::T('cers', '知名用户')?></td>
+						<td class="top">
+							<input name="ServiceUsers" class="text" size="40" value="<?php echo H($form['ServiceUsers'] ?: $equipment->ServiceUsers)?>" />
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap top"><?php echo I18N::T('cers', '备注')?></td>
+						<td class="top"><textarea class="text autogrow" rows="3" cols="60" name="OtherInfo"><?php echo H($no_error ? $equipment->OtherInfo : $form['OtherInfo']) ?></textarea></td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle"></td>
+						<td class="top">
+							<input class="button button_save" name="submit" type="submit" value="<?php echo H(I18N::T('cers', '更新')) ?>" />
+						</td>
+					</tr>
+				<tbody>
+			</table>
+			</form>
+		</td>
+	</tr>
+	</tbody>
+</table>
+</div>

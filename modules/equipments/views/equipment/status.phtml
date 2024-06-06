@@ -1,0 +1,35 @@
+<?php
+$me = L('ME');
+/*
+NO. TASK#255 (Cheng.Liu@2010.11.19)
+仪器常规信息状态下 状态列表转换成table widget
+ */
+
+$table       = Widget::factory('table', ['extra_class' => 'equipments_grid']);
+$table->name = 'equipments_status';
+$table->add_columns([
+    'status'      => [
+        'title'  => I18N::T('equipments', '状态'),
+        'nowrap' => true,
+    ],
+    'date'        => [
+        'title'  => I18N::T('equipments', '时间'),
+        'nowrap' => true,
+    ],
+    'description' => [
+        'title'  => I18N::T('equipments', '备注'),
+        'align'  => 'left',
+//        'nowrap' => true,
+        'noLast' => TRUE,
+    ],
+]);
+$table->empty_message = I18N::T('equipments', '无符合条件的仪器状态记录!');
+foreach ($statuses as $status) {
+    $table->add_row([
+        'status'      => V('equipments:statuses_table/data/status', ['status' => $status]),
+        'date'        => V('equipments:statuses_table/data/date', ['object' => $status]),
+        'description' => H($status->description, true),
+    ]);
+}
+
+echo $table;

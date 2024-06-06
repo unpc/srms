@@ -1,0 +1,44 @@
+<?php $uniqid = uniqid(); ?>
+<div class="hr_1">&#160;</div>
+<form method="post" action="">
+	<div style="overflow:auto">
+	<table class="form flexible">
+	<thead>
+		<tr>
+			<?php
+				$fields = Config::get('orders.import_fields');
+			?>
+			<?php
+			for($i = 0; $i < $csv_max_cols; $i++): ?>
+				<th class="padding_1 nowrap filter left"><?php echo Form::dropdown("csv_columns[$i]", I18N::T('orders',$fields),'', 'class="middle"'); ?></th>
+			<?php endfor; ?>
+		</tr>
+	</thead>
+	<?php
+		echo V('order/csv_content_uniqid',['uniqid'=>$uniqid,'csv_rows'=>$csv_rows,'csv_max_cols'=>$csv_max_cols]);
+	?>
+	</table>
+	</div>
+	<div class="form padding_2">
+	<p>
+	<?php echo Form::checkbox('skip_rows',FALSE, I18N::T('orders', '从第几行开始导入'),'class="middle monitor"');?>
+	<input type="text" name="skip_rows_count" class="middle text right toggle_status:skip_rows enable_on:on src:<?php echo URI::url('!orders')?> view object:rows_count event:change static:uniqid=<?php echo $uniqid; ?>" value="0" size="5" />
+	</p>
+	<div class="hr_1">&#160;</div>
+	<p>
+		<span class="label middle"><?php echo I18N::T('orders','默认订购人') ?></span>
+		<?php echo Widget::factory('user_selector', [
+			'autocomplete'=>'',
+			'name'=>'default_purchaser',
+			'user'=> L('ME'),
+			'size'=> 20,
+			]);?>
+		<span class="small description"><?php echo I18N::T('orders','(若导入的记录无订购人或订购人不是实验室中的成员，请选择默认订购人.)') ?></span>
+	</p>
+	<div class="hr_2">&#160;</div>
+	<p>
+		<input type="submit" name="submit" value="<?php echo I18N::T('orders','导入'); ?>" class="button button_import middle" />
+		<a href="<?php echo H(URI::url('!orders/index/import') ) ?>" class="button button_cancel middle"><?php echo I18N::T('orders','取消'); ?></a>
+	</p>
+	</div>
+</form>

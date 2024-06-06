@@ -1,0 +1,2 @@
+<?php $uniqid = 'dc_record_'.uniqid(); ?>
+<a class="blue view object:delete_record event:click static:<?php echo H(['id'=>$record->id,'uniqid'=>$uniqid]) ?> src:<?php echo H(URI::url('!entrance/dc_record/index')) ?>"><?php echo I18N::T('entrance','删除') ?></a>

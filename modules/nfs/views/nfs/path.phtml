@@ -1,0 +1,31 @@
+<a class="middle path nfs-path"
+    <?php if (!$path) echo 'style="color: #448EF6"';?>
+   href="<?php echo H(URI::url('!nfs/nfs/index.'.$object->name().'.'.$object->id.'.'.$path_type, ['form_token'=>$form_token]) ) ?>" data=""><?php echo I18N::T('nfs', '根目录')?></a>
+<?php if ($path) :?>
+<span style="color: #999999;padding: 0 8px">&frasl;</span>
+<?php
+	$folder_arr = explode('/', rawurldecode($path));
+	$p = '';
+	$i = 0;
+	$size = count($folder_arr);
+	foreach ($folder_arr as $folder):
+		$i++;
+		if ($p) {
+			$p .= '/';
+		}
+		$p .= $folder;
+?>
+	<a  class="middle path nfs-path"
+	href="<?php echo H(URI::url('!nfs/nfs/index.'.
+	$object->name().'.'.$object->id.'.'.$path_type, 
+	['path'=>rawurlencode($p), 'form_token'=>$form_token])) ?>"
+	 data="<?php echo H(rawurlencode($p) ) ?>"
+    <?php if ($i == $size) echo 'style="color: #448EF6"';?>>
+	<?php echo H($folder)?>
+	</a>
+    <?php if($i < $size):?>
+        <span style="color: #999999;padding: 0 8px">&frasl;</span>
+    <?php endif; ?>
+
+	<?php endforeach;?>
+<?php endif;?>

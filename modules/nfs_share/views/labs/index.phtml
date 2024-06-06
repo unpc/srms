@@ -1,0 +1,36 @@
+<?php 
+	/*
+	NO. TASK#258 (Cheng.Liu@2010.11.19)
+	nfs labs分区查看转换成 table widget
+	 */
+$table = Widget::factory('table');
+$table->name = 'nfs_labs';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+$table->empty_message = I18N::T('nfs_share', '无符合条件的实验室');
+
+$table->add_columns($columns);
+$search_box = V('application:search_box', ['is_offset' => false,'top_input_arr'=>['lab'], 'columns' => $columns]);
+
+if (count($labs) > 0 ) {
+	foreach ($labs as $lab) {
+		$table->add_row([
+		/*	'@'=>[
+				'view'=>$lab->icon(32, 'style="display:block"'),
+				'extra'=>'style="padding:4px" align="right"'
+			],*/
+			'lab'=>V('nfs_share:labs_table/data/lab', ['lab'=>$lab]),
+			'group'=>V('application:tag/path', ['tag'=>$lab->group]),
+			'used'=>V('nfs_share:labs_table/data/used', ['lab'=>$lab]),
+			'mtime'=>V('nfs_share:labs_table/data/mtime', ['lab'=>$lab]),
+			'rest'=>V('nfs_share:labs_table/data/rest', ['lab'=>$lab])
+		]);		
+	}
+}
+
+echo $search_box;
+echo $table;
+?>
+
+<div class="pages"><?= $pagination ?></div>

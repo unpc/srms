@@ -1,0 +1,123 @@
+<div class="interval_16"></div>
+<?php
+echo CSS::load_async('equipments:common');
+
+$table = Widget::factory('table');
+
+$table->name = 'incharge_training_applied';
+
+$columns = [
+    'check' => [
+        'align'=>'center',
+        'nowrap'=>TRUE,
+    ],
+    'status' => [
+        'align'=>'center',
+        'nowrap'=>TRUE,
+        'title' => I18N::T('equipments', '状态'),
+    ],
+    'user'=>[
+        'weight' => 10,
+        'title' => I18N::T('equipments', '姓名'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+        'filter'=> [
+            'form'=> V('equipments:equipments_table/filters/name', [
+                'name'=> 'user',
+                'value'=> $form['user'],
+            ]),
+            'value'=> H($form['user']),
+        ],
+    ],
+    'user_info' => [
+        'weight' => 20,
+        'title' => I18N::T('equipments', '联系方式'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'equipment' => [
+        'weight' => 30,
+        'title' => I18N::T('equipments', '仪器名称'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+        'filter'=> [
+            'form'=> V('equipments:equipments_table/filters/name', [
+                'name'=> 'equipment',
+                'value'=> $form['equipment'],
+            ]),
+            'value' => H($form['equipment']),
+        ],
+    ],
+    'ctime' => [
+        'weight' => 40,
+        'title' => I18N::T('equipments', '申请时间'),
+        'align' => 'center',
+        'nowrap' => TRUE,
+    ],
+    'rest'=>[
+        'nowrap'=>TRUE,
+        'align'=>'right',
+        'weight' => 70,
+    ]
+];
+
+$table->add_columns($columns);
+
+$table->empty_message = I18N::T('equipments', '无符合条件的培训 / 授权');
+
+$param = [
+    'panel_buttons' => $panel_buttons,
+    'top_input_arr'=> ['user', 'equipment'],
+    'columns'=> $table->columns,
+];
+echo V('application:search_box', $param);
+
+foreach ($trainings as $training) {
+    $table->add_row([
+        'check' => [
+            'view' => V('equipments:training_table/data/check', ['training' => $training, 'checked' => !!$ids[$training->id]]),
+        ],
+        'status'=> [
+            'view' => V('equipments:training_table/data/label', ['training' => $training]),
+            'extra' => 'style="padding:4px" align="right"',
+        ],
+        'user' => V('equipments:users_table/data/name', ['user' => $training->user]),
+        'user_info' => V('equipments:users_table/data/contact_info', ['user' => $training->user, 'training'=>$training]),
+        'equipment' => V('equipments:equipments_table/data/name', ['equipment' => $training->equipment]),
+        'ctime' => $training->ctime ? date('Y/m/d', $training->ctime) : T('--'),
+        'rest' => Widget::factory('application:links', ['links' => $training->links('applied')]),
+    ]);
+}
+?>
+
+<div class="pages" ><?php echo $pagination; ?></div>
+<?php
+echo $table;
+?>
+<div class="pages" ><?php echo $pagination; ?></div>
+
+<script>
+$().ready(function () {
+    var training_ids = {}
+    $('input[name=check]').bind('click', function (e) {
+
+        $("input[name=check]").each(function(index, element) {
+            var id = $(element).val();
+            training_ids[id] = element.checked ? 1 : 0;
+        })
+        
+        Q.trigger({
+            object: 'training',
+            event: 'check',
+            data: {
+                'ids': training_ids,
+                'type': 'applied'
+            },
+            url: '<?= URI::url('!equipments/training') ?>',
+            success: function (data) {
+                
+            }
+        })
+    })
+})
+</script>

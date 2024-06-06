@@ -1,0 +1,127 @@
+<?php
+$cache_css = Cache::cache_file(MODULE_PATH . 'technical_service/private/css/select2.min.css');
+$cache_css_base = Cache::cache_file(MODULE_PATH . 'technical_service/private/css/base.css');
+$cache_js = Cache::cache_file(MODULE_PATH . 'technical_service/private/js/select2.min.js');
+?>
+<link href="<?= $cache_css ?>" rel="stylesheet" />
+<link href="<?= $cache_css_base ?>" rel="stylesheet" />
+<script src="<?= $cache_js ?>"></script>
+
+<?php
+$me = L('ME');
+$form_id = 'batch_edit_sample_form_'. uniqid();
+?>
+
+<div class="form" style="min-width:570px">
+    <form q-object="batch_edit_sample" q-event="submit" q-src="<?php echo H(URI::url('!eq_sample/approval')) ?>" id="<?php echo H($form_id) ?>" autocomplete="off" method="post">
+        <?php echo V('form_error', ['form' => $form]);?>
+
+        <?php foreach($sample_ids as $sample_id): ?>
+        <input type="hidden" name="select[<?php echo $sample_id; ?>]" value="on">
+        <?php endforeach; ?>
+
+        <input type="hidden" name="equipment_id" value="<?php echo $equipment_id; ?>">
+
+        <table class="form">
+            <tr>
+                <td style="width: 140px; text-align: right;">送样状态</td>
+                <td style="width: 240px;">
+                    <?php
+                        $ss = [
+                            EQ_Sample_Model::STATUS_APPROVED => EQ_Sample_Model::$status[EQ_Sample_Model::STATUS_APPROVED],
+                            EQ_Sample_Model::STATUS_REJECTED => EQ_Sample_Model::$status[EQ_Sample_Model::STATUS_REJECTED],
+                            EQ_Sample_Model::STATUS_CANCELED => EQ_Sample_Model::$status[EQ_Sample_Model::STATUS_CANCELED],
+                        ];
+
+                        if ($same_equipment) {
+                            $ss[EQ_Sample_Model::STATUS_TESTED] = EQ_Sample_Model::$status[EQ_Sample_Model::STATUS_TESTED];
+                        }
+
+                        echo Form::dropdown('status', I18N::T('eq_sample', $ss), $form['status'] ?: null, 'class="dropdown monitor"');
+                    ?>
+                </td>
+            </tr>
+
+            <?php if($equipment_id):?>
+            <tr class="hidden toggle:status show_on:<?php echo EQ_Sample_Model::STATUS_TESTED; ?>">
+                <td style="width: 140px; text-align: right;">测样成功数</td>
+                <td>
+                    <input name="success_samples" type="text" class="text number" value="<?= $form['success_samples'] ?: 0?>" />
+                </td>
+            </tr>
+
+            <tr class="hidden toggle:status show_on:<?php echo EQ_Sample_Model::STATUS_TESTED; ?>">
+                <td style="width: 140px; text-align: right;">选择关联使用记录</td>
+                <td>
+                    <select data-src="<?php echo H(URI::url('!eq_sample/autocomplete/records.' . $equipment_id)) ?>" class="js-example-basic-multiple_record no_dropdown" name="connect_records[]" multiple="multiple" style="width: 100%">
+                        <?php if($connect_records): ?>
+                        <?php foreach($connect_records as $rid => $tx):?>
+                            <option value="<?= $rid?>" selected><?= $tx?></option>
+                        <?php endforeach;?>
+                        <?php endif;?>
+                    </select>
+                </td>
+            </tr>
+            
+            <?php endif;?>
+
+            <tr>
+                <td colspan="2" class="nowrap" style="height:78px;vertical-align:center;padding-top:0px!important;">
+                    <div class="float_right">
+                        <input name="cancel" type='reset' id='cancel' class="font-button-default sm rmargin_2e4" value="<?php echo I18N::HT('eq_sample', '取消');?>" />
+                        <input name="submit" type='submit' class="font-button-save sm" value="<?php echo I18N::HT('eq_sample', '保存');?>" />
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+    </form>
+</div>
+
+<?php if($equipment_id):?>
+<script type="text/javascript">
+var select_params = {
+    closeOnSelect: false,
+    multiple: true, //多选
+    ajax: {
+        dataType: 'json',
+        data: function(params) {
+            return {
+                s: params.term, // 搜索框内输入的内容，传递到Java后端的parameter为username
+                st: params.page, // 第几页，分页哦
+            };
+        },
+        // 分页
+        processResults: function(data, params) {
+            params.page = params.page || 1;
+            return {
+                results: data, // 后台返回的数据集
+                pagination: {
+                    more: (params.page * 5) < data[0].total_count //auto接口需要返回total_count
+                }
+            };
+        },
+        cache: false
+    },
+    escapeMarkup: function(markup) {
+        return markup;
+    },
+    templateResult: function(repo) { // 显示的结果集格式，这里需要自己写css样式，可参照demo
+        // 正在检索
+        if (repo.loading) {
+            return repo.text;
+        }
+        var markup = repo.text || repo.html;
+        return markup;
+    },
+    templateSelection: function(repo) {
+        return repo.text;
+    } // 列表中选择某一项后显示到文本框的内容
+};
+jQuery(function($) {
+    var record_params = select_params;
+    record_params['ajax']['url'] = $(".js-example-basic-multiple_record").data('src');
+    $('.js-example-basic-multiple_record').select2(record_params);
+});
+</script>
+<?php endif; ?>

@@ -1,0 +1,214 @@
+<style>
+    .impression_container {
+        padding: 10px;
+    }
+    
+    .dropdown_container {
+        min-width: 284px;   
+    }
+
+    .dropdown_menu {
+        max-height: 120px;
+        min-width: 284px;
+        overflow: scroll;
+    }
+
+    .im_tag_pool .placeholder {
+        padding: 3px 0;
+    }
+
+    .im_tag_pool .im_tags {
+        display: inline-block;
+        margin: 3px 5px 1px 0;
+        border: 1px solid #ccd5e4;   
+        padding: 0 2px 0 2px;
+        background-color: #eff2f7;
+        cursor: default;
+    }
+
+    .im_tag_pool .im_tags.without_x {
+        padding: 0 4px 0 2px;
+    }
+
+    .impression_container .hover {
+        border-color: #ccd5e4;
+        background-color: #7498e0 !important;
+        color: white;
+    }
+
+    .im_tag_pool .im_tags:hover {
+        background-color: #d8dfea;
+        border-color: #ccd5e4;
+    }
+
+    .im_tag_pool .im_tags .remove_button_x {
+        display: inline-block;
+        background-image: url(images/token/x.gif) !important;
+        background-position: center center;
+        background-repeat: no-repeat;
+        cursor: pointer;
+        width: 16px;
+        height: 16px;
+        line-height: 16px;
+        padding: 0;
+        margin: 1px -2px 0 -3px;
+    }
+
+    .im_tag_pool .im_tags .remove_button:hover {
+        background-image: none;
+    }
+
+    .impression_container .button_add {
+        width: 24px;
+    }
+
+    .impression_container .button_save {
+        width: 78px;
+        height: 26px;
+        text-align: center;
+        background-position: 18px center;
+    }
+
+    .impression_container .button_cancel {
+        width: 50px;    
+    }
+
+</style>
+<form class="impression_container" q-object="equipment_im_tag" q-event="submit" q-src="<?php echo H(URI::url('!impression/equipment')) ?>">
+    <table class="form">
+        <tbody>
+            <tr>
+                <td colspan="3">
+                    <?= V('form_error', ['form' => $form]); ?>
+                    <?php if ($success): ?>
+                    <div class="message message_normal">
+                        <p><?= H(I18N::T('impression', '添加成功!')) ?></p>
+                    </div>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="label right nowrap top"><?php echo I18N::T('impression', '仪器名称')?></td>
+                <td class="middle" colspan="2">
+                    <?php echo Form::dropdown('equipment', $equipments, array_keys($equipments)[0], 'class="dropdown middle"'); ?>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td colspan="2" class="im_tag_pool">
+                    <?php foreach($im_tags as $im_tag): ?>
+                        <div class="im_tags without_x <?= is_array($im_tag) ? 'hover' : '' ?> middle">
+                            <span><?= H(I18N::T('impression', is_array($im_tag) ? $im_tag[0] : $im_tag)) ?></span>
+                        </div>
+                    <?php endforeach; ?>
+                    <?php foreach($tags as $tag): ?>
+                        <div class="im_tags without_x hover middle">
+                            <span><?= H(I18N::T('impression', $tag)) ?></span>
+                            <span class="remove_button_x">&nbsp;</span>
+                        </div>
+                    <?php endforeach; ?>
+                    <input type="hidden" class="hidden_tags" name="tags" />
+                </td>
+            </tr>
+            <tr>
+                <td class="label right nowrap middle"><?= I18N::T('impression', '关键词')?></td>
+                <td class="middle">
+                    <input id="im_tag" name="im_tag" class="text" style="text-align: left;" size="31" />
+                </td>
+                <td><input class="button button_add" value="<?= H(I18N::T('impression', '添加')) ?>" readonly /></td>
+            </tr>
+            <tr><td></td><td colspan="2" class="require"><?= H(I18N::T('impression', '*请输入关键词后按回车键提交或选择已有标签')) ?></td></tr>
+            <tr><td colspan="3" class="hr_2"></td></tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="submit" class="button button_save" value="<?= H(I18N::T('nrii', '确定') ) ?>" readonly />
+                    <input class="button button_cancel" value="<?= H(I18N::T('nrii', '返回首页') ) ?>" readonly />
+                </td>
+            </tr>
+            </tr>
+        </tbody>
+    </table>
+</form>
+<script>
+$(function($) {
+    $("#im_tag").keypress(function(e) {
+        if (e.which == 13) {
+            e.preventDefault();
+            $('.button_add').click();
+        }
+    });
+
+    $('.dialog_close, .impression_container .button_cancel').click(function() {
+        window.location.href='';
+    })
+
+    $('.without_x').click(function(e) {
+        $('#form_error_box').remove();
+        $('#im_tag').removeClass('validate_error');
+        $('.hidden_tags').val('');
+        if ($(this).hasClass('hover')) {
+            $(this).removeClass('hover');
+        } else {
+            $(this).addClass('hover');
+        }
+        put_tags();
+    })
+
+    $('.impression_container .button_add').click(function() {
+        $('#form_error_box').remove();
+        $('#im_tag').removeClass('validate_error');
+        $('.message_normal').remove();
+        var im_tag = $.trim($('#im_tag').val());
+        if (im_tag != '') {
+            $('.im_tag_pool .placeholder').remove();
+            $('.im_tag_pool').append('<div class="im_tags hover middle"><span>'+im_tag+'</span><span class="remove_button_x">&nbsp;</span></div>');
+            put_tags();
+            $('#im_tag').val('');
+        }
+    })
+
+    $('.remove_button_x').on('click', function(e) {
+        var count = $('.im_tags').length
+        
+        $(e.target).parent('.im_tags').remove();
+
+        $('.hidden_tags').val('');
+        put_tags();
+    })
+
+    $('[name="equipment"]').change(function() {
+        var equipment_id = $(this).selected().val()
+
+        Q.trigger({
+            object: 'equipment',
+            event: 'change',
+            data: {
+                'equipment_id' : equipment_id    
+            },
+            url: '<?php echo URI::url("!impression/equipment"); ?>',
+            success: function(res) {
+                $('.im_tag_pool .without_x').remove();
+                if (res.tags.length > 0) {
+                    $.each(res.tags, function(index, value) {
+                        $('.placeholder').remove();
+                        $('.im_tag_pool').prepend('<div class="im_tags without_x middle"><span>'+value+'</span></div>');
+                    })
+                }
+            }
+        });
+    })
+
+    function put_tags() {
+        $('.hover').each(function(index, value) {
+            var hidden_tags = $('.hidden_tags').val();
+            var tag = $.trim($(value).first('span').text());
+            if (hidden_tags == '') {
+                $('.hidden_tags').val(tag);
+            } else {
+                $('.hidden_tags').val(hidden_tags+'|'+tag);
+            }
+        })
+    }
+})
+</script>

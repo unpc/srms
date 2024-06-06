@@ -1,0 +1,18 @@
+div.dc_rul_form {
+	div.month {
+		background-color:red;
+		width:190px;
+	}
+
+	div.month_week {
+		width:343px;
+	}
+
+	div.week_day {
+		width:390px;
+	}
+
+	div.month_day {
+		width:310px;
+	}
+

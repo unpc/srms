@@ -1,0 +1,76 @@
+<div class="interval_60"></div>
+<div class="content_padding">
+
+        <h2 class="section_title"><?php echo I18N::T('eq_sample', '送样时间设置')?>
+            <a
+                href="<?php echo H($equipment->url('sample', null, null, 'exdiva_setting')) ?>"
+                class="h2-font-button-icon font-button-icon float_right">
+                <span class="icon-add  "></span><?php echo I18N::T('eq_sample', '添加')?></a>
+
+        </h2>
+
+        <div class="interval_30"></div>
+        <div>
+
+            <div class="middle rpadding_5">
+                <label class="float_left" for="<?php echo $sample_apply_checkbox_uniqid; ?>">规则起止日期</label>
+
+                <div class=" float_left date lmargin_5">
+                    <input id="dtstart" name="dtstart" type="text" class="text small_search_text" value="" />
+                    -
+                    <input id="dtend" name="dtend" type="text" class="text small_search_text" value="" />
+                </div>
+            </div>
+            <div class="interval_60"></div>
+            <div class="middle">
+                <label class="float_left" for="<?php echo $sample_apply_checkbox_uniqid; ?>">重复</label>
+
+                <ul class='radio_group float_left lmargin_6'>
+                    <li >
+                        <input name="date" class="radio" type="radio">每天
+                    </li>
+                    <li >
+                        <input name="date" class="radio" type="radio">每周
+                    </li>
+                    <li >
+                        <input name="date" class="radio" type="radio" name="" id="">每月
+                    </li>
+                    <li >
+                        <input name="date" class="radio" type="radio" name="" id="">每年
+                    </li>
+                    <li>
+                        <input type="checkbox" class="checkbox" name="" id="">自定义
+                    </li>
+                </ul>
+            </div>
+            <div class="interval_40"></div>
+            <hr/>
+            <div class="interval_30"></div>
+             <div class="middle">
+                <label class="float_left" for="<?php echo $sample_apply_checkbox_uniqid; ?>">设置可送样用户</label>
+                <ul class='check_group float_left lmargin_4a30'>
+                    <li >
+                        <input class="checkbox" type="checkbox">个别用户
+                    </li>
+                    <li >
+                        <input class="checkbox" type="checkbox">课题组
+                    </li>
+                    <li >
+                        <input class="checkbox" type="checkbox" name="" id="">组织机构
+                    </li>
+
+                </ul>
+            </div>
+
+        </div>
+</div>
+<script>
+    laydate.render({
+        elem: '#dtstart',
+        type:'datetime'
+    });
+    laydate.render({
+        elem: '#dtend',
+        type:'datetime'
+    });
+</script>

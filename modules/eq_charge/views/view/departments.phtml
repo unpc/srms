@@ -1,0 +1,8 @@
+<div class="department_container clearfix">
+	<?php foreach($departments as $department) :?>
+		<a href="#" class="browse_token"  token_alt="<?php echo H($department->id)?>" token_text="<?php echo H($department->name)?>">
+			<?php echo H($department->name)?>
+		</a>
+	<?php endforeach;?>
+</div>
+

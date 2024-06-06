@@ -1,0 +1,43 @@
+<?php
+
+$buttons = (array)$this->links;
+if (count($buttons)>0) {
+
+	//根据weight排序
+	
+	usort($buttons, function($a, $b) {
+		$aw = (int) $a['weight'];
+		$bw = (int) $b['weight'];
+		if ($aw == $bw) {
+			return 0;
+		}
+		elseif ($aw < $bw) {
+			return 1;
+		}
+		else
+			return -1;
+	});
+
+	$buttons = array_reverse($buttons);
+	
+	$str_buttons = [];
+	foreach($buttons as $button) {
+		if ($button['html']) {
+			$str_button = $button['html'];
+		}
+		else {
+			$str_button = '';
+			if ($button['prefix']) $str_button .= $button['prefix'];
+			//$extra = $button['extra'];
+			if ($button['tip']) $extra .= 'title="'.H($button['tip']).'"';
+			$extra = 'class="button"';
+			$str_button .= URI::anchor($button['url'], $button['text'], $extra);
+			if ($button['suffix']) $str_button .= $button['suffix'];
+		}
+		
+		$str_buttons[] = $str_button;
+	}	
+
+	echo implode(' ', $str_buttons);		
+
+}

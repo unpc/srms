@@ -1,0 +1,53 @@
+<div class="hr_1">&#160;</div>
+<div class="form padding_2">
+<form method="post" action="<?php echo H(URI::url() ) ?>">
+	<?php echo V('form_error', ['form'=>$form]); ?>
+	<table class="form food_add_form">
+		<tbody>
+			<tr>
+				<td class="label right nowrap top"><?php echo I18N::T('food', '供应商名称'); ?></td>
+				<td>
+					<input name="supplier" class="text" value="<?php echo H($form['supplier']); ?>"/>
+				</td>
+			</tr>
+			<tr>
+				<td class="label right nowrap top"><?php echo I18N::T('food', '菜式名称'); ?></td>
+				<td>
+					<input name="name" class="text" value="<?php echo H($form['name']); ?>"/>
+				</td>
+			</tr>
+			<tr>
+				<td class="label right nowrap"><?php echo I18N::T('food', '菜谱价格'); ?></td>
+				<td>
+					<input name="price" class="text currency" sign="<?php echo H(Config::get('lab.currency_sign')) ?>" value="<?php echo H($form['price']); ?>"/>
+				</td>
+			</tr>
+			<tr>
+				<td class="label right nowrap"><?php echo I18N::T('food', '可预订日期'); ?></td>
+				<td>
+					<?php echo Form::checkbox('reserve[1]',  FALSE , I18N::T('food','周一'), 'class="middle"', 'class="middle"'); ?>
+					<?php echo Form::checkbox('reserve[2]',  FALSE , I18N::T('food','周二'), 'class="middle"', 'class="middle"'); ?>
+					<?php echo Form::checkbox('reserve[3]',  FALSE , I18N::T('food','周三'), 'class="middle"', 'class="middle"'); ?>
+					<?php echo Form::checkbox('reserve[4]',  FALSE , I18N::T('food','周四'), 'class="middle"', 'class="middle"'); ?>
+					<?php echo Form::checkbox('reserve[5]',  FALSE , I18N::T('food','周五'), 'class="middle"', 'class="middle"'); ?>
+					<?php echo Form::checkbox('reserve[6]',  FALSE , I18N::T('food','周六'), 'class="middle"', 'class="middle"'); ?>
+					<?php echo Form::checkbox('reserve[7]',  FALSE , I18N::T('food','周日'), 'class="middle"', 'class="middle"'); ?>
+				</td>
+			</tr>
+			<tr>
+				<td class="label right nowrap top"><?php echo I18N::T('food', '菜式说明');?></td>
+				<td>
+					<textarea name="description"><?php echo H($form['description']);?></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<input name="submit" type="submit" class="button button_add" value="<?php echo I18N::T('food', '添加'); ?>" />
+					<input type="reset" class="button button_cancel" value="<?php echo I18N::T('food', '重置'); ?>" />
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</form>
+</div>

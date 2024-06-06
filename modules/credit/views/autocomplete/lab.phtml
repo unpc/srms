@@ -1,0 +1,10 @@
+<div class="token"><strong>
+    <?php echo H($lab->name); ?>
+    <br />
+    <?php $status_tags = (string) $lab->status_tags(); ?>
+    <?php if ($status_tags): ?>
+    <div class="clearfix">
+        <?php echo $status_tags ?>
+    </div>
+    <?php endif;?>
+</strong></div>

@@ -1,0 +1,250 @@
+<div class="interval_30"></div>
+<?php $disabled = L('ME')->is_allowed_to('修改计费设置', $equipment) ? '' : 'disabled="disabled"';
+?>
+<?php
+$departments = Q('billing_department');
+$arr = [];
+
+if (!$equipment->billing_dept->id) $arr[0] = '--';
+foreach ($departments as $k=>$v){
+    $arr[$v->id] = $v->name;
+}
+?>
+<form method="post" autocomplete="off" action="<?php echo H(URI::url() ) ?>">
+    <div class="form">
+        <?php echo CSS::load_async('eq_charge:common');?>
+        <table class="form flexible">
+            <tbody>
+                <tr>
+                    <td class="top flexible lpadding_30">
+                        <div>
+                            <?php if(L('ME')->is_allowed_to('锁定计费', $equipment)) :?>
+                            <h2 class="section_title"><?php echo I18N::T('eq_charge', '锁定计费');?></h2>
+                            <div class="interval_30"></div>
+                            <div class="lmaigin_1e5">
+                                <?php echo Form::checkbox('charge_lock',  $equipment->charge_lock, I18N::T('eq_charge', '锁定仪器负责人对该仪器的计费设置'), 'class="middle checkbox"', 'class="middle"');?>
+                            </div>
+                            <?php endif;?>
+                            <?= Event::trigger('equipment.extra.charge.setting', $equipment) ?>
+                        </div>
+                    </td>
+                </tr>
+				
+                <?php if (!$GLOBALS['preload']['billing.single_department'] && Module::is_installed('billing')): ?>
+                <tr>
+                    <td class="lpadding_30">
+						<div class="interval_60"></div>
+                        <div>
+                            <h2 class="section_title"><?php echo I18N::T('eq_charge', '收费中心')?></h2>
+                            <div class="interval_30"></div>
+                            <div class="lmaigin_1e5">
+                                <?php echo CSS::load_async('eq_charge:browse_department');?>
+                                <?php if ($disabled):?>
+                                <div>
+                                    <?php echo Form::dropdown('charge', $arr, $equipment->billing_dept->id,'class="monitor dropdown" disabled="disabled"'); ?>
+                                </div>
+                                <?php else: ?>
+                                <div>
+                                    <?php echo Form::dropdown('charge', $arr, $equipment->billing_dept->id,'class="monitor dropdown"'); ?>
+                                </div>
+                                <?php endif;?>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <?php endif; ?>
+
+
+				<?php if (Module::is_installed('billing_manage')): ?>
+					<?= V('billing_manage:equipment/charge', ['equipment' => $equipment, 'form' => $form]) ?>
+                <?php endif; ?>
+
+                <tr>
+                    <td class="lpadding_30">
+                        <script>
+                        function choose_department(item, $button) {
+                            var $input = $button.prev('input:eq(0)');
+                            $input.attr('value', item.alt);
+                            $input.prev('input[name=department]').attr('value', item.text);
+
+                            $('#' + item.uniqid).hide();
+                        }
+                        </script>
+                        <?php
+				$luas = Config::get('eq_charge.template');
+				$recommends = Config::get('eq_charge.recommend_template');
+
+				foreach ($luas as $key => $value) {
+					if(in_array($key, (array)$recommends)) $value['title'] .= ' ('.I18N::T('eq_charge', '推荐').')';
+
+					if (count($value['content']) >= 2){
+						$complex_luas[$key] = $value;
+					}
+					elseif ($value['category'] == 'reserv') {
+						$reserv_luas[$key] = $value;
+					}
+					elseif ($value['category'] == 'record') {
+						$record_luas[$key] = $value;
+					}
+					elseif ($value['category'] == 'sample') {
+						$sample_luas[$key] = $value;
+					}
+				}
+				$charge_template = $equipment->charge_template;
+				$charge_reserv = $charge_template['reserv'];
+				$charge_record = $charge_template['record'];
+				$charge_sample = $charge_template['sample'];
+			?>
+                        <div class="interval_60"></div>
+                        <?php if ($equipment->accept_reserv):?>
+                        <h2 class="section_title"><?php echo I18N::T('eq_charge', '预约 / 使用计费设置')?></h2>
+                        <?php else:?>
+                        <h2 class="section_title"><?php echo I18N::T('eq_charge', '使用计费设置')?></h2>
+                        <?php endif;?>
+                        <div class="interval_30"></div>
+                        <div class="charge_setting lmaigin_1e5">
+                            <b class="right rpadding_label"><?= I18N::T('eq_charge', '免费使用|:use')?></b>
+                            <div class="charge_dis">
+                                <?php
+						echo Form::radio('reserv_record_template', 'free' , (!$charge_reserv || !$charge_record) ? TRUE : FALSE, I18N::T('eq_charge', '免费使用'), 'class="monitor radio" data=""' . $disabled);
+					?>
+                            </div>
+                            <div class="interval_20"></div>
+
+                            <?php if ($equipment->accept_reserv) : ?>
+                            <b class="right rpadding_label"><?= I18N::T('eq_charge', '智能计费')?></b>
+
+                            <div class="charge_dis">
+                                <?php
+						foreach ($complex_luas as $key => $value) :
+					?>
+                                <div>
+                                    <?php
+							$arr = [];
+							foreach ($value['content'] as $k => $v) $arr[] = $k;
+							$str = implode(' ', $arr);
+							echo Form::radio('reserv_record_template', $key , ($charge_reserv == $key) ? TRUE : FALSE, I18N::T('eq_charge', $value['title']), 'class="monitor radio '.$key.'" data="'.$str.'"' . $disabled);
+						?>
+                                </div>
+                                <?php endforeach;?>
+                            </div>
+                            <div class="interval_20"></div>
+
+
+                            <b class="right rpadding_label"><?php echo I18N::T('eq_charge', '按预约情况计费')?></b>
+
+                            <?php foreach ($reserv_luas as $key => $value) :?>
+                            <div class="charge_dis">
+                                <?php
+						$arr = [];
+						foreach ($value['content'] as $k => $v) $arr[] = $k;
+						$str = implode(' ', $arr);
+						echo Form::radio('reserv_record_template', $key , ($charge_reserv == $key) ? TRUE : FALSE, I18N::T('eq_charge', $value['title']), 'class="monitor radio '.$key.'" data="'.$str.'"' . $disabled);
+					?>
+                            </div>
+                            <!--                <div class="interval_12"></div>-->
+                            <?php endforeach;?>
+                            <div class="charge_dis lpadding_5">
+                                <?php
+					if(Config::get('equipment.enable_charge_script', FALSE)){
+						echo Form::radio('reserv_record_template', 'custom_reserv' , ($charge_reserv == 'custom_reserv' && $charge_record != 'custom_record') ? TRUE : FALSE, I18N::T('eq_charge', '自定义'), 'class="monitor radio" data=""' . $disabled);
+					}
+					?>
+                            </div>
+                            <div class="interval_20"></div>
+
+                            <?php endif; ?>
+                            <div class="nowrap" style="display: inline-block;">
+                                <b class="right rpadding_label"><?php echo I18N::T('eq_charge', '按实际使用情况计费')?></b>
+                                <?php $i = 0;?>
+                                <?php foreach ($record_luas as $key => $value) :
+                $i++;?>
+                                <?php if($i==1): ?>
+                                <div class="charge_dis">
+                                    <?php else: ?>
+                                    <div class="charge_dis lpadding_5">
+                                        <?php endif;?>
+                                        <?php
+						$arr = [];
+						foreach ($value['content'] as $k => $v) $arr[] = $k;
+						$str = implode(' ', $arr);
+						echo Form::radio('reserv_record_template', $key , ($charge_record == $key) ? TRUE : FALSE, I18N::T('eq_charge', $value['title']), 'class="monitor radio '.$key.'" data="'.$str.'"' . $disabled);
+					?>
+                                    </div>
+                                    <?php endforeach;?>
+                                    <div class="charge_dis lpadding_5">
+                                        <?php
+					if(Config::get('equipment.enable_charge_script', FALSE)){
+						echo Form::radio('reserv_record_template', 'custom_record' , ($charge_record == 'custom_record' && $charge_reserv != 'custom_reserv') ? TRUE : FALSE, I18N::T('eq_charge', '自定义'), 'class="monitor radio" data=""' . $disabled);
+					}
+					?>
+                                    </div>
+                                </div>
+                                <div class="interval_20"></div>
+
+
+                                <?php if ($equipment->accept_reserv && Config::get('equipment.enable_charge_script', FALSE)) : ?>
+                                <b class="right rpadding_label"><?= I18N::T('eq_charge', '高级计费')?></b>
+
+                                <div class="charge_dis">
+                                    <?php
+						echo Form::radio('reserv_record_template', 'advanced_custom' , ($charge_reserv == 'custom_reserv' && $charge_record == 'custom_record') ? TRUE : FALSE, I18N::T('eq_charge', '高级自定义'), 'class="monitor radio" data=""' . $disabled);
+					?>
+                                </div>
+
+                                <?php endif;?>
+                            </div>
+
+                    </td>
+                </tr>
+                <?php if ($equipment->accept_sample) : ?>
+                <tr class="hr">
+                    <td colspan="2"></td>
+                </tr>
+                <tr>
+                    <td class="lpadding_30">
+                        <div class="interval_60"></div>
+                        <h2 class="section_title"><?php echo I18N::T('eq_charge', '送样计费设置')?></h2>
+                        <div class="charge_setting">
+                            <div class="interval_30"></div>
+                            <div class="charge_dis lmaigin_1e5">
+                                <?php
+						echo Form::radio('sample', 'no_charge_sample' , (!$charge_sample || !$form['sample']) ? TRUE : FALSE, I18N::T('eq_charge', '免费检测'), 'class="monitor radio" data=""' . $disabled);
+					?>
+                            </div>
+                            <?php foreach ($sample_luas as $key => $value) :?>
+                            <div class="charge_dis lpadding_10">
+                                <?php
+						$arr = [];
+						foreach ($value['content'] as $k => $v) $arr[] = $k;
+						$str = implode(' ', $arr);
+						echo Form::radio('sample', $key , ($charge_sample == $key) ? TRUE : FALSE, I18N::T('eq_charge', $value['title']), 'class="monito radio '.$key.'" data="'.$str.'"' . $disabled);
+					?>
+                            </div>
+                            <?php endforeach;?>
+                            <div class="charge_dis lpadding_10">
+                                <?php
+					if(Config::get('equipment.enable_charge_script', FALSE)){
+						echo Form::radio('sample', 'custom_sample' , ($charge_sample == 'custom_sample') ? TRUE : FALSE, I18N::T('eq_charge', '自定义'), 'class="monitor radio" data=""' . $disabled);
+					}
+					?>
+                            </div>
+
+                        </div>
+                    </td>
+                </tr>
+                <?php endif; ?>
+
+                <?= Event::trigger('extra.charge.setting.view', $equipment) ?>
+
+            </tbody>
+        </table>
+    </div>
+    <div class="interval_60"></div>
+    <?php if (!$disabled):?>
+    <div class="form float_right">
+        <input type="reset" name="cancel" class="font-button-default rmargin_16" value="<?php echo H(T('取消')) ?>" />
+        <input type="submit" name="submit" class="font-button-save" value="<?php echo H(T('保存修改')) ?>" />
+    </div>
+    <?php endif;?>
+</form>

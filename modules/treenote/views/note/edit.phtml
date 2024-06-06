@@ -1,0 +1,74 @@
+<?php
+// 初始化变量
+$me = L('ME');
+$no_error = ($form->no_error !== FALSE);
+?>
+<div class="hr_1">&#160;</div>
+<div class="padding_2 form">
+	<form action="<?php echo H(URI::url()) ?>" method="post" autocomplete="off">
+	<?php echo V('form_error', ['form'=>$form]);?>
+	<?php $require = (string) V('form_require'); ?>
+		<table class="form">
+			<tbody>
+				<tr>
+					<td class="label left nowrap"><?php echo I18N::T('treenote', '标题')?></td>
+					<td><input class="text" name="title" value="<?php echo H($no_error ? $note->title : $form['title']) ?>"/><?php echo $require?></td>
+				</tr>
+				<tr>
+					<td class="label left nowrap"><?php echo I18N::T('treenote', '任务')?></td>
+					<td><?php echo Widget::factory('treenote:task_selector', ['name' => 'task', 'task' => $no_error ? $note->task : O('tn_task', $form['task']), 'must_set_task' => TRUE]) ?><?php echo $require?></td>
+				</tr>
+				<?php /*<tr>
+					<td class="label left nowrap"><?php echo I18N::T('treenote', '负责人|:note')?></td>
+					<td><?php
+						$user = $no_error ? $task->user : $form['user'];
+						if (!$user->id) {
+							$user = $me;
+						}
+						echo Widget::factory('user_selector', array(
+												 'autocomplete'=>'',
+												 'name'=>'user', 
+												 'user'=> $user,
+												 'size'=> 20,
+												 ));
+					?><?php echo $require?></td>
+				</tr> */?>
+				<tr>
+					<td class="label left nowrap top">
+						<?php echo I18N::T('treenote', '内容')?>
+					</td>
+					<td class="top">
+						<textarea name="content" class="rich-textarea" cols="40" rows="10"><?php echo Output::safe_html($no_error ? $note->content : $form['content'])?></textarea>
+					</td>
+				</tr>
+				<?php if (Module::is_installed('nfs')) : ?>
+				<tr>
+					<td class="label left nowrap top">
+						<?php echo I18N::HT('treenote', '附件')?>
+					</td>
+					<td class="top relative">
+					<div class="text_like relative" style="display:block">
+					<?php
+						echo V('nfs:nfs_lite/view', [
+							'object'=> $note,
+							'path_type'=>'attachments'
+						]);
+?>
+					</div>
+					</td>
+				</tr>
+				<?php endif;?>
+				<tr>
+					<td>&#160;</td>
+					<td class="nowrap">
+						<input class="button button_save" type="submit" name="submit" value="<?php echo I18N::HT('treenote', '修改')?>" />
+						<?php if ($me->is_allowed_to('删除', $note)): ?>
+							&#160;&#160;&#160;
+							<a class="font-button-delete" confirm="<?php echo I18N::HT('treenote', '您确定删除该记录吗?')?>" href="<?php echo H($note->url(NULL, NULL, NULL, 'delete') ) ?>"><?php echo I18N::HT('treenote', '删除')?></a>
+						<?php endif; ?>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</div>

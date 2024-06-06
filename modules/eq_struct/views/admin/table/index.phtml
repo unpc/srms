@@ -1,0 +1,114 @@
+<?php $me = L('ME');?>
+<?php
+$table = Widget::factory('table');
+$table->name = 'eq_struct';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+$columns = [
+  'group' => [
+    'weight' => 0,
+    'title' => I18N::T('eq_struct', '所属单位'),
+    'align' => 'left',
+		'nowrap' => true,
+		'filter' => [
+			'form' => V('eq_struct:admin/table/filters/text', ['name' => 'group', 'value' => $form['group']]),
+			'value' => $form['group'] ? H($form['group']) : NULL
+		],
+  ],
+  'name' => [
+    'weight' => 10,
+    'title' => I18N::T('eq_struct', '平台名称'),
+    'align' => 'left',
+		'nowrap' => true,
+		'filter' => [
+			'form' => V('eq_struct:admin/table/filters/text', [ 'value' => $form['name']]),
+			'value' => $form['name'] ? H($form['name']) : NULL
+		],
+  ],
+  'proj_no' => [
+    'weight' => 20,
+    'title' => I18N::T('eq_struct', '部门码'),
+		'nowrap' => true,
+		'filter' => [
+			'form' => V('eq_struct:admin/table/filters/text', ['name' => 'proj_no', 'value' => $form['proj_no']]),
+			'value' => $form['proj_no'] ? H($form['proj_no']) : NULL
+		],
+  ],
+  'ref_no' => [
+    'weight' => 30,
+    'title' => I18N::T('eq_struct', '项目编号'),
+		'nowrap' => true,
+		'filter' => [
+			'form' => V('eq_struct:admin/table/filters/text', ['name' => 'ref_no', 'value' => $form['ref_no']]),
+			'value' => $form['ref_no'] ? H($form['ref_no']) : NULL
+		],
+  ],
+  'card_no' => [
+    'weight' => 50,
+    'title' => I18N::T('eq_struct', '财务收费账户'),
+		'nowrap' => true,
+		'filter' => [
+			'form' => V('eq_struct:admin/table/filters/text', ['name' => 'card_no', 'value' => $form['card_no']]),
+			'value' => $form['card_no'] ? H($form['card_no']) : NULL
+		],
+  ],
+  'pch' => [
+    'weight' => 60,
+    'title' => I18N::T('eq_struct', '统一支付批次号'),
+    'nowrap' => true,
+  ],
+  'order_prefix' => [
+    'weight' => 70,
+    'title' => I18N::T('eq_struct', '统一支付订单号缩写'),
+    'nowrap' => true,
+  ],
+  'pch_key' => [
+    'weight' => 75,
+    'title' => I18N::T('eq_struct', '统一支付密钥'),
+    'nowrap' => true,
+  ],
+  'rest' => [
+    'weight' => 80,
+    'align' => 'left',
+    'nowrap' => true,
+    'title' => I18N::T('eq_struct', '操作'),
+  ]
+];
+$columns = new ArrayIterator($columns);
+Event::trigger('extra.eq_struct.column', $form, $columns);
+$table->add_columns((array)$columns);
+
+$table->empty_message = I18N::T('eq_struct', '无仪器入账平台信息');
+
+foreach ($eq_structs as $eq_struct) {
+  $links = $eq_struct->links();
+  $row = [
+    'ref_no' => H($eq_struct->ref_no ? : '--'),
+    'name' => H($eq_struct->name),
+    'group' => H($eq_struct->group),
+    'proj_no' => H($eq_struct->proj_no ? : '--'),
+    'card_no' => H($eq_struct->card_no ? : '--'),
+    'pch' => H($eq_struct->pch),
+    'pch_key' => H($eq_struct->pch_key),
+    'order_prefix' => H($eq_struct->order_prefix),
+    'rest' => Widget::factory('application:links', ['links' => $links]),
+  ];
+
+  $row = new ArrayIterator($row);
+  Event::trigger('extra.eq_struct.row', $eq_struct, $row);
+  $table->add_row($row);
+}
+
+echo $pagination;
+$extra_title = '';
+$param = [
+    'is_offset' => true,
+    'top_input_arr' => Config::get('search.top_input_arr')['eq_struct.index'],
+    'columns' => $table->columns,
+    'panel_buttons' => $panel_buttons,
+    'extra_view' => '<div class="adj statistics middle">' . $extra_title . $pagination . '</div>'
+];
+echo V('application:search_box', $param);
+echo $table;
+echo $pagination;

@@ -1,0 +1,68 @@
+<div class="form ">
+<form class="view object:group_edit" autocomplete="off">
+<?php echo V('form_error', ['form' => $form]); ?>
+<?php $require = (string) V('form_require');?>
+	<table class="form">
+		<tbody>
+			<tr>
+				<td class="label right nowrap">
+				<?php echo $require; ?>
+				<?php echo I18N::T('equipments', '负责人'); ?><br>
+				<?php echo V('form_filter', ['error' => $form->errors['user_id'][0]]) ?>
+				</td>
+					<td class="top nowrap">
+					<?php
+                        echo Widget::factory('user_selector', [
+                            'name' => 'user_id',
+                            'user' => $form['user_id'] ? O('user', $form['user_id']) : $training->user,
+                        ]);
+                    ?>
+				</td>
+			</tr>
+			<tr>
+				<td class="label right nowrap">
+				<?php echo $require; ?>
+				<?php echo I18N::T('equipments', '总培训人数'); ?><br>
+				<?php echo V('form_filter', ['error' => $form->errors['ntotal'][0]]) ?>
+				</td>
+				<td class="top nowrap">
+					<input name="ntotal" type="text" class="text number" value="<?php echo H($form['ntotal'] ?: $training->ntotal); ?>" />
+				</td>
+			</tr>
+			<tr>
+				<td class="label right nowrap"><?php echo I18N::T('equipments', '通过人数'); ?></td>
+				<td class="top nowrap">
+					<input name="napproved" type="text" class="text number" value="<?php echo H($form['napproved'] ?: $training->napproved); ?>" />
+				</td>
+			</tr>
+			<tr>
+				<td class="label right nowrap">
+                    <?php echo $require; ?>
+                    <?php echo I18N::T('equipments', '培训时间'); ?><br>
+                    <?php echo V('form_filter', ['error' => $form->errors['date'][0]]) ?>
+                </td>
+				<td class="top nowrap">
+					<input name="date" date_type="date" type="text" class="text date" value="<?php echo H($form['date'] ?: $training->date ?: Date::time()); ?>" />
+				</td>
+			</tr>
+			<tr>
+				<td class="label right top nowrap"><?php echo I18N::T('equipments', '描述'); ?></td>
+				<td class="top nowrap">
+					<textarea class="text autogrow" rows="6" cols="40" name="description"><?php echo H($form['description'] ?: $training->description); ?></textarea>
+				</td>
+			</tr>
+
+		</tbody>
+	</table>
+		<?php echo Form::hidden('training_id', $training->id); ?>
+					<?php if ($equipment) {
+    echo Form::hidden('equipment_id', $equipment->id);}?>
+
+	<div class="button_container">
+	<div class="float_right">
+	<input name="cancel" id="cancel" type='reset' class="font-button-default sm rmargin_2e4" value="<?php echo I18N::HT('equipments', '取消'); ?>" />
+	<input name="submit" type='submit' class="font-button-save sm" value="<?php echo I18N::HT('equipments', '提交'); ?>" />
+	</div>
+	</div>
+</form>
+</div>

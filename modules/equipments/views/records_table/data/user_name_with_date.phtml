@@ -1,0 +1,18 @@
+<?php $user = $record->user;?>
+<div>
+<?php $user->render(); ?>
+<?php 
+if (Module::is_installed('labs')): 
+	if (!$GLOBALS['preload']['people.multi_lab']) :
+		$lab = Q("$user lab")->current();
+		if ($lab->id) :
+?>
+<?php 
+		endif;
+	endif;
+endif; 
+?>
+</div>
+<div class="description">
+<?php echo H($lab->name) ?>
+</div>

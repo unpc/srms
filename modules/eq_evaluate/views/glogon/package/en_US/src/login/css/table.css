@@ -1,0 +1,433 @@
+CSS_PATCHED_FLAG
+
+table th.check_hover .filter_container {
+	position: relative;
+}
+
+
+.form .form tr.section td {
+	border-top: none;
+}
+
+
+table tr.skipped td {
+	background-color: #e7e7e7;
+}
+
+
+table.form {
+	color: #000;
+}
+
+
+table.form th, table.form td {
+	padding: 2px;
+	*padding: 3px 2px 1px;
+}
+
+
+table.form th.first, table.form td.first {
+	padding-left: 2px;
+}
+
+
+table.form td.label {
+
+	line-height: 24px;
+	font-weight: normal;
+}
+
+
+table.form p.form_paragraph {
+	margin-bottom: 5px;
+}
+
+
+table.form th.legend {
+	font-size: 14px;
+	font-weight: bold;
+	color: #666;
+}
+
+
+table.form td.first, table.form th.first {
+	padding-left: 2px;
+}
+
+
+table.mini_form td {
+	padding: 1px;
+	*padding: 2px 1px 0px;
+}
+
+
+table.sticky, table.sticky_header {
+	border-collapse: collapse;
+	color: #000;
+}
+
+
+table.sticky th,  table.sticky_header th {
+	font-weight: bold;
+	padding: 2px 6px;
+	text-transform: capitalize;
+}
+
+
+table.sticky thead th,  table.sticky_header thead th {
+	cursor: default;
+	background-color: #f4f4f4;
+	border-bottom: 2px solid #ccc;
+}
+
+
+table.sticky thead th a.header, table.sticky thead th span.header,   table.sticky_header thead th a.header,   table.sticky_header thead th span.header {
+	text-decoration: none;
+	display: block;
+	*zoom: 1;
+	clear: right;
+	height: 18px;
+	line-height: 18px;
+	_height: 18px;
+	overflow: hidden;
+}
+
+
+table.sticky thead th a.header_search, table.sticky thead th span.header_search,   table.sticky_header thead th a.header_search,   table.sticky_header thead th span.header_search {
+	background-image: url('images/icons/search.png');
+	_background-image: url('images/icons/search.gif');
+	background-repeat: no-repeat;
+	background-position: 4px center;
+	padding-left: 22px;
+	padding-right: 4px;
+	white-space: nowrap;
+}
+
+
+table.sticky thead th a.header_sort_asc,   table.sticky_header thead th a.header_sort_asc {
+	background: url('images/icons/asc.gif') no-repeat right center;
+	padding-right: 20px;
+}
+
+
+table.sticky thead th a.header_sort_desc,   table.sticky_header thead th a.header_sort_desc {
+	background: url('images/icons/desc.gif') no-repeat right center;
+	padding-right: 20px;
+}
+
+
+table.sticky thead th.filter_search,  table.sticky_header thead th.filter_search {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+
+table.sticky thead th.sort_by,  table.sticky_header thead th.sort_by {
+	background-color: #e7e7e7;
+}
+
+
+table.sticky thead th.border,  table.sticky_header thead th.border {
+	border-left: 1px solid #CCC;
+	border-right: 1px solid #CCC;
+}
+
+
+table.sticky thead th.first,  table.sticky_header thead th.first {
+	border-left: 1px solid #CCC;
+}
+
+
+table.sticky thead th.last,  table.sticky_header thead th.last {
+	border-right: 1px solid #CCC;
+}
+
+
+table.sticky th.filter:hover, table.sticky th.active,  table.sticky_header th.filter:hover,  table.sticky_header th.active {
+	background-color: #ccc;
+	background-image: none;
+	color: #000;
+	border-bottom-color: #999;
+}
+
+
+table.sticky th.filter .filter_container,  table.sticky_header th.filter .filter_container {
+	position: relative;
+}
+
+
+table.sticky th.filter .filter_panel,  table.sticky_header th.filter .filter_panel {
+	position: absolute;
+	z-index: 100;
+	background-color: #ccc;
+	border-left: 2px solid #999;
+	border-bottom: 2px solid #999;
+	border-right: 2px solid #999;
+	left: -12px;
+	top: 20px;
+	-moz-box-shadow: #666 0 3px 3px;
+	-webkit-box-shadow: #666 0 3px 3px;
+	box-shadow: #666 0 3px 3px;
+	-webkit-border-top-left-radius: 0;
+	-webkit-border-top-right-radius: 0;
+	-webkit-border-bottom-right-radius: 3px;
+	-webkit-border-bottom-left-radius: 3px;
+	-moz-border-radius: 0 0 3px 3px;
+	border-radius: 0 0 3px 3px;
+	filter: progid:DXImageTransform.Microsoft.Shadow (Color=#000000, Direction=135, Strength=2);
+}
+
+
+table.sticky th.filter_search .filter_panel,  table.sticky_header th.filter_search .filter_panel {
+	left: 0;
+}
+
+
+table.sticky th.filter .filter_panel_right, table.sticky th.filter_right .filter_panel,  table.sticky_header th.filter .filter_panel_right,  table.sticky_header th.filter_right .filter_panel {
+	left: auto;
+	right: -12px;
+}
+
+
+table.sticky thead td.search_filters,  table.sticky_header thead td.search_filters {
+	text-align: left;
+	padding: 4px;
+	border-bottom: 1px solid #ccc;
+	line-height: 1.231;
+}
+
+
+table.sticky thead td.search_filters .tag,   table.sticky_header thead td.search_filters .tag {
+	background-color: #eff2f7;
+	border: 1px solid #ccd5e4;
+	margin-right: 2px;
+	padding: 2px;
+	cursor: default;
+	text-decoration: none;
+}
+
+
+table.sticky thead td.search_filters .tag span, table.sticky thead td.search_filters .tag a,    table.sticky_header thead td.search_filters .tag span,    table.sticky_header thead td.search_filters .tag a {
+	display: -moz-inline-box;
+	display: inline-block;
+	*zoom: 1;
+	*display: inline;
+	vertical-align: middle;
+}
+
+
+table.sticky thead td.search_filters .tag .remove,    table.sticky_header thead td.search_filters .tag .remove {
+	display: -moz-inline-box;
+	display: inline-block;
+	*zoom: 1;
+	*display: inline;
+	width: 10px;
+	height: 12px;
+	overflow: hidden;
+	background: transparent url(images/token/x.gif) no-repeat 0 0;
+	cursor: pointer;
+}
+
+
+table.sticky thead td.search_filters .tag:hover,   table.sticky_header thead td.search_filters .tag:hover {
+	background-color: #d8dfea;
+	border-color: #ccd5e4;
+	text-decoration: none;
+}
+
+
+table.sticky .filter_container .form,  table.sticky_header .filter_container .form {
+	font-weight: normal;
+}
+
+
+table.sticky .filter_container table.form td,  table.sticky_header .filter_container table.form td {
+	border: none;
+	padding: 2px;
+	*padding: 3px 2px 1px;
+}
+
+
+table.sticky {
+	position: relative;
+	background-color: #fff;
+	border-bottom: 1px solid #d7d7d7;
+
+
+}
+
+
+table.sticky td {
+	padding: 2px 6px;
+	border-right-width: 0;
+}
+
+
+table.sticky td.row_even {
+	background-color: #f4f4f4;
+}
+
+
+table.sticky td.row_odd {
+	background-color: #fff;
+}
+
+
+table.sticky >tbody>tr.row:nth-child(even)>td {
+	background-color: #f4f4f4;
+}
+
+
+table.sticky >tbody>tr.row:nth-child(odd)>td {
+	background-color: #fff;
+}
+
+
+table.sticky td.icon img {
+	display: block;
+	*zoom: 1;
+}
+
+
+table.sticky tfoot th {
+	background-color: #f4f4f4;
+	border-top: 2px solid #ccc;
+}
+
+
+table.sticky tr.section td {
+	border: none;
+	vertical-align: middle;
+	font-weight: bold;
+	padding: 0;
+}
+
+
+table.sticky tr.section td a, table.sticky tr.section td strong {
+	color: #000;
+	display: block;
+	*zoom: 1;
+	background-color: #e7e7e7;
+	padding: 4px 8px;
+}
+
+
+table.sticky tr.section td a:hover {
+	background-color: #d7d7d7;
+	text-decoration: none ;
+}
+
+
+table.sticky td span.panel_uniqid {
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	background-color: #7498E0;
+	color: #fff !important;
+	display: -moz-inline-box;
+	display: inline-block;
+	*zoom: 1;
+	*display: inline;
+	margin-right: 2px;
+	padding: 1px 4px;
+	text-decoration: none !important;
+	white-space: nowrap;
+}
+
+
+table.sticky th.tabs {
+	background-color: #d7d7d7;
+	background-image: none;
+	border: none;
+	padding: 2px 0 0;
+}
+
+
+table.sticky th.tabs .tab_wrapper {
+	display: -moz-inline-box;
+	display: inline-block;
+	*zoom: 1;
+	*display: inline;
+	position: relative;
+	font-weight: normal;
+}
+
+
+table.sticky th.tabs .num_notif {
+	background-color: #8CBF40;
+	border: 1px solid #360;
+	background: -moz-linear-gradient(270deg, #8CBF40, #693);
+	background: -webkit-gradient(linear, left top, left bottom, from(#8CBF40), to(#693));
+	text-shadow: -1px 1px #693;
+	padding-bottom: 1px;
+	right: -10px;
+}
+
+
+table.sticky th.tabs a {
+	display: -moz-inline-box;
+	display: inline-block;
+	*zoom: 1;
+	*display: inline;
+	vertical-align: bottom;
+	padding: 2px 6px;
+
+}
+
+
+table.sticky th.tabs a:hover {
+	text-decoration: none;
+	background-color: #999;
+	color: #eee;
+}
+
+
+table.sticky th.tabs a.selected {
+	color: #000;
+	font-weight: bold;
+	background-color: #f4f4f4;
+}
+
+
+table.sticky th.tabs a.selected:hover {
+	color: #000;
+	background-color: #f4f4f4;
+}
+
+
+table.sticky td.sort_column {
+	background: #f0f4f7;
+}
+
+
+table.sticky td.sort_column.row_even {
+	background: #e0e4e7;
+}
+
+
+table.sticky >tbody>tr.row:nth-child(even)>td.sort_column {
+	background-color: #e0e4e7;
+}
+
+
+table.sticky >tbody>tr.row:nth-child(odd)>td.sort_column {
+	background-color: #f0f4f7;
+}
+
+
+table.sticky td.criteria, table.sticky td .criteria {
+	font-weight: normal !important;
+	color: #999;
+	line-height: 1.231;
+	border-bottom: 1px solid #d7d7d7;
+}
+
+
+table.sticky tr.date_header td {
+	background-color: #999;
+	color: #fff;
+	padding: 4px;
+	font-weight: bold;
+	font-size: 13px;
+	line-height: 1;
+}

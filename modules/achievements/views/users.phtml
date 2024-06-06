@@ -1,0 +1,14 @@
+<ul id="<?php echo H($uniqid) ?>">
+<?php foreach($users as $id => $user): ?>
+	<li class="padding_1 aumap_user icon aumap_pointer">
+		<span class="float_right">
+			<a class="remove_button view object:delete_lab_user event:click static:user_id=<?php echo $user->id?>&uniqid=<?php echo $uniqid?> ">&#160;</a>
+		</span>
+		<div class="icon_block">
+			<input type="hidden" value="<?php echo H($user->id) ?>" />
+			<img src="<?php echo H($user->icon_url('32')) ?>" /><?php echo H($user->name) ?>
+		</div>
+	</li>
+<?php endforeach;?>
+</ul>
+

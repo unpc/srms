@@ -1,0 +1,7 @@
+<?php
+$form['dtstart'] = $form['dtstart'] ? date('Y-m-d', $form['dtstart']) : ''; ?>
+<?php $form['dtend'] = $form['dtend'] ? date('Y-m-d', $form['dtend']) : ''; ?>
+<input id="dtstart" name="dtstart" date_type="date" class="text date small_search_text" value="<?php echo $form['dtstart']; ?>" />
+<span class="middle description date_interval">-</span>
+<input id="dtend" name="dtend" date_type="date" class="text date small_search_text" value="<?php echo $form['dtend']; ?>" />
+

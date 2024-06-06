@@ -1,0 +1,83 @@
+<div class="padding_2 clearfix">
+<h4><?= I18N::T('eq_approval', '凭证详情')?></h4>
+<?php
+	$equipment = $voucher->equipment;
+?>
+<table class="form">
+<tbody>
+	<tr>
+		<td class="top">
+			<span class="status_tag status_tag_label"><?= I18N::T('eq_approval', '预约类型')?></span>
+		</td>
+		<td class="top"><?= EQ_Voucher_Model::$TYPES[$voucher->type] ?></td>
+	</tr>
+	<tr>
+		<td class="top">
+			<span class="status_tag status_tag_label"><?= I18N::T('eq_approval', '预约仪器')?></span>
+		</td>
+		<td class="top"><?= H($equipment->name) ?></td>
+	</tr>
+	<tr>
+		<td class="top">
+			<span class="status_tag status_tag_label"><?= I18N::T('eq_approval', '仪器负责人')?></span>
+		</td>
+		<td class="top"><?= H(join(',', $equipment->contacts()->to_assoc('id', 'name'))) ?></td>
+	</tr>
+	<tr>
+		<td class="top">
+			<span class="status_tag status_tag_label"><?= I18N::T('eq_approval', '关联项目')?></span>
+		</td>
+		<td class="top"><?= H($voucher->project->name) ?></td>
+	</tr>
+	<?php if ($voucher->type == EQ_Voucher_Model::RESERV): ?>
+	<tr>
+		<td class="top">
+			<span class="status_tag status_tag_label"><?= I18N::T('eq_approval', '预计时长')?></span>
+		</td>
+		<td class="top">
+			<?php if ($voucher->type == EQ_Voucher_Model::RESERV): ?>
+				<span><?= sprintf('%.2f', $voucher->used_time / 60) ?><?= I18N::T('eq_approval', '小时') ?></span>
+			<?php else: ?>
+				<span>--</span>
+			<?php endif; ?>
+		</td>
+	</tr>
+	<?php else: ?>
+	<tr>
+		<td class="top">
+			<span class="status_tag status_tag_label"><?= I18N::T('eq_approval', '送样数')?></span>
+		</td>
+		<td class="top">
+			<?php if ($voucher->type == EQ_Voucher_Model::SAMPLE): ?>
+				<span><?= $voucher->samples ?><?= I18N::T('eq_approval', '个') ?></span>
+			<?php else: ?>
+				<span>--</span>
+			<?php endif; ?>
+		</td>
+	</tr>
+	<?php endif; ?>
+	<tr>
+		<td class="top">
+			<span class="status_tag status_tag_label"><?= I18N::T('eq_approval', '预计价格')?></span>
+		</td>
+		<td class="top">
+			<span>
+				<?= $voucher->auto_amount ? Number::currency($voucher->auto_amount) : '&#160;'; ?>
+			</span>
+		</td>
+	</tr>
+	<tr>
+		<td class="top">
+			<span class="status_tag status_tag_label"><?= I18N::T('eq_approval', '实验内容')?></span>
+		</td>
+		<td class="top"><?= H($voucher->description) ?></td>
+	</tr>
+	<tr>
+		<td class="top">
+			<span class="status_tag status_tag_label"><?= I18N::T('eq_approval', '申请时间')?></span>
+		</td>
+		<td class="top"><?= Date::format($voucher->ctime) ?></td>
+	</tr>
+</tbody>
+</table>
+</div>

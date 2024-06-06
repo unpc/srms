@@ -1,0 +1,159 @@
+<?php $reserv = O('eq_reserv', ['component' => $component]); ?>
+<div class="block_title" style="display: <?= $component->dtend - $component->dtstart >= 50 * 60 ? 'block' : 'none' ?>">
+<span>
+    <?php
+    $timeformat = 'H:i';
+    if(date('d',$reserv->dtstart) != date('d',$reserv->dtend)){
+        $timeformat = 'm-d H:i';
+    }
+    if(date('m',$reserv->dtstart) != date('m',$reserv->dtend)){
+        $timeformat = 'm-d H:i';
+    }
+    if(date('Y',$reserv->dtstart) != date('Y',$reserv->dtend)){
+        $timeformat = 'Y-m-d H:i';
+    }
+    if (date('a', $reserv->dtstart) == 'am') {
+        $a = '上午';
+    } else {
+        $a = '下午';
+    }
+    ?>
+    <?= $a . ' ' . date($timeformat, $reserv->dtstart); ?>
+    -
+    <?php
+    if (date('a', $reserv->dtend) == 'am') {
+        $a = '上午';
+    } else {
+        $a = '下午';
+    }
+    ?>
+    <?= $a . ' ' . date($timeformat, $reserv->dtend); ?>
+</span>
+
+    <?php
+    if (!$mode || $mode == 'week') {
+        echo JS::load_async('preview');
+    }
+    else {
+        echo JS::load_async('slide_preview');
+    }
+    echo CSS::load_async('preview');
+    echo CSS::load_async('eq_reserv:common');
+    //默认情况下不显示仪器名称，不显示用户名称，不显示component的名称
+    $show_equipment_name = FALSE;
+    $show_user_name = FALSE;
+    $show_component_name = FALSE;
+
+    $user = $component->organizer;
+    $equipment = $component->calendar->parent;
+
+    switch($current_calendar->parent_name) {
+        case 'equipment' :
+            $show_user_name = TRUE;
+            if ($component->type == Cal_Component_Model::TYPE_VFREEBUSY) $show_component_name = TRUE;
+            break;
+        case 'user':
+            if ($current_calendar->type == 'schedule') {
+                //个人日程页面
+                $show_equipment_name = TRUE;
+                if ($component->type == Cal_Component_Model::TYPE_VFREEBUSY) {
+                    $show_component_name = TRUE;
+                    $show_equipment_name = TRUE;
+                    $show_user_name = FALSE;
+
+                }
+
+            }
+            elseif ($current_calendar->type == 'eq_incharge') {
+                //负责人所负责的仪器的预约情况
+                $show_user_name = TRUE;
+                $show_equipment_name =  TRUE;
+                if ($component->type == Cal_Component_Model::TYPE_VFREEBUSY)  {
+                    //如果是非预约时段，显示仪器的名称和用户名称
+                    $show_component_name = TRUE;
+                    $show_equipment_name = TRUE;
+                    $show_user_name = FALSE;
+                }
+                elseif ($component->calendar->id == $current_calendar->id ) {
+                    //如果是当前仪器的预约页面，显示用户名称，不显示仪器名称
+                    $show_user_name = TRUE;
+                }
+            }
+            break;
+        case 'lab':
+            //实验室的日程安排
+            break;
+        default:
+
+    }
+
+    ?>
+    <?php
+
+    //当前时间之前的预约状态为PENDING，显示状态
+    if ( $equipment->control_mode && $reserv->id && $reserv->dtend <= Date::time() && $reserv->status == EQ_Reserv_Model::PENDING) {
+        $record = Q("eq_record[reserv={$reserv}][dtend>0]:limit(1)")->current();
+        $reserv->status = $reserv->get_status(TRUE, $record);
+    }
+
+    if($reserv->id && ($reserv->status == EQ_Reserv_Model::MISSED
+            || $reserv->status == EQ_Reserv_Model::OVERTIME
+            || $reserv->status == EQ_Reserv_Model::LATE
+            || $reserv->status == EQ_Reserv_Model::LATE_OVERTIME
+            || $reserv->status == EQ_Reserv_Model::LEAVE_EARLY
+            || $reserv->status == EQ_Reserv_Model::LATE_LEAVE_EARLY )) :
+
+        $repeat = $component->cal_rrule->id;
+
+        ?>
+
+
+
+
+        <span class="float_right" style="<?php if ($repeat) echo 'padding-right: 18px'; ?>;">
+        <?php if ( $reserv->status == EQ_Reserv_Model::MISSED ) : ?>
+            <span style="color: white;">爽约</span>
+        <?php elseif ( $reserv->status == EQ_Reserv_Model::OVERTIME ) : ?>
+            <span style="color: white;">超时</span>
+        <?php elseif ($reserv->status == EQ_Reserv_Model::LATE) : ?>
+            <span style="color: white;">迟到</span>
+        <?php elseif ($reserv->status == EQ_Reserv_Model::LEAVE_EARLY) : ?>
+            <span style="color: white;">早退</span>
+        <?php elseif ($reserv->status == EQ_Reserv_Model::LATE_LEAVE_EARLY) : ?>
+            <span style="color: white;">迟到&早退</span>
+        <?php elseif ($reserv->status == EQ_Reserv_Model::LATE_OVERTIME) : ?>
+            <span style="color: white;">迟到&超时</span>
+        <?php else : ?>
+            <span class="status_tag_late">&nbsp;</span>
+            <span class="status_tag_overtime">&nbsp;</span>
+        <?php endif; ?>
+        </span>
+    <?php endif;?>
+</div>
+<div
+    <?php if ($component->id): ?>
+        <?php if (!$mode || $mode == 'week'): ?>
+            q-preview="<?php echo URI::url('!eq_reserv/index'); ?>" q-timeout="1500" q-static="<?php echo H(['component_id' => $component->id, 'current_calendar_id'=>$current_calendar->id]); ?>"
+        <?php else: ?>
+            q-slide-preview="<?php echo URI::url('!eq_reserv/index'); ?>" q-slide-parent=".calendar_day" q-static="<?php echo H(['component_id' => $component->id, 'current_calendar_id'=>$current_calendar->id]); ?>"
+        <?php endif; ?>
+    <?php endif; ?>
+>
+    <?php if ($show_component_name) :?>
+        <p><?php echo $component->name;?></p>
+    <?php endif;?>
+
+
+
+    <?php
+    if ($show_user_name) {
+        $contents = [];
+        $contents['people'] = '<p><a style="color: white; font-weight: bold; padding-left: 6px;" class="prevent_default" href="'.$user->url().'" >'.H("{$user->name} - {$user->phone}").'</a></p>';
+        $new_contents = Event::trigger('eq_reserv.calendar.people', $user, $contents);
+        echo implode($new_contents,'');
+    }
+    ?>
+    <?php if ($show_equipment_name) :?>
+        <p><a class="prevent_default" href="<?php echo $equipment->url(); ?>"><?php echo H($equipment->name) ?></a></p>
+    <?php endif;?>
+</div>

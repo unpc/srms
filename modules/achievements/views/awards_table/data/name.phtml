@@ -1,0 +1,5 @@
+<?php if(L('ME')->is_allowed_to('查看成果', $award->lab)):?>
+<a href="<?php echo H($award->url(NULL,NULL,NULL,'view') ) ?>"><?php echo H($award->name); ?></a>
+<?php else:?>
+<strong><?php echo H($award->name);?></strong>
+<?php endif;?>

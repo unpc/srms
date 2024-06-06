@@ -1,0 +1,97 @@
+<div class="form" style="min-width:550px">
+<?php
+$form_id = 'add_sample_' . uniqid();
+$notice = Event::trigger('eq_sample.notice');
+if ($notice) : 
+?>
+	<div class="message message_normal clearfix nowrap"><?= H($notice);?></div>
+<?php 
+endif;
+if (isset($message)): 
+?>
+<div class="message message_error clearfix nowrap"><?php echo H($message);?></div>
+<?php endif;?>
+<form q-object="add_sample" q-event="submit" q-src="<?php echo H(URI::url('!eq_sample/index')) ?>" autocomplete="off" method="post" id="<?php echo H($form_id) ?>">
+    <?php echo V('form_error', ['form'=>$form]);?>
+    <input name="equipment_id" type="hidden" value="<?php echo H($equipment->id)?>" />
+    <table class="form" width="100%">
+        <?= Event::trigger('eq_sample.prerender.add.form', $form, $equipment, $sample); ?>
+        <tr class="begin">
+            <td class="label left top nowrap blue" colspan="2"><h1><?php echo I18N::HT('eq_sample', '时间设定');?></h1></td>
+            <td class="label right top nowrap description" colspan="2">
+                *&nbsp;<?php echo I18N::T('eq_sample', '必填项');?>
+            </td>
+        </tr>
+        <tr>
+            <td class="left top nowrap">
+                <div class="bpadding_24">
+                    <span><?php echo I18N::HT('eq_sample', '送样时间');?></span>
+                    <?php echo V('form_filter', ['error' => $form->errors['dtsubmit'][0]]) ?>
+                </div>
+                <input name="dtsubmit" type="text" class="text date" value="<?php echo H($form['dtsubmit'])?:time(); ?>" />
+            </td>
+        </tr>
+        <?php
+            if ($sample->id) {
+                $extra = Extra_Model::fetch($sample->equipment, 'eq_sample');
+                $extra_value = O('extra_value', ['object' => $sample]);
+                if ($extra_value->id) $values = $extra_value->values;
+                echo V('eq_sample:extra/display', ['extra' => $extra, 'form' => $form, 'values' => $values, 'sample' => $sample]);
+            }
+            else {
+                $extra = Extra_Model::fetch($equipment, 'eq_sample');
+                echo V('eq_sample:extra/display', ['extra'=>$extra, 'form'=>$form]);
+            }
+        ?>
+        
+        <?php 
+            if (class_exists('Lab_Project_Model')): 
+        ?>
+        
+        
+        <?php echo V('eq_sample:project/connect', [
+                    'sample' => $sample,
+                    'equipment' => $equipment,
+                    'form' => $form,
+         ]); ?>
+        <?php endif; ?>
+        <?php
+            //申请送样时预估收费
+            echo Event::trigger('eq_sample.charge_forecast', $sample, $equipment);
+        ?>
+    </table>
+    <?php if (Module::is_installed('nfs')) : ?>
+        <?php echo V('eq_sample:edit/attachments', ['sample' => $sample ? : O('eq_sample')]); ?>
+    <?php endif; ?>
+    <div class="button_container">
+            <div class="float_right">
+                <input name="cancel" id="cancel" type='reset' class="font-button-default sm rmargin_2e4" value="<?php echo I18N::HT('eq_sample', '取消');?>" />
+                <input name="submit" type='submit' class="font-button-save sm" value="<?php echo I18N::HT('eq_sample', '添加');?>" />
+            </div>
+     </div>
+</form>
+
+</div>
+<script type="text/javascript">
+$().ready(function() {
+    $('#<?php echo $form_id?>').find('.validate_error').nextAll('label').addClass('error');
+
+    var $project_lab = $("select[name=project_lab]")
+        , url = "<?= URI::url('!eq_sample/index'); ?>";
+
+    $project_lab.change(function() {
+        reset(url)
+    });
+
+    function reset(url) {
+        Q.trigger({
+            object: 'add_sample',
+            event: 'click',
+            data: {
+                'form': $('#<?php echo $form_id?>').serialize()
+            },
+            url: url
+        });
+    }
+});
+</script>

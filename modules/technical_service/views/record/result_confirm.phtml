@@ -1,0 +1,48 @@
+<style>
+    .wid6 {
+        /*width: 4rem;*/
+    }
+</style>
+<div class="form" style="">
+    <?php
+    $form_id = 'result_' . uniqid();
+    $require = (string)V('form_require', ['extra_class' => 'right']);
+    ?>
+    <form q-object="result_sample" q-event="submit" q-src="<?php echo H(URI::url('!technical_service/record')) ?>"
+          autocomplete="off" method="post" id="<?php echo H($form_id) ?>">
+        <?php echo V('form_error', ['form' => $form]); ?>
+        <input name="apply_record_id" type="hidden" value="<?php echo H($record->id) ?>"/>
+        <table class="form" width="100%">
+            <tr>
+                <td class="label left top nowrap" colspan="5">
+                    <h1></span><?php echo I18N::HT('eq_sample', '请将关联的以下送样记录状态调整为"已测试"'); ?></h1>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="wid6"><?= I18N::T('technical_service', '送样编号') ?></td>
+                <td class="wid6"><?= I18N::T('technical_service', '申请者') ?></td>
+                <td class="wid6"><?= I18N::T('technical_service', '申请时间') ?></td>
+                <td class="wid6"><?= I18N::T('technical_service', '送样状态') ?></td>
+                <td class="wid6"><?= I18N::T('technical_service', '操作') ?></td>
+            </tr>
+            <?php foreach ($connects as $connect): ?>
+                <tr>
+                    <td class="wid6 blue"><?= str_pad($connect->id, 6, 0, STR_PAD_LEFT) ?></td>
+                    <td class="wid6"><?= $connect->sender->name ?></td>
+                    <td class="wid6"><?= $connect->dtsubmit ? date('Y-m-d', $connect->dtsubmit) : '' ?></td>
+                    <td class="wid6"><?= EQ_Sample_Model::$status[$connect->status] ?></td>
+                    <td class="wid6 blue">
+                        <?php
+                        if (L('ME')->is_allowed_to('修改', $connect)):
+                            ?>
+                            <a href="" class="blue" q-object="edit_sample" q-event="click"
+                               q-static="<?= H(['id' => $connect->id]) ?>"
+                               q-src="<?= URI::url('!eq_sample/index') ?>">编辑</a>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
+    </form>
+</div>

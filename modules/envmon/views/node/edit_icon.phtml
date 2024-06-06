@@ -1,0 +1,25 @@
+<div class="hr_1">&#160;</div>
+<div class="form padding_1">
+    <table class="form">
+        <tr>
+            <td class="top icon">
+                <?php echo $node->icon('64', 'style="display:block"')?>
+            </td>
+            <td class="top">
+                <form autocomplete="off" q-event="submit" q-static="<?php echo H(['node_id'=>$node->id])?>" q-object="edit_node_icon" q-src="<?php echo H(URI::url('!envmon/node')) ?>" method="post">
+                <?php echo V('form_error', ['form'=>$form]);?>
+                    <p>
+                        <input name="file" type="file" class="file" />
+                     	<div class="hr_1">&#160;</div>
+                     	<span class="float_left">
+                  	 		<input type="submit" class="button button_import" value="<?php echo H(I18N::T('envmon', '上传图标')) ?>"/>
+                      	</span>
+                      	<span class="float_right">  
+                        	<a class="font-button-delete" q-event="click" q-object="delete_node_icon" q-static="<?php echo H(['node_id'=>$node->id])?>"><?php echo I18N::T('envmon', '删除图标')?></a>
+                        </span>	
+                    </p>
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>

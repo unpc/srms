@@ -1,0 +1,78 @@
+<div class="interval_24"></div>
+<div class="form" style="padding-left: 130px;">
+    <h2 class="section_title">
+        <span class="border"></span>
+        <span class="black_title"><?php echo I18N::T('equipment', '使用预警') ?></span>
+    </h2>
+    <div class="interval_12"></div>
+    <div class="lmaigin_1e5">
+        <table class="form">
+            <tbody>
+                <!-- 仪器超时未使用 -->
+                <?php $allow_equipment_not_use_notice_id = 'allow_equipment_not_use_notice_' . uniqid(); ?>
+                <tr>
+                    <td class="label middle">
+                        <input id=<?php echo $allow_equipment_not_use_notice_id ?> type="checkbox" name="allow_equipment_not_use_notice" class="middle monitor checkbox" <?php echo ($form['allow_equipment_not_use_notice'] || $equipment->allow_equipment_not_use_notice) ? 'checked="checked"' : null; ?> />
+                    </td>
+                    <td class="label middle">
+                        <label for="<?php echo H($allow_equipment_not_use_notice_id) ?>" class="baseline middle"><?php echo I18N::T('eq_reserv', '仪器超过'); ?></label>
+                        <span class="toggle_status:allow_equipment_not_use_notice enable_on:on"> &nbsp;
+                            <?php
+                                $format = $form['equipment_not_use_notice_format'] ?: $equipment->equipment_not_use_notice_format ?: 'i';
+                                $format = Date::format_interval($equipment->equipment_not_use_notice_mins, $format);
+                            ?>
+                            <input class="number text middle set_time_value" name="equipment_not_use_notice_mins" value="<?php echo $form['equipment_not_use_notice_mins'] ?: $format[0]; ?>" 
+                                q-number_default_value="0" <?php if (!$equipment->equipment_not_use_notice_mins) {echo 'disabled="disabled"';}?> <?php echo $disabled; ?> />&nbsp;
+                            <?php echo Form::dropdown('equipment_not_use_notice_format', Date::units('ihd'), $format[1], 'class="middle set_time_format_80"' . $disabled); ?>
+                        </span>
+                        <label for="<?php echo H($allow_equipment_not_use_notice_id) ?>" class="baseline middle"><?php echo I18N::T('eq_reserv', '未使用，需要预警'); ?></label>
+                    </td>
+                </tr>
+
+                <!-- 仪器使用时间超过 -->
+                <tr><td colspan="2"><div class="interval_6"></div></td></tr>
+                <?php $allow_equipment_use_time_more_id = 'allow_equipment_use_time_more_' . uniqid(); ?>
+                <tr>
+                    <td class="label middle">
+                        <input id=<?php echo $allow_equipment_use_time_more_id ?> type="checkbox" name="allow_equipment_use_time_more" class="middle monitor checkbox" <?php echo $equipment->allow_equipment_use_time_more ? 'checked="checked"' : null; ?> />
+                    </td>
+                    <td class="label middle">
+                        <label for="<?php echo H($allow_equipment_use_time_more_id) ?>" class="baseline middle"><?php echo I18N::T('eq_reserv', '仪器使用超过'); ?></label>
+                        <span class="toggle_status:allow_equipment_use_time_more enable_on:on"> &nbsp;
+                            <?php
+                                $format = $form['equipment_use_time_more_format'] ?: $equipment->equipment_use_time_more_format ?: 'i';
+                                $format = Date::format_interval($equipment->equipment_use_time_more_mins, $format);
+                            ?>
+                            <input class="number text middle set_time_value" name="equipment_use_time_more_mins" value="<?php echo $form['equipment_use_time_more_mins'] ?: $format[0]; ?>" 
+                                q-number_default_value="0" <?php if (!$equipment->equipment_use_time_more_mins) {echo 'disabled="disabled"';}?> <?php echo $disabled; ?> />&nbsp;
+                            <?php echo Form::dropdown('equipment_use_time_more_format', Date::units('ihd'), $format[1], 'class="middle set_time_format_80"' . $disabled); ?>
+                        </span>
+                        <label for="<?php echo H($allow_equipment_use_time_more_id) ?>" class="baseline middle"><?php echo I18N::T('eq_reserv', '，需要预警'); ?></label>
+                    </td>
+                </tr>
+
+                <!-- 仪器使用时长少于 -->
+                <tr><td colspan="2"><div class="interval_6"></div></td></tr>
+                <?php $allow_equipment_use_time_less_id = 'allow_equipment_use_time_less_' . uniqid(); ?>
+                <tr>
+                    <td class="label middle">
+                        <input id=<?php echo $allow_equipment_use_time_less_id ?> type="checkbox" name="allow_equipment_use_time_less" class="middle monitor checkbox" <?php echo $equipment->allow_equipment_use_time_less ? 'checked="checked"' : null; ?> />
+                    </td>
+                    <td class="label middle">
+                        <label for="<?php echo H($allow_equipment_use_time_less_id) ?>" class="baseline middle"><?php echo I18N::T('eq_reserv', '仪器使用低于'); ?></label>
+                        <span class="toggle_status:allow_equipment_use_time_less enable_on:on"> &nbsp;
+                            <?php
+                                $format = $form['equipment_use_time_less_format'] ?: $equipment->equipment_use_time_less_format ?: 'i';
+                                $format = Date::format_interval($equipment->equipment_use_time_less_mins, $format);
+                            ?>
+                            <input class="number text middle set_time_value" name="equipment_use_time_less_mins" value="<?php echo $form['equipment_use_time_less_mins'] ?: $format[0]; ?>" 
+                                q-number_default_value="0" <?php if (!$equipment->equipment_use_time_less_mins) {echo 'disabled="disabled"';}?> <?php echo $disabled; ?> />&nbsp;
+                            <?php echo Form::dropdown('equipment_use_time_less_format', Date::units('ihd'), $format[1], 'class="middle set_time_format_80"' . $disabled); ?>
+                        </span>
+                        <label for="<?php echo H($allow_equipment_use_time_less_id) ?>" class="baseline middle"><?php echo I18N::T('eq_reserv', '，需要预警'); ?></label>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

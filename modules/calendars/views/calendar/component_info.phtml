@@ -1,0 +1,38 @@
+<?php 
+/*
+NO.BUG#156（guoping.zhang@2010.11.15)
+bug：在IE上信息自动换行
+解决：table标签添加nowrap样式
+NO.TASK#260（guoping.zhang@2010.11.19)
+查看日程权限判断
+// jia.huang@2010.12.16 移除权限判断 没有必要重复判断
+*/
+?>
+<div class="padding_2">
+	<?php $messages = (array)Lab::messages(Lab::MESSAGE_ERROR); 
+	if ($messages) :?>
+	<div class="message message_error">
+		<ul>
+			<?= '<li class="nowrap">' . implode('</li><li>',  $messages) . '</li>'; ?>
+		</ul>
+	</div>
+	<?php endif; ?>
+	<form q-object="component_form" q-event="event" autocomplete="off" method="post">
+		<input type="hidden" name="component_id" value="<?php echo H($component->id) ?>" />
+		<table class="form nowrap">
+			<?php
+			$calendar = $component->calendar;
+			foreach($this->component_form as $name=>$properties){
+				$path = isset($properties['path']['info']) ? $properties['path']['info'] : 'calendars:calendar/component_info/';
+				echo V($path.$name, ['component'=>$component, 'name'=>$name, 'properties'=>$properties, 'calendar'=>$calendar]);
+			}
+			?>
+			<?php if (L('ME')->is_allowed_to('删除', $component)): ?>
+				<tr>
+					<td>&#160;</td>
+					<td><input type="submit" class="font-button-delete" name="delete" value="<?php echo H(I18N::T('calendars', '删除')) ?>" /></td>
+				</tr>
+			<?php endif; ?>
+		</table>
+	</form>
+</div>

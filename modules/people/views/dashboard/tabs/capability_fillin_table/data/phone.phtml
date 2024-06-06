@@ -1,0 +1,10 @@
+<?php
+$users = Q("{$ap} capability_equipment_task_user user");
+$i=0;
+foreach ($users as $user) {
+    ?>
+    <?php if($i > 0)echo ',';?>
+    <?= H($user->phone) ?>
+    <?php $i++;
+}
+?>

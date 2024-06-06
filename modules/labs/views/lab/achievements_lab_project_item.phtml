@@ -1,0 +1,11 @@
+<tr id="<?= $container?>">
+  <td class="middle label_width lpadding_21"><?php echo I18N::T('labs', '关联项目')?></td>
+  <td class="middle" colspan="4">
+  <?php if ($projects) foreach ($projects as $project) :?>
+    <?php echo Form::checkbox("projects[{$project->id}]",
+      in_array($project->id, $select_projs),
+      H($project->name),
+      'class="middle monitor achi_projs checkbox" data-id="' . $project->id  . '"', 'class="middle rmargin_80"');?>
+  <?php endforeach; ?>
+  </td>
+</tr>

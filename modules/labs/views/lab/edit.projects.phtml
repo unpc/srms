@@ -1,0 +1,55 @@
+<div class="float_left" style="width: 130px;height: 100%;">
+    <img src="<?php echo H($lab->icon_url('104')) ?>" width="104" />
+</div>
+
+<?php
+	if (count($projects) > 0) {
+		foreach($projects as $project){
+			$existing_data[$project->type][] = ['project'=>$project];
+		}
+	}
+
+?>
+<form action="<?php echo H(URI::url()) ?>" method="post" class="edit" style="padding-left: 130px;">
+    <?php
+    	echo V('form_error', ['form'=>$form]);
+    ?>
+    <?php
+	$types = Lab_Project_Model::$types;
+	foreach ($types as $type => $name) :
+	$item_view = null;
+	switch($type){
+        case Lab_Project_Model::TYPE_RESEARCH:
+        $item_view = 'labs:lab/projects/research_project';
+        break;
+		case Lab_Project_Model::TYPE_EDUCATION:
+			$item_view = 'labs:lab/projects/teaching_project';
+			break;
+		case Lab_Project_Model::TYPE_SERVICE:
+			$item_view = 'labs:lab/projects/service_project';
+			break;
+	}
+	if (!is_null($item_view)) : ?>
+	<div class="form">
+	<?php
+		echo Widget::factory('flexform', [
+			'title' => I18N::T('labs', $name),
+			'template_data' => ['disabled'=>TRUE, 'type'=>$type],
+			'existing_data' => $existing_data[$type],
+			'item_view' => $item_view,
+            'extra_vars' => [
+                'form' => $form['project'][$type],
+            ],
+		]);
+	?>
+	</div>
+	<?php endif; ?>
+	<?php
+		endforeach;
+	?>
+	<div class="form">
+        <div class="interval_30"></div>
+		<input name="submit" type="submit" class="font-button-save float_right" value="<?php echo I18N::T('labs', '保存修改'); ?>" />
+        <div class="interval_60"></div>
+	</div>
+</form>

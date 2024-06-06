@@ -1,0 +1,42 @@
+
+<div style="width: 500px;">
+    <div class="interval_40"></div>
+    <div class="interval_40"></div>
+	<div style="width: 100%;text-align: center;">
+        <h3>请在ISC平台完成门禁规则设置</h3>
+    </div>
+    <div class="interval_40"></div>
+    <div class="interval_40"></div>
+    <div class="center">
+        <input id="iscSuccess" style="width: 110px;margin-right: 25px;" type="submit" name="save" class="font-button-save" value="<?php echo H(T('完成设置')) ?>" />
+        <input id="iscFail" style="width: 110px;margin-left: 25px;" type="button" class="font-button-default" name="cancel" id="cancel" value="<?php echo H(I18N::T('entrance', '取消')) ?>" />
+    </div>
+    <div class="interval_40"></div>
+</div>
+
+<script>
+    jQuery(function($){
+        function updateStatus (opera) {
+            html = "<span class=\"prevent_default status_tag status_tag_danger\" style=\"font-size: 13px;\">未设置</span>";
+            if (opera) {
+                html = "<span class=\"prevent_default status_tag status_tag_inservice\" style=\"font-size: 13px;\">已设置</span>";
+            }
+            $('#iscSetting').html(html)
+            $('.dialog').hide()
+            Q.trigger({
+                object: 'tohkisc',
+                event: 'submit',
+                data: {
+                    id : <?= $id ?>,
+                    status : opera
+                }
+            });
+        }
+        $('#iscSuccess').click(function(){
+            updateStatus(1)
+        });
+        $('#iscFail').click(function(){
+            updateStatus(0)
+        });
+    })
+</script>

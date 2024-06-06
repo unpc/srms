@@ -1,0 +1,132 @@
+<?php
+$me = L('ME');
+echo CSS::load_async('eq_charge:common');
+?>
+
+<div class="hr_1">&#160;</div>
+
+<?php echo $pagination; ?>
+
+<?php
+$table = Widget::factory('table');
+
+$table->name = 'charge_confirm';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+$table->add_column('@', NULL);
+
+$table->add_column('charge_id', [
+    'title'=>I18N::T('eq_charge', '计费编号'),
+    'filter'=> [
+        'form'=> V('eq_charge:charges_table/filters/id', ['form'=> $form]),
+        'value'=> $form['charge_id'] ? Number::fill($form['charge_id']) : NULL,
+    ],
+    'invisible'=> TRUE,
+]);
+
+if (!$obj || $obj->name() != 'equipment') {
+	$equipment = O('equipment', $form['equipment']);
+	$table->add_column('equipment', [
+		'title' => T('仪器'),
+		'filter' => [
+			'form' => V('eq_charge:charges_table/filters/equipment', ['equipment' => $form['equipment']]),
+			'value' => $equipment->id ? H($equipment->name) : H($form['equipment'] ?: NULL)
+		],
+		'nowrap' => TRUE
+	]);
+}
+
+if ($tab == Neu_EQ_Charge_Model::$confirm[Neu_EQ_Charge_Model::CONFIRM_PENDING]
+	|| $tab == Neu_EQ_Charge_Model::$confirm[Neu_EQ_Charge_Model::CONFIRM_CONFIRM]) {
+	if (!$obj || $obj->name() != 'user') {
+		$user = O('user', $form['user']);
+		$table->add_column('user', [
+			'title'=>I18N::T('eq_charge', '使用者'),
+			'filter'=>[
+				'form'=>V('eq_charge:charges_table/filters/user', ['user'=>$user]),
+				'value'=> $user->id ? H($user->name) : H($form['user'] ?: NULL)
+			],
+			'nowrap'=>TRUE
+		]);
+	}
+
+	if (!$obj || $obj->name() != 'lab') {
+		$lab = O('lab', $form['lab']);
+		$table->add_column('lab', [
+			'title'=>I18N::T('eq_charge', '实验室'),
+			'invisible' => TRUE,
+			'filter'=>[
+				'form'=>V('eq_charge:charges_table/filters/lab', ['lab'=>$lab]),
+				'value'=> $lab->id ? H($lab->name) : H($form['lab'] ?: NULL)
+			],
+			'nowrap'=>TRUE
+		]);
+	}
+}
+
+if($form['dtstart_check'] && $form['dtend_check']) {
+	$form['date'] = H(date('Y/m/d',$form['dtstart'])).'~'.H(date('Y/m/d',$form['dtend']));
+}
+elseif($form['dtstart_check']) {
+	$form['date'] = H(date('Y/m/d',$form['dtstart'])).'~'.I18N::T('eq_charge','最末');
+}
+elseif($form['dtend_check']) {
+	$form['date'] = I18N::T('eq_charge','最初').'~'.H(date('Y/m/d',$form['dtend']));
+}
+
+$table->add_columns([
+	'date'=>[
+		'title'=>I18N::T('eq_charge', '时间'),
+		'invisible' => TRUE,
+		'filter' => [
+			'form' => V('eq_charge:charges_table/filters/date', [
+				'dtstart_check'=>$form['dtstart_check'],
+				'dtstart'=>$form['dtstart'],
+				'dtend_check'=>$form['dtend_check'],
+				'dtend'=>$form['dtend']
+			]),
+			'value' => $form['date'] ? H($form['date']) : NULL,
+			'field' => 'dtstart_check,dtstart,dtend_check,dtend'
+		],
+		'nowrap'=>TRUE
+	],
+	'amount'=>[
+		'title'=>I18N::T('eq_charge', '收费'),
+		'nowrap'=>TRUE
+	],
+	'type'=>[
+		'title'=>I18N::T('eq_charge', '收费类型'),
+		'nowrap' => TRUE,
+    ],
+    'confirm'=>[
+		'title'=>I18N::T('eq_charge', '收费确认'),
+		'nowrap' => TRUE,
+	],
+	'summary' => [
+		'title' => I18N::T('eq_charge', '备注'),
+		'extra_class'=>'flexible',
+	],
+	'rest'=> [
+		'nowrap' => TRUE
+	]
+]);
+
+$table->empty_message = I18N::T('eq_charge', '无符合条件的收费记录');
+
+foreach ($charges as $c) {
+	$links = Charge_Confirm::links($tab, $c);
+
+	$table->add_row( [
+		'@' => V('eq_charge:charges_table/data/ref', ['c' => $c]),
+		'equipment' => V('eq_charge:charges_table/data/equipment', ['obj' => $obj, 'c' => $c]),
+		'user' => V('eq_charge:charges_table/data/user_with_lab', ['obj' => $obj, 'c' => $c]),
+		'date' => V('eq_charge:charges_table/data/date', ['c' => $c]),
+		'type' => V('eq_charge:charges_table/data/type', ['c' => $c]),
+        'amount' => V('eq_charge:charges_table/data/amount_with_date', ['c' => $c]),
+        'confirm' => V('charge_confirm:charges_table/data/confirm', ['c' => $c]),
+		'summary' => V('eq_charge:charges_table/data/summary', ['c' => $c]),
+		'rest' => Widget::factory('application:links', ['links' => $links])
+	]);
+}
+
+echo $table;

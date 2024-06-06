@@ -1,0 +1,44 @@
+<?php
+
+$lang['日程模块'] = NULL;
+$lang['周'] = NULL;
+$lang['列表'] = NULL;
+$lang['删除失败!'] = NULL;
+$lang['结束日期需晚于起始日期'] = NULL;
+$lang['主持者'] = NULL;
+$lang['必须参与者'] = NULL;
+$lang['可选参与者'] = NULL;
+$lang['知情者'] = NULL;
+$lang['主题'] = NULL;
+$lang['组织者'] = NULL;
+$lang['地址'] = NULL;
+$lang['起始时间'] = NULL;
+$lang['结束时间'] = NULL;
+$lang['相关人员'] = NULL;
+$lang['附件'] = NULL;
+$lang['网址'] = NULL;
+$lang['备注'] = NULL;
+$lang['请输入参与者的email地址'] = NULL;
+$lang['新的事件'] = NULL;
+$lang['事件'] = NULL;
+$lang['确认'] = NULL;
+$lang['删除'] = NULL;
+$lang['无'] = NULL;
+$lang['h:i:s A'] = NULL;
+$lang['下周'] = NULL;
+$lang['上周'] = NULL;
+$lang['Y/m/d'] = NULL;
+$lang['删除全部'] = NULL;
+$lang['删除以后'] = NULL;
+$lang['下月'] = NULL;
+$lang['上月'] = NULL;
+$lang['午夜'] = NULL;
+$lang['中午'] = NULL;
+$lang['类型'] = NULL;
+$lang['预约者'] = NULL;
+$lang['上传'] = NULL;
+$lang['日历模块'] = NULL;
+$lang['月'] = NULL;
+$lang['Y年m月'] = NULL;
+$lang['添加'] = NULL;
+

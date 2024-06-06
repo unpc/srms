@@ -1,0 +1,35 @@
+<div class="hr_1">&#160;</div>
+<div class="form padding_2">
+	<form method="post" action="<?php echo H(URI::url() ) ?>" autocomplete="off">
+		<?php echo V('form_error', ['form'=>$form]);?>
+		<?php $check_num = V('form_num', ['perf'=>$perf]);?>
+		<table class="form">
+			<tr>
+				<td class="nowrap middle">
+					<?php echo $equipment->icon('48');?>&#160;&#160;&#160;
+					<strong>
+						<?php echo $equipment->name;?>
+					</strong>
+				<td>
+				<td>&#160;</td>
+			</tr>
+			<?php 
+				$items = json_decode($perf->rating_items);
+				foreach($items as $key => $item):
+				$name = $key.(string)$equipment;
+			?>
+			<tr>
+				<td class="nowrap">
+					<?php echo ($key+1).'. '.T($item);?>
+				<td>
+				<td>
+					<input class="text right middle" size="2" name="<?php echo H($name) ?>" value="<?php echo H($form[$name]) ?: 0?>"/><?php echo $check_num?>
+				</td>
+			</tr>
+			<?php endforeach;?>
+		</table>
+		<div class="hr_1">&#160;</div>
+		<input name="submit" type="submit" class="button button_save" value="<?php echo I18N::T('eq_stat', '评分'); ?>" />
+	</form>
+	
+</div>

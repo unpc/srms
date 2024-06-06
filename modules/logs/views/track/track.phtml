@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C/DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?php $tbody_id =  'tbody_'.uniqid(); ?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <meta name="renderer" content="webkit" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1" />
+	<title><?php echo I18N::T('logs', '跟踪日志'); ?></title>
+	<?php echo $this->controller->load_css(); ?>
+	<?php echo $this->controller->load_js(TRUE); ?>
+	<script type="text/javascript">
+		$(document).ready(function(){
+		
+				setInterval(function() {
+					Q.trigger({
+						url: '<?php echo URI::url('!logs/track'); ?>',
+						object: 'content',
+						event: 'refresh',
+						global: false,
+						data: {
+				 			mtime: '<?php echo $mtime; ?>',
+				 			path: '<?php echo $full_path; ?>',
+				 			tbody: '<?php echo $tbody_id; ?>'
+
+						},
+					});
+				}, 3000);
+			}
+		);
+	</script>
+	<style type="text/css">
+		td.row_even {
+			background-color: #f4f4f4;
+		}
+	
+		td.row_odd {
+			background-color: #fff;
+		}
+
+	</style>
+</head>
+<body>
+ <div>
+	<table class="sticky flexible" style="margin: 0 auto;">
+		<thead>
+			<tr>
+				<th class="center nowrap"><span class="header"><?php echo I18N::T('logs', '日志内容追踪'); ?></span></th>
+			</tr>
+		</thead>
+		<tbody id="<?php echo $tbody_id; ?>">
+		<?php 
+			//显示日志文件列表
+			echo V('logs:track/content', [
+						'log_content' => $log_content,
+								]);
+		?>
+
+		</tbody>
+	</table>
+</div>
+<?php echo $this->controller->load_js(FALSE); ?>
+</body>
+</html>

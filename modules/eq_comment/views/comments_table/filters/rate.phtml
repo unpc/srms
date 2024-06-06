@@ -1,0 +1,2 @@
+<?php $tip = Config::get('comment.rate')['tip']; ?>
+<?php echo Form::dropdown($name , [-1 => '--'] + $tip, (isset($val) && $val != -1) ? (double)$val : -1, 'class="autosubmittable dropdown middle"');?>

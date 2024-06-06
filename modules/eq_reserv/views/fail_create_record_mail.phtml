@@ -1,0 +1,39 @@
+<style type="text/css">
+.top_text {
+	font-size:14px;
+	margin-left:42px;
+	padding:4px;
+}
+</style>
+<div class="hr_1">&#160;</div>
+<div>
+    <p><?php echo I18N::T('eq_reserv','%incharge, 您好!', ['%incharge'=> URI::anchor($incharge->url(), H($incharge->name))])?></p>
+</div>
+
+<div>
+	<div class="top_text"><?php echo I18N::T('eq_reserv', '在您负责的[%equipment_name]下, 系统添加一条使用记录失败!', ['%equipment_name'=>URI::anchor($reserv->equipment->url(), H($reserv->equipment->name))])?></div>
+</div>
+
+<div>
+    <p><b><?php echo I18N::T('eq_reserv', '添加失败原因')?></b></p>
+</div>
+
+<div class="top_text">
+    <?php echo I18N::T('eq_reserv', '该时段存在其他使用记录!')?>
+</div>
+
+<div>
+    <p><b><?php echo I18N::T('eq_reserv', '失败记录信息')?></b></p>
+</div>
+
+<div>
+    <div class="top_text"><?php echo I18N::T('eq_reserv', '预约者: %user_name', ['%user_name'=> URI::anchor($reserv->user->url(), H($reserv->user->name))])?></div>
+    <div class="top_text"><?php echo I18N::T('eq_reserv', '预约时段: %dtstart - %dtend', ['%dtstart'=> Date::format($reserv->dtstart), '%dtend'=> Date::format($reserv->dtend)]);?></div>
+    <div class="top_text"><?php echo I18N::T('eq_reserv', '使用时长: %use', ['%use'=> '--'])?></div>
+    <div class="top_text"><?php echo I18N::T('eq_reserv', '样品数: %sample_count', ['%sample_count'=> '--']);?></div>
+</div>
+
+<div>
+    <p><b><?php echo URI::anchor(Config::get('system.company_link', 'http://www.geneegroup.com'), 'LabScout LIMS Team'); ?></b></p>
+    <p><b><?php echo I18N::T('eq_reserv', '[系统消息,请勿回复]');?></b></p>
+</div>

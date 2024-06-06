@@ -1,0 +1,35 @@
+<?php 
+
+$axis_options = [
+	'y1' => 'Y-Axis 1',
+	'y2' => 'Y-Axis 2',
+	'no' => I18N::HT('envmon', '不显示')
+];
+
+$sensors = Q("env_sensor[node={$node}]");
+?>
+<form method="post" action="<?php echo H(URI::url('')) ?>">
+<div class="lpadding_1">
+	<table class="form tmargin_2" >
+		<?php 
+			$num = 1;
+			$type = 'yaxis';
+			foreach ($sensors as $sensor):
+		?>
+		<tr>
+			<td class="middle "><span class="legend_color " style="background-color:<?php  echo Sensor::$colors[(int)$sensor->id % 11]?>"></span></td>
+			<td class=" middle"><h4 class="middle "><?php echo H($sensor->name)?></h4></td>
+		</tr>
+		<tr >
+		<td colspan="2"  class="middle tpadding_3"><?php echo Form::dropdown('axes['.$sensor->id.']', $axis_options,'y1','class="middle_text"' ); ?></td>
+		</tr>
+		<?php echo V('envmon:bucket/curve_axis_option', [
+					'key' => $sensor->id,
+					'sensor' => $sensor
+				]); ?>
+		<?php 
+			endforeach; 
+		?>
+	</table>
+</div>
+</form>

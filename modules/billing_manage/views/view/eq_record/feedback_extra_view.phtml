@@ -1,0 +1,30 @@
+<?php
+$me = L('ME');
+$grantSelect = $form['remote_fund_id'] ? : (O('billing_fund',$record->billing_fund_id)->remote_id ? : 0 );
+// 如果该使用记录关联了预约
+if(!$grantSelect && $record->reserv->id) {
+    $grantSelect = O('billing_fund', $record->reserv->billing_fund_id)->remote_id ? : 0;
+}
+$user = $record->user->id ? $record->user : $me;
+$grants = (array)Billing_Manage::get_grants($user, $equipment);
+?>
+<p class="padding_1 lmargin_-2">
+<div class="interval_6"></div>
+<div>
+    <table style="width: 370px">
+        <tr>
+            <td style="white-space: nowrap;">
+                <span><?= I18N::T('labs', '选择经费')?></span>
+                <?php if(!Billing_Manage::isFree($equipment, 'eq_reserv') || !Billing_Manage::isFree($equipment, 'eq_record')): ?> 
+                    <span class="red">*</span> 
+                <?php endif; ?>
+            </td>
+            <td class="right">
+                <?php echo Form::dropdown('remote_fund_id', ['--'] + $grants, $grantSelect,
+                    'style="width: 294px;"'
+                ); ?>
+            </td>
+        </tr>
+    </table>
+</div>
+</p>

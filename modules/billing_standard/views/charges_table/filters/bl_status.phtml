@@ -1,0 +1,10 @@
+<?php
+$sl = Billing_Standard::$STATUS_LABEL;
+foreach ($sl as &$s){
+    $s = I18N::T('billing_standard',$s);
+}
+?>
+<?= Form::dropdown('bl_status',
+    I18N::T('eq_charge_confirm',
+        ['-1' => '--'] + $sl),
+    (isset($form['bl_status']) && $form['bl_status'] != -1) ? $form['bl_status'] : -1, 'class="dropdown"'); ?>

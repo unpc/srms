@@ -1,0 +1,17 @@
+<table>
+	<tbody>
+	<?php 
+		foreach(json_decode($update->new_data, TRUE) as $key=>$data):
+		if (in_array($key, array_keys(Stock::$properties))) :
+	?>
+		<tr>
+			<td class="left top nowrap">
+				<strong class="description"><?php echo HT(Stock::$properties[$key]);?></strong>
+			</td>
+			<td class="left top content_wrap lpadding_2">
+				<?php echo new Markup($data, TRUE) ?>
+			</td>
+		</tr>
+	<?php endif; endforeach;?>
+	</tbody>
+</table>

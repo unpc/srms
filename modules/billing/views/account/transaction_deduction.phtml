@@ -1,0 +1,79 @@
+<div class="form">
+	<form method="post" class="blue view" q-object="refill_deduction" q-event="submit" q-static="<?php echo H(['lab_id'=>$lab->id, 'type'=>'deduct'])?>">
+	<?php 
+	$require = (string) V('form_require', ['extra_class' => 'top']);
+    $requires = Config::get('form.billing_deduction')['requires']; 
+	?>
+	<table class="form">
+		<tbody>
+			<tr>
+				<td class="left nowrap middle"><?php echo I18N::T('billing', '财务部门'); ?></td>
+                <td class="left nowrap middle"><?php echo I18N::T('billing', '目前余额')?></td>
+
+			</tr>
+			<tr>
+                <td class="top">
+                    <?php
+                    echo Widget::factory('billing:lab_department_selector', [
+                        'autocomplete'=>URI::url('!billing/autocomplete/lab_department.'.$lab->id),
+                        'name'=>'department_id',
+                    ]);
+                    ?>
+                </td>
+				<td class="top"><input name="credit_balance" class="text currency readonly" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="0" readonly="true" /></td>
+			</tr>
+			<tr>
+				<td class="left nowrap middle">
+					<?= array_key_exists('amount', $requires) ? $require : ''; ?>
+					<?php echo I18N::T('billing', '扣除金额')?>
+					<?php echo V('form_filter',['error'=>$form->errors['amount'][0]])?>
+				</td>
+                <td class="left nowrap middle"><?php echo I18N::T('billing', '凭证号')?></td>
+			</tr>
+			<tr>
+                <td class="top"><input name="amount" class="text currency" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" size="20" value="<?php echo H($form['amount']) ?>" /></td>
+				<td class="top"><input name="certificate" class="text right"  size="20" value="<?php echo H($form['certificate']) ?>" /></td>
+				<?= array_key_exists('certificate', $requires) ? $require : ''; ?>
+			</tr>
+
+			<tr name="change_deduction_user" class="hidden">
+				<td class="left nowrap middle"><?php echo I18N::T('billing', '扣费人员')?></td>
+			</tr>
+            <tr name="change_deduction_user" class="hidden">
+                <td class="top">
+                    <?php
+                    /*
+                    NO.BUG#315(guoping.zhang@2010.12.28)
+                    充值人员默认为是：当前用户
+                    */
+                    echo Widget::factory('user_selector', [
+                        'autocomplete'=>URI::url('!billing/autocomplete/users'),
+                        'name'=>'user_id',
+                        'user'=>L('ME'),
+                    ]);
+                    ?>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="left nowrap middle">
+					<?= array_key_exists('description', $requires) ? $require : ''; ?>
+                    <?php echo I18N::T('billing', '备注')?>
+					<?php echo V('form_filter',['error'=>$form->errors['description'][0]])?>
+                </td>
+            </tr>
+			<tr>
+				<td class="right nowrap top" colspan="2">
+					<textarea name="description" type="text" rows="4" class="text autogrow"><?php echo H($form['description'])?></textarea>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+        <div class="button_container">
+            <div class="float_right">
+                <input name="cancel" id="cancel" type="reset" class="font-button-default sm rmargin_2e4" value="<?php echo H(I18N::T('billing', '取消') ) ?>">
+                <input name="submit" type="submit" class="font-button-save sm" value="<?php echo H(I18N::T('billing', '扣费')) ?>">
+            </div>
+        </div>
+	</form>
+</div>

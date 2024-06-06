@@ -1,0 +1,5 @@
+<script>
+<?php if(!$readonly):?>
+$("input[name^='field[<?php echo $prefix ?>][checkbox]']").prev().children('input').removeAttr('disabled');
+<?php endif;?>
+</script>

@@ -1,0 +1,12 @@
+<?php
+$incharges = Q("{$node} user.incharge");
+if ($incharges->total_count()) :
+    foreach($incharges as $incharge) :
+    ?>
+        <a href="<?php echo H($incharge->url() ) ?>"><?php echo H($incharge->name); ?></a>&nbsp;&nbsp;
+    <?php
+    endforeach; 
+else :
+?>
+--
+<?php endif;?>

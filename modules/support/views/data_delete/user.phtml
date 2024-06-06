@@ -1,0 +1,129 @@
+<div class="padding_2">
+  <h2 class="section_title">
+    <span class="middle"><?= I18N::T('support', '基本信息') ?></span>
+  </h2>
+  <div style="padding-top:5px">
+    <table class="form equipment_info_form" style="min-width:400px">
+      <tr>
+        <td class="nowrap left top" rowspan="10">
+          <img class="icon icon_user" width="104px" height="104px"
+          src="<?= $user->icon_url(104) ?>" style="display:block">
+        </td>
+        
+      </tr>
+      <tr>
+      <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('support', '用户名称')?>
+          </span>
+        </td>
+        <td class="left">
+          <?= H($user->name) ?>
+        </td>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <span class="content_wrap"><?= I18N::T('support', '账号')?></span>
+          </span>
+        </td>
+        <td class="left">
+          <span class="content_wrap"><?= H($user->token) ?></span>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('support', '学工号') ?>
+          </span>
+        </td>
+        <td colspan="3">
+          <?= H($user->ref_no) ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left top">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('support', '课题组') ?>
+          </span>
+        </td> 
+        <td colspan="3">
+          <?= H(implode(',', Q("{$user} lab")->to_assoc('id', 'name'))) ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('support', '电子邮箱')?>
+          </span>
+        </td> 
+        <td colspan="3">
+          <?= H($user->email) ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('support', '联系电话')?>
+          </span>
+        </td> 
+        <td colspan="3">
+          <?= $user->phone ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('support', '卡号')?>
+          </span>
+        </td> 
+        <td style="width: 25%">
+          <?= H($user->card_no) ?>
+        </td>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('support', '送样数')?>
+          </span>
+        </td> 
+        <td style="width: 25%">
+          <span class="content_wrap"><?= $samples ?></span>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <span class="content_wrap"><?= I18N::T('support', '预约数')?></span>
+          </span>
+        </td> 
+        <td>
+          <?= $reservs ?>
+        </td>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <span class="content_wrap"><?= I18N::T('support', '使用数')?></span>
+          </span>
+        </td> 
+        <td>
+          <?= $records ?>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div class="interval_20"></div>
+  <div class="float_right">
+    <a class="font-button-delete middle delete_user_match"><?= I18N::HT('support', '删除')?></a>
+  </div>
+  <div class="interval_60"></div>
+</div>
+
+<script>
+jQuery(function($) {
+  $('.delete_user_match').bind('click', function () {
+    Q.trigger({
+      url: '<?= H(URI::url('!support/data')) ?>',
+      object: 'delete_user',
+      event: 'exec',
+      global: false,
+      data: { id: <?= $user->id ?> },
+    });
+  })
+})
+</script>

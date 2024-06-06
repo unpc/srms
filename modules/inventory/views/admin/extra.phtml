@@ -1,0 +1,5 @@
+<?php
+$lab = Lab_Model::default_lab();
+$extra = Extra_Model::fetch($lab, 'stock');
+?>
+<div src="<?php echo H($extra->url()) ?>"></div>

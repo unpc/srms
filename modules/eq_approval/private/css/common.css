@@ -1,0 +1,73 @@
+.status_approved {
+	background-color: #8CBF40;
+}
+
+.status_pendding {
+	background-color: #7498E0;
+}
+
+.status_rejected {
+	background-color: #E90000;
+}
+
+.status_used {
+	background-color: #CCCCCC;
+}
+
+.status_un_used {
+	background-color: #14B2B2;
+}
+
+.type_reserv {
+	background-color: #8CBF40;
+}
+
+.type_sample {
+	background-color: #F2A640;
+}
+
+.pass_action {
+	height: 24px;
+	display: inline-block;
+	width: 56px;
+	background-image: url(images/action/pass.png);
+	background-repeat: no-repeat;
+	background-position: 4px center;
+	_background-image: url(images/action/pass.png); 
+
+	&.disable {
+		background-image: url(images/action/pass_disable.png);
+	}
+
+	&.disable:active {
+		background-image: url(images/action/pass_disable.png);
+	}
+}
+
+.pass_action:active {
+	background-image: url(images/action/pass_enter.png);
+}
+
+
+.reject_action {
+	height: 24px;
+	width: 56px;
+	display: inline-block;
+	background-image: url(images/action/reject.png);
+	background-repeat: no-repeat;
+	background-position: 4px center;
+	_background-image: url(images/action/reject.png); 
+
+	&.disable {
+		background-image: url(images/action/reject_disable.png);
+	}
+
+	&.disable:active {
+		background-image: url(images/action/reject_disable.png);
+	}
+}
+
+.reject_action:active {
+	background-image: url(images/action/reject_enter.png);
+}
+

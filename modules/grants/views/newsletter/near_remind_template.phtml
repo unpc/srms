@@ -1,0 +1,8 @@
+<?php 
+$base_url = Config::get('system.base_url');
+foreach ($grants as $grant) :
+	$url = $base_url.'!grants/grant/index.'.$grant->id;
+	$project = URI::anchor($url, $grant->project);
+?>
+<li>➡ &#160;&#160;&#160;<?php echo I18N::T('grants', $template, ['%grant_project'=>$project, '%date'=> Date::format($grant->dtend, 'Y/m/d')]);?></li>
+<?php endforeach; ?>

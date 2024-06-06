@@ -1,0 +1,49 @@
+<table class="form" width="500px;">
+    <tr>
+        <td class="left middle" colspan="2">
+            <h1 class="bpadding_1"><?php echo I18N::HT('approval', '送样详情');?></h1>
+        </td>
+    </tr>
+    <tr>
+        <td class="right middle"><strong class="description"><?php echo I18N::HT('eq_sample', '送样仪器');?></strong></td>
+        <td class="middle" width="350px">
+            <a class="prevent_default"
+                href="<?= $approval->equipment->url()?>"><?= H(T($approval->equipment->name))?></a>
+        </td>
+    </tr>
+    <tr>
+        <td class="right middle"><strong class="description"><?php echo I18N::HT('eq_sample', '申请者');?></div>
+        </td>
+        <td class="middle">
+            <?= V('approval_flow:approval_table/data/user', ['user' => $approval->user])?>
+        </td>
+    </tr>
+    <tr>
+        <td class="right middle"><strong class="description"><?php echo I18N::HT('eq_sample', '备注');?></div>
+        </td>
+        <td class="middle">
+            <?= H(T($sample->note ? : $approval->description))?>
+        </td>
+    </tr>
+    <?php
+        $extra = Extra_Model::fetch($approval->equipment, 'eq_sample');
+        if (!$sample->id) {
+            $sample = O('eq_sample');
+            $sample->id = $approval->source_id;
+        }
+        $extra_value = O('extra_value', ['object'=>$sample]);
+        if($extra_value->id) {
+            $values = $extra_value->values;
+            $sample->count = $approval->count;
+            $sample->description = $approval->description;
+        }
+        echo V('eq_sample:extra/display', ['extra'=>$extra, 'form'=>$form, 'values'=>$values, 'sample'=>$sample]);
+    ?>
+</table>
+<script>
+    jQuery(function($) {
+        $('input[name]').attr('disabled', true);
+        $('textarea[name]').attr('disabled', true);
+        $('select[name]').attr('disabled', true);
+    })
+</script>

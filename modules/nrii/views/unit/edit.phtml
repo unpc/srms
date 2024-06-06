@@ -1,0 +1,177 @@
+<div class="hr_1">&#160;</div>
+<div class="padding_1 form">
+    <form method="post" autocomplete="off" action="<?php echo H(URI::url() ) ?>" enctype="multipart/form-data">
+    <div class="hr_2">&#160;</div>
+    <?php 
+        $no_error = $form->no_error;
+        $require = V('form_require');
+        echo V('form_error', ['form'=>$form]);
+        
+        $address = $unit->address;
+        if ($no_error) {
+            $citylist = Nrii_Address::get_citys($address);
+            $arealist = Nrii_Address::get_areas($address);
+            $province = str_pad(substr($address, 0, 2), 6, '0');
+            $city = str_pad(substr($address, 0, 4), 6, '0');
+            $area = $address;
+        }
+        else {
+            $citylist = isset($form['province']) && $form['province'] != -1 
+                ? Nrii_Address::get_citys($form['province']) 
+                : [];
+            $arealist = isset($form['city']) && $form['city'] != -1 
+                ? Nrii_Address::get_areas($form['city']) 
+                : [];
+            $city = $form['city'] && array_key_exists($form['city'], $citylist) ? $form['city'] : -1;
+            $area = $form['area'] && array_key_exists($form['area'], $arealist) ? $form['area'] : -1;
+        }
+    ?>
+    <fieldset class="bottom">
+        <legend><?= I18N::T('nrii', '基本信息') ?></legend>
+        <table class="form">
+            <tbody>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '服务单元名称')?></td>
+                    <td><input class="text" name="unitname"  size="30" value="<?= H($no_error ? $unit->unitname : $form['unitname']) ?>" /></td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '所属单位') ?></td>
+                    <td><input class="text" name="org"  size="30" value="<?= H($no_error ? $unit->org : $form['org']) ?>" /></td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '服务单元类别')?></td>
+                    <td><?= Form::dropdown('category', [-1 => '-- 请选择 --'] + I18N::T('nrii', Nrii_Unit_Model::$type_status), $no_error ? $unit->category : $form['category'], 'class="dropdown" size="30" '); ?></td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '所在单位服务单元编号') ?></td>
+                    <td><input class="text" name="innerId"  size="30" value="<?= H($no_error ? $unit->inner_id : $form['innerId']) ?>" /></td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '运行状态')?></td>
+                    <td><?= Form::dropdown('status', [-1 => '-- 请选择 --'] + I18N::T('nrii', Nrii_Unit_Model::$status_unit), $no_error ? $unit->status : $form['status'], 'class="dropdown" size="30" '); ?></td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '成立日期') ?></td>
+                    <td><input class="text date" name="beginDate" value="<?= H($no_error ? $unit->begin_date : $form['beginDate']) ?>" q-date_format="<?php echo HT('$year/$month/$day')?>" /></td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '共享模式')?></td>
+                    <td>
+                        <?= Form::dropdown('shareMode', [-1 => '-- 请选择 --'] + I18N::T('nrii', Nrii_Unit_Model::$share_status), $no_error ? $unit->share_mode : $form['shareMode'], 'class="dropdown" size="30" '); ?>
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '主要学科领域')?></td>
+                    <td>
+                        <?php
+                            echo Widget::factory('nrii:muti_selector',
+                                [
+                                    'name'=>'realm',
+                                    'autocomplete'=>URI::url('!nrii/autocomplete/search.subject'),
+                                    'value' => $no_error ? $unit->realm : $form['realm'],
+                                    'extra'=>'token_verify'
+                                ]);
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '预约服务网址')?></td>
+                    <td><input class="text" name="serviceUrl" size="30" value="<?= H($no_error ? $unit->service_url : $form['serviceUrl']) ?>"/></td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '安放地址')?></td>
+                    <td id="province">
+                        <?= Form::dropdown('province', 
+                        [-1 => '- 请选择省-'] + Nrii_Address::get_provinces(), 
+                        $form['province'] ? : $province, 
+                        'class="dropdown" size="30" '); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '图片')?></td>
+                    <td>
+                        <input class="file" name="file" size="30" type="file" />
+                    </td>
+                    <td class="nowrap right"></td>
+                    <td id="city">
+                        <?= Form::dropdown('city', 
+                        [-1 => '- 请选择市-'] + $citylist, 
+                        $city, 
+                        'class="dropdown" size="30" '); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right" rowspan="2"><?= I18N::T('nrii', '主要功能')?></td>
+                    <td rowspan="2">
+                        <textarea class="text autogrow" rows="3" cols="30" name="function"><?= H($no_error ? $unit->function : $form['function']) ?></textarea>
+                    </td>
+                    <td class="nowrap right"></td>
+                    <td id="area">
+                        <?= Form::dropdown('area', 
+                        [-1 => '- 请选择区-'] + $arealist, 
+                        $area, 
+                        'class="dropdown" size="30" '); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"></td>
+                    <td>
+                        <input class="text" name="street" size="30" value="<?= H($no_error ? $unit->street : $form['street']) ?>"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '服务内容')?></td>
+                    <td>
+                        <textarea class="text autogrow" rows="3" cols="30" name="service_content"><?= H($no_error ? $unit->service_content : $form['service_content']) ?></textarea>
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '服务的典型成果')?></td>
+                    <td>
+                        <textarea class="text autogrow" rows="3" cols="30" name="achievement"><?= H($no_error ? $unit->achievement : $form['achievement']) ?></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '对外开放共享规定')?></td>
+                    <td>
+                        <textarea class="text autogrow" rows="3" cols="30" name="requirement"><?= H($no_error ? $unit->requirement : $form['requirement']) ?></textarea>
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '参考收费标准')?></td>
+                    <td>
+                        <textarea class="text autogrow" rows="3" cols="30" name="fee"><?= H($no_error ? $unit->fee : $form['fee']) ?></textarea>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </fieldset>
+    <div class="hr_2">&#160;</div>
+    <fieldset class="bottom">
+        <legend><?= I18N::T('nrii', '联系人信息') ?></legend>
+        <table class="form">
+            <tbody>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '联系人')?></td>
+                    <td>
+                        <input class="text" name="contact" size="20" value="<?= H($no_error ? $unit->contact : $form['contact']) ?>"/>
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '联系人电话')?></td>
+                    <td>
+                        <input class="text" name="phone" size="20" value="<?= H($no_error ? $unit->phone : $form['phone']) ?>"/>
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '电子邮箱')?></td>
+                    <td>
+                        <input class="text" name="email" size="28" value="<?= H($no_error ? $unit->email : $form['email']) ?>"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '通讯地址')?></td>
+                    <td colspan="3">
+                        <input class="text" name="contact_street" size="51" value="<?= H($no_error ? $unit->contact_street : $form['contact_street']) ?>"/>
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '邮政编码')?></td>
+                    <td>
+                        <input class="text" name="zip_code" size="28" value="<?= H($no_error ? $unit->zip_code : $form['zip_code']) ?>"/>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </fieldset>
+    <fieldset style="width:680px; border:0">
+        <table class="form">
+            <tr>
+                <td><input type="submit" name="submit" class="button button_save" value="<?php echo H(I18N::T('nrii', '保存')) ?>" /></td>
+                <td><a href="<?php echo H(URI::url('!nrii/nrii.unit') ) ?>" name="reset" class="button button_cancel"><?php echo H(I18N::T('nrii', '取消') ) ?></a></td>
+            </tr>
+        </table>
+    </fieldset>
+    </form>
+</div>
+<?php echo JS::load('nrii:address', ['trigger_url'=>URI::url('!nrii/address')]) ?>

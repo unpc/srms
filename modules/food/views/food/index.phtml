@@ -1,0 +1,83 @@
+<?php $me = L('ME')?>
+<div class="hr_1">&#160;</div>
+<?php  if ($me->is_allowed_to('添加', 'food')) :?>
+	<div class="panel padding_1 clearfix">
+		<a class="button button_add" href="<?php echo URI::url('!food/food/add'); ?>"><?php echo I18N::T('food','添加菜式') ?></a>
+	</div>
+<?php endif;?>
+<?php
+
+echo $pagination;
+$table = Widget::factory('table');
+$table->name = 'food';
+$table->add_columns([
+	'@'=>[
+		'nowrap'=>TRUE,
+		'align'=>'center',
+	],
+	'name'=>[
+		'title'=>I18N::T('food', '食物名称'),
+		'filter'=>[
+			'form'=> V('food:food_table/filters/name',['form'=>$form]),
+			'value'=> $form['name'] ? H($form['name']) : NULL
+		],
+		'nowrap'=>TRUE
+	],
+	'supplier'=>[
+		'title'=>I18N::T('food', '供应商'),
+		'align'=>'center',
+		'nowrap'=>TRUE,
+		'invisible'=>TRUE,
+	],
+	'price'=>[
+		'title'=>I18N::T('food', '食物价格'),
+		'filter'=>[
+			'form'=> V('food:food_table/filters/price',['form'=>$form]),
+			'value'=> $form['price'] ? H($form['price']) : NULL
+		],
+		'align'=>'right',
+		'nowrap'=>TRUE
+	],
+	'reserve'=>[
+		'title'=>I18N::T('food', '食物可预订时间'),
+		'align'=>'left',
+		'nowrap'=>TRUE
+	],
+	'description'=>[
+		'title'=>I18N::T('food', '菜式说明'),
+		'align'=>'left',
+		'nowrap'=>TRUE
+	],
+	'rest'=>[
+		'nowrap'=>TRUE,
+		'align'=>'right',
+	],
+]);
+
+$table->empty_message = I18N::T('food', '菜式为空，请添加菜式');
+$last_supplier = NULL;
+if (count($foods) > 0) foreach($foods as $food) {
+
+	if ($food->supplier != $last_supplier) {
+		$table->add_row([
+			'#special_view'=>H($food->supplier),
+			'#extra_class'=>'food_supplier',
+		]);
+		$last_supplier = $food->supplier;
+	}
+
+	$links = $food->links();
+	$table->add_row([
+		'@'=>[
+			'view'=>$food->icon('32', 'style="display:block"'),
+			'extra'=>'style="padding:4px" align="right"'
+		],
+		'name'=> H($food->name),
+		'price'=>H(Number::currency($food->price)),
+		'reserve'=>V('food_table/data/reserve', ['food'=>$food]),
+		'description'=> H($food->description),
+		'rest'=>Widget::factory('application:links', ['links'=>$links]),
+	]);
+}
+
+echo $table;

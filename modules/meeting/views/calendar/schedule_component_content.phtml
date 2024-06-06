@@ -1,0 +1,32 @@
+<?php 
+echo CSS::load_async('meeting:topic_color');
+$color = $component->me_room->id % 6;
+$class = "topic_color_{$color}";
+$meeting = $component->me_room;
+
+
+$show_meeting_name = FALSE;
+switch($current_calendar->parent_name) {
+//查看所有会议室预约
+case 'calendar' :
+    if ($current_calendar->type == 'all_meetings') {
+    	$show_meeting_name = TRUE;
+	}
+break;
+case 'user':
+    if ($current_calendar->type == 'me_incharge') {
+    	$show_meeting_name = TRUE;
+	}
+break;
+}
+
+
+
+if ($component->name) : ?>
+	<p class="<?php echo H($class) ?>"><?php echo H($component->name);?></p>
+<?php endif;?>
+<p>
+	<?php if ($show_meeting_name) :?>
+	<a class="prevent_default" href="<?php echo $meeting->url(); ?>"><?php echo H($meeting->name) ?></a>
+	<?php endif;?>
+</p>

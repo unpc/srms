@@ -1,0 +1,105 @@
+
+<?php
+	echo CSS::load_async('extra:relate_list');
+
+	$relate_uniqid = 'relate_view_'.uniqid();
+	$selected = $selected ? : current($categories);
+    $categories_id = 'categories_'. uniqid();
+?>
+
+<div class="interval_10"></div>
+<div class="relate_list clearfix">
+
+
+<!--左边-->
+   <div class="relate_left">
+   <?php if (!$readonly):?>
+
+<div class="padding_1 clearfix add_tags center tmargin_3 bmargin_3">
+
+	<a  class="font-button-default border_gray gray"
+		q-object="create_category"
+		q-event="click"
+		q-static="<?php echo H(['extra_id'=>$extra->id])?>"
+		q-src="<?php echo H(URI::url('!extra/extra')) ?>"
+        title="<?php echo I18N::T('extra','添加类别')?>">
+        <span class='icon-add rmargin_1 vertical_middle'></span> <span class="vertical_middle"> <?php echo I18N::T('extra','添加类别')?></span></a>
+</div>
+<?php endif;?>
+
+    <ul class="extra_categories" id="<?php echo H($categories_id) ?>">
+		<?php
+			foreach($categories as $category) {
+
+                if ($extra->object->name() == 'equipment'
+                    && Config::get('sample_approval.to_equipment')
+                    && !$extra->object->sample_approval_enable
+                ) {
+                    if (in_array($category, ['报告格式及方式'])) continue;
+                }
+                //默认允许被编辑、删除
+                $i18n_module = '';
+                $can_edit = TRUE;
+                $config_extra = Config::get('extra.'. $extra->object->name() . '.'. $extra->type);
+                if ($config_extra[$category]) {
+                    $can_edit = FALSE;
+                    $i18n_module = $config_extra[$category]['#i18n_module'] ?: 'extra';
+
+                }
+                echo V('extra:edit/category', [
+                    'category'=>$category,
+                    'relate_uniqid'=>$relate_uniqid,
+                    'selected'=> $selected,
+                    'can_edit'=> $can_edit,
+                    'extra'=> $extra,
+                    'i18n_module' => $i18n_module,
+                    'readonly' => $readonly
+                ]);
+			}
+		?>
+	</ul>
+   </div>
+
+ <!-- 右边-->
+   <div style="width:82%;padding-bottom:20px;">
+	<?php
+		if ($selected) {
+            echo V('extra:edit/relate',[
+                'category'=> $selected,
+                'extra'=>$extra,
+                'relate_uniqid'=> $relate_uniqid,
+                'readonly' => $readonly
+            ]);
+		}
+	?>
+    </div>
+</div>
+<script type="text/javascript">
+jQuery(function($) {
+
+<?php if (!$readonly):?>
+    $('#<?php echo $categories_id?>').sortable({
+        axis: 'y',
+        handle: 'div.category_drag_handle',
+        containment: 'parent',
+        update: function(event, ui) {
+            $item = ui.item;
+
+            var data = {};
+
+            data.extra_id = <?php echo $extra->id;?>;
+            data.category = $item.classAttr('item');
+
+            if ($item.prev('.extra_category').length) data.prev_category = $item.prev('.extra_category').classAttr('item');
+
+            Q.trigger({
+                object: 'category',
+                event: 'change_weight',
+                url: '<?php echo URI::url('!extra/extra');?>',
+                data: data
+            });
+        }
+    });
+<?php endif;?>
+});
+</script>

@@ -1,0 +1,4 @@
+<?php
+	$types = ['-1' => '---'] + EQ_Voucher_Model::$TYPES;
+	echo Form::dropdown('type', I18N::T('eq_approval', $types), isset($form['type']) ? $form['type'] : -1, 'class="autosubmittable dropdown middle"');
+?>

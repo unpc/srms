@@ -1,0 +1,44 @@
+<table class="form td_padding_2" width="80%">
+	<tr>
+        <td class="right nowrap label middle">
+            <?php echo I18N::T('eq_reserv', '时间范围'); ?>
+        </td>
+        <td class="middle">
+			<?php
+	   			echo Form::dropdown("unit[$flexform_index]",EQ_Warning::$unit_lebals,$unit ?: 'month', 'disabled');
+	   		?>
+		</td>
+	</tr>
+	<tr>
+		<td class="right nowrap middle label"><?php echo I18N::T('eq_warning', '仪器额定机时') ?></td>
+		<td class="">
+			<input disabled
+				type="text"
+				name="machine_hour[<?php echo $flexform_index; ?>]"
+				size="55" class="text number"
+				value="<?php echo H(isset($form['machine_hour'][$flexform_index]) ? $form['machine_hour'][$flexform_index] : $machine_hour) ?>" />&#160;
+		</td>
+	</tr>
+	<tr>
+		<td class="right nowrap middle label"><?php echo I18N::T('eq_warning', '使用时长最大值') ?></td>
+		<td class="middle">
+			<input disabled
+				type="text"
+				name="use_limit_max[<?php echo $flexform_index; ?>]"
+				size="55" class="text number"
+				value="<?php echo H(isset($form['use_limit_max'][$flexform_index]) ? $form['use_limit_max'][$flexform_index] : $use_limit_max) ?>" />&#160;
+		</td>
+	</tr>
+	<tr>
+		<td class="right nowrap middle label"><?php echo I18N::T('eq_warning', '使用时长最小值') ?></td>
+		<td class="middle">
+			<input disabled
+				type="text"
+				name="use_limit_min[<?php echo $flexform_index; ?>]"
+				size="55" class="text number"
+				value="<?php echo H(isset($form['use_limit_min'][$flexform_index]) ? $form['use_limit_min'][$flexform_index] : $use_limit_min) ?>" />&#160;
+		</td>
+	</tr>
+</table>
+<br/>
+<div class="clear"></div>

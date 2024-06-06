@@ -1,0 +1,156 @@
+<table style="width:600px;font-size:14px;padding:10px 5px 10px 5px;" border='1'>
+    <tbody>
+        <tr>
+            <td style="border: 1px solid #000;text-align:left;width:100px;"><?= H('委托单位') ?></td>
+            <td style="border: 1px solid #000;text-align:left;width:200px;" colspan="3">
+                <?= $sample->sender->organization ?>
+            </td>
+            <td style="border: 1px solid #000;text-align:left;width:100px;"><?= H('联系电话') ?></td>
+            <td style="border: 1px solid #000;text-align:left;width:200px;" colspan="3">
+                <?= $sample->sender->phone ?>
+            </td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid #000;text-align:left;width:100px;"><?= H('单位地址') ?></td>
+            <td style="border: 1px solid #000;text-align:left;width:200px;" colspan="3">
+                <?= $sample->sender->address ?>
+            </td>
+            <td style="border: 1px solid #000;text-align:left;width:100px;"><?= H('E-mail') ?></td>
+            <td style="border: 1px solid #000;text-align:left;width:200px;" colspan="3">
+                <?= $sample->sender->email ?>
+            </td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid #000;text-align:left;width:100px;"><?= H('样品名称') ?></td>
+            <td style="border: 1px solid #000;text-align:left;width:200px;" colspan="3">
+                <?= $sample->name ?>
+            </td>
+            <td style="border: 1px solid #000;text-align:left;width:100px;"><?= H('样品类别') ?></td>
+            <td style="border: 1px solid #000;text-align:left;width:200px;" colspan="3">
+                <?= $sample->type ?>
+            </td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid #000;text-align:left;width:100px;"><?= H('样品代号') ?></td>
+            <td style="border: 1px solid #000;text-align:left;width:200px;" colspan="3">
+                <?= $sample->code ?>
+            </td>
+            <td style="border: 1px solid #000;text-align:left;width:100px;"><?= H('样品数量') ?></td>
+            <td style="border: 1px solid #000;text-align:left;width:200px;" colspan="3">
+                <?= $sample->count ?>
+            </td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid #000;text-align:left;width:100px;"><?= H('样品编码') ?></td>
+            <td style="border: 1px solid #000;text-align:left;width:200px;" colspan="3">
+                <?= H('检测参数及浓度范围') ?></td>
+            <td style="border: 1px solid #000;text-align:left;width:100px;"><?= H('结果要求等级') ?></td>
+            <td style="border: 1px solid #000;text-align:left;width:200px;" colspan="3">
+                <?= H('检测科室确认') ?></td>
+        </tr>
+        <?php if ($sample_results->total_count()) :?> 
+        <?php foreach ($sample_results as $sample_result) :?>
+        <tr>
+            <td style="border: 1px solid #000;text-align:left;width:100px;">
+                <?= $sample_result->subname ?>
+            </td>
+            <td style="border: 1px solid #000;text-align:left;width:200px;" colspan="3">
+                <?= $sample_result->parameter . ';' . $sample_result->concentration ?></td>
+            <td style="border: 1px solid #000;text-align:left;width:100px;">
+                <?= $sample_result->level ?>
+            </td>
+            <td style="border: 1px solid #000;text-align:left;width:200px;" colspan="3">
+            </td>
+        </tr>
+        <?php endforeach; ?>
+        <?php endif; ?>
+        <?php 
+            $max = ((5 - $sample_results->total_count()) > 0) ? (5 - $sample_results->total_count()) :  0;
+        ?>
+        <?php for ($i=0; $i < $max; $i++): ?>
+        <tr>
+            <td style="border: 1px solid #000;text-align:left;width:100px;">
+            </td>
+            <td style="border: 1px solid #000;text-align:left;width:200px;" colspan="3">
+            </td>
+            <td style="border: 1px solid #000;text-align:left;width:100px;">
+            </td>
+            <td style="border: 1px solid #000;text-align:left;width:200px;" colspan="3">
+            </td>
+        </tr>
+        <?php endfor; ?>
+        <?php $mode = json_decode($sample->mode, true) ?>
+        <tr>
+            <td style="border: 1px solid #000;text-align:left;width:100px;">
+                <?= H('报告格式及方式') ?>
+            </td>
+            <td style="border: 1px solid #000;text-align:left;width:67px;font-size:14px;">
+                <?= H('文本') ?>
+                <?= $sample->format == Sample_Approval_Model::FORMAT_TEXT ? '√' : '' ?>
+            </td>
+            <td style="border: 1px solid #000;text-align:left;width:67px;font-size:14px;">
+                <?= H('电子版') ?>
+                <?= $sample->format == Sample_Approval_Model::FORMAT_PDF ? '√' : '' ?>
+            </td>
+            <td style="border: 1px solid #000;text-align:left;width:66px;font-size:14px;">
+                <?= H('送达') ?>
+                <?= $mode[Sample_Approval_Model::MODE_SEND] == 'on' ? '√' : '' ?>
+            </td>
+            <td style="border: 1px solid #000;text-align:left;width:100px;font-size:14px;">
+                <?= H('自取') ?>
+                <?= $mode[Sample_Approval_Model::MODE_GET] == 'on' ? '√' : '' ?>
+            </td>
+            <td style="border: 1px solid #000;text-align:left;width:67px;font-size:14px;">
+                <?= H('光盘') ?>
+                <?= $mode[Sample_Approval_Model::MODE_CD] == 'on' ? '√' : '' ?>
+            </td>
+            <td style="border: 1px solid #000;text-align:left;width:67px;font-size:14px;">
+                <?= H('电子邮件') ?>
+                <?= $mode[Sample_Approval_Model::MODE_EMAIL] == 'on' ? '√' : '' ?>
+            </td>
+            <td style="border: 1px solid #000;text-align:left;width:66px;font-size:14px;">
+                <?= H('电子拷贝') ?>
+                <?= $mode[Sample_Approval_Model::MODE_COPY] == 'on' ? '√' : '' ?>
+            </td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid #000;text-align:left;width:100px;"><?= H('报告时间') ?></td>
+            <td style="border: 1px solid #000;text-align:center;" colspan="7">
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;月
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日至&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;月&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日
+            </td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid #000;text-align:left;width:100px;"><?= H('价格(元):') ?></td>
+            <td style="border: 1px solid #000;text-align:right;" colspan="7">
+                (大写&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;万&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;仟&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;佰
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;拾&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;元整)
+            </td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid #000;text-align:left;height:60px;" colspan="8">
+                <table>
+                    <tr>
+                        <td><?= H('委托单位经办人(签字):') ?><br/><?= H('时间:') ?></td>
+                        <td><?= H('实验室经办人(签字):') ?><br/><?= H('时间:') ?></td>
+                        <td><?= H('平台负责人(签字):') ?><br/><?= H('时间:') ?></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid #000;text-align:left;width:100px;"><?= H('备注') ?></td>
+            <td style="border: 1px solid #000;text-align:left;height:100px;" colspan="7">
+                <?= H('1、委托单位经办人应认真填写此单，并提供有关技术资料；') ?><br>
+                <?= H(' 2、委托检测应先交费60%，余额取报告时交清；') ?><br>
+                <?= H(' 3、本单一式二联，第二联同时作为科室考核凭证，请妥善保管。') ?><br>
+            </td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid #000;text-align:left;width:100px;"><?= H('结果处理') ?></td>
+            <td style="border: 1px solid #000;text-align:right;height:90px;" colspan="7">
+            </td>
+        </tr>
+    </tbody>
+</table>

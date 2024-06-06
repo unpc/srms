@@ -1,0 +1,3 @@
+<?php
+
+$config['!wechat'] = TRUE;

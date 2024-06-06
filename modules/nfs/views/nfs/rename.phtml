@@ -1,0 +1,28 @@
+<div class="form">
+<form class="view object:rename_form event:submit">
+	<?php echo Form::hidden('path', $path); ?>
+	<?php echo Form::hidden('old_name', $name); ?>
+	<?php echo Form::hidden('form_token', $form_token)?>
+    <?php //echo V('form_error', ['form'=>$form]); ?>
+    <div class="interval_24"></div>
+	<table class="form flexible">
+		<tbody>
+			<tr>
+				<td class="left nowrap middle">
+                    <?php echo T('名称'); ?>
+                    <?php echo V('form_filter',['error'=>$form->errors['name'][0]]); ?>
+                </td>
+				<td class="middle">
+					<input type="text" class="text" name="name" value="<?php echo H($name ?: 'untitled') ?>" />
+				</td>
+			</tr>
+		</tbody>
+	</table>
+    <div class="button_container">
+        <div class="float_right">
+            <input name="cancel" id="cancel" type="reset" class="font-button-default sm rmargin_2e4" value="取消">
+            <input type="submit" name="submit" class="font-button-save" value="<?php echo H(T('提交')) ?>">
+        </div>
+    </div>
+</form>
+</div>

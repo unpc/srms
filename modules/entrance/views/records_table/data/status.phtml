@@ -1,0 +1,5 @@
+<?php if($record->status): ?>
+	<span style="color: #67c23a"><?=DC_Record_Model::$status[$record->status]?></span>
+<?php else: ?>
+	<span style="color: #F5222D;"><?=DC_Record_Model::$status[$record->status]?></span>
+<?php endif; ?>

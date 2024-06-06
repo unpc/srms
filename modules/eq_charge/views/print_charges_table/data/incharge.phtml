@@ -1,0 +1,5 @@
+<?php
+	$equipment = $c->equipment;
+	$users = Q("{$equipment} user.contact")->to_assoc('id', 'name');
+	echo join(', ', $users);
+?>

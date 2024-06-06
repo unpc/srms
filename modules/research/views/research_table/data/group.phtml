@@ -1,0 +1,9 @@
+<?php
+$group = $research->group;
+$groups = [];
+$root = Tag_Model::root('group');
+while ($group->id != $root->id) {
+  array_unshift($groups, $group->name);
+  $group = $group->parent;
+}
+echo H(join(' » ', $groups));

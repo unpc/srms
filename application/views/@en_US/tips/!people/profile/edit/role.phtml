@@ -1,0 +1,23 @@
+<?php
+$params = Config::get('system.controller_params');
+$user = O('user', $params[0]);
+?>
+<div class="description">
+	<?php if ( Module::is_installed('labs') ) : ?>
+	<p>
+		<span class="tip_star">*</span>
+		<span class="tip_content">Assign a role for this user. Default setting is “regular users” with limited permissions.</span>
+	</p>
+	<?php else : ?>
+	<p>
+		<span class="tip_star">*</span>
+		<span class="tip_content">Assign a role for this user if applicable. Default is regular users.</span>
+	</p>
+	<?php endif; ?>
+	<p>
+		<span class="tip_star">*</span>
+		<span class="tip_content">Administrators only.</span>
+	</p>
+	<br />
+</div>
+

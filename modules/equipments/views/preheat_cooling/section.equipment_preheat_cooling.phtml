@@ -1,0 +1,29 @@
+<div class="equipments_info_style">
+  <div class="clearfix">
+    <h2 class="section_title">
+        <span class="border"></span>
+        <span class="black_title"><?php echo I18N::T('eq_reserv', '预热/冷却时间设置') ?></span>
+    </h2>
+    <div class="interval_30"></div>
+    <ul>
+      <?php if ($eq_preheat_cooling->preheat_time) :
+        $format = $eq_preheat_cooling->preheat_unit ? : 'i';
+        $format = Date::format_interval($eq_preheat_cooling->preheat_time, $format);
+      ?>
+      <li><?php echo I18N::T('eq_reserv', '<span class="left">开机预热时间</span> <span class="right">%time %unit</span>', [
+        '%time' => $format[0],
+        '%unit' => I18N::T('eq_reserv', Date::unit($format[1]))
+      ]); ?></li>
+      <?php endif; ?>
+      <?php if ($eq_preheat_cooling->cooling_time) :
+        $format = $eq_preheat_cooling->cooling_unit ? : 'i';
+        $format = Date::format_interval($eq_preheat_cooling->cooling_time, $format);
+      ?>
+        <li><?php echo I18N::T('eq_reserv', '<span class="left">关机冷却时间</span> <span class="right">%time %unit</span>', [
+          '%time' => $format[0],
+          '%unit' => I18N::T('eq_reserv', Date::unit($format[1]))
+        ]); ?></li>
+      <?php endif; ?>
+    </ul>
+  </div>
+</div>

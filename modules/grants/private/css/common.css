@@ -1,0 +1,152 @@
+.triple {
+	width:380px;
+	overflow:hidden;
+}
+.triple li {
+	float:left;
+	display:inline;
+	width:30%;
+    white-space: nowrap;
+}
+table.grant_portions_table {
+
+	thead th {
+		font-weight: bold;
+	}
+
+}
+
+.text_portion_used {
+	color: #69c;
+}
+
+.text_portion_deficit {
+	color: #c33;
+}
+
+.text_portion_balance {
+	color: #390;
+}
+
+table.grant_summary {
+	_position: relative;
+	th, td {
+		padding: 0 4px;
+		position: relative;
+	}
+
+	.portion_bar_container {
+		border-left: 1px solid #ccc;
+		border-right: 1px solid #ccc;
+		background-color: #f4f4f4;
+	}
+
+	.portion_bar_background {
+		position: absolute;
+		z-index:1;
+		background: #023aab;
+		opacity: 0.3;
+		padding: 2px 0;
+	}
+}
+
+/*
+table.form  td.portion_bar_container,
+table.form th.portion_bar_container {
+	border-left: 1px solid #ccc;
+}
+*/
+
+.button_blank {
+	display: inline-block;
+	width: 16px;
+}
+
+.button_list_children {
+	background: url("!grants/images/buttons/collapse.png") no-repeat scroll center center transparent;
+	display: inline-block;
+	width: 16px;
+	cursor: pointer;
+}
+
+.button_list_children_expanded {
+	background: url("!grants/images/buttons/expand.png") no-repeat scroll center center transparent;
+}
+
+.portion_bar {
+	display: inline-block;
+	white-space: nowrap;
+	background: #FFF;
+	
+	.simple_portion_bar {
+		border:1px solid #ccc;
+		padding: 1px;
+	}
+	
+	.portion_real_bar {
+		padding: 0px;
+		position: relative;
+		z-index: 50;
+		border:1px solid #ccc;
+		padding: 1px;
+		background-color: white;
+	}
+
+	.part {
+		display: inline-block;
+	}
+
+	.part_used {
+		background-color: #69f;
+		background: -moz-linear-gradient(top, #69f, #009);
+		background: -webkit-gradient(linear, left top, left bottom, from(#69f), to(#009));
+	}
+
+	.part_deficit {
+		background-color: #c33;
+		background: -moz-linear-gradient(top, #c33, #600);
+		background: -webkit-gradient(linear, left top, left bottom, from(#c33), to(#600));
+	}
+
+	.part_alloc {
+		background-color: #36c;
+		background: -moz-linear-gradient(top, #36c, #039);
+		background: -webkit-gradient(linear, left top, left bottom, from(#36c), to(#039));
+	}
+
+	.part_balance {
+		background-color: #6c3;
+		background: -moz-linear-gradient(top, #6c3, #060);
+		background: -webkit-gradient(linear, left top, left bottom, from(#6c3), to(#060));
+	}
+
+}
+
+#table_grant_expenses .status_icon {
+	display: inline-block;
+	overflow: hidden;
+	width: 16px;
+	height: 16px;
+	background-repeat: no-repeat;
+	background-position: center center;
+
+	&.status_locked {
+		background-image: url(!grants/images/status_locked.gif);
+	}
+
+	&.status_normal {
+		background-image: url(!grants/images/status_normal.gif);
+	}
+}
+
+.near {
+    color: #F2A640;
+}
+
+.over {
+    color: #CC3333;
+}
+
+.far_away {
+    color: #808080;
+}

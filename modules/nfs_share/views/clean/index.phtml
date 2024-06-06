@@ -1,0 +1,49 @@
+<div class="form padding_3">
+	<form q-src="<?= URI::url('!nfs_share/clean') ?>" q-object="click" q-event="submit"  target="_self" class="prevent_default" method="post" autocomplete="off" >
+	<?php
+		if(!$form->no_error)
+			echo V('form_error', ['form'=>$form]);
+	?>
+	<?php $require = (string) V('form_require'); ?>
+	<table class="form" >
+		<tbody>
+			<tr>
+				<td class="right nowrap middle rpadding_3"><strong><?php echo I18N::T('nfs_share', '清理范围')?></strong></td>
+				<td class="top">
+					<input name="dtstart" size="20" type="text" class="text date middle" date_type="date" value="<?php echo $form['dtstart'] ? : ($clean['dtstart'] ? : Date::time()); ?>" />
+					~
+					<input name="dtend" size="20" type="text" class="text date middle" date_type="date" value="<?php echo $form['dtend'] ? : ($clean['dtend'] ? : Date::time()); ?>" />
+					<span class="require top margin-left-half red"><?= HT('* "更新/上传时间"在清理时间范围内的文件，将被清理',null,['domain'=>'nfs_share']) ?></span>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<div class="interval_30"></div>
+				<td>
+			</tr>
+			<tr>
+				<td class="right nowrap middle rpadding_3"><strong><?php echo I18N::T('nfs_share', '清理时间')?></strong></td>
+				<td class="top">
+					<input name="clean_time" size="20" type="text" class="text date display_time" value="<?php echo $form['clean_time'] ? : ($clean['clean_time'] ? : Date::time()); ?>" q-date_format="<?php echo HT('$year/$month/$day $hour:$min')?>"/>
+					<span class="require top margin-left-half red"><?= HT('* 系统将在该时间自动执行清理操作',null,['domain'=>'nfs_share']) ?></span>
+				</td>
+			</tr>
+		</tbody>
+		
+	</table>
+	<div class="interval_60"></div>
+	<div class="button_container">
+        <div class="float_right">
+            <?php if($clean['clean_time']) :?>
+
+            <input name="cancel" id="cancel" type='submit' class="font-button-default sm rmargin_1" value="<?php echo I18N::HT('', '取消');?>" />
+                <span class="require top red"><?= HT('*清理机制执行中，如需取消本次清理，直接点击左侧取消按钮。') ?></span>
+            <?php else: ?>
+            <input name="submit" type='submit' class="font-button-save sm" value="<?php echo I18N::HT('nfs_share', '确认');?>" />
+            <?php endif;?>
+        </div>
+	</div>
+    <div class="interval_30"></div>
+	</form>
+</div>
+

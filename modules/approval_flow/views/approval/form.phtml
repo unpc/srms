@@ -1,0 +1,35 @@
+<div class="form">
+    <?php if (isset($message)): ?>
+    <div class="message message_error clearfix nowrap"><?php echo H($message);?></div>
+    <?php endif;?>
+    <form q-object="<?= $action?>" q-event="submit" q-src="<?php echo H(URI::url('!approval_flow/index')) ?>"
+        autocomplete="off" method="post">
+        <?php echo V('form_error', ['form'=>$form]);?>
+        <?php foreach($approval_ids as $id):?>
+        <input name="approval_ids[<?= $id?>]" type="hidden" value="<?= $id?>" />
+        <?php endforeach;?>
+        <table class="form">
+            <tr>
+                <td class="label left top nowrap">
+                    <div class="">
+                        <span><?php echo I18N::HT('approval', '原因描述');?></span>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="left top nowrap">
+                    <div class="">
+                        <textarea class="top textarea autogrow padding_1" name="description" rows="5"
+                            cols="50"><?php echo $form['description'] ?></textarea>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" class="label right top nowrap">
+                    <div class=""><input name="submit" type='submit' class="font-button-save middle"
+                            value="<?php echo I18N::HT('approval', '保存');?>"></div>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>

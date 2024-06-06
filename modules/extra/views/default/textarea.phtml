@@ -1,0 +1,15 @@
+<?php
+function remove_quote(&$str) {
+    if (preg_match("/^\"/",$str)){
+        $str = substr($str, 1, strlen($str) - 1);
+    }
+    if (preg_match("/\"$/",$str)){
+        $str = substr($str, 0, strlen($str) - 1);;
+    }
+    return $str;
+}
+$default_value = remove_quote($default_value);
+?>
+<span class="lpadding_2 rpadding_2" style="display: inline-block; width: 220px;">
+    <textarea name="field[<?php echo $prefix?>][textarea][default_value]" class="text" style="margin-left: 10px;height: 50px; width: 160px; vertical-align: middle;" <?php echo $readonly ? 'disabled="disabled"' : ''?>><?php echo H(isset($value) ? $value : $default_value ) ?></textarea>
+</span>

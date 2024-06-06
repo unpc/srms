@@ -1,0 +1,42 @@
+<?php
+echo CSS::load_async('equipments:common');
+echo $pagination;
+$me = L('ME');
+$sort_fields = Config::get('equipments.training.sortable_columns');
+$table = Widget::factory('table');
+
+$table->name = 'equipments';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+$lab = is_object($form['lab']) ? $form['lab'] : O('lab', $form['lab']);
+
+$table->add_columns((array) $columns);
+
+$table->empty_message = I18N::T('equipments', '无符合条件的培训 / 授权');
+
+foreach ($equipments as $equipment) {
+    $training = O('ue_training', ['equipment'=>$equipment, 'user' => $me]);
+    $rest = $training->user->id == $me->id
+    ? '<a class="blue" href="' . $training->url($equipment->id, NULL, NULL, 'apply') . '">'
+    . I18N::T('equipments', '申请培训') . '</a>' : '';
+
+    $rows = [
+        '@'=> [
+            'view'=>$equipment->icon('32', 'style="display:block"'),
+            'extra'=>'style="padding:4px" align="right"',
+        ],
+		'name' => V('equipments:equipments_table/data/name', ['equipment'=>$equipment]),
+		'control' => V('equipments:equipments_table/data/control', ['equipment'=>$equipment]),
+		'location' => V('equipments:equipments_table/data/location', ['equipment'=>$equipment]),
+        'atime'=> V('equipments:profile/training_tables/data/atime', ['equipment'=> $equipment, 'user'=> $user]),
+		'contact' => V('equipments:equipments_table/data/contacts', ['equipment'=>$equipment]),
+        'rest' => $rest
+    ];
+    $rows = new ArrayIterator($rows);
+    Event::trigger('training.table_list.row', $rows, $equipment);
+	$table->add_row((array) $rows);
+}
+
+echo $table;
+echo $pagination;

@@ -1,0 +1,29 @@
+<div q-preview="<?php echo H(URI::url('!equipments/index')) ?>" q-static="<?php echo H(['id'=>$equipment->id]); ?>">
+    <?php if($equipment->id): ?>
+    <a class="eq_name" href="<?php echo H($equipment->url() ) ?>">
+        <?= H($equipment->name); ?>
+    </a>
+    <?php else: ?>
+    <?php echo H($equipment->name) ?>
+    <?php endif; ?>
+
+    <?php if ($equipment->model_no): ?>
+    <?php echo I18N::T('equipments', '(%model)', ['%model'=>H($equipment->model_no)]); ?>
+    <!-- </small> -->
+    <?php endif; ?>
+
+    <span style="margin-right: 8px;"></span>
+    <?php /* BUG #1038::之前可以送样和预约的仪器进行报废，在废弃仪器列表中不建议显示送样和预约。(kai.wu@2011.08.22) */ ?>
+    <?php if ($equipment->status != EQ_Status_Model::NO_LONGER_IN_SERVICE): ?>
+    <?php $status_tags = (string) $equipment->status_tags(); ?>
+    <?php if ($status_tags): ?>
+    <?php echo $status_tags ?>
+    <?php endif; ?>
+    <?php endif; ?>
+
+	<?php if ($equipment->en_name): ?>
+	<div>
+    <small class="normal" style="color: #666;"><?php echo $equipment->en_name; ?></small>
+	</div>
+    <?php endif; ?>
+</div>

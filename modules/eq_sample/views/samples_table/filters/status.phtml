@@ -1,0 +1,10 @@
+<?php
+    foreach(Event::trigger('sample.status') as $k=>$v) {
+        if (Config::get('sample_approval.to_equipment') && isset($equipment) && !($equipment->sample_approval_enable || !$equipment->sample_approval_enable && !in_array($k, Sample_Approval::get_not_show_status()))) {
+            continue;
+        }
+        $status_list[$k] = $v;
+    }
+    $status_lists = ['-1' => ''] + $status_list;
+    echo Form::dropdown("status[]", $status_lists, isset($status) ? $status : -1, 'class="selectpicker width_200"');
+ ?>

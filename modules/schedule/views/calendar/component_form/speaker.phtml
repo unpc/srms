@@ -1,0 +1,26 @@
+<?php
+	echo CSS::load_async('schedule:common');
+?>
+<tr>
+	<td class="label right nowrap top"><?php echo $properties['label'] ?></td>
+	<td>
+		<table class="form">
+			<tr>
+				<td class="top nowrap">
+					<div class="show_on:on" >
+						<?php
+							echo Widget::factory('schedule:user_selector', [
+								'value' => $component->speakers,
+								'autocomplete' => URI::url('!schedule/autocomplete/users'),
+								'name' => 'speakers',
+								'ajax'=>TRUE
+							]); 	
+						?>
+						<div class="floatleft">&#160;</div>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</td>
+</tr>
+

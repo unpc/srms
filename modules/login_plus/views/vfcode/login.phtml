@@ -1,0 +1,20 @@
+<?php
+$vfcode_id = $_SESSION['vfcode']['id'];
+$panel_buttons = VfCode::buttons();
+?>
+<tr id="<?= H($vfcode_id)?>">
+    <td class="middle" >
+        <i class="icon-lock login_icon"></i>
+        <input name="vfcode" type="test" class="text" size="10" tabindex="2" placeholder="请输入验证码"style="padding-left: 28px;width: 60%;" />
+        <a href="<?= URI::url('')?>" class="button_refresh"
+           q-object="verification_code"
+           q-event="click"
+           q-src="<?= URI::url('!login_plus/vfcode/index')?>"
+           q-static="mode=login">
+            <div style="width: 25%;float: right;overflow: hidden;height: 30px;">
+                <img style="width: 90%;padding-left: 5%;" class="label right nowrap middle" src="<?= URI::url('!login_plus/vfcode', ['t' => time()]);?>" <?= $extra?> />
+            </div>
+        </a>
+        <br> <?php echo V('form_filter',['error'=>$form->errors['vfcode'][0]])?>
+    </td>
+</tr>

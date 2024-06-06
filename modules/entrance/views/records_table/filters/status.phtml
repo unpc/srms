@@ -1,0 +1,2 @@
+<?php if (!$this->status && $this->status !== 0 && $this->status !== '0') $this->status = '-1'; ?>
+<?php echo Form::dropdown('status', ['-1' => '--'] + I18N::T('entrance', DC_Record_Model::$status), $this->status, 'class="dropdown autosubmittable middle"'); ?>

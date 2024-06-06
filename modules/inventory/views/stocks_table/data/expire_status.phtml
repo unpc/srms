@@ -1,0 +1,70 @@
+<?php
+$expire_status_class = '';
+$tool_tip = '';
+/*
+$has_exd_num = 0;//已经过期的存货数量
+$almost_exd_num = 0;//即将过期的数量
+$not_exd_num = 0; //没有过期的存货数量
+$never_exd_num = 0; //没有设置过期时间的数量
+$total_count = 0;
+*/
+if ( $collection_id ) {
+	$collection_stock = O('stock', $collection_id);
+	$has_exd_num = $collection_stock->has_exd_num;
+	$almost_exd_num = $collection_stock->almost_exd_num;
+	$not_exd_num = $collection_stock->not_exd_num;
+	
+	if ( $has_exd_num > 0 && $almost_exd_num > 0  && $not_exd_num > 0 ) {
+		$expire_status_class = 'has_almost_not_exd';
+		$tool_tip = I18N::T('inventory', '部分存货已过期或即将过期!');
+	}
+	else if ( $has_exd_num > 0 && $almost_exd_num == 0 && $not_exd_num > 0 ) {
+		$expire_status_class = 'has_not_exd';
+		$tool_tip = I18N::T('inventory', '部分存货已过期!');
+	}
+	else if ( $has_exd_num > 0 && $almost_exd_num > 0  && $not_exd_num == 0 ) {
+		$expire_status_class = 'has_almost_exd';
+		$tool_tip = I18N::T('inventory', '存货已过期或即将过期!');
+	}
+	else if ( $has_exd_num == 0 && $almost_exd_num > 0 && $not_exd_num > 0 ) {
+		$expire_status_class = 'almost_not_exd';
+		$tool_tip = I18N::T('inventory', '部分存货即将过期!');
+	}
+	else if ( $has_exd_num > 0 && $almost_exd_num == 0 && $not_exd_num == 0 ) {
+		$expire_status_class = 'has_exd';
+		$tool_tip = I18N::T('inventory', '所有存货已过期!');
+	}
+	else if ( $has_exd_num == 0 && $almost_exd_num > 0 && $not_exd_num == 0 ) {
+		$expire_status_class = 'almost_exd';
+		$tool_tip = I18N::T('inventory', '所有存货即将过期!');
+	}
+	else if ( $has_exd_num == 0 && $almost_exd_num == 0 && $not_exd_num > 0 ) {
+		$expire_status_class = 'not_exd';
+		$tool_tip = I18N::T('inventory', '所有存货未过期!');
+	}
+}
+else {
+	if ( $stock->expire_status ) {
+		switch( $stock->expire_status ) {
+			case Stock_Model::$has_expired : 
+					$expire_status_class = 'has_exd';
+					$tool_tip = I18N::T('inventory', '已过期: %date', ['%date' =>  date('Y/m/d',  $stock->expire_time)]);
+				break;
+			case Stock_Model::$not_expired :
+					$tool_tip = I18N::T('inventory', '过期时间: %date', ['%date' => date('Y/m/d',  $stock->expire_time)]);
+					$expire_status_class = 'not_exd';
+				break;
+			case Stock_Model::$almost_expired :
+					$tool_tip = I18N::T('inventory', '即将过期: %date', ['%date' => date('Y/m/d',  $stock->expire_time)]);
+					$expire_status_class = 'almost_exd';
+				break;
+			
+		}
+	}
+}
+?>
+<?php if ( $tool_tip ) : ?>
+<span class="expire_status" q-tooltip="<?php echo H($tool_tip ) ?>">
+	<span class="<?php echo $expire_status_class; ?>">&nbsp;</span>
+</span>
+<?php endif; ?>

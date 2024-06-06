@@ -1,0 +1,19 @@
+<form method="post" autocomplete="off" q-event="submit" q-object="edit_archive" q-static="<?php echo H(['archive_id'=>$archive->id,
+'equipment_id'=>$equipment->id])?>">
+<div class="hr_1">&#160;</div>
+<div class="padding_1">
+    <?php echo V('form_error', ['form'=>$form])?>
+    <table>
+        <tbody>
+            <tr>
+                <td class="nowrap middle">
+                    <span class="label"><?php echo I18N::T('equipments', '名称')?></span>
+                    <input class="text" name="name" value="<?php echo H($archive->name)?>" />
+                    <input class="button button_save" type="submit" value="<?php echo H(I18N::T('equipments', '更新')) ?>" name="submit" />
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="hr_1">&#160;</div>
+</form>

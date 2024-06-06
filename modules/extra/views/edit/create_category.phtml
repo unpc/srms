@@ -1,0 +1,23 @@
+<div class="interval_12"></div>
+<form style="height: 160px;" class="form" q-object="create_category" q-event="submit" q-src="<?php echo H(URI::url('!extra/extra')) ?>">
+	<?php echo V('form_error', ['form'=>$form]);?>
+	<table>
+		<tbody>
+			<tr>
+				<td>
+                    <?php echo V('form_filter', ['error'=>$form->errors["name"][0]]); ?>
+				</td>
+			</tr>
+			<tr>
+				<td class="nowrap middle">
+					<input class="hidden text" value="<?php echo H($extra->id) ?>" name="extra_id" />
+					<span class="label"><?php echo I18N::T('extra', '类别名称')?></span>
+					<input class="text" name="name" value="<?php echo H($form['name']) ?>" />
+				</td>
+			</tr>
+		</tbody>
+	</table>
+    <div class="button_container">
+        <input class="font-button-save float_right" type="submit" value="<?php echo H(I18N::T('extra', '保存修改')) ?>" name="submit" />
+    </div>
+</form>

@@ -1,0 +1,23 @@
+<style type="text/css">
+    .equipment-qrcode-export{
+        width: 70px;
+        height: 70px;
+        display: none;
+        position: absolute;
+        background-color: #333;
+        color: #FFF;
+        right: 0px;
+        top: 0px;
+        line-height: 70px;
+        text-align: center;
+        opacity: 0.8;
+    }
+
+    .equipment-qrcode-export span {
+        display: block;
+    }
+</style>
+<a id="equipment-qrcode-export" class="equipment-qrcode-export" href="<?php echo H(URI::url('!wechat/qrcode/equipment_export.'. $equipment->id)) ?>">
+    <span style="line-height: 40px" class="icon-download"></span>
+    <span style="line-height: 5px"><?php echo I18N::T('wechat', '导出');?></span>
+</a>

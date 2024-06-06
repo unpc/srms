@@ -1,0 +1,40 @@
+<?php
+echo $pagination;
+
+$table = Widget::factory('table');
+$table->name = 'equipments';
+$columns = [
+    'equipment_name' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '仪器名称'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'equipment_location' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '放置地点'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'equipment_incharges' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '联系人'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+];
+
+$table->add_columns($columns);
+$table->empty_message = I18N::T('technical_service', Config::get('equipment.default_empty_message'));
+
+foreach ($connects as $connect) {
+    $connect = O('service_equipment', $connect->id);
+    $table->add_row([
+        'equipment_name' => V('technical_service:service_table/data/equipment_name', ['connect' => $connect]),
+        'equipment_location' => V('technical_service:service_table/data/equipment_location', ['connect' => $connect]),
+        'equipment_incharges' => V('technical_service:service_table/data/equipment_incharges', ['connect' => $connect]),
+    ]);
+}
+
+echo $table;
+echo $pagination;

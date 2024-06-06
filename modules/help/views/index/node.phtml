@@ -1,0 +1,10 @@
+<li>
+	<?php echo $node->anchor; ?>
+	<?php if(count($node->children) > 0) :?>
+		<ul>
+		<?php foreach($node->children as $child): ?>
+			<?php echo V('index/node', ['node'=>$child]); ?>
+		<?php endforeach; ?>
+		</ul>
+	<?php endif; ?>
+</li>

@@ -1,0 +1,21 @@
+<div class="hr_1">&#160;</div>
+<?php
+    //if (count($projects) > 0) {
+        //foreach($projects as $project){
+            //$existing_data[$project->type][] = array('project'=>$project);
+        //}
+    //}
+?>
+<div class="form padding_2">
+    <?php
+        $item_view = 'eq_stat:eq_stat_table/filters/condition.item';
+        if ($item_view) {
+            echo Widget::factory('flexform', [
+                'title' => I18N::T('labs', $name),
+                'template_data' => ['disabled'=>TRUE, 'type'=>$type],
+                'existing_data' => $existing_data[$type],
+                'item_view' => $item_view,
+            ]);	
+        }
+    ?>
+</div>	

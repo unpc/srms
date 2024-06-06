@@ -1,0 +1,24 @@
+<div class="form margin-left-half">
+<form class="edit" method="post" autocomplete="off">
+<?php echo V('form_error', ['form'=>$form]);?>
+	<table class="form" width="100%">
+		<tr >
+			<td class="nowrap middle"><?php echo I18N::T('people', '标题')?></td>
+			<td><input class="text" name="signup_title" value="<?php echo H(($form->no_error!==FALSE)?$signup_title:$form['signup_title']); ?>" /></td>
+		</tr>
+        <tr><td colspan="2"><div class="interval_20"></div></td></tr>
+		<tr >
+			<td class="nowrap top"><?php echo I18N::T('people', '内容')?></td>
+			<td ><textarea name="signup_doc" class="text autogrow" cols="80"><?php echo H(($form->no_error!==FALSE)?$signup_doc:$form['signup_doc']); ?></textarea></td>
+		</tr>
+        <tr><td colspan="2"><div class="interval_60"></div></td></tr>
+		<tr >
+			<td class="nowrap"></td>
+			<td>
+				<input class="font-button-save float_right" name="submit" type="submit" value="<?php echo H(I18N::T('people', '保存修改')) ?>" />
+				<input class="font-button-default float_right rmargin_16" type="reset" value="<?php echo H(I18N::T('people', '取消')) ?>" />
+			</td>
+		</tr>
+	</table>
+</form>
+</div>

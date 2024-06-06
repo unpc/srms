@@ -1,0 +1,7 @@
+<strong class="name middle">
+	<?php if(L('ME')->is_allowed_to('查看', $perf)): ?>
+	<a href="<?php echo H($perf->url() ) ?>"><?php echo H($perf->name) ?></a>
+	<?php else: ?>
+	<?php echo H($perf->name) ?>
+	<?php endif; ?>
+</strong>

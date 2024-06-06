@@ -1,0 +1,105 @@
+<style>
+    td{
+        padding:5px 0px;
+    }
+</style>
+<form method="post" autocomplete="off">
+    <div class="form">
+        <?php echo V('form_error', ['form'=>$form, 'show_list'=>true])?>
+        <h2 class="section_title margin-left-half"><?php echo I18N::T('credit', '使用资格限制') ?></h2>
+        <div class="interval_20"></div>
+        <table class="form margin-left-1-half">
+            <tr>
+                <td class="nowrap middle rpadding_2">
+                    <?php echo Form::checkbox('can_not_reserv', $form['can_not_reserv'] ?: $can_not_reserv_limit->enable, I18N::T('credit', '当信用分低于'), 'class="middle checkbox monitor"'); ?>
+                    <input type="text" name="can_not_reserv_score" size="5" class="text number" value="<?php echo H((int) $form['can_not_reserv_score'] ?: $can_not_reserv_limit->score) ?>" />
+                    <?php echo I18N::T('credit', '分, 禁止用户预约仪器') ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="nowrap middle rpadding_2">
+                    <?php echo Form::checkbox('ban', $form['ban'] ?: $ban_limit->enable, I18N::T('credit', '当信用分低于'), 'class="middle checkbox monitor"'); ?>
+                    <input type="text" name="ban_score" size="5" class="text number" value="<?php echo H((int) $form['ban_score'] ?: $ban_limit->score) ?>" />
+                    <?= I18N::T('credit', '分, 自动加入系统黑名单, 默认封禁时长') ?>
+                    <input type="text" name="ban_day" size="5" class="text number" value="<?php echo H((int) $form['ban_day'] ?: $ban_limit->ban_day) ?>" />
+                    <?php echo I18N::T('credit', '天') ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="nowrap middle rpadding_2">
+                    <?php echo Form::checkbox('unactive_user', $form['unactive_user'] ?: $unactive_user_limit->enable, I18N::T('credit', '当信用分低于'), 'class="middle checkbox monitor"'); ?>
+                    <input type="text" name="unactive_user_score" size="5" class="text number" value="<?php echo H((int) $form['unactive_user_score'] ?: $unactive_user_limit->score) ?>" />
+                    <?php echo I18N::T('credit', '分, 用户账号变为未激活') ?>
+                </td>
+            </tr>
+        </table>
+        <div class="interval_10"></div>
+        <hr>
+        <div class="interval_10"></div>
+        <table class="form margin-left-1-half">
+            <tr>
+                <td class="nowrap middle">
+                    <?php echo Form::checkbox('send_msg', $form['send_msg'] ?: $send_msg_limit->enable, I18N::T('credit', '通知阈值提醒, 当信用分低于'), 'class="middle checkbox monitor"'); ?>
+                    <input class="text number" name="send_msg_score" size="5" value="<?php echo H($form['send_msg_score'] ?: $send_msg_limit->score)?>" />
+                    <?php echo I18N::T('credit', '分时, 系统自动发送消息通知用户') ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="nowrap middle">
+                    <?php echo Form::checkbox('auto_eq_ban', $form['auto_eq_ban'] ?: $eq_ban_limit->enable, I18N::T('credit', '当用户触发单台仪器扣分项'), 'class="middle checkbox monitor"'); ?>
+                    <input class="text number" name="auto_eq_ban_score" size="5" value="<?php echo H($form['auto_eq_ban_score'] ?: $eq_ban_limit->score)?>" />
+                    <?php echo I18N::T('credit', '次时，自动加入该仪器黑名单') ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="nowrap middle">
+                    <?php echo Form::checkbox('auto_system_ban', $form['auto_system_ban'] ?: $system_ban_limit->enable, I18N::T('credit', '当用户同时存在于'), 'class="middle checkbox monitor"'); ?>
+                    <input class="text number" name="auto_system_ban_score" size="5" value="<?php echo H($form['auto_system_ban_score'] ?: $system_ban_limit->score)?>" />
+                    <?php echo I18N::T('credit', '台仪器黑名单内时，自动被加入系统黑名单') ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="nowrap middle">
+                    <?php echo Form::checkbox('auto_lab_ban', $form['auto_lab_ban'] ?: $lab_ban_limit->enable, I18N::T('credit', '当同课题组用户出现'), 'class="middle checkbox monitor"'); ?>
+                    <input class="text number" name="auto_lab_ban_score" size="5" value="<?php echo H($form['auto_lab_ban_score'] ?: $lab_ban_limit->score)?>" />
+                    <?php echo I18N::T('credit', '人及以上被加入系统黑名单时，全组自动被加入系统黑名单') ?>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="interval_20"></div>
+    <div class="form" style="margin-left: .5rem">
+        <?php
+        $specific = $temp = [];
+        foreach ($specials as $key => $special) {
+            $temp[$special->measures_id][] = $special;
+        }
+        $mea_count = count($temp);
+
+        $count = intval($specials->total_count() / $mea_count);
+        for ($i = 0;$i < $count;$i++) {
+            $data = [];
+            foreach ($temp as $k=>$t) {
+                $key = $k % ($mea_count + 1);
+                $data['limit_' . $key] = $t[$i];
+            }
+            $specific[] = $data;
+        }
+
+        $flexform = Widget::factory('flexform');
+        $flexform->title = I18N::T('credit', '个别资格限制');
+        $flexform->existing_data = array_values($specific);
+        $flexform->extra_vars = ['special' => $form['special']];
+        $flexform->item_view = 'credit:admin/credit/specific_setting';
+        $flexform->title_class = "section_title_span";
+        echo $flexform;
+
+        ?>
+    </div>
+    <div class="interval_60"></div>
+    <div class="form">
+        <input type="submit" name="submit" value="<?php echo T('提交'); ?>" class="font-button-save float_right" />
+        <input type="reset" name="reset" value="<?php echo T('取消'); ?>" class="font-button-default rmargin_16 float_right" />
+    </div>
+    <div class="interval_60"></div>
+</form>

@@ -1,0 +1,6 @@
+<?php
+    $form['mtime_dtstart'] = $form['mtime_dtstart'] ? date('Y-m-d', $form['mtime_dtstart']) : '';
+    $form['mtime_dtend'] = $form['mtime_dtend'] ? date('Y-m-d', $form['mtime_dtend']) : '';
+ ?>
+
+<input id="mtime_dtstart" name="mtime_dtstart" date_type="date" class="date text date small_search_text" value="<?php echo H($form['mtime_dtstart']) ?>" /><span class="middle description date_interval">-</span><input id="mtime_dtend" name="mtime_dtend" date_type="date" class="date text date small_search_text" value="<?php echo H($form['mtime_dtend'] ) ?>" />

@@ -1,0 +1,163 @@
+.vidcam_pic {
+	background-image:url('!vidmon/icons/48/vidmon.png');
+}
+
+.vidcam_list_pic {
+	background-image:url('!vidmon/icons/12/vidmon.png');
+}
+
+/*.vidcam_detail_pic {*/
+/*	margin-*/
+/*}*/
+
+.status_tag_label {
+    background-color: #777;
+    display: block;
+    text-align: center;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+.vidmon_single {
+	margin:50px;
+	width:800px;
+	margin-left:200px;
+}
+
+.vidmon_monitor {
+	width:250px;
+}
+
+.realtime div {
+    float: left;
+    margin: 10px;
+}
+
+.single_video {
+	overflow:hidden;
+	border-radius:5px;
+	box-shadow: rgba(0,0,0,0.8) 0 1px 2px;
+	margin-bottom: 5px;
+	background-color: #666;
+    padding: 8px;
+
+    div.alarm {
+        position: relative;
+        top: -276px;
+        padding-right: 12px;
+        text-align: right;
+        span {
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 3px;
+            background-color: #c00;
+            padding: 2px 6px;
+            color: #fff;
+        }
+    }
+
+    div.restart {
+        text-align: right;
+        margin: 2px 2px 5px;
+        a {
+            font-size: 14px;
+            border-radius: 3px;
+            color: #fff;
+        }
+    }
+
+	.single_video_buttons {
+		padding:5px 0;
+	}
+	
+	.single_video_body {
+        background-color: #000;
+        border: 1px solid #999;
+        width: 352px;
+        height: 288px;
+
+		img {
+			display: block;
+		}
+	}
+}
+
+
+.list_video {	
+	
+	margin: 5px;
+	border-radius: 5px;
+	box-shadow: rgba(0,0,0,0.8) 0 1px 2px;
+    background-color: #666;
+    padding: 3px 8px 8px;
+    /* 强制定义宽度，解决IE系列浏览器自动撑开的问题 */
+    width: 215px;
+	
+	.list_video_name, .list_video_address {
+        line-height:1.231;
+        color: #ddd;
+        padding: 3px 0;
+        width: 214px;
+
+        a {
+            color: #fff;
+        }
+	}
+	
+	.list_video_monitor {
+		overflow: hidden;
+        background-color: #000;
+        border: 1px solid #999;
+
+        div.alarm {
+            position: relative;
+            top: -154px;
+            padding-right: 8px;
+            text-align: right;
+            span {
+                font-size: 10px;
+                border-radius: 2px;
+                background-color: #C00;
+                padding: 2px 4px;
+                color: #FFF;
+            }
+        }
+
+		img {
+			display: block;
+		}
+	}
+	
+}
+
+@css-define actions: ["record", "playback"];
+
+@css-foreach(action in actions) {
+
+	input.button_$action, a.button_$action {
+		padding-left: 22px;
+		background-image: url(!vidmon/images/buttons/$action.png);
+		background-repeat: no-repeat;
+		background-position: 4px center;
+	}
+	
+}
+
+form.vidcam {
+     .vidcam_input {
+        width: 280px !important;
+    }
+
+    .vidcam_incharge_input {
+        width: 100% !important;
+    }
+}
+
+span.vidcam_require {
+    height: 24px;
+}
+
+
+.vidcam_detail p a {
+    color: #666;
+}

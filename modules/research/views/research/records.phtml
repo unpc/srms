@@ -1,0 +1,263 @@
+<div class="hr_1">&#160;</div>
+<div class="panel clearfix">
+  <?php if (count($panel_buttons)): ?>
+    <div class="float_left padding_1 nowrap" style="line-height:24px">
+      <?=Form::checkbox("select_all", 0, I18N::T('eq_training', '全选'), 'class="middle"', 'class="middle"')?>
+      <span><?php echo Widget::factory('application:links', ['links' => $panel_buttons, 'separator' => '&#160;']); ?></span>
+      <?php if (L('ME')->is_allowed_to('管理使用记录', $research)):?>
+        <a class="button button_archive batch_process" href="#"
+        data-ac="research"><?=I18N::T('eq_training', '批量修改收费状态')?></a>
+        <?php endif;?>
+    </div>
+  <?php endif;?>
+<?php echo $pagination; ?>
+<?php
+$me              = L('ME');
+$table           = Widget::factory('table');
+$table->name     = 'research_records';
+$table->sort_asc = $sort_asc;
+$table->sort_by  = $sort_by;
+
+if ($form['dtstart_check'] && $form['dtend_check']) {
+    $form['date'] = H(date('Y/m/d', $form['dtstart'])) . '~' . H(date('Y/m/d', $form['dtend']));
+} elseif ($form['dtstart_check']) {
+    $form['date'] = H(date('Y/m/d', $form['dtstart'])) . '~' . I18N::T('research', '最末');
+} elseif ($form['dtend_check']) {
+    $form['date'] = I18N::T('research', '最初') . '~' . H(date('Y/m/d', $form['dtend']));
+}
+
+$group_root = Tag_Model::root('group');
+
+$columns = [
+    '@'             => null,
+    'serial_number' => [
+        'title'  => I18N::T('research', '记录编号'),
+        'filter' => [
+            'form'  => V('research:research_table/filters/input', [
+                'name'  => 'id',
+                'value' => $form['id'],
+            ]),
+            'value' => $form['id'] ? Number::fill(H($form['id']), 6) : null,
+            'field' => 'id',
+        ],
+        'nowrap' => true,
+    ],
+    'lab_ref_no'    => [
+        'title'  => I18N::T('research', '客户编号'),
+        'filter' => [
+            'form'  => V('research:research_table/filters/input', [
+                'name'  => 'lab_ref_no',
+                'value' => $form['lab_ref_no'],
+            ]),
+            'value' => $form['lab_ref_no'] ?: null,
+            'field' => 'lab_ref_no',
+        ],
+        'nowrap' => true,
+    ],
+    'company_name'  => [
+        'title'  => I18N::T('research', '单位名称'),
+        'filter' => [
+            'form'  => V('research:research_table/filters/input', [
+                'name'  => 'company_name',
+                'value' => $form['company_name'],
+            ]),
+            'value' => $form['company_name'] ?: null,
+            'field' => 'company_name',
+        ],
+        'nowrap' => true,
+    ],
+    'research_no'   => [
+        'title'    => I18N::T('research', '科研服务编号'),
+        'sortable' => true,
+        'nowrap'   => true,
+    ],
+    'dtstart'       => [
+        'title'  => I18N::T('research', '服务开始时间'),
+        'nowrap' => true,
+    ],
+    'lab'           => [
+        'title'  => I18N::T('research', '所属课题组'),
+        'filter' => [
+            'form'  => V('research:research_table/filters/input', [
+                'name'  => 'lab',
+                'value' => $form['lab'],
+            ]),
+            'value' => $form['lab'] ?: null,
+            'field' => 'lab',
+        ],
+        'nowrap' => true,
+    ],
+    'name'          => [
+        'title'  => I18N::T('research', '使用者'),
+        'filter' => [
+            'form'  => V('research:research_table/filters/input', [
+                'name'  => 'name',
+                'value' => $form['name'],
+            ]),
+            'value' => $form['name'] ?: null,
+            'field' => 'name',
+        ],
+        'nowrap' => true,
+    ],
+    'dtend'         => [
+        'title'  => I18N::T('research', '服务结束时间'),
+        'nowrap' => true,
+    ],
+    'price'         => [
+        'title'  => I18N::T('research', '收费单价'),
+        'nowrap' => true,
+    ],
+    'quantity'      => [
+        'title'  => I18N::T('research', '服务数量'),
+        'nowrap' => true,
+    ],
+    'amount'        => [
+        'title'  => I18N::T('research', '服务总金额'),
+        'nowrap' => true,
+    ],
+    'discount'      => [
+        'title'  => I18N::T('research', '折扣'),
+        'nowrap' => true,
+    ],
+    'auto_amount'   => [
+        'title'  => I18N::T('research', '应收金额'),
+        'nowrap' => true,
+    ],
+    'status'        => [
+        'title'  => I18N::T('research', '收费状态'),
+        'filter' => [
+            'form'  => V('research:records_table/filters/status', ['form' => $form]),
+            'value' => $form['status'] != -1 ? I18N::T('research', Research_Record_Model::$charge_status[$form['status']]) : '',
+            'field' => 'status',
+        ],
+        'nowrap' => true,
+    ],
+    'date'          => [
+        'title'     => I18N::T('research', '服务时间'),
+        'invisible' => true,
+        'filter'    => [
+            'form'  => V('research:records_table/filters/date', [
+                'dtstart_check' => $form['dtstart_check'],
+                'dtstart'       => $form['dtstart'],
+                'dtend_check'   => $form['dtend_check'],
+                'dtend'         => $form['dtend'],
+            ]
+            ),
+            'value' => $form['date'] ? H($form['date']) : null,
+            'field' => 'dtstart_check,dtstart,dtend,dtend_check',
+        ],
+        'nowrap'    => true,
+    ],
+    'description'   => [
+        'title'  => I18N::T('research', '备注'),
+        'nowrap' => true,
+    ],
+    'links'         => [
+        'nowrap'      => true,
+        'extra_class' => 'tight',
+    ],
+];
+
+$table->add_columns((array) $columns);
+$table->empty_message = I18N::T('research', '无符合条件的记录');
+$table->records       = $records;
+
+if (count($records) > 0) {
+    foreach ($records as $record) {
+        $lab = Q("{$record->user} lab")->current();
+        $row = [
+            '@'             => [
+                'view'  => Form::checkbox("select_record[{$record->id}]", 0, '', ' data-id="' . $record->id . '" class="middle id:' . $record->id . '" ' . $extra_class, 'class="middle"'),
+                'extra' => 'style="padding:4px;min-width:44px;*width:44px;" align="center"',
+            ],
+            'serial_number' => V('research:records_table/data/serial_number', ['id' => $record->id]),
+            'price'         => Number::currency($record->price),
+            'research_no'   => H($record->research_no),
+            'lab_ref_no'    => H($lab->id ? $lab->ref_no : ''),
+            'company_name'  => H($lab->id ? $lab->company_name : ''),
+            'name'          => V('research:records_table/data/user_name', ['record' => $record]),
+            'lab'           => V('research:records_table/data/lab', ['record' => $record]),
+            'quantity'      => H($record->quantity),
+            'amount'        => Number::currency($record->amount),
+            'discount'      => round($record->discount, 2) . "%",
+            'auto_amount'   => Number::currency($record->auto_amount),
+            'status'        => I18N::T('research', Research_Record_Model::$charge_status[$record->charge_status]),
+            'dtstart'       => Date::format($record->dtstart, "Y-m-d"),
+            'dtend'         => Date::format($record->dtend, "Y-m-d"),
+            'description'   => H($record->description),
+            'links'         => V('application:widgets/links', ['links' => $record->links('index')]),
+        ];
+
+        $table->add_row((array) $row);
+    }
+}
+echo $table;
+?>
+<?php echo $pagination; ?>
+</div>
+
+<script>
+
+var ids = {};
+var all = false;
+
+var select = function () {
+  $("input[name^=select_record]:enabled").each(function (index, element) {
+    var id = $(element).data('id');
+    ids[id] = $(element).is(":checked") ? 1 : 0;
+  })
+
+  $.ajax({
+    url: '!research/research/index',
+    method: 'POST',
+    data: {
+      _ajax: 1,
+      _object: 'research_select',
+      _event: 'click',
+      ids: ids,
+      type: 'research',
+      research: <?=$research->id?>,
+    },
+  })
+}
+
+jQuery(function ($) {
+  var $total_select = $('[name="select_all"]')
+    , $selectors = $('[name^="select_record"]:enabled')
+    , $batch_button = $('.batch_process')
+
+  $("input[name*=select_record]").each(function () {
+    $(this).change(function () {
+      select();
+    })
+  });
+
+  $total_select.bind('click', function (e) {
+    all = !all
+    $("input[name*=select_record]").prop('checked', all)
+    select();
+  })
+
+  $batch_button.bind('click', function (e) {
+    var $items = $('[name^="select_record"]:checked:enabled')
+    var ids = []
+    if (!$items.length) {
+      alert('<?=I18N::T("eq_training", "请选择要进行操作的申请!")?>')
+      return false
+    }
+
+    Q.trigger({
+      url: '!research/research/index',
+      object: 'research_handle',
+      event: 'click',
+      data: {
+        ac: $(this).data('ac'),
+        type: 'research',
+        research: <?=$research->id?>,
+      },
+    })
+
+    return false;
+  })
+});
+</script>

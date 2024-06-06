@@ -1,0 +1,54 @@
+<?php 
+$root_name = Config::get('tag.inventory', '订单存货标签');
+$group_root = O('tag', ['root_id'=>0, 'name'=>$root_name]);
+?>
+
+<div class="form padding_2">
+	<a class="build_button add_stock"> <?php echo I18N::T('inventory', '关联存货')?></a>
+	<span class="description"> 
+		<?php echo I18N::T('inventory', '* 您可以指定消耗的存货量')?>
+	</span>
+	<div class="hr_1">&#160;</div>
+	<div id="stock_change_show">
+		<strong class="middle"><?php echo I18N::T('inventory', '存货位置')?></strong>
+		<div class="gray_tag_container middle">
+		<?php echo Widget::factory('application:tag_selector', [
+					'tag' => $tag,
+					'root' => $group_root,
+					'name'=> 'tag_id',
+					'ajax' => 'true'
+		]); ?>
+		</div>
+		<table class="form">
+			<tbody>
+				<tr>
+					<td class="label left nowrap">
+						
+					</td>
+					<td class="left nowrap">
+					</td>
+				<tr>
+				<tr>
+					<td class="label left nowrap">
+						&#160;
+					</td>
+					<td  class="nowrap left">
+						<div id="stocks_show">
+							<?php 
+							$stocks = Q("{$group_root} stock");
+							echo V('inventory:stock/show_stock',['stocks'=>$stocks]);?>
+						</div>
+					</td>
+				<tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<script>
+jQuery(function($){
+	var $tag_div = $('#stock_change_show div.tag_filter_container:eq(0)');
+	
+
+});
+</script>

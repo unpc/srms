@@ -1,0 +1,17 @@
+<div class="light_panel">
+ <?php
+/**
+ *
+ * 这里通过sample_link_list来生成筛选视图
+ */
+$status=substr(trim($_SERVER['PHP_SELF']),-1);
+$QUERY_STRING = trim($_SERVER['QUERY_STRING']) ? "?".trim($_SERVER['QUERY_STRING']) : '';
+ ?>
+ <?php foreach($sample_link_list as $sample_link):?>
+
+ <a class="sample_link middle <?php if($status==$sample_link['status']) echo 'active'?>" href="<?=$link?>.<?=$sample_link['status']?><?=$QUERY_STRING?>">
+        <span class="tab" id="<?php echo $sample_link['span_id']?>"><?php echo $sample_link['text']?></span>
+    </a>
+<?php endforeach ?>
+
+</div>

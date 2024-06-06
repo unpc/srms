@@ -1,0 +1,10 @@
+<?php
+	$scores = (array)Perf::perf_score($equipment, $perf);
+?>
+<div 
+	q-preview="<?php echo H(URI::url('!eq_stat/perf')) ?>"
+	q-static="<?php echo H(['e_id'=>$equipment->id, 'p_id'=>$perf->id]); ?>" style="cursor:pointer;">
+	<strong>
+		<?php echo $scores['total']?>
+	</strong>
+</div>

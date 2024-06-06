@@ -1,0 +1,100 @@
+<?php	
+	if($order->id):
+	$me = L('ME');
+	/*
+	NO.TASK#274(guoping.zhang@2010.11.25)
+	应用权限判断新规则
+	*/
+	if($me->is_allowed_to('修改', $order)):
+		// 选择了除 尚未处理 的其他状态，就不能再选择 尚未处理 了
+		$order_status = Order_Model::$order_status;
+		if($order->status != Order_Model::PENDING){
+			unset($order_status[Order_Model::PENDING]);
+		}
+		if($order->status == Order_Model::RECEIVED){
+			$order_status = [Order_Model::RECEIVED=>$order_status[Order_Model::RECEIVED]];
+		}
+
+	?>
+		<tr>
+			<td class="right nowrap top"><?php echo I18N::T('orders','状态') ?></td>
+			<td>
+				<?php echo Form::dropdown('status',I18N::T('orders', $order_status), $order->status, 'class="middle monitor"'); ?>
+				<span class="toggle:status show_on:<?php echo Order_Model::RECEIVED; ?>">
+					<?php 
+						$stock = $order->stock;
+						$disabled_stock = $stock->id ? 'disabled="disabled"' : ''; 
+					?>
+					<?php echo Form::checkbox('add_to_stock', $stock->id ? TRUE : FALSE, I18N::T('orders', '加为存货'), 'class="middle '.$disabled_stock.'"', 'class="middle"'); ?>
+		
+				</span>
+				<?php if($stock->id): ?>
+				<div class="hr_1">&#160;</div>
+				<div class="form padding_2 clearfix">
+				<a href="<?php echo URI::url('!orders/stock/edit.'.$stock->id); ?>" class="button button_edit float_right"><?php echo I18N::T('orders', '编辑存货'); ?></a>
+				<table class="form">
+					<tr>
+						<td class="label right"><?php echo I18N::T('orders', '存放位置'); ?></td>
+						<td><?php echo H($stock->location); ?></td>
+					</tr>
+					<tr>
+						<td class="label right"><?php echo I18N::T('orders', '条形码'); ?></td>
+						<td><?php echo H($stock->barcode); ?></td>
+					</tr>						
+					<tr>
+						<td class="label right"><?php echo I18N::T('orders', '备注'); ?></td>
+						<td><?php echo H($stock->note); ?></td>
+					</tr>
+				</table>
+				</div>
+				<?php endif; ?>
+			</td>
+		</tr>
+
+		<?php //选择经费 ?>
+		<?php if($order->status != Order_Model::PENDING): ?>
+		<tr>
+			<td class="right nowrap middle"><?php echo I18N::T('orders', '经费课题名称'); ?></td>
+			<td>
+				<?php
+					$transaction = $order->transaction;
+					$grant_portion = Q("{$transaction} grant_portion")->current();
+					$grant_lab = $order->grant_lab;
+					/*
+					NO.TASK#274(guoping.zhang@2010.11.25)
+					应用权限判断新规则
+					*/
+					if(L('ME')->is_allowed_to('修改', $order)){
+						$select_lab = TRUE;
+					}
+			
+					echo Widget::factory('grant_select', ['lab'=>$grant_lab, 'portion'=>$grant_portion, 'select_lab'=>$select_lab]);
+				?>
+			</td>
+		</tr>
+		<?php endif; ?>
+	<?php endif; ?>
+
+	<?php //财务是否已经确认 ?>
+	<?php 
+		/*
+		NO.TASK#274(guoping.zhang@2010.11.25)
+		应用权限判断新规则
+		*/
+		$transaction = $order->transaction;
+		if($transaction->id && $me->is_allowed_to('修改', $order) || $me->is_allowed_to('管理经费', $order->grant_lab)): 
+	?>
+
+	<tr>
+		<td class="right nowrap middle"><?php echo I18N::T('orders', '发票号'); ?></td>
+		<td>
+			<input class="text" name="invoice_no" value="<?php echo $transaction->invoice_no; ?>"/>
+			<?php 
+			if($me->is_allowed_to('管理经费', $order->grant_lab)){
+				echo Form::checkbox('transaction_confirm', ($transaction->status) ? TRUE : FALSE, '已处理', 'class="middle"', 'class="middle"');
+			}
+			?>
+		</td>  
+	</tr>
+	<?php endif; ?>
+<?php endif; // order->id ?>

@@ -1,0 +1,74 @@
+<?php $require = (string) V('form_require'); ?>
+<div class="form padding_1">
+<table class="form">
+	<tbody>
+	<tr>
+		<td class="top icon">
+			<?php echo $account->icon('64'); ?>
+		</td>
+		<td class="top">
+			<form method="post" action="<?php echo H(URI::url() ) ?>" autocomplete="off">
+			<?php echo V('form_error', ['form'=>$form]); ?>
+			<h4><?php echo I18N::T('accounts', '版本'); ?></h4>
+			<div>
+				<input type="text" name="version" value="<?php echo H($form['version']) ?>" />
+				<?php echo $require; ?>
+			</div>
+			<div class="hr_1">&#160;</div>
+			<div>
+				<h4><?php echo I18N::T('accounts', '描述'); ?></h4>
+				<div>
+					<textarea class="text autogrow autoselect" rows="3" cols="60" name="description"><?php
+						echo H($form['description']);
+					?></textarea>
+				</div>
+			</div>
+			<div class="hr_1">&#160;</div>
+			<div>
+				<input type="submit" name="submit" confirm="<?php echo I18N::T('accounts', '你确定要更新吗？请谨慎操作！'); ?>" class="button button_save" value="<?php echo H(T('更新')) ?>" />
+			</div>
+			</form>
+		</td>
+	</tr>
+	</tbody>
+</table>
+</div>
+<?php
+if ($versions->total_count() > 0):
+?>
+<div class="hr_1"></div>
+<?php
+	$table = Widget::factory('table');
+	$table->name = 'account_versions';
+	$table->add_columns([
+		'version'=>[
+			'title'=>I18N::T('accounts', '版本'),
+			'nowrap'=>TRUE
+		],
+		'date'=>[
+			'title'=>I18N::T('accounts', '时间'),
+			'nowrap'=>TRUE
+		],
+		'description'=>[
+			'title'=>I18N::T('accounts', '备注'),
+			'nowrap'=>TRUE,
+		],
+	]);
+	$table->empty_message = I18N::T('accounts', '暂无版本记录！');
+	foreach ($versions as $version) {
+	    $table->add_row([
+	    	'version'=>H($version->version),
+	    	'date'=>V('accounts:account/version_table/data/date', ['object'=>$version]),
+	    	'description'=>H($version->description, TRUE)
+	    ]);
+	}
+
+	echo $table;
+?>
+<?php endif; ?>
+<script>
+<?php // 修改版本后, 描述清空(xiaopei.li@2012-06-11) ?>
+jQuery(function($){
+	$(':input[name=version]').change(function(){$(':input[name=description]').val('')})
+});
+</script>

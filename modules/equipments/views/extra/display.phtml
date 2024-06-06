@@ -1,0 +1,63 @@
+<?php 
+    $categories = $extra->get_categories();
+    foreach($categories as $category):
+
+    $fields = $extra->get_fields($category);
+
+    if(count($fields) && !isset($fields['config'])):?>
+        <tr>
+            <td class="label left top nowrap blue" colspan="2">
+                <h1><?= $category;?></h1>
+            </td>
+        </tr>
+        <?php 
+        foreach ($fields as $uniqid => $field) :
+        ?>
+        <?php if($field['adopted']):
+            $value = isset($form[$uniqid]) ? $form[$uniqid] : $record->$uniqid;
+            if ($field['type'] == Extra_Model::TYPE_SELECT) {
+                $value = isset($form[$uniqid]) ? $form[$uniqid]: ($record->$uniqid ?: -1);
+            }
+            ?>
+            <?php echo V('extra/display/'.$uniqid, ['field'=>$field, 'record'=> $record, 'is_edit'=>$is_edit, 'form'=> $form, 'value'=> $value, 'extra_value'=>$extra_value]);?>
+        <?php else:
+            $value = isset($form['extra_fields'][$uniqid]) ? $form['extra_fields'][$uniqid] : $values[$uniqid];
+            if ($field['type'] == Extra_Model::TYPE_SELECT) {
+                $value = isset($form['extra_fields'][$uniqid]) ? $form['extra_fields'][$uniqid]: ($values[$uniqid] ?: -1);
+            }
+            ?>
+        <tr>
+            <td class="label left top nowrap">
+                <div class="title">
+                <?php if ($field['required']) echo V('form_require'); ?>&#160;<?php echo H($field['title']); ?>
+                <?php $error=$form->errors["extra_fields[$uniqid]"][0]; ?>
+                <?php
+                    if (!$error) {
+                        $key = 0;
+                        while($key <= 1) {
+                            if ($form->errors["extra_fields[$uniqid][$key]"][0]){
+                                echo '<br>' . V('form_filter',['error' => $form->errors["extra_fields[$uniqid][$key]"][0]]);
+                            }
+                            $key ++;
+                        } 
+                    } else {
+                        echo V('form_filter',['error' => $error]);
+                    }
+                ?>
+                </div>
+
+
+                <?php
+                echo V('extra:display/'.Extra_Model::$types[$field['type']], ['uniqid'=>$uniqid,'field'=>$field, 'value'=>$value, 'extra_value'=>$extra_value]);
+                ?>
+            </td>
+        </tr>
+        <?php endif;?>
+        <?php endforeach;?> 
+<?php endif;?>
+<?php endforeach; ?>
+<script>
+    jQuery(function($){
+        $('.validate_error').closest('td').next().find('.require').addClass('error');
+    });
+</script>

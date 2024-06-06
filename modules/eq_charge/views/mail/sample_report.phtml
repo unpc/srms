@@ -1,0 +1,22 @@
+<?php $charge = O('eq_charge', ['source'=>$sample]);?>
+<?php if($charge->amount):
+	$tags = (array) $charge->charge_tags;
+?>
+	<?php if(count($tags)):?>
+	<p style="font-size:18px"><b><?php echo I18N::T('eq_charge', '计费标签') ?>:</b></p>
+	<div style="height:4px"></div>
+	<ul>
+		<?php foreach ($tags as $tag => $value) :?>
+		<li><?= $tag?>: <?= $value?></li>
+		<?php endforeach;?>
+	</ul>
+	<div style="height:10px"></div>
+	<?php endif;?>
+
+	<p style="font-size:18px"><b><?php echo I18N::T('eq_charge', '收费金额') ?>:</b></p>
+	<div style="height:4px"></div>
+	<ul>
+		<li><?= Number::currency($charge->amount) ?></li>
+	</ul>
+	<div style="height:10px"></div>
+<?php endif?>

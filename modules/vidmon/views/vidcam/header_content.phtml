@@ -1,0 +1,46 @@
+<?php $me = L('ME'); ?>
+<div class="clearfix vidcam_detail header_content_padding">
+<table class="form flexible">
+	<tr>
+        <td class="top icon rpadding_3">
+            <?php echo $vidcam->icon('104'); ?>
+        </td>
+        <td class="top flexible">
+            <h2 ><a><?php echo H($vidcam->name); ?></a></h2>
+            <div class="interval_20"></div>
+            <?php if ($vidcam->location || $vidcam->location2) : ?>
+
+                <?php
+                $locations = [];
+                if ($vidcam->location) $locations[] = H($vidcam->location);
+                if ($vidcam->location2) $locations[] = H($vidcam->location2);
+
+                $location = implode(' ', $locations);
+                ?>
+                <p  class="people_info"><?php echo I18N::T('vidmon', '地址')?>: <?php echo H($location)?></p>
+                <div class="interval_20"></div>
+            <?php endif;?>
+
+            <?php $incharges = Q("{$vidcam} user.incharge");?>
+
+            <?php if ($incharges->total_count()) :?>
+
+            <?php
+            $list = [];
+            foreach ($incharges as $i) {
+                $list[] = '<span class="nowrap">'.URI::anchor($i->url(), H($i->name)).'</span>';
+            }
+            ?>
+            <p class="people_info"><?php echo I18N::T('vidmon', '负责人')?>: <?php echo join(', ', $list);?>
+
+                <?php endif;?>
+        </td>
+        <td class="right top nowrap">
+            <div class="float_right">
+                <?php echo Widget::factory('application:links', ['links' => $vidcam->links('view'), 'separator'=>'']); ?>
+            </div>
+        </td>
+    </tr>
+    <tr><td><div class="interval_12"></div> </td></tr>
+</table>
+</div>

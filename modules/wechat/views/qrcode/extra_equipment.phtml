@@ -1,0 +1,30 @@
+<div class="float_right">
+    <p id="equipment-qrcode-img" style="height: 70px;"  class="equipment-qrcode-img">
+        <img width="70" src="<?php echo URI::url('!wechat/qrcode/equipment.' . $equipment->yiqikong_id); ?>" />
+        <?php 
+            /** 
+             * 这个参数的目的是glogon不显示导出功能
+             * 由于不想修改各处添加判断以作区分，所以在equipment赋值一个临时属性
+             */
+        ?>
+        <?php if (!$equipment->no_link) : ?>
+        <?php echo Widget::factory('application:links', array('links' => $equipment->links('wechat'))) ?>
+        <?php endif; ?>
+    </p>
+</div>
+
+<script>
+window.onload = function() {
+    var equipment_qrcode_export = document.getElementById('equipment-qrcode-export');
+    var equipment_qrcode_img = document.getElementById('equipment-qrcode-img');
+    if (equipment_qrcode_export) {
+        equipment_qrcode_img.onmouseover = function() {
+            equipment_qrcode_export.style.display = 'block';
+        }
+        
+        equipment_qrcode_img.onmouseout = function() {
+            equipment_qrcode_export.style.display = 'none';
+        }
+    }
+}
+</script>

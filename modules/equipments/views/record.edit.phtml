@@ -1,0 +1,253 @@
+<?php $me = L('ME');?>
+<?php
+if (Config::get('eq_record.duty_teacher') && $equipment->require_dteacher):
+	$incharges = [0 => '--'] + Q("$equipment user.incharge")->to_assoc('id', 'name');
+endif;
+?>
+<div class="form  clearfix">
+    <?php if(!$me->is_allowed_to('删除', $record)){ ?>
+        <div class="inner_message inner_message_error"><?php echo I18N::T('equipments', '使用中记录，不可删除') ?></div>
+    <?php } ?>
+    <form
+        class="view"
+        q-object="record_edit"
+        q-src="<?php echo H($record->url()) ?>"
+        autocomplete="off">
+
+        <?php echo Form::hidden('record_id', $record->id); ?>
+        <?php echo Form::hidden('equipment_id', $record->equipment->id); ?>
+        <?php echo V('form_error', ['form'=>$form]);?>
+        <table class="form clearfix" >
+            <tbody>
+                <tr>
+                    <td class="top blue">
+                        <h1><?php echo I18N::T('equipments','使用者');?></h1>
+                    </td>
+					<td class="right description middle red nowrap">*&nbsp;<?php echo I18N::T('calendar', '必填项');?></td>
+                </tr>
+                <tr>
+                    <td class="top nowrap" colspan=2>
+                    <?php 
+					if ($me->is_allowed_to('管理仪器临时用户', $record->equipment)) {
+						echo V('equipments:record.edit.create.user', ['form'=>$form, 'record'=>$record]);
+					}
+					else {
+						echo Widget::factory('user_selector', [
+							'name'=>'user_id',
+							'user'=> $form['user_id'] ? O('user', $form['user_id']) : $record->user,
+						]);
+					}
+					?>
+					</td>
+				</tr>
+				
+                
+                <?php if ($record->agent->id && $me->is_allowed_to('修改代开者', $record)):?>
+                <tr>
+                    <td class="label left nowrap"><?php echo I18N::T('equipments', '代开者'); ?></td>
+                </tr>
+                <tr>
+                    <td>
+                        <?php
+					echo Widget::factory('user_selector', [
+                                        'name' => 'agent_id',
+                                        'user' => $form['agent_id'] ? O('user', $form['agent_id']) : $record->agent
+                                    ]);
+				?>
+                    </td>
+                </tr>
+                <?php endif;?>
+    
+            <?php
+          		$extra = Extra_Model::fetch($record->equipment, 'use');
+				if($record->id) $extra_value = O('extra_value', ['object'=>$record]);
+				else $extra_value = O('extra_value');
+                if($extra_value->id) $values = $extra_value->values;
+            	echo V('extra/display', ['extra'=>$extra, 'form'=>$form, 'values'=>$values, 'record'=>$record]);
+        	?>
+                <?php if (Config::get('eq_record.duty_teacher') && $equipment->require_dteacher): ?>
+                <tr>
+                    <td class="top blue" colspan="2">
+                        <h1><?php echo I18N::T('equipments','使用记录');?></h1>
+                    </td>
+                </tr>
+                <tr>     
+                    <?php if(Config::get('eq_record.tag_duty_teacher')){?>
+                        <td class="label left nowrap"><?php echo I18N::T('equipments', '值班老师'); ?></td>
+                    <?php }else{?>
+                        <td class="label left nowrap"<?= (string)V('form_require') ?><?php echo I18N::T('equipments', '值班老师'); ?></td>
+                    <?php } ?>
+                </tr>
+                <tr>
+                    <td class="nowrap">
+                        <?php
+                        if($select_tag_duty_teacher = Event::trigger('record.equipment.tag_duty_teacher', $record)){
+                            echo $select_tag_duty_teacher;
+                        }else{?>
+                            <?php echo Form::dropdown('duty_teacher', I18N::T('equipments', $incharges), $record->duty_teacher->id ? : ($form['duty_teacher'] ? : 0), 'class="dropdown"'); ?>
+                        <?php } ?>
+                    </td>
+                </tr>
+                <?php endif; ?>
+                <?php if (Config::get('equipment.enable_use_type')): ?>
+                <tr>
+                    <td class="top blue " colspan="2">
+                        <h1><?php echo I18N::T('equipments','操作信息');?></h1>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label nowrap"><?= (string)V('form_require') ?><?php echo I18N::T('equipments', '使用类型'); ?></td>
+                </tr>
+                <tr>
+                    <td class="nowrap">
+                        <?php echo Form::dropdown('use_type', I18N::T('equipments', EQ_Record_Model::$use_type), $record->use_type ? : ($form['use_type'] ? : current(array_keys(EQ_Record_Model::$use_type))), 'class="dropdown"'); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label top nowrap">
+                        <?php echo I18N::T('equipments', '备注'); ?>
+                        <?php echo V('form_filter', ['error'=>$form->errors["use_type_desc"][0]]); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <textarea style="line-height: normal" name="use_type_desc" class="text autogrow"><?= $record->use_type_desc ? : $form['use_type_desc'] ?></textarea>
+                    </td>
+                </tr>
+                <?php endif; ?>
+
+                <?php
+                    // 该条记录发生时，具有开机预热/冷却设置 问过产品 取ctime
+                    $eq_preheat_cooling = Equipment_Preheat_Cooling::get_preheat_cooling($record->equipment, $record->ctime ? : Date::time());
+                    if ($eq_preheat_cooling->preheat_time || $eq_preheat_cooling->cooling_time) {
+                ?>
+                        <tr>
+                            <td class="top blue" colspan="2">
+                                <h1><?php echo I18N::T('equipments','预热/冷却操作');?></h1>
+                            </td>
+                        </tr>
+                        <?php if ($eq_preheat_cooling->preheat_time) {?>
+                            <td class="label middle">
+                                <?php $power_on_preheating_id = 'power_on_preheating_'. uniqid();?>
+                                <input id="<?php echo H($power_on_preheating_id) ?>" name="power_on_preheating" type="checkbox" class="middle checkbox monitor"
+                                    <?php if ($form['power_on_preheating'] == 'on' || $record->preheat) echo 'checked="checked"';?> <?php echo $disabled;?> />
+                                <label for="<?php echo H($power_on_preheating_id) ?>" class="baseline middle"><?php echo I18N::T('eq_reserv' ,'开机预热'); ?></label>
+                            </td>
+                        <?php }?>
+
+                        <?php if ($eq_preheat_cooling->cooling_time) {?>
+                            <td class="label middle nowrap">
+                                <?php $shutdown_cooling_id = 'shutdown_cooling_'. uniqid();?>
+                                <input id="<?php echo H($shutdown_cooling_id) ?>" name="shutdown_cooling" type="checkbox" class="middle checkbox monitor"
+                                    <?php if ($form['shutdown_cooling'] == 'on' || $record->cooling) echo 'checked="checked"';?> <?php echo $disabled;?> />
+                                <label for="<?php echo H($shutdown_cooling_id) ?>" class="baseline middle"><?php echo I18N::T('eq_reserv' ,'关机冷却'); ?></label>
+                            </td>
+                        <?php }?>
+                <?php } ?>
+
+                <?php if($me->is_allowed_to('修改开始时间', $record)) : ?>
+                <tr>
+                    <td class="top blue" colspan="2">
+                        <h1><?php echo I18N::T('equipments','时间设定');?></h1>
+                    </td>
+                </tr>
+                <tr>
+					<td class="label left nowrap">
+					<div class="title">	
+					<?php echo I18N::T('equipments', '开始时间'); ?>
+					</div>
+                        <input
+                            name="dtstart"
+                            type="text"
+                            class="text date middle"
+                            value="<?php echo $form['dtstart'] ? $form['dtstart'] : ($record->dtstart ? $record->dtstart : strtotime(date("Y-m-d H:i:00"))); ?>"/>
+						&#160;&#160;
+					
+						<?php if($me->is_allowed_to('修改结束时间', $record)) : ?>
+						</td>
+						<td class="label left nowrap">
+                        <div class="title">
+                        <?php echo I18N::T('equipments', '结束时间'); ?>
+                        <?php echo V('form_filter', ['error'=>$form->errors["dtend"][0]]); ?>
+                        </div>
+                            <?php if($me->access('管理所有内容')): ?>
+                                <?php echo Form::checkbox('dtend_check', $record->dtend, NULL, 'class="middle monitor checkbox"');?>
+                            <?php endif; ?>
+                        <input
+                            name="dtend"
+                            type="text"
+                            class="text date middle toggle_status:dtend_check enable_on:on"
+                            value="<?php echo $form['dtend'] ? $form['dtend'] : ($record->dtend ? $record->dtend : strtotime(date("Y-m-d H:i:00"))); ?>" />
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <?php endif; ?>
+                <?php if($me->is_allowed_to('修改样品数', $record)) : ?>
+                <tr class="begin">
+                    <td class="top blue" colspan="2">
+                        <h1><?php echo I18N::T('equipments','样品信息');?></h1>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label left nowrap">
+						<div class="title"><?php echo I18N::T('equipments', '样品数'); ?></div>
+                        <?php $samples_uniqid = 'record_samples_'. uniqid();?>
+                        <div id="<?php echo H($samples_uniqid) ?>">
+                            <?php echo V('equipments:record/samples_lock', ['id'=> $samples_uniqid, 'record'=> $record, 'form'=>$form]);?>
+                        </div>
+                        
+                    </td>
+                </tr>
+                <?php endif; ?>
+            </tbody>
+            <?php if($sections) foreach($sections as $section) { echo $section; } ?>
+           
+        </table>
+        <?php
+        if (L('ME')->is_allowed_to('上传文件', $record, ['type' => 'attachments']) && $record->id)
+        {
+            echo V('equipments:record.attachments', ['record' => $record]);
+        }
+        ?>
+        <div class="button_container">
+               
+                       <div class="float_right">
+                           <input
+                               type="button"
+                               class="font-button-default sm rmargin_2e4"
+                               name="cancel"
+                               id="cancel"
+                               value="<?php echo H(I18N::T('calendars', '取消')) ?>"/>
+                           <input
+                               type="submit"
+                               class="font-button-save sm"
+                               name="submit"
+                               value="<?php echo H(I18N::T('calendars', '保存')) ?>"/>
+                       </div>
+                       <?php if ( $me->is_allowed_to('删除', $record) && $record->id ){ ?>
+                       <input
+                           type="submit"
+                           name="delete"
+                           class="font-button-delete sm rmargin_2e4"
+                           value="<?php echo H(I18N::T('equipments', '删除')) ?>"/>
+                       <?php } ?>
+                       </div>
+    </form>
+</div>
+<script>
+    laydate.render({
+        elem: '#dtstart',
+        type:'datetime'
+    });
+    laydate.render({
+        elem: '#dtend',
+        type:'datetime'
+    });
+    $(function () {
+
+        $("#cancel").click(function () {
+            $(document).trigger('keydown.dialog', [1]);
+        });
+
+    });
+</script>

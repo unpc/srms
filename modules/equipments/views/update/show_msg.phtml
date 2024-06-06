@@ -1,0 +1,29 @@
+<table>
+	<tbody>
+<?php 
+	$datas = array_intersect_key((array)json_decode($update->new_data, TRUE), (array) $properties);
+	foreach((array)$datas as $key=>$data):
+		if (!$data)
+			continue;
+	?>
+		<tr>
+			<td class="left top nowrap">
+				<strong class="description"><?php echo I18N::HT('equipments', $properties[$key]);?></strong>
+			</td>
+			<td class="left top content_wrap lpadding_2">
+				<?php
+					if ( $key == 'price' ) {
+						$price_unit = Config::get('lab.currency_sign') ? : '¥';
+						echo $price_unit . H($data);
+					}
+					else {
+						echo H(I18N::T('equipments', $data), TRUE); 
+					}
+					 
+					
+				?>
+			</td>
+		</tr>
+	<?php endforeach;?>
+	</tbody>
+</table>

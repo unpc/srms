@@ -1,0 +1,23 @@
+<h3>
+	<?php echo $title ?>
+	<?php if ($alert_url) : ?>
+		<span class="normal description"> &#187;
+			<a href="<?php echo H($alert_url) ?>" class="blue link"><?php echo I18N::T('projects', '群发消息'); ?></a>
+		</span>
+	<?php endif; ?>
+</h3>
+
+<div class="hr_1">&#160;</div>
+<div class="clearfix users_container">
+<?php 
+if($users->total_count()) {
+	foreach ($users as $user) {
+		$user->render('projects:timeline/user', NULL, ['task'=>$task, 'alert'=>$alert]);
+	}
+}
+else {
+	echo '&#160;';
+}
+?>
+</div>
+

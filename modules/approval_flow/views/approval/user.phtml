@@ -1,0 +1,12 @@
+<?php if ($user->id):?>
+<a style="text-decoration: underline;" href="<?php echo H($user->url()) ?>" class="blue prevent_default"><?php echo H($user->name); ?></a>
+<?php else:?>
+<?php echo I18N::T('approval_flow', '系统自动判定: '); ?>
+<?php 
+    $flow = Config::get('flow.eq_reserv');
+    $key_flow = array_keys($flow);
+    if ($approved->flag == $key_flow[1]) : 
+?>
+    <?php echo I18N::T('approval_flow', '课题组负责人'); ?>
+<?php endif; ?>
+<?php endif;?>

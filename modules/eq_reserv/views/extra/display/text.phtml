@@ -1,0 +1,14 @@
+<tr>
+    <td class="label right top nowrap">
+    <?php if($properties['field']['required']) : ?>*<?php endif; ?>
+    <?php echo I18N::HT('eq_reserv', $properties['label'])?>
+    </td>
+    <td class="nowrap">
+    <?php
+        $extra_value = O('extra_value', ['object'=> $component]);
+        $values = $extra_value->values;
+        $vname = ltrim($name, 'extra_');
+    ?>
+        <input name="<?php echo H($name) ?>" type="text" class="text" size="40" value="<?php echo H($component->id ?  $values[$vname] : NULL) ?>" />
+    </td>
+</tr>

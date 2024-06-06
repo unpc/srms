@@ -1,0 +1,43 @@
+<?php 
+    $me = L('ME');
+    $messages = Q("message[receiver=$me]:sort(ctime D):limit(2)");
+?>
+
+<div class="messages">
+    <div style="padding: 0px 8px 0px 8px">
+        <div class="padding">
+            <div class="message_title  padding_12_16 border_bottom_line">
+                <div class="title float_left">消息中心</div>
+                <div class="more float_right">
+                    <a href="<?= URI::url('!messages') ?>">更多<i style="font-size: 14px;" class="icon-right"></i></a>
+                </div>
+            </div>
+            <div class="message_body padding_12_16">
+                <?php foreach($messages as $message): ?>
+                    <a href="<?= H($message->url()) ?>">
+                        <div class="message_item">
+                            <div class="message_type_content">
+                                <div class="message_type">
+                                    <span><?= $message->sender->id > 0 ? '个人' : '系统' ?></span>
+                                    <?php if (!$message->is_read): ?>
+                                        <i class="message_tips"></i>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <div class="message_content">
+                                <div class="title float_left">
+                                    <?= H($message->title) ?>
+                                </div>
+                                <div class="message_time float_right"><?= Date::format($message->ctime, 'Y/m/d H:i'); ?></div>
+                                <div class="clearfix"></div>
+                                <div class="message_info">
+                                    <span><?= mb_substr(new Markup(strip_tags(stripslashes($message->body), '<br><a>'), false), 0, 100, 'utf-8'); ?></span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+</div>

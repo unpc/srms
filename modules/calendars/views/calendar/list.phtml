@@ -1,0 +1,87 @@
+<?php 
+$left_id = 'calendar_left_nav_'.uniqid();
+?>
+<div class="panel clearfix calendar_pad_bottom"  style="position: relative;width: 100%">
+    <div class="center time_center" id="calendar_time_center" style="left: 0px;width: 80%;padding-left: 10%;">
+        <a href="<?php echo H(URI::url('', ['st'=>$dtprev] + Input::get())) ?>">
+            <span class="calendar_pre icon-left  rpadding_1"></span>
+        </a>
+        <span class="center_date"><?php echo Date::format($dtstart, I18N::T('calendars', 'Y/m/d'))?> - <?php echo Date::format(Date::prev_time($dtnext), I18N::T('calendars', 'Y/m/d'))?></span>
+        <a href="<?php echo H(URI::url('', ['st'=>$dtnext] + Input::get())) ?>">
+            <span class="calendar_pre icon-right lpadding_1"></span>
+        </a>
+    </div>
+</div>
+<?php echo $search_box; ?>
+<div  style="position: relative;bottom: 13px;">
+<?= $pagination ?>
+<div class="calendar_list">
+<?php 
+
+$table = Widget::factory('table');
+$table->extra_class = 'reserv';
+$table->name = 'calendar_list_view';
+$table->sort_by = $sort_by;
+$table->sort_asc = $sort_asc;
+$table->empty_message = $calendar->list_empty_message();
+
+$table->add_columns($calendar->list_columns($form));
+$table->form_url = Input::url();
+$odd = FALSE;
+$last_day = -1;
+$day_count = 0;
+$component_count = 0;
+
+foreach ($components as $component) {
+	if ($component->dtend < $component->dtstart) continue;
+	$day = date('z', $component->dtstart);
+/*	if ($last_day != $day) {
+		$table->add_row([
+			'#special_view'=> Date::fuzzy($component->dtstart),
+			'#extra_class'=>'date_sep',
+		]);
+		$day_count++;
+	}*/
+	$row = $calendar->list_row($component);
+	if ($row) {
+		$table->add_row($row);
+	}
+	$component_count++;
+
+	/*if ($component_count >= 15 && $day_count > 1) {
+		break;
+	}*/
+	$last_day = $day;
+}
+
+echo $table;
+?>
+
+</div>
+<?= $pagination ?>
+</div>
+<script type="text/javascript">
+Q.globals.cal_week_rel = 'edit_week';
+Q.globals.mode = 'list';
+
+$(document).ready(
+	function(){
+		var dtstart = <?php echo (int)$dtstart; ?>;
+		var dtend = <?php echo (int)$dtend; ?>;
+		var form_token = '<?php echo $form_token ?>';
+		
+		Q.Calendar.dtstart = dtstart;
+		Q.Calendar.dtend = dtend;
+        Q.Calendar.form_token = form_token;
+        
+        /**
+         * @todo 增加 print | csv 赋值
+         */
+    	
+		if ( Q.Calendar && Q.Calendar.left_nav_area) {
+			 $left = $('#<?php echo $left_id?>');
+			$(Q.Calendar.left_nav_area).appendTo($left);
+		}
+	}
+);
+</script>

@@ -1,0 +1,27 @@
+<?php 
+$notip = Input::form('nobrowstip');
+if (isset($notip)) $_SESSION['browser_diehard'] = $notip;
+?>
+<div class="footer_browser_suggestion middle">
+    <a class="label" onclick="jQuery(this).next().toggle(); return false">建议更换浏览器</a>
+    <div class="tip<?php echo $_SESSION['browser_diehard']?' hidden':''?>">
+        <h4>更换网络浏览器的建议</h4>
+        <p class="description">我们检测到您的系统使用了过时的网络浏览器，存在安全隐患。为了保证您浏览时的安全以及获得最佳的浏览效果, 我们强烈建议您更换为以下浏览器。</p>
+        <div class="hr_1">&#160;</div>
+        <div class="clearfix">
+            <span class="nowrap inline_block"><img class="middle" src="images/browsers/firefox_s.gif" />&#160;<a class="middle" href="http://firefox.com.cn/"><strong>火狐浏览器</strong></a></span>
+            <div class="hr_1">&#160;</div>
+            <span class="nowrap inline_block"><img class="middle" src="images/browsers/chrome_s.gif" />&#160;<a class="middle" href="http://www.google.com/chrome/"><strong>谷歌Chrome浏览器</strong></a></span>
+            <div class="hr_1">&#160;</div>
+            <span class="nowrap inline_block"><img class="middle" src="images/browsers/safari_s.gif" />&#160;<a class="middle" href="http://www.apple.com/cn/safari/"><strong>苹果Safari浏览器</strong></a></span>
+        </div>
+        <div class="hr_1">&#160;</div>
+        <div class="right">
+            <?php
+            $params = $_GET;
+            $params['nobrowstip'] = 1;
+            ?>
+            <a href="<?php echo H(URI::url('', $params)) ?>" style="color: #633" confirm="您确定不想尝试一下其他浏览器吗?">我不要更换浏览器&#187;</a>
+        </div>
+    </div>
+</div>

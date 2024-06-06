@@ -1,0 +1,24 @@
+<?php 
+if ($record->feedback) {
+	$tooltip = 'tooltip:'.H(URI::encode($record->feedback));
+}
+else {
+	$tooltip = '';
+}
+
+if ($record->status == EQ_Record_Model::FEEDBACK_NORMAL) {
+	echo '<div class="feedback-status feedback-status-normal">
+			<span style="font-size: 12px" class="right icon-selected"></span>
+		<small class="right '.$tooltip.'">'.I18N::T('equipments', '正常').'</small>
+        </div>';
+}
+elseif ($record->status == EQ_Record_Model::FEEDBACK_PROBLEM) {
+	echo '<div class="feedback-status feedback-status-problem">
+			<span style="font-size: 12px" class="right icon-cancel"></span>
+		<small class="right '.$tooltip.'">'.I18N::T('equipments', '故障').'</small>
+        </div>';
+}
+else {
+	echo '&#160;';
+}
+?>

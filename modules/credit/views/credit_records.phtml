@@ -1,0 +1,208 @@
+<?php $me = L('ME');?>
+<?php echo $secondary_tabs; ?>
+
+<?php echo V('banstatus_pannel', ['form' => $form]); ?>
+
+<?php
+
+$table = Widget::factory('table');
+
+$table->name     = 'credit_list';
+$table->sort_asc = $sort_asc;
+$table->sort_by  = $sort_by;
+
+$lab       = is_object($form['lab']) ? $form['lab'] : O('lab', $form['lab']);
+$equipment = (int) $form['equipment'] ? O('equipment', $form['equipment']) : null;
+
+$columns = [
+    'serial_number' => [
+        'title' => I18N::T('credit', '编号'),
+        'align' => 'left',
+        'invisible' => false,
+        'filter' => [
+          'form' => V('credit:profile/record_table/filters/serial_number', ['id' => $form['id']]),
+          'value' => $form['id'] ? $form['id'] : NULL,
+          'field' => 'id'
+        ],
+        'weight' => 5,
+        'nowrap' => true
+      ],
+    'ctime'     => [
+        'weight'   => 10,
+        'title'    => I18N::T('credit', '计分时间'),
+        'align'    => 'left',
+        'nowrap'   => true,
+        'sortable' => true,
+        'filter'   => [
+            'form'  => V('credit:profile/record_table/filters/ctime', ['form' => $form]),
+            'field' => 'ctstart,ctend',
+            'value' => $form['ctstart'] || $form['ctend'],
+        ],
+    ],
+    'name'      => [
+        'weight' => 20,
+        'title'  => I18N::T('credit', '姓名'),
+        'align'  => 'left',
+        'nowrap' => true,
+        'filter' => [
+            'form'  => V('credit:credit_table/filters/text', ['value' => $form['name']]),
+            'value' => $form['name'] ? H($form['name']) : null,
+        ],
+    ],
+    'lab'       => [
+        'weight'    => 30,
+        'title'     => I18N::T('labs', '所属课题组'),
+        'invisible' => true,
+        'filter'    => [
+            'form'  => Widget::factory('labs:lab_selector', [
+                'name'         => 'lab',
+                'selected_lab' => $lab,
+                'all_labs'     => true,
+                'no_lab'       => true,
+            ]),
+            'value' => $lab->id ? H($lab->name) : null,
+            'extra' => 'style="margin-right:3rem"'
+        ],
+    ],
+    'group'     => [
+        'weight'    => 40,
+        'title'     => I18N::T('credit', '用户组织机构'),
+        'invisible' => true,
+        'filter'    => [
+            'form'  => V('credit:credit_table/filters/user_group', [
+                'name' => 'group_id',
+                'tag'  => $tag,
+                'root' => $root,
+            ]),
+            'value' => $tag->id ? H($tag->name) : null,
+            'field' => 'group_id',
+        ],
+    ],
+    'type'      => [
+        'title'     => I18N::T('credit', '计分类型'),
+        'weight'    => 60,
+        'invisible' => true,
+        'filter'    => [
+            'form'  => V('credit:credit_table/filters/type', [
+                'form' => $form,
+                'type' => $form['type'],
+            ]),
+            'value' => Credit_Rule_Model::$status[$form['type']] ?: null,
+            'field' => 'type',
+        ],
+    ],
+    'event'     => [
+        'title'  => I18N::T('credit', '计分事件'),
+        'weight' => 50,
+        'filter' => [
+            'form'  => V('credit:credit_table/filters/event', [
+                'form'  => $form,
+                'event' => $form['event'],
+            ]),
+            'value' => $form['event'] ? H(O('credit_rule', (int) $form['event'])->name) : null,
+            'field' => 'event',
+        ],
+    ],
+    'equipment' => [
+        'weight' => 60,
+        'title'  => I18N::T('credit', '关联仪器'),
+        'filter' => [
+            'form'  => V('credit:credit_table/filters/equipment', [
+                'equipment' => $equipment->id ? $equipment : null,
+            ]),
+            'value' => $equipment->id ? H($equipment->name) : null,
+        ],
+    ],
+    'score'     => [
+        'weight' => 70,
+        'title'  => I18N::T('credit', '分数'),
+        'align'  => 'right',
+        /* 'filter' => [
+    'form'  => V('credit:credit_table/filters/credit_score', [
+    'score_start' => $form['score_start'],
+    'score_end'   => $form['score_end'],
+    ]),
+    'field' => 'score_start,score_end',
+    'value' => $form['credit_score'] ? H($form['credit_score']) : null,
+    ], */
+    ],
+    'total'     => [
+        'weight' => 80,
+        'title'  => I18N::T('credit', '信用分'),
+        'align'  => 'right',
+        'nowrap' => true,
+    ],
+    'violate_type'     => [
+        'title'     => I18N::T('credit', '违规类型'),
+        'weight'    => 85,
+        'invisible' => true,
+        'filter'    => [
+            'form'  => V('credit:credit_table/filters/violate_type', [
+                'form'  => $form,
+                'violate_type' => $form['violate_type'],
+            ]),
+            'value' => $form['violate_type'],
+            'field' => 'violate_type',
+        ],
+    ],
+    'operator'     => [
+        'weight' => 90,
+        'title'  => I18N::T('credit', '操作人'),
+        'align'  => 'center',
+        'nowrap' => true,
+    ],
+    'operation_time'     => [
+        'weight' => 100,
+        'title'  => I18N::T('credit', '操作时间'),
+        'align'  => 'center',
+        'nowrap' => true,
+    ],
+    'rest'      => [
+        'weight' => 110,
+        // 'title'  => I18N::T('credit', '操作'),
+        'align'  => 'right',
+        'nowrap' => true,
+    ],
+];
+
+$columns = new ArrayIterator($columns);
+
+$table->add_columns((array) $columns);
+
+$table->empty_message = I18N::T('credit', '找不到相关的信用明细！');
+
+if ($credit_records->total_count()) {
+    foreach ($credit_records as $credit_record) {
+        // $links = $credit_records->links();
+        $table->add_row([
+            'serial_number' => V('credit:profile/record_table/data/serial_number', ['id' => $credit_record->id]),
+            'ctime'     => Date('Y-m-d', $credit_record->ctime),
+            'name'      => V('credit:credit_table/data/name', ['credit' => $credit_record]),
+            'event'     => H(in_array($credit_record->credit_rule->ref_no, [Credit_Rule_Model::CUSTOM_ADD, Credit_Rule_Model::CUSTOM_CUT]) ? $credit_record->description : $credit_record->credit_rule->name),
+            'equipment' => H($credit_record->equipment->name ?: '--'),
+            'score'     => V('credit:profile/record_table/data/score', ['credit_record' => $credit_record]),
+            'total'     => H($credit_record->total),
+            'operator'  => V('credit:credit_table/data/operator', ['credit' => $credit_record]),
+            'operation_time' => $credit_record->operation_time ? Date('Y-m-d', $credit_record->operation_time) : I18N::T('credit','无'),
+            // 'rest'         => Widget::factory('application:links', ['links' => $links]),
+        ]);
+    }
+}
+$param = [
+    'panel_buttons' => $panel_buttons,
+    'top_input_arr' => ['serial_number', 'name'],
+    'columns'       => (array) $table->columns,
+    'extra_view'    => '<div class="adj statistics middle">'.
+        I18N::T('credit', '共有%total条违规记录, 其中迟到%late次, 早退%early次, 超时%timeout次, 爽约%miss次, 其他%other次', [
+            '%total'   => '<span class="eq_number">' . intval($stat['total']) . '</span>',
+            '%late'    => '<span class="eq_number">' . intval($stat['late']) . '</span>',
+            '%early'   => '<span class="eq_number">' . intval($stat['early']) . '</span>',
+            '%timeout' => '<span class="eq_number">' . intval($stat['timeout']) . '</span>',
+            '%miss'    => '<span class="eq_number">' . intval($stat['miss']) . '</span>',
+            '%other'   => '<span class="eq_number">' . intval($stat['other']) . '</span>',
+        ]).$pagination.'</div>'
+];
+echo V('application:search_box', $param);
+?>
+<?php echo $table; ?>
+<div class="pages"><?php echo $pagination; ?></div>

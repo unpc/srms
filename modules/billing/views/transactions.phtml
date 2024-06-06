@@ -1,0 +1,114 @@
+<div class="hr_1">&#160;</div>
+<div class="panel padding_1 clearfix">
+	<div class="float_right">
+		<?php
+		/*
+		NO.TASK#300guoping.zhang@2010.10.11)
+		列表收支明细时概要信息：财务帐号个数｜总收入｜总支出｜总余额
+		*/
+		echo I18N::T('billing','财务帐号个数: %account_count, 总收入: %total_income, 总费用: %total_outcome, 总余额: %total_balance', [
+            '%account_count'=> '<span class="eq_number">'. $account_count.'</span>',
+            '%total_income'=> '<span class="eq_number">'.H(Number::currency($total_income)).'</span>',
+            '%total_outcome'=> '<span class="eq_number">'. H(Number::currency($total_outcome)).'</span>',
+            '%total_balance'=> '<span class="eq_number">'. H(Number::currency($total_balance)).'</span>']);
+        ?>
+	</div>
+</div>
+<?php echo $pagination; ?>
+<?php
+/*
+NO.BUG#328(guoping.zhang@2011.01.18)
+明细列表，添加日期搜索项
+*/
+if($form['dtstart_check'] && $form['dtend_check']) {
+	$form['date'] = H(date('Y/m/d',$form['dtstart'])).'-'.H(date('Y/m/d',$form['dtend']));
+}
+elseif($form['dtstart_check']) {
+	$form['date'] = H(date('Y/m/d',$form['dtstart'])).'-'.I18N::T('billing','最末');
+}
+elseif($form['dtend_check']) {
+	$form['date'] = I18N::T('billing','最初').'-'.H(date('Y/m/d',$form['dtend']));
+}
+
+/*
+	NO. TASK#249 (Cheng.Liu@2010.11.18)
+	billing模块 transaction列表转换成 table widget
+	NO.TASK#300(guoping.zhang@2010.12.10)
+	收支明细可根据财务部门搜索
+*/
+$table = Widget::factory('table', ['extra_class'=>'account_grid']);
+$table->name = 'billing_transactions';
+$table->add_column('@', [
+	'nowrap' => TRUE,
+	'align' => 'center',
+]);
+
+$table->add_columns([
+	'date'=>[
+		'title'=>I18N::T('billing', '日期'),
+		'filter'=> [
+				'form' => V('billing:transactions_table/filters/date', [
+					'dtstart_check'=>$form['dtstart_check'],
+					'dtstart'=>$form['dtstart'],
+					'dtend_check'=>$form['dtend_check'],
+					'dtend'=>$form['dtend']
+				]),
+				'value' => $form['date'] ? H($form['date']) : NULL
+			],
+		'nowrap'=>TRUE,
+	],
+	'department'=>[
+		'title'=>I18N::T('billing', '财务部门'),
+		'filter'=>[
+			/* BUG #1052::财务明细页面中，实验室搜索和其他不同，可能导致由于实验室过多，无法选定需要搜索的实验室(kai.wu@2011.08.19) */
+			'form'=>V('billing:transactions_table/filters/department', ['department_id'=>$form['department_id']]),
+			'value'=>$form['department_id'] ? O('billing_department', H($form['department_id']))->name : NULL
+		],
+		'nowrap'=>TRUE,
+	],
+	'lab_name'=>[
+		'title'=>I18N::T('billing', '实验室'),
+		'nowrap'=>TRUE,
+	],
+	'income'=>[
+		'title'=>I18N::T('billing', '收入'),
+		'align'=>'right',
+		'nowrap'=>TRUE,
+	],
+	'outcome'=>[
+		'title'=>I18N::T('billing', '支出'),
+		'align'=>'right',
+		'nowrap'=>TRUE,
+	],
+	'description'=>[
+		'title'=>I18N::T('billing', '备注'),
+	],
+	'rest'=>[
+		'nowrap'=>TRUE,
+		'align'=>'right',
+	]
+
+]);
+
+$table->empty_message = I18N::T('billing','没有符合条件的明细');
+
+if (count($transactions) > 0) {
+	foreach ($transactions as $transaction) {
+		$links = $transaction->links();
+		$table->add_row([
+			'@'=> [
+				'view' => V('billing:transactions_table/data/id', ['object'=>$transaction]),
+				'extra' => 'style="padding:4px" align="right" align="right"',
+			],
+			'date'=>'<small class="description">'.H(Date::format($transaction->ctime)).'</small>',
+			'department'=>V('billing:transactions_table/data/department', ['object'=>$transaction]),
+			'lab_name'=>V('billing:transactions_table/data/lab_name', ['object'=>$transaction]),
+			'income'=>$transaction->income ? H(Number::currency($transaction->income)) : '--',
+			'outcome'=>$transaction->outcome ? H(Number::currency($transaction->outcome)) : '--',
+			'description'=>V('billing:transactions_table/data/description', ['object'=>$transaction]),
+			'rest'=>Widget::factory('application:links', ['links' => $links])
+		]);
+	}
+}
+
+echo $table;

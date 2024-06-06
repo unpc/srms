@@ -1,0 +1,6 @@
+<?php echo Form::checkbox('dtstart_check', $this->dtstart_check, '', 'class="middle monitor checkbox"'); ?>&#160;
+<input name="dtstart" class="text date middle toggle_status:dtstart_check enable_on:on" value="<?php echo H($this->dtstart) ?>" date_type="month"/>
+&#160;<span class="middle description">-</span>&#160;
+<?php echo Form::checkbox('dtend_check', $this->dtend_check, '', 'class="middle monitor checkbox"'); ?>&#160;
+<input name="dtend" class="text date middle toggle_status:dtend_check enable_on:on" value="<?php echo H($this->dtend) ?>" date_type="month"/>
+<input class="hidden" name="date_filter" value="1" />

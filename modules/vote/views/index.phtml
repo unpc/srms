@@ -1,0 +1,108 @@
+<div class="hr_1">&nbsp;</div>
+<div style="padding-top:0px">
+	<?php $me = L('ME');
+	
+	if ($me->is_allowed_to('创建', 'vote_activity')): ?>
+		<div class="panel clearfix">
+			<div class="float_left padding_1 nowrap" style="line-height:24px">
+				<a href="<?php echo H(URI::url('!vote/add') ) ?>" class="button button_add middle"><?php echo I18N::T('vote', '创建投票')?></a>
+			</div>
+		</div>
+	<?php endif; ?>
+	<?php echo $pagination; ?>
+	
+	<?php 
+		$me = L('ME');
+		$table = Widget::factory('table');
+		$table->name = 'vote';
+		
+		
+		$columns = [
+					'@' => NULL,
+					'topic' => [
+						'weight' => 20,
+						'title' => I18N::T('vote','投票主题'),
+						'align' => 'left',
+						'nowrap' => TRUE,
+						'filter' => [
+							'form' => V('vote:search_filter/topic', [
+														'form' => $form]
+							),
+							'value' => $form['topic'] ? H($form['topic']) : NULL,
+	           			    //'field' => 'topic'
+						]
+					],
+					'creater' => [
+						'weight' => 20,
+						'title' => I18N::T('vote','发起人'),
+						//'align' => 'left',
+						'filter' => [
+							'form' => V('vote:search_filter/creater',[
+								'form' => $form
+							]),
+							'value' => $form['creater'] ? H($form['creater']) : NULL
+						
+						]
+						
+					],
+					'dtstart' => [
+						'weight' => 20,
+						'title' => I18N::T('vote','投票开始时间'),
+						'align' => 'left',
+						'nowrap' => TRUE,
+						'sortable' => TRUE,
+					],
+					'dtend' => [
+						'weight' => 20,
+						'title' => I18N::T('vote','投票截止时间'),
+						'align' => 'left',
+						'nowrap' => TRUE,
+						'sortable' => TRUE
+					],
+					'ctime' => [
+						'weight' => 20,
+						'title' => I18N::T('vote','发起时间'),
+						'align' => 'left',
+						'sortable' => TRUE,
+						'nowrap' => TRUE
+					]
+				];
+				
+				$columns['links'] = ['align' => 'right','nowrap' => TRUE];//添加修改、删除链接
+				
+		foreach ($activities as $activity) {	
+
+			$links = $activity->links('edit');
+			
+			$table->add_row([
+				'@' => [
+					'view' => $activity->icon('32', 'style="display:block"'),
+					'extra' => 'style="padding:4px" align="right"'
+				],
+
+				'topic' => V('vote:vote_table/topic',[
+					'activity' => $activity
+				]),
+				'creater' => V('vote:vote_table/creater',[
+					'activity' => $activity
+				]),
+				'dtstart' => Date::format($activity->dtstart),
+				'dtend' => V('vote:vote_table/dtend', [ 'dtend' => $activity->dtend ]),
+				'ctime' => Date::format($activity->ctime),
+				'links' => Widget::factory('application:links', ['links' => $links])
+			
+			]);
+		
+		
+		}
+
+		$table->add_columns($columns);
+		$table->empty_message = I18N::T('vote','没有投票活动！');
+		
+		echo $table;
+	?>
+</div>
+		
+		
+		
+	

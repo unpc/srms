@@ -1,0 +1,204 @@
+<?php
+$tip = Config::get('comment.rate')['tip'];
+$panel_buttons   = [];
+$panel_buttons[] = [
+    'text' => I18N::T('eq_comment', '导出'),
+    'tip'   => I18N::T('eq_comment', '导出Excel'),
+    'extra' => 'q-object="export" q-event="click" q-src="' . H(URI::url('!eq_comment/user/export')) .
+        '" q-static="' . H(['type' => 'csv', 'form_token' => $form_token, 'tab' => 'incharge']) .
+        '" class="button button_save "',
+];
+$panel_buttons[] = [
+    'text' => I18N::T('eq_comment', '打印'),
+    'tip'   => I18N::T('eq_comment', '打印'),
+    'extra' => 'q-object="export" q-event="click" q-src="' . H(URI::url('!eq_comment/user/export')) .
+        '" q-static="' . H(['type' => 'print', 'form_token' => $form_token, 'tab' => 'incharge']) .
+        '" class = "button button_print "',
+];
+
+if ($form['user_dtend_dtstart'] && $form['user_dtend_dtend']) {
+  $form['user_dtend_date'] = H(date('Y/m/d',$form['user_dtend_dtstart'])).'-'.H(date('Y/m/d',$form['user_dtend_dtend']));
+}
+elseif ($form['user_dtend_dtstart']) {
+  $form['user_dtend_date'] = H(date('Y/m/d',$form['user_dtend_dtstart'])).'-'.I18N::T('eq_comment','最末');
+}
+elseif ($form['user_dtend_dtend']) {
+  $form['user_dtend_date'] = I18N::T('eq_comment','最初').'-'.H(date('Y/m/d',$form['user_dtend_dtend']));
+}
+
+$table = Widget::factory('table');
+$table->name = 'eq_comment_user';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+$table->add_columns([
+    'user_serial_number' => [
+      'title' => I18N::T('eq_comment', '编号'),
+      'align' => 'left',
+      'filter' => [
+        'form' => V('eq_comment:comments_table/filters/user/user_serial_number', ['uid' => $form['uid']]),
+        'value' => $form['uid'] ? Number::fill(H($form['uid']), 6) : NULL,
+        'field' => 'uid'
+      ],
+      'weight' => 10,
+      'nowrap' => TRUE
+    ],
+    'group'=> [
+      'title' => I18N::T('quota', '组织机构'),
+      'invisible' => TRUE,
+      'filter' => [
+        'form' => V('eq_comment:comments_table/filters/group', ['tag' => $group, 'root' => $root]),
+        'value' => $group->id != $root->id ? H($group->name) : NULL,
+        'field'=>'group_id',
+      ],
+      'nowrap' => TRUE
+    ],
+    'user_equipment_name'=>[
+      'title' => I18N::T('eq_comment', '仪器'),
+      'align' => 'left',
+      'filter' => [
+        'form' => V('eq_comment:comments_table/filters/user/user_equipment_name', ['user_equipment_name' => $form['user_equipment_name']]),
+        'value' => $form['user_equipment_name'] ? H($form['user_equipment_name']) : NULL
+      ],
+      'weight' => 20,
+      'nowrap' => TRUE,
+    ],
+    'user_name' => [
+      'title' => I18N::T('eq_comment', '使用者'),
+      'align' => 'left',
+      'filter' => [
+        'form' => V('eq_comment:comments_table/filters/user_name', ['user_name' => $form['user_name']]),
+        'value' => $form['user_name'] ? H($form['user_name']) : NULL,
+        'field' => 'user_name'
+      ],
+      'weight' => 30,
+      'nowrap' => TRUE
+    ],
+    'lab_id' => [
+			'title' => I18N::T('eq_comment', '课题组'),
+			'invisible' => TRUE,
+			'suppressible' => TRUE,
+			'filter' => [
+				'form' => Widget::factory('labs:lab_selector', [
+					'name' => 'lab_id',
+					'selected_lab' => $form['lab_id'],
+					'size' => 25,
+					'all_labs' => TRUE
+				]),
+				'value' => $form['lab_id'] ? H(O('lab', $form['lab_id'])->name) : NULL,
+			],
+			'weight' => 100,
+    ],
+    'incharge_name'=>[
+      'title' => I18N::T('eq_comment', '仪器负责人'),
+      'invisible' => TRUE,
+      'align' => 'left',
+      'filter' => [
+        'form' => V('eq_comment:comments_table/filters/incharge', ['incharge_name'=>$form['incharge_name']]),
+        'value' => $form['incharge_name'] ? H($form['incharge_name']) : NULL
+      ],
+      'weight' => 100,
+      'nowrap' => TRUE,
+    ],
+    'service_attitude' => [
+      'title' => I18N::T('eq_comment', '服务态度'),
+      'align' => 'left',
+      'filter' => [
+        'form' => V('eq_comment:comments_table/filters/rate', ['name' => 'service_attitude', 'val' => $form['service_attitude']]),
+        'value' => (isset($form['service_attitude']) && $form['service_attitude'] != -1) ? $tip[$form['service_attitude']] : '',
+      ],
+      'weight' => 100,
+      'nowrap' => TRUE
+    ],
+		'user_dtend' => [
+			'title' => I18N::T('eq_comment', '时间范围'),
+			'align' => 'left',
+      'invisible' => TRUE,
+			'filter'=> [
+				'form' => V('eq_comment:comments_table/filters/user/date', [
+					'name_prefix' => 'user_dtend_',
+					'dtstart_check' => $form['user_dtend_dtstart_check'],
+					'dtstart' => $form['user_dtend_dtstart'],
+					'dtend_check' => $form['user_dtend_dtend_check'],
+					'dtend' => $form['user_dtend_dtend']
+				]),
+        'value' => $form['user_dtend_date'] ? H($form['user_dtend_date']) : NULL,
+        'field' => 'user_dtend_dtstart_check,user_dtend_dtstart,user_dtend_dtend_check,user_dtend_dtend'
+			],
+			'weight' => 150,
+			'nowrap'=>TRUE,
+		],
+    'service_quality' => [
+      'title' => I18N::T('eq_comment', '服务质量'), 
+      'align' => 'left', 
+      'weight' => 100, 
+      'filter' => [
+        'form' => V('eq_comment:comments_table/filters/rate', ['name' => 'service_quality', 'val' => $form['service_quality']]),
+        'value' => (isset($form['service_quality']) && $form['service_quality'] != -1) ? $tip[$form['service_quality']] : '',
+      ],
+      'nowrap' => TRUE
+    ],
+    'technical_ability' => [
+      'title' => I18N::T('eq_comment', '技术能力'), 
+      'align' => 'left', 
+      'weight' => 100, 
+      'filter' => [
+        'form' => V('eq_comment:comments_table/filters/rate', ['name' => 'technical_ability', 'val' => $form['technical_ability']]),
+        'value' => (isset($form['technical_ability']) && $form['technical_ability'] != -1) ? $tip[$form['technical_ability']] : '',
+      ],
+      'nowrap' => TRUE
+    ],
+    'emergency_capability' => [
+      'title' => I18N::T('eq_comment', '应急能力'), 
+      'align' => 'left', 
+      'weight' => 100, 
+      'filter' => [
+        'form' => V('eq_comment:comments_table/filters/rate', ['name' => 'emergency_capability', 'val' => $form['emergency_capability']]),
+        'value' => (isset($form['emergency_capability']) && $form['emergency_capability'] != -1) ? $tip[$form['emergency_capability']] : '',
+      ],
+      'nowrap' => TRUE
+    ],
+    'detection_performance' => ['title' => I18N::T('eq_comment', '检测性能'), 'align' => 'left', 'weight' => 100, 'nowrap' => TRUE],
+    'accuracy' => ['title' => I18N::T('eq_comment', '准确性'), 'align' => 'left', 'weight' => 100, 'nowrap' => TRUE],
+    'compliance' => ['title' => I18N::T('eq_comment', '吻合度'), 'align' => 'left', 'weight' => 100, 'nowrap' => TRUE],
+    'timeliness' => ['title' => I18N::T('eq_comment', '及时性'), 'align' => 'left', 'weight' => 100, 'nowrap' => TRUE],
+    'sample_processing' => ['title' => I18N::T('eq_comment', '样品处理'), 'align' => 'left', 'weight' => 100, 'nowrap' => TRUE],
+    'comment_suggestion' => ['title' => I18N::T('eq_comment', '评价建议'), 'align' => 'left', 'weight' => 100, 'nowrap' => TRUE]
+]);
+$table->empty_message = I18N::T('eq_comment', '没有评价信息');
+
+$param = [
+    'panel_buttons' => $panel_buttons,
+    'top_input_arr'=> ['user_serial_number', 'user_equipment_name'],
+    'columns'=> $table->columns,
+];
+echo V('application:search_box', $param);
+
+$table->comments = $comments;
+
+if ($comments->total_count()) foreach ($comments as $comment) {
+    $key = 'user_comment_' . $comment->id;
+    
+    $row = [
+        'user_serial_number' => V('eq_comment:comments_table/data/serial_number', ['id' => $comment->id]),
+        'user_equipment_name' => V('eq_comment:comments_table/data/equipment_name', ['comment' => $comment]),
+        'user_name' => V('eq_comment:comments_table/data/user', ['comment' => $comment]),
+        'service_attitude' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->service_attitude]),
+        'service_quality' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->service_quality]),
+        'technical_ability' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->technical_ability]),
+        'emergency_capability' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->emergency_capability]),
+        'detection_performance' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->detection_performance]),
+        'accuracy' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->accuracy]),
+        'compliance' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->compliance]),
+        'timeliness' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->timeliness]),
+        'sample_processing' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->sample_processing]),
+        'comment_suggestion' => V('eq_comment:comments_table/data/text', ['text' => $comment->comment_suggestion]),
+    ];
+    $table->add_row_withkey($row, $key);
+}
+?>
+<div class="pages" ><?php echo $pagination; ?></div>
+<?php
+echo $table;
+?>
+<div class="pages" ><?php echo $pagination; ?></div>

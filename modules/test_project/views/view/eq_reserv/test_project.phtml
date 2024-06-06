@@ -1,0 +1,50 @@
+<?php
+$equipment = $component->calendar->parent;
+$test_projects_by_cat = Test_Project::get_enable_use_test_projects_by_eq($equipment);
+$reserv = O('eq_reserv', ['component' => $component]);
+if ($reserv->id) {
+    $select_test_projects = json_decode($reserv->test_projects, true);
+}else{
+    $select_test_projects = [];
+}
+?>
+<tr class="begin">
+    <td class="label left top nowrap blue" colspan="2">
+        <h1><?php echo I18N::HT('test_project', '测试项目');?></h1>
+    </td>
+</tr>
+<?php
+foreach ($test_projects_by_cat as $cat_id => $test_projects):?>
+    <tr>
+        <td class="label top lpadding_2">
+                <?php
+                $test_project_cat = O('test_project_cat', $cat_id);
+                echo $test_project_cat->name;
+                ?>
+        </td>
+        <td></td>
+    </tr>
+    <?php foreach ($test_projects as $test_project): ?>
+    <?php
+        $ids[$test_project->id] = $test_project->id;
+    ?>
+    <tr>
+        <td class="lpadding_4">
+            <?php
+                $checked = isset($form['test_project'][$test_project->id]) ? $form['test_project'][$test_project->id] == 'on' : isset($select_test_projects[$test_project->id]);
+                $value = isset($form['test_project_number'][$test_project->id]) ? $form['test_project_number'][$test_project->id] : $select_test_projects[$test_project->id];
+                echo Form::checkbox("test_project[$test_project->id]", $checked, I18N::T('test_project', $test_project->name), 'class="middle checkbox"', 'class="label"')
+            ?>
+        </td>
+        <td>
+            <span>样品数<input style="margin-left: 8px" name="test_project_number[<?= $test_project->id?>]" type="text" class="text number" size="10" value="<?= $value?> "></span>
+        </td>
+    </tr>
+    <?php endforeach; ?>
+    <?php 
+        //显示已删除 但该记录已选用的项目
+        $hidden_test_project_ids = Q("test_project[equipment={$equipment}][cat_id={$cat_id}][hidden]")->to_assoc('id', 'id');
+        $disabled_test_projects = array_intersect_key($select_test_projects, $hidden_test_project_ids);
+        if (count($disabled_test_projects)) echo V('test_project:view/disabled', ['disabled_test_projects' => $disabled_test_projects]);
+    ?>
+<?php endforeach;?>

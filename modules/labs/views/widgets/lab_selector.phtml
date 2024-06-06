@@ -1,0 +1,19 @@
+<?php
+if (!is_object($selected_lab)) $selected_lab = O('lab', $selected_lab);
+
+if ($this->labs):
+	$labs = $this->labs !== NULL ? $this->labs : Q('lab:sort(name_abbr)')->to_assoc('id','name');
+	$labs = $this->labs;
+	$labs = $this->no_lab ? [0=>Config::get('lab.name')]+$labs : $labs;
+	$labs = $this->all_labs ? ['*'=>I18N::T('labs', '--')]+$labs : $labs;
+	echo Form::dropdown($this->name, $labs, $selected_lab->id, 'class="middle dropdown '.($this->is_autosubmit ? 'autosubmit ' : '').'"');
+else:
+	$uniqid = 'labsel_'.uniqid();
+	$size = $this->size ?: '';
+	$autocomplete = $this->autocomplete ?: URI::url('!labs/autocomplete/lab');
+	$lp = $this->lpadding;
+?>
+<input id="<?php echo $uniqid?>_lab" name="<?php echo H($this->name ) ?>" type="hidden" value="<?php echo H($selected_lab->id) ?>" />
+<input id="<?php echo $uniqid?>_lab_name" placeholder="<?php echo I18N::T('labs', '实验室|:signup')?>" class="text middle <?php echo $lp?'lpadding_30':''?> select_on_focus autocomplete:<?php echo H($autocomplete) ?> autocomplete_alt:#<?php echo $uniqid?>_lab" size="<?php
+echo $size?>" value="<?php echo $selected_lab->id ? H($selected_lab->name) : '' ?>" q-tooltip="<?php echo H(I18N::T('labs', '请输入关键字并选择')) ?>" <?php echo $extra ?> />
+<?php endif;

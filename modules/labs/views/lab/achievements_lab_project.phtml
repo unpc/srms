@@ -1,0 +1,54 @@
+<?php
+	$container = 'container_'.uniqid();
+	$require = (string)V('form_require');
+?>
+
+
+		<tr><td><div class="interval_20"></div></td></tr>
+		<tr id="<?php echo $container; ?>">
+	<?php
+	if ($lab->id) $projects = Q("lab_project[lab=$lab]");
+	if (count($projects)>0):
+		$project = $project->id ? $project : null;
+	?>
+	<td class="label middle nowrap lpadding_21 "><?php echo I18N::T('labs', '请选择实验室项目'); ?></td>
+	<td class="middle">
+    <?php
+    $status = Lab_Project_Model::STATUS_ACTIVED;
+    $pros = [];
+    foreach ($projects as $p) {
+    	if ($project->id && $p->id != $project->id && $p->status != $status) {
+    		continue;
+    	}
+        $pros[$p->id] = H($p->name);
+    }
+	echo Form::dropdown(
+		'lab_project', [0=>'--'] + $pros, $project->id ?: 0,
+		'class="middle dropdown"'
+	);
+	?>
+	<?php
+	if (Config::get('achievements.equipments.require')) {
+			echo $require;
+	}?>
+	</td>
+	<?php
+	else:
+		?>
+		<td></td>
+		<td class="middle"><span class="description"><?php echo I18N::T('labs', '* 你可以关联此成果到某一实验室项目，但你的实验室尚未建立项目，建立项目请联系实验室负责人')?></span></td>
+	<?php
+	endif;
+	?>
+		</tr>
+		<tr>
+			<td></td>
+			<td><?php echo $view; ?></td>
+		</tr>
+
+	<?php echo JS::load('labs:achievements_lab_project', [
+		'container'=>$container,
+		'object_name'=>$object->name(),
+		'object_id'=>$object->id,
+		'url'=>URI::url('!labs/projects')
+	]);?>

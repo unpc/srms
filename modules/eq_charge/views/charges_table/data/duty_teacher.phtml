@@ -1,0 +1,24 @@
+<?php
+
+if ($charge->source_name == 'eq_record') {
+    $record = $charge->source;
+    echo $record->duty_teacher->id ? $record->duty_teacher->name : '--';
+} else if ($charge->source_name == 'eq_reserv') {
+    $records = Q("eq_record[reserv_id=$charge->source_id]")->to_assoc('id', 'duty_teacher_id');
+
+    $dt = [];
+    if (count($records)) foreach ($records as $record) {
+        $dteacher = O('user', $record);
+        if ($dteacher->id) {
+            $dt[] = $dteacher->name;
+        }
+    }
+
+    echo (count($dt) ? join(', ', $dt) : '--');
+
+} else if ($charge->source_name == 'eq_sample') {
+    $sample = $charge->source;
+    echo $sample->duty_teacher->id ? $sample->duty_teacher->name : '--';
+}
+
+?>

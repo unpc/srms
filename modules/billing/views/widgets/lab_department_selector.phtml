@@ -1,0 +1,56 @@
+<?php 
+$uniqid = 'departmentsel_'.uniqid();
+$autocomplete = $this->autocomplete ?: URI::url('!billing/autocomplete/department');
+$department = $this->department;
+$size = $this->size ? : '40';
+$currency_sign = Config::get('lab.currency_sign');
+?>
+
+<input id="<?php echo $uniqid?>_department" name="<?php echo H($this->name ) ?>" type="hidden" value="<?php echo H($department->id) ?>" />
+<input id="<?php echo $uniqid?>_department_name" class="text middle select_on_focus autocomplete:<?php echo H($autocomplete) ?> autocomplete_alt:#<?php echo $uniqid?>_department" size="<?php echo H($size) ?>" value="<?php echo H($department->name) ?>" q-tooltip="<?php echo H(I18N::T('billing', '请输入关键字并选择') ) ?>" />
+<script type="text/javascript">
+$(function() {
+	var $department = $('input#<?php echo $uniqid?>_department');
+	var $change_credit_user_tr = $department.parents('form').find('tr[name=change_credit_user]');
+	var $change_deduction_user_tr = $department.parents('form').find('tr[name=change_deduction_user]');
+	
+	$department.bind('change', function() {
+		
+		var input_value = $(this).val();
+		//input_value为2.3。2为department_id,3为lab_id
+		var account_info = input_value.match('^(\\d*)\\.(\\d*)'); 
+		var department_id = account_info['1'];
+		var lab_id = account_info['2'];
+		
+		Q.trigger({
+			object: 'lab_department',
+			url: '<?php echo URI::url('!billing/account')?>',
+			event: 'change',
+			data: {
+				department_id: department_id,
+				lab_id: lab_id
+			},
+			success: function(data) {
+				$department.val(department_id);
+				var department_info = data.match('([-]*\\d*[.]*\\d*)[|](\\d*)');
+				$department.parents('form:eq(0)').find('input[name=credit_balance]').prev().val('<?php echo $currency_sign; ?>'+ parseFloat(department_info['1']).toFixed('2'));
+				if (department_info['2']) {
+					$change_credit_user_tr.show();
+					$change_deduction_user_tr.show();
+				}
+
+                var ob = {};
+                if (department_id) {
+                    ob['department_id'] = department_id;
+                }
+
+                if (lab_id) {
+                    ob['lab_id'] = lab_id;
+                }
+
+                $('input[id*=lab_name][class*=autocomplete]').attr('q-static', $.param(ob));
+			}
+		});
+	});
+});
+</script>

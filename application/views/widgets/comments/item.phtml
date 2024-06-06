@@ -1,0 +1,22 @@
+<?php 
+$comment_id = 'comment_delete_'.uniqid();
+$url_params = json_decode($comment->url_params, TRUE);
+?>
+<div id="<?php echo H($comment_id) ?>" class="form comment padding_1">
+<a href="<?php echo H('comment_'. $comment->id) ?>" class="hidden">&#160;</a>
+<table width="100%">
+<tr>
+<td class="icon top"><?php echo $comment->author->icon(32) ?></td>
+<td class="content_wrap left top lpadding_1" style="width:100%">
+	<?php if (L('ME')->is_allowed_to('删除', $comment)): ?>
+	<div class="float_right">
+		<a href="#" class="blue remove_button" onclick="return false" q-widget="comments" q-object="delete" q-event="click" q-static="<?php echo H(['id'=>$comment->id, 'comment_id'=>$comment_id, 'list_id'=>$list_id, 'oname'=>$object->name(), 'oid'=>$object->id]) ?>">&#160;</a>
+	</div>
+	<?php endif; ?>
+    <a name="<?php echo H($comment->id) ?>">&#160;</a>
+	<span><?php $comment->author->render() ?>: </span>
+	<?php echo Comments_Widget::change_name(H($comment->content), TRUE) ?>
+	<span class="time">(<?php echo Date::fuzzy($comment->ctime, TRUE) ?>)</span>
+</td>	
+</table>
+</div>

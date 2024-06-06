@@ -1,0 +1,398 @@
+@css-define lightest_gray: "#f4f4f4";
+@css-define lighter_gray: "#e7e7e7";
+@css-define light_gray: "#d7d7d7";
+@css-define gray: "#ccc";
+@css-define dark_gray: "#999";
+@css-define darker_gray: "#666";
+@css-define darkest_gray: "#333";
+@css-define white: "#fff";
+
+html {
+	height: auto;
+}
+
+body {
+	height: auto;
+	padding: 10px;
+}
+
+#body {
+	width: 910px;
+	/* margin: 0 auto; */
+	color: #666;
+	position: relative;
+	
+	.head-img {
+		margin: 0;
+		padding: 0;
+		margin-left: 4px;
+	}
+}
+
+.gismon_map_front {
+    border: 1px solid #CCCCCC;
+    height: 500px;
+    width: 100%;
+}
+
+h1, h2, h3 {
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.left_content {
+	float: left;
+	width: 550px;
+	padding-left: 4px;
+}
+
+.right_content {
+	float: left;
+	margin-left: 14px;
+	padding-right: 2px;
+	width:300px;
+}
+
+.tbar {
+	background: #eee url('images/mbar_bg.png') repeat-x left bottom;
+	overflow: hidden;
+	height: 25px;
+	margin-bottom:10px;
+	display: block;
+}
+
+.tbar span {
+	float: left;
+	font-size:14px;
+	font-weight:bold;
+	margin-top:5px;
+	margin-left:10px;
+}
+
+.tbar a {
+	float: right;
+	font-weight: bold;
+	line-height: 25px;
+	margin-right: 8px;
+	margin-top: 3px;
+}
+
+.description {
+	color: #666666;
+}
+
+table.form td{
+	padding:2px 6px;
+}
+
+table.sticky {
+	color: #000;
+
+	th, td {
+		padding: 2px 6px;
+		*padding: 3px 2px 1px;
+		border-bottom: 1px solid #E7E7E7;
+	}
+	
+	thead th
+	{
+		cursor: default;
+		background-color: $lightest_gray;
+		border-bottom: 2px solid $gray;
+		font-weight: bold;
+		padding: 2px 6px;
+	}	
+
+}
+
+table.flexible {width:100%}
+
+
+.check_hover .show_on_hover {
+	visibility: hidden;
+}
+
+.check_hover:hover .check_hover .show_on_hover {
+	visibility: hidden;
+}
+
+.check_hover:hover .show_on_hover {
+	visibility: visible;
+	z-index:1000;
+}
+
+.check_hover .check_hover:hover .show_on_hover {
+	visibility: visible;
+	z-index:1000;
+}
+
+
+.tag_filter_container {
+	display: inline-block;
+
+	.tag_filter {
+		display: inline-block;
+		background: url(images/tag_filter.png) 100% 50% no-repeat;
+		_background-image: url(images/tag_filter.gif);
+		padding: 0 9px 0 0;
+		padding-right: 10px\9;
+		color: $white;
+		height: 20px;
+		line-height: 20px;
+		vertical-align: top;
+		_width:0;
+		*margin-bottom: 1px;
+
+		a {
+			color: $white;
+			background-color: #7498E0; 
+			display: block;
+			text-decoration: none !important;
+			white-space: nowrap;
+			line-height: 16px;
+			height: 16px;
+			padding: 3px 6px 1px;
+		}
+
+	}
+
+	.tag_filter_first a {
+		border-radius: 2px 0 0 2px;
+	}
+
+	.tag_filter_more {
+		background-image: url(images/tag_filter_more.png);
+		_background-image: url(images/tag_filter_more.gif);
+		width: 20px;
+		/* 多余的改动 */
+		/* position: relative; */
+
+		.tag_menu {
+			position:absolute;
+			z-index: 100;
+			display: block;
+			background-color: $white;
+			color: #000;
+			min-width: 80px;
+			_width: 80px;
+			border:1px solid $darker_gray\9;
+			box-shadow:$darker_gray 0 4px 8px;
+
+			a.tag_link {
+				display: block !important;
+				background-color: $white;
+				color: #000;
+				padding-right: 18px;
+				min-width : 80px;
+				*width: 100%;
+			}
+
+			a.tag_link:hover {
+				background-color: #7498E0;
+				color: $white;
+			}
+
+			a.tag_with_children {
+				background: url(images/collapse.png) no-repeat right center;
+				_background-image: url(images/collapse.gif);
+			}
+			
+		}
+	}
+
+	.tag_filter_more.active,
+	.tag_filter_more:hover
+	{
+		background-color: $white !important;
+	}
+
+	.tag_filter_last {
+		background-image: url(images/tag_filter_last.png);
+		_background-image: url(images/tag_filter_last.gif);
+	}
+
+}
+
+
+.panel .tag_filter_container .tag_filter_more .tag_menu {
+	box-shadow:#000 0 4px 8px;
+}
+
+.gray_tag_container {
+	display:inline-block;
+	background-color:$white;
+	border:1px solid $gray;
+	margin:0;
+	padding:1px;
+
+	.tag_filter_container {
+		margin: 0;
+		padding: 0;
+
+	   	.tag_filter_first a {
+			border-radius: 0;
+		}
+	}
+}
+
+.tag_show_next {
+	position:absolute;
+	left:100%;
+	top : 0; 
+	background-color: $white !important;
+	border:1px solid $dark_gray\9;
+	box-shadow:$darker_gray 0 4px 8px;
+	z-index:1000;
+}
+
+input, label {
+	vertical-align: middle;
+}
+
+input.text, select, textarea, .text_like {
+	padding:3px;
+	border:1px solid $gray;
+	background-color: $white;
+	margin:0;
+	color: #000;
+}
+
+input.text:disabled, select:disabled, textarea:disabled {
+	color: $dark_gray;
+	background-color: $lighter_gray;
+}
+
+input.text {
+	height: 15px;
+}
+
+label {
+	line-height: 24px;
+}
+
+input.text, textarea {
+	-webkit-appearance: none;
+	-webkit-border-radius: 0;
+}
+
+input.button, button, a.button {
+	text-decoration: none;
+	cursor: hand;
+	cursor: pointer;
+	margin:0;
+	display: inline-block;
+
+	height:14px;
+	line-height:1.231;
+	padding:4px;
+	text-align: center;
+	text-decoration: none !important;
+	-moz-user-select: none;
+	*white-space:nowrap;
+
+	font-size: 14px;
+	font-weight: normal;
+
+	background-color: #f4f4f4;
+
+	border-width:1px;
+	border-style:solid;
+	border-color:#fff #999 #999 #fff;
+
+}
+
+input.button, button{
+	padding:0 4px;
+	height:24px;
+	line-height:24px;
+	_padding:0;
+	*width:auto;
+	_line-height:20px;
+	*overflow:hidden;
+}
+
+input.button:hover, button:hover, a.button:hover {
+	background-color: #ddd;
+}
+
+input.button:active, button:active, a.button:active {
+	border-color: #999 #fff #fff #999;
+}
+
+textarea {
+	-moz-resize: none;
+}
+
+div.pagination {
+	background-color:$light_gray;
+	color:$darker_gray;
+	padding: 2px 4px;
+	line-height: 1.231;
+	text-align: right;
+}
+
+div.pagination a, div.pagination span {
+	color:$darker_gray;
+	padding: 1px 6px;	
+	display: inline-block;
+}
+
+div.pagination a {
+	text-decoration: none;
+	cursor: pointer;
+	color: #000;
+}
+
+div.pagination .current {
+	font-weight: bold;
+	color: $darker_gray;
+	text-decoration: underline;
+}
+
+div.pagination a:hover {
+	color: $white;
+	background-color: $darker_gray;
+}
+
+a {
+	outline: none;
+	text-decoration: none;
+	cursor:pointer;
+	color:#666;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+
+.login_box {
+	border-bottom:1px dashed #666;	
+	margin-bottom:15px;
+}
+
+table.form {
+	margin-bottom: 10px;
+}
+
+table.form td {
+	padding: 2px 4px;
+}
+
+.login_box table.form .dropdown_container {
+	width: 140px;
+	*width: 108px; 
+}
+
+input.button_login, a.button_login {
+	padding-left: 22px;
+	background-image: url('images/login.png');
+	background-repeat: no-repeat;
+	background-position: 4px center;
+	_background-image: url('images/login.gif'); 
+}
+
+.bubble_info {
+	margin-left:72px;
+	_width: 180px;
+}

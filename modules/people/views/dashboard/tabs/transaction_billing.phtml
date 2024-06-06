@@ -1,0 +1,147 @@
+<?php
+$uniqid = uniqid();
+$select_all_id = 'select_all_' . $uniqid;
+$batch_form_id = 'batch_form_' . $uniqid;
+$delete_selected = 'delete_selected_' . $uniqid;
+$form_token = 'form_token_' . $uniqid;
+$me = L('ME');
+?>
+<?php
+$table = Widget::factory('table');
+
+$table->name = 'transaction_billing';
+$table->form = $form;
+
+
+$table->add_columns([
+    'checkbox' => [
+        'type' => 'checkbox',
+        'id' => $select_all_id,
+        'align' => 'center'
+    ],
+    'transaction'=> [
+        'title' => I18N::T('billing_standard', '计费编号'),
+        'nowrap'=>TRUE,
+        'filter' => [
+            'form' => V('billing_standard:charges_table/filters/vouchernum', ['form' => $form])
+        ],
+        'weight'=> 10,
+    ],
+	'equipment_name'=>[
+		'title'=>I18N::T('billing_standard', '仪器名称'),
+		'nowrap'=>TRUE,
+        'filter' => [
+            'form' => V('billing_standard:charges_table/filters/equipment_name', ['form' => $form])
+        ],
+		'weight'=> 20,
+    ],
+    'equipment_ref_no'=>[
+        'title'=>I18N::T('billing_standard', '仪器编号'),
+        'nowrap'=>TRUE,
+        'weight'=> 30,
+    ],
+    'amount'=> [
+        'title' => I18N::T('billing_standard', '金额'),
+        'nowrap'=> TRUE,
+        'weight'=> 40,
+    ],
+    'user'=> [
+        'title' => I18N::T('billing_standard', '使用者'),
+        'nowrap'=> TRUE,
+        'weight'=> 50,
+    ],
+    'type'=> [
+        'title' => I18N::T('billing_standard', '收费类型'),
+        'nowrap'=> TRUE,
+        'input_type' => 'select',
+        'filter' => [
+            'form' => V('billing_standard:charges_table/filters/charge_type', ['form' => $form]),
+            'value'=>''
+        ],
+        'weight'=> 60,
+    ],
+    'fund_no'=> [
+        'title' => I18N::T('billing_standard', '经费卡号'),
+        'nowrap'=> TRUE,
+        'weight'=> 70,
+    ],
+]);
+
+
+$table->add_column('rest', ['title'=>I18N::T('billing_standard', '操作'), 'align'=>'left', 'nowrap'=>TRUE, 'weight'=> 120,]);
+
+$table->empty_message = I18N::T('billing_standard', '无符合条件的报销项目');
+
+$table->transactions = $transactions;
+
+foreach ($transactions as $transaction) {
+    $links = [];
+    $links[] = [
+        'text' => I18N::T('billing_standard', '撤回'),
+        'extra' => 'class="blue" q-event="click" q-object="cancel_transaction"' .
+                    ' q-static="' . H(['transaction_id' => $transaction['id']]) .
+                    '" q-src="' . URI::url("!billing_standard/index") . '"',
+    ];
+
+    $links[] = [
+        'text' => I18N::T('billing_standard', '修改经费卡号'),
+        'extra' => 'class="blue" q-event="click" q-object="edit_transaction"' .
+                     ' q-static="' . H(['transaction_id' => $transaction['id'], 'fund_id' => $transaction['fund_id']]) .
+                     '" q-src="' . URI::url("!billing_standard/index") . '"',
+     ];
+
+	$add_row_arr = [
+		'checkbox'=>V('billing_standard:charges_table/data/selector', ['id'=>$transaction['id'], 'select_all_id' => $select_all_id]),
+		'transaction' => $transaction['transaction'],
+        'equipment_name' => $transaction['equipment_name'],
+        'equipment_ref_no' => $transaction['equipment_ref_no'],
+        'amount' => $transaction['amount'],
+        'user' => $transaction['user'],
+        'type' => $transaction['type'],
+        'fund_no' => $transaction['fund_no'],
+		'rest'=>Widget::factory('application:links', ['links'=>$links])
+	];
+
+	$table->add_row($add_row_arr);
+}
+
+$columns = (array)$table->columns;
+
+$param = [
+    'top_input_arr' => ['transaction', 'equipment_name', 'type'],
+    'columns'       => $columns,
+];
+
+echo V('application:search_box', $param);
+
+?>
+
+
+<form
+    q-object="batch_edit_transaction"
+    q-event="submit"
+    q-src="<?= H(URI::url("!billing_standard/index")); ?>"
+    id="<?= H($batch_form_id) ?>"
+    method="post"
+    autocomplete="off"
+>
+<div class="panel clearfix">
+    <div class="float_left" style="padding-top: 10px; color: #000;">
+        合计个数：<span style="color: var(--basiccolor);"><?php echo $total_transactions; ?></span>，合计金额（元）：<span style="color: var(--basiccolor);"><?php echo $total_amount; ?></span>
+    </div>
+    <div class="float_right">
+        <input class="font-button-save" type="submit" name="cancel" value="<?= I18N::T('application', '批量撤回') ?>">
+        <input class="font-button-save" type="submit" name="edit" value="<?= I18N::T('application', '批量修改经费卡号') ?>">
+        <input class="font-button-save" type="submit" name="create" value="<?= I18N::T('application', '生成报销单') ?>">
+    </div>
+</div>
+<div class="interval_16"></div>
+<?php 
+    echo $table;
+?>
+</form>
+<div style="text-align: right"><?php echo $pagination; ?></div>
+<div class="interval_10"></div>
+<?php
+echo JS::load('people:index_operate', ['select_all_id'=>$select_all_id, 'batch_form_id' => $batch_form_id]);
+?>

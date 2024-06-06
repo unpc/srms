@@ -1,0 +1,30 @@
+<?php echo CSS::load_async('calendars:common'); ?>
+<?php if(!$hidden_tabs)://决定是否显示日历列表切换的tab
+	?>
+<div class="left" style="position:relative;">
+	<?php echo $calendar_tabs ?>
+
+    <?php
+    if ($calendar->type == 'eq_incharge') {
+        $panel_buttons = [
+            [
+                'tip'   => I18N::T('eq_reserv', '导出Excel'),
+                'text' => I18N::T('equipments', '导出'),
+                'extra' => 'q-object="export_components" q-event="click" q-src="' . URI::url('!eq_reserv') .
+                    '" q-static="' . H(['type' => 'csv', 'form_token' => $form_token, 'calendar_id' => $calendar->id]) .
+                    '" class="button button_save "',
+            ],
+            [
+                'tip'   => I18N::T('eq_reserv', '打印'),
+                'text' => I18N::T('equipments', '打印'),
+                'extra' => 'q-object="export_components" q-event="click" q-src="' . URI::url('!eq_reserv') .
+                    '" q-static="' . H(['type' => 'print', 'form_token' => $form_token, 'calendar_id' => $calendar->id]) .
+                    '" class="button button_print "',
+            ],
+        ];
+        echo V('application:panel_buttons', ['panel_buttons' => $panel_buttons]);
+    }
+    ?>
+</div>
+<?php endif;?>
+<?php echo $calendar_tabs->content ?>

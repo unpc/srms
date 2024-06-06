@@ -1,0 +1,20 @@
+<style>
+    a.flexform_button_delete:hover{
+        color: #F5222D !important;
+    }
+</style>
+<div class="flexform_item clearfix <?php echo 'door_' . $this->index;?>">
+<?php if(!$this->extra_vars['hidden_delete_button']):?>
+<div class="float_right trash_area" style="line-height: 30px">
+    <a style="color: #999;" class="pointer flexform_button_delete <?php echo $this->no_delete_confirm ? 'flexform_no_delete_confirm' : '';?>"><span style="position: relative;top: 1.5px;" class=" icon-trash"></span> <?php echo HT('删除');?></a>
+</div>
+<?php endif;?>
+    <?php
+    echo V($this->view, (array) $this->data + (array) $this->extra_vars +
+    [
+        'flexform_index'    => $this->index,
+        'no_delete_confirm' => $this->no_delete_confir,
+    ]);
+    ?>
+
+</div>

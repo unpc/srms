@@ -1,0 +1,15 @@
+<div>
+    <div style="width: 126px;line-height: 30px;" class="nowrap float_left">
+        <?= H(T($item['name']))?>
+    </div>
+    <div style="height: 30px; line-height: 30px;">
+        <?php
+        foreach ($item['params'] as $k => $v) {
+        	echo Form::radio($prekey.'_'.$key, $k, Event::trigger('admin.support.convert', $prekey, $key, $k), I18N::T('support', $v), 'class="radio"');
+        ?>
+            <span style="display: inline-block;width: 152px;"></span>
+        <?php
+            }
+        ?>
+    </div>
+</div>

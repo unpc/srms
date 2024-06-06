@@ -1,0 +1,5 @@
+<?php 
+$actual_times = Q("$task tn_note")->to_assoc('id', 'actual_time');
+$sum = round(array_sum($actual_times) / 3600, 1);
+?>
+<strong><big><?php echo $sum ?></big></strong>hr

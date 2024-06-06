@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" style="overflow: hidden; margin: 0px;">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+	<title>Glogon提醒</title>
+
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <meta http-equiv="Content-Script-Type" content="text/javascript" />
+
+    <base href="<?php echo H(Config::get('system.base_url') ) ?>" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+
+    <?php echo $this->controller->load_css(); ?>
+    <?php echo $this->controller->load_js(TRUE); ?>
+
+    <style>
+        div.form {
+            padding: 10px 20px; 
+            background: none; 
+            width: 480px; 
+            box-sizing: border-box;
+        }
+    </style>
+
+</head>
+
+<body>
+    <img src="<?php echo H(URI::url('!equipments/images/glogon_banner.bmp')) ?>" />
+    <!-- <img src="<?php // echo H(_C('images/glogon_banner.bmp')) ?>" width="<?php // echo H(Config::get('glogon.login.window_width', 420)) . 'px' ?>" height="94px" /> -->
+    <div class="form" style="padding-left: 65px;">
+        <div window_width="<?php echo H(Config::get('glogon.prompt.window_width', 420)) ?>" window_height="<?php echo H(Config::get('glogon.prompt.window_height', 310)) ?>">
+            <table class="form">
+                <tr>
+                    <td class="middle nowrap label" style="padding-bottom: 5px;">
+                        <?php echo I18N::T('equipments', "您已使用该仪器超24小时, 为避免仪器忘记关机的情况,");?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="middle nowrap label" style="padding-bottom: 5px;">
+                        <?php echo I18N::T('equipments', "请您确认是否继续使用？");?>
+                    </td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td class="top" style="padding-bottom: 10px;">
+                        <div>
+                            <input class="button font-button-save middle" type="button" value="<?php echo H(I18N::T('equipments', '确定使用')) ?>" onclick="javascript:window.location.href='glogon_action_cancel'"/>
+                            &#160;
+                            <input class="button font-button-default middle" type="button" value="<?php echo H(I18N::T('equipments', '退出系统')) ?>" onclick="javascript:window.location.href='glogon_action_redirect'"/>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <table style="margin-top: 10px; width: 480px;">
+        <tr class="qr_code_control" style="background: #F1F1F1;">
+            <td style="width: 70px;"></td>
+            <td style="border-right: 1px solid #B3B3B3; width: 130px;">
+                <?php echo Event::trigger('equipment.profile.extra_view', $equipment);?>
+            </td> 
+            <td style="padding-left: 45px; margin-top: 55px; font-weight: normal; text-align: left; font-size: 14px; width: 160px;">
+                微信扫描左方二维码<br/>实现快速开关仪器
+            </td>	
+         </tr>
+    </table>
+</body>
+</html>

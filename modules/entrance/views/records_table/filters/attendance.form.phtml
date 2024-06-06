@@ -1,0 +1,8 @@
+<?php // echo Form::radio('attendance', DC_Record_Model::FILTER_ALL, $form['attendance'], I18N::T('entrance', '所有记录') ); ?>
+<?php // echo Form::radio('attendance', DC_Record_Model::FILTER_EARLIEST, $form['attendance'], I18N::T('entrance', '每日最早记录') ); ?>
+<?php // echo Form::radio('attendance', DC_Record_Model::FILTER_LATEST, $form['attendance'], I18N::T('entrance', '每日最晚记录') ); ?>
+
+<?php
+    $attendance = ['所有记录', '每日最早记录', '每日最晚记录'];
+    echo Form::dropdown('attendance', $attendance, $form['attendance'] ? $form['attendance'] : 0, 'class="dropdown autosubmittable middle"');
+?>

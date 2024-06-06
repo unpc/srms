@@ -1,0 +1,38 @@
+<?php $container = 'container_'.uniqid();?>
+<div id="<?php echo $container; ?>">
+	<div class="form padding_2">
+		<table class="form message_form">
+		<tbody>
+		<tr>
+	<?php
+	$projects = Q('tn_project');
+	if (count($projects)>0):
+		$project = $project->id ? $project : null;
+	?>
+	<td class="label middle nowrap"><?php echo I18N::T('treenote', '请选择项目'); ?></td>
+	<td class="middle">
+	<?php
+	  echo Widget::factory('treenote:project_selector', [
+							   'name' => 'tn_project',
+							   'project' => $project
+							   ]);
+	?>
+	</td>
+	<?php
+	else:
+		?>
+		<td class="middle"><span class="description"><?php echo I18N::T('treenote', '* 当实验室建立项目后，便能关联此成果到某一项目')?></span></td>
+	<?php
+	endif;
+	?>
+		</tr>
+		<?php /*
+		<tr>
+			<td></td>
+			<td><?php echo $view; ?></td>
+		</tr>
+			  */ ?>
+		</tbody>
+		</table>
+	</div>
+</div>

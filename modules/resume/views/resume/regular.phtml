@@ -1,0 +1,50 @@
+<div class="hr_1">&nbsp;</div>
+<div>
+	<table class="form">
+		<tbody>
+			<tr>
+				<td class="nowrap top"><span class="status_tag status_tag_label"><?php echo I18N::T('resume', '当前状态'); ?></span></td>
+				<td></td>
+				<td>
+					<?php echo $resume->status ? H(Resume::$status[$resume->status]) : I18N::T('resume', '--'); ?>
+				</td>
+			</tr>
+			<tr>
+				<td class="nowrap top"><span class="status_tag status_tag_label"><?php echo I18N::T('resume', '面试时间'); ?></span></td>
+				<td></td>
+				<td><?php echo $resume->interview_time ? Date::format($resume->interview_time, T('Y/m/d H:i:s')) : I18N::T('resume', '--'); ?></td>
+			</tr>
+			<tr>
+				<td class="nowrap top"><span class="status_tag status_tag_label"><?php echo I18N::T('resume', '应聘职位'); ?></span></td>
+				<td></td>
+				<?php if ($resume->position_id): ?>
+				<?php $position = O('position', $resume->position_id); ?>
+				<?php $name = $position->name; ?>
+				<?php else: ?>
+				<?php $name = '--'; ?>
+				<?php endif; ?>
+				<td><?php echo $name; ?></td>
+			</tr>
+			<tr>
+				<td class="nowrap top"><span class="status_tag status_tag_label"><?php echo I18N::T('resume', '面试地点'); ?></span></td>
+				<td></td>
+				<td><?php echo $resume->interview_place ? H(Resume::$interview_place[$resume->interview_place]) : I18N::T('resume', '--'); ?></td>
+			</tr>
+			<tr>
+				<td class="nowrap top"><span class="status_tag status_tag_label"><?php echo I18N::T('resume', '反馈信息'); ?></span></td>
+				<td></td>
+				<td style="width:800px;"><?php echo $resume->feedback ? H($resume->feedback) : I18N::T('resume', '--'); ?></span></td>
+			</tr>
+			<tr>
+				<td class="nowrap top"><span class="status_tag status_tag_label"><?php echo I18N::T('resume', '备注'); ?></span></td>
+				<td></td>
+				<td><?php echo $resume->description ? H($resume->description) : I18N::T('resume', '--'); ?></td>
+			</tr>
+			<tr>
+				<td class="nowrap top"><span class="status_tag status_tag_label"><?php echo I18N::T('resume', '领导意见'); ?></span></td>
+				<td></td>
+				<td><?php echo $resume->opinion ? H($resume->opinion) : I18N::T('resume', '--'); ?></td>
+			</tr>
+		</tbody>
+	</table>
+</div>

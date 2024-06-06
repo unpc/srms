@@ -1,0 +1,52 @@
+<?php 
+$me = L('ME');
+$dtstart = time(); 
+$dtnext = $dtstart + 604800; 
+$type = Cal_Component_Model::TYPE_VEVENT;
+
+if (Q("$lab user<organizer cal_component")->total_count() == 0)  :
+    ?>
+<div class="center description clearfix"><?php echo I18N::T('eq_reserv', '没有仪器预约'); ?></div>
+<?php
+else :
+    if (Module::is_installed('db_sync') && DB_SYNC::is_slave() && DB_SYNC::is_module_unify_manage('eq_reserv')) {
+        $components = Q("(equipment[site=" . LAB_ID . "]<parent calendar[parent_name=equipment], $lab user<organizer) cal_component[type=$type][dtstart~dtend={$dtstart}|dtstart~dtend={$dtnext}|dtstart={$dtstart}~{$dtnext}]:sort(dtstart)");
+    }else{
+        $components = Q("$lab user<organizer cal_component[type=$type][dtstart~dtend={$dtstart}|dtstart~dtend={$dtnext}|dtstart={$dtstart}~{$dtnext}]:sort(dtstart)");
+    }
+?>
+
+    <?php if ($components->total_count() > 0): ?>
+    <?php echo CSS::load_async('calendars:common'); ?>
+    <div class="clearfix">
+        <div class="calendar_list">
+        <?php foreach($components as $component) :
+                $day = date('z', $component->dtstart);
+                if ($last_day != $day) {
+                    echo V('calendars:calendar/list_date_sep', ['date'=>$component->dtstart]);
+                }
+                $last_day = $day;
+                $equipment = $component->calendar->parent;
+        ?>
+        <div class="component float_left">
+        <p class="description"><?php echo Date::relative($component->dtstart,  $component->dtstart)?> - <?php echo Date::relative($component->dtend, $component->dtstart)?></p> 
+        <table class="form">
+            <tr>
+                <td class="top icon rpadding_6"><a href="<?php echo H($equipment->url() ) ?>"><?php echo $equipment->icon('64') ?></a></td>
+                <td class="top">
+                    <h4><?php echo H($component->name);?></h4>
+                    <p><?php echo URI::anchor($component->organizer->url(), H($component->organizer->name), 'class="blue"');?></p>
+                    <p><a class="blue" href="<?php echo H($equipment->url() ) ?>"><?php echo H($equipment->name); ?></a></p>
+                </td>
+            </tr>
+        </table>
+        </div>
+        <?php endforeach; ?>
+        </div>
+    </div>
+    <?php else: ?>
+        <div class="interval_20">&#160;</div>
+        <div class="center description clearfix"><?php echo I18N::T('eq_reserv', '没有仪器预约'); ?></div>
+    <?php endif; ?>
+<?php endif; ?>
+

@@ -1,0 +1,17 @@
+
+<?php if(Session::get_url_specific('view_mode') != 'grid'):?>
+<div class="description">
+	<p>This is a list of scrapped equipment.</p>
+	<p>Click to view more details.</p>
+	<?php if ( Module::is_installed('labs') ) : ?>
+	<p>Search equipment.</p>
+	<?php else : ?>
+	<p>Search by equipment names.</p>
+	<?php endif; ?>
+</div>
+<?php else:?>
+<div class="description">
+	<p>This is a grid view of all scrapped equipment.</p>
+	<p>Click equipment icons or names to view more information.</p>
+</div>
+<?php endif;?>

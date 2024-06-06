@@ -1,0 +1,22 @@
+<?= JS::load_sync('widgets/rateit'); ?>
+<?= JS::load_sync('json2'); ?>
+<?= CSS::load_async('widgets/rateit'); ?>
+
+<?php
+
+$default_min_value = 0;
+$default_max_value = 5;
+
+$min_value = $default_min_value;
+$max_value = $default_max_value;
+
+$span = '<span style="position: relative; left: 5px;" class="rateit" data-rateit-value="%value" data-rateit-min="%min_value" data-rateit-max="%max_value" data-rateit-ispreset="true" data-rateit-readonly="true"></span>';
+
+echo strtr($span, array(
+    '%value' => $value,
+    '%min_value' => $min_value,
+    '%max_value' => $max_value,
+));
+
+?>
+<span style="position: relative; left: 10px; bottom: 3px;" class="description" id="<?php echo $rateit_tip_uniqid; ?>"><?php echo $tip[$value - 1]; ?></span>

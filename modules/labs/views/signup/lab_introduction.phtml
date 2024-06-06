@@ -1,0 +1,23 @@
+<?php $has_read = $_SESSION['has_read_registeration_announcement'];?>
+<div class="padding_2" style="width: 600px;margin: 0px auto">
+  <div class="clearfix">
+    <div class="center" style="margin-bottom: 20px;">
+      <H3 style="font: 30px bold;font-family:helvetica,arial"><?php echo I18N::T('people', (Lab::get('people.signup.title', Config::get('people.signup.title')))); ?>
+      </H3>
+    </div>
+    <div style="padding: 10px; height: 300px; overflow: auto;">
+      <?php echo H(Lab::get('people.signup.doc', Config::get('people.signup.doc')), TRUE); ?> 
+    </div>
+  </div>
+  <form method="post" autocomplete="off" q-event="submit" q-object="new_lab_register" class="center" q-src="<?php echo H(URI::url('!labs/signup') ) ?>">
+  	<input type="hidden" value="<?php echo Input::form()['register_user']; ?>" name="register_user" />
+  	<input type="hidden" value="<?php echo Input::form()['register_user_type']; ?>" name="register_user_type" />
+    <input type="hidden" value="<?php echo $signup_object; ?>" name="signup_object" />
+    <div>
+        <?php if (!$has_read) :?>
+        <?php echo Form::checkbox('has_read', FALSE, I18N::T('labs','我已阅读过此注册须知'), ' class="middle checkbox monitor"', 'class="middle"'); ?>
+        <?php endif;?>
+    </div>
+    <input type="submit" name="submit" <?php if (!$has_read) :?>disabled="disabled"<?php endif;?> class="button button_save text <?php if (!$has_read) : ?>toggle_status:has_read enable_on:on<?php endif;?>" value="<?php echo H(I18N::T('labs', '确认')) ?>" /> 
+  </form> 
+</div>

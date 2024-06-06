@@ -1,0 +1,34 @@
+<div class="pages"><?= $pagination ?></div>
+<?php
+
+$me = L('ME');
+$table = Widget::factory('table');
+$table->name = 'approval_reserv';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+$table->form = $form;
+
+$table->add_columns((array) $columns);
+
+$table->empty_message = I18N::T('approval', '没有查询到相应的项目!');
+
+if (count($approval) > 0) {
+
+    foreach($approval as $ap) {
+        $stime = $stime_title ? O('approved', ['source' => $ap, 'flag' => $flag])->ctime : '';
+
+        $table->add_row([
+            'user' => V('approval_flow:approval_table/data/user', ['user'=>$ap->user]),
+            'equipment' => V('approval_flow:approval_table/data/equipment', ['equipment'=>$ap->equipment]),
+            'reserv_time' => date('Y/m/d H:i:s', $ap->dtstart).' - '.date('Y/m/d H:i:s', $ap->dtend),
+            'amount' => V('approval_flow:approval_table/data/amount', ['source'=>$ap->source]),
+            'ctime' => date('Y/m/d H:i:s', $ap->ctime),
+            'stime' => $stime_title ? date('Y/m/d H:i:s', $stime) : '',
+            'description' => $ap->source->component->description ? H($ap->source->component->description) : H($ap->reserv_desc),
+            'rest' => Widget::factory('application:links', ['links' => $ap->links()])
+        ]);
+    }
+}
+echo $table;
+?>
+<div class="pages"><?= $pagination ?></div>

@@ -1,0 +1,47 @@
+<?php $me = L('ME');?>
+
+<div class="equipments_info_style">
+<div class="clearfix">
+	<?php echo CSS::load_async("entrance:common");?>
+	<h2 class="section_title">
+        <span class="border"></span>
+        <span class="black_title"><?php echo I18N::T('eq_door', '关联门禁') ?></span>
+	</h2>
+	<div class="interval_30"></div>
+	<div style="display: flex;">
+		<table class="form">
+			<?php foreach($doors as $door): ?>
+			<tr>
+				<td class="nowrap">
+					<?php $control_class = $door->is_open ? 'door_open' : 'door_locked'; ?>
+					<span class="control_status middle <?php echo $control_class ?>"></span>
+				</td>
+				<td class="middle nowrap">
+					<strong>
+
+                    <?php if ($me->is_allowed_to('查看', $door)) : ?>
+                    <a href="<?php echo H($door->url()) ?>">
+                        <?php echo H($door->name); ?><small>(<?php echo H($door->location1.' '.$door->location2)?>)</small>
+                    </a>
+                    <?php else :?>
+                        <?php echo H($door->name); ?><small>(<?php echo H($door->location1.' '.$door->location2)?>)</small>
+                    <?php endif;?>
+                    <strong>
+				</td>
+			</tr>
+			<tr><td><div class="interval_12"></div></td></tr>
+			<?php endforeach; ?>
+		</table>
+        <div class="middle nowrap">
+            <strong class="lmargin_4">
+                <?php
+                echo I18N::T('eq_door', '预约后可提前');
+                echo (int) $equipment->slot_card_ahead_time;
+                echo I18N::T('eq_door', '分钟进门');
+                ?>
+            </strong>
+        </div>
+	</div>
+</div>
+</div>
+

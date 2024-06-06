@@ -1,0 +1,41 @@
+<?php 
+
+$now = time(); 
+$type = Cal_Component_Model::TYPE_VEVENT;
+$component = Q("calendar[parent=$equipment] cal_component[type=$type][dtstart~dtend={$now}]:limit(1)")->current(); 
+
+if($component->id): 
+	$user = $component->organizer;
+?>
+<div class="equipments_info_style">
+<div class="clearfix">
+	<h2 class="section_title">
+		<span class="middle"><?php echo I18N::T('eq_reserv', '当前时段预约者') ?></span>
+	</h2>
+	<div class="interval_30"></div>
+	<table class="form">
+		<tr class="check_hover">
+			<td class="top icon"><a href="<?php echo H($user->url()) ?>"><?php echo $user->icon('64') ?></a></td>
+			<td class="top nowrap">
+				<p>
+					<span class="name"><a href="<?php echo H($user->url()) ?>"><?php echo H($user->name);?></a></span>
+					<?php 
+					$eq_reserv = O('eq_reserv', ['component' => $component]);
+					$lab = $eq_reserv->project->lab->id ?
+							$eq_reserv->project->lab :
+							Q("{$component->organizer} lab")->current();
+					if($lab->id):?>
+					<span class="lab"><?php echo $lab->name; ?></span>
+					<?php endif; ?>
+					<span class="small description"><?php echo Date::relative($component->dtstart, $component->dtstart)?> - <?php echo Date::relative($component->dtend, $component->dtstart)?>
+					</span>
+				</p> 
+				<p class="description"><?php echo I18N::HT('eq_reserv', $component->name);?></p>
+			</td>
+		</tr>
+	</table>
+</div>
+</div>
+
+<?php endif; ?>
+

@@ -1,0 +1,10 @@
+<?php	
+$progress = $project->progress();
+if ($progress['all']) :
+	$percent = round(100 * $progress['complete'] / $progress['all']);
+?>
+<strong class="middle"><?php echo H($percent.'%'); ?></strong>
+<span class="middle"> ( <?php echo $progress['complete'] . ' / ' . $progress['all'];?> )</span>
+<?php else: ?>
+	<?php echo I18N::T('treenote', '暂无数据');?>
+<?php endif; ?>

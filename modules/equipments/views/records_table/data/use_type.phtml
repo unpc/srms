@@ -1,0 +1,5 @@
+<div><strong><?= H(EQ_Record_Model::$use_type[$record->use_type]); ?></strong></div>
+<?php if ($record->use_type_desc): ?>
+<p><?= I18N::T('equipment', '操作备注') ?></p>
+<div class="quote" style="width: 200px; white-space: normal; text-align: left;word-break: break-word;"><?= H($record->use_type_desc); ?></div>
+<?php endif; ?>

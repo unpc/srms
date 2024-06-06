@@ -1,0 +1,10 @@
+<tr>
+  <td colspan="2">
+  <div class="title">
+  <?php  $need_reserv_description = Lab::get('equipment.need_reserv_description', Config::get('equipment.need_reserv_description', '@')); ?>
+      <?php if ('on' == $need_reserv_description) : ?><span class="red">*</span><?php endif;?>
+      <?php echo $properties['label'];?>
+  </div>
+	<textarea name="<?php echo H($name) ?>" type="text" class="text autogrow"><?php echo $form->no_error ? ( $component->id ? $component->description : $properties['default_value'] ) : $form['description'] ?></textarea>
+  </td>
+</tr>

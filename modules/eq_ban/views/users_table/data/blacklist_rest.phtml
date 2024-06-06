@@ -1,0 +1,10 @@
+<?php if(L('ME')->is_allowed_to('删除', $object)): ?>
+<?php if ($this->equipment->id):?>
+<a class="blue" href="#"
+	q-event="click" 
+	q-object="delete_banned" 
+	q-static="<?php echo H(['e_id'=>$this->equipment->id, 'banned_id'=>$this->object->id])?>"
+	q-src="<?php echo H(URI::url('!equipments/equipment')) ?>"><?php echo I18N::T('eq_ban', '解除封禁')?></a>
+<?php else:?>
+<a class="blue" confirm="<?php echo I18N::T('eq_ban', '你确定要解除封禁吗?请谨慎操作!'); ?>" href="<?php echo H(URI::url('!equipments/blacklist/remove.'.$object->id) ) ?>"><?php echo I18N::T('equipments', '解除封禁')?></a>
+<?php endif; endif;?>

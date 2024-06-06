@@ -1,0 +1,26 @@
+<div class="form padding_1">
+    <form class="view object:rrule" autocomplete="off" method="post">
+        <?php echo V('form_error', ['form'=>$form]); ?>
+        <input type="hidden" name="component_id" value="<?php echo H($component->id ) ?>" />
+        <?php
+	   /*
+	   NO.TASK#262 (xiaopei.li@2010.11.20)
+	   */
+	   $rrule = $component->cal_rrule;
+
+	echo Widget::factory('cal_rrule', ['rrule'=>$rrule, 'dtstart'=>$component->dtstart, 'dtend'=>$component->dtend, 'form'=>$form]) ?>
+        <?php
+	    // 重复限制提示
+		// echo '<div class="description">* 系统只能生成 30 天内的重复事件,更远的事件您可以以后再从这儿同步</div>' ?>
+        <div class="button_container" style="margin-top: 0;">
+            <div class="float_right">
+                <!-- <input type="button" class="font-button-default sm rmargin_2e4" name="cancel" id="cancel" value="<?php // echo H(I18N::T('calendars', '取消')) ?>" /> -->
+                <?php if($rrule->id > 0) : ?>
+                    <input type="submit" class="font-button-delete tooltip:<?php echo H('删除此重复规则中的所有事件') ?>" name="delete_all" value="<?php echo H(I18N::T('calendars', '删除全部')) ?>" />
+                    <input type="submit" class="font-button-delete tooltip:<?php echo H('删除此事件及重复规则中所有将来的事件') ?>" name="delete_following" value="<?php echo H(I18N::T('calendars', '删除以后')) ?>" />
+                <?php endif; ?>
+                    <input type="submit" name="save" class="font-button-save sm" value="<?php echo H(T('保存')) ?>" />
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,14 @@
+<?php
+echo JS::load('wiki:wiki_media_list', ['base'=>addslashes($base)]);
+$dh = @opendir($root.$base);
+if ($dh) {
+	$even = 0;
+	while ($n=readdir($dh)) {
+		if($n[0]=='.' || is_dir($root.$n))continue;
+		$file_view = V('wiki:wiki_media/thumbnail', ['root'=>$root, 'path'=>$base.$n, 'even'=>$even]);
+		echo $file_view;
+		unset($file_view);
+		$even = 1 - $even;
+	}
+	closedir($dh);
+}

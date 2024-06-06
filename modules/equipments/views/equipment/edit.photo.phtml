@@ -1,0 +1,30 @@
+<div class="form padding_1">
+	<table class="form">
+		<tr>
+			<td class="top icon" width="130">
+				<?php echo $equipment->icon('104'); ?>
+			</td>
+			<td class="top">
+                <div class="interval_12"></div>
+                <h2 class="section_title">更新设备图标</h2>
+                <div class="interval_30"></div>
+				<form action="<?php echo H(URI::url()) ?>" method="post" enctype="multipart/form-data">
+					<p>
+						<input name="file" type="file" class="file" />
+
+                        <!-- <div class="upload_area">
+                            <div class="upload_file_name"></div>
+                            <div class="upload_file"></div>
+                        </div> -->
+
+						<input type="submit" class="font-button-save" name="submit" value="<?php echo H(I18N::T('equipments', '上传图标')) ?>"/>
+					</p>
+					<div class="interval_30"></div>
+					<p>
+						<a class="font-button-delete" href="<?php echo H(URI::url('!equipments/equipment/delete_photo.'.$equipment->id)) ?>" confirm="<?php echo H(I18N::T('equipments', '确定要删除图标吗?')) ?>"><?php echo I18N::T('equipments', '删除仪器图标')?></a>
+					</p>
+				</form>
+			</td>
+		</tr>
+	</table>
+</div>

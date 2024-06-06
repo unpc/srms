@@ -1,0 +1,75 @@
+<?php $me = L('ME');?>
+
+<?php
+echo $secondary_tabs;
+?>
+
+<?php
+
+$table = Widget::factory('table');
+
+$table->name = 'equipment_eva';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+$columns = [
+    'name'=>[
+        'weight'=>20,
+        'title'=>I18N::T('equipments', '姓名'),
+        'align'=>'left',
+        'nowrap'=>TRUE,
+        'sortable'=>TRUE,
+        'filter'=> [
+            'form' => V('equipments:evaluate_table/filters/text', ['name'=>$form['name']]),
+            'value' => $form['name'] ? H($form['name']) : NULL
+        ],
+    ],
+    'eq_name'=>[
+        'weight'=>30,
+        'title'=>I18N::T('equipments', '评价仪器名称'),
+        'align' => 'left',
+        'nowrap'=>TRUE,
+        'sortable'=>TRUE,
+        /*'filter'=> [
+            'form' => V('equipments:evaluate_table/filters/text', ['name'=>'eq_name', 'value'=>$form['eq_name']]),
+            'value' => $form['eq_name'] ? H($form['eq_name']) : NULL
+        ],*/
+    ],
+    'feedback'=>[
+        'weight'=>40,
+        'title'=>I18N::T('equipments', '评价内容'),
+        'align' => 'left',
+        'nowrap'=>TRUE,
+    ],
+    'mtime' => [
+        'weight' => 50,
+        'title'=>I18N::T('equipments', '评价时间'),
+        'align' => 'left',
+        'nowrap'=>TRUE,
+        'sortable'=>TRUE,
+    ]
+];
+
+$table->add_columns($columns);
+
+$table->empty_message = I18N::T('equipments', '找不到相关的使用评价！');
+
+if ($evas->total_count()) foreach ($evas as $eva) {
+    $table->add_row([
+        'name' => V('equipments:evaluate_table/data/name', ['eva'=>$eva]),
+        'eq_name' => V('equipments:evaluate_table/data/eq', ['eva'=>$eva]),
+        'feedback' => V('equipments:evaluate_table/data/feedback', ['eva' => $eva]),
+        'mtime' => V('equipments:evaluate_table/data/mtime', ['eva' => $eva]),
+//        'rest'=> Widget::factory('application:links', ['links'=>$links]),
+    ]);
+}
+
+$panel_buttons = V('application:panel_buttons', ['panel_buttons' => $panel_buttons]);
+echo $panel_buttons;
+
+echo V('application:search_box', ['top_input_arr' => ['name'], 'columns' => $table->columns, 'panel_buttons' => $panel_buttons]);
+?>
+<div class="interval_24"></div>
+<?php echo $table; ?>
+<div class="interval_12"></div>
+<div class="float_right"><?php echo $pagination; ?></div>

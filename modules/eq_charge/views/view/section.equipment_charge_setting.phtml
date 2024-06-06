@@ -1,0 +1,141 @@
+<div class="equipments_info_style">
+<div class="clearfix">
+	<h2 class="section_title">
+        <span class="border"></span>
+        <span class="black_title"><?php echo I18N::T('eq_charge', '计费设置') ?></span>
+	</h2>
+	<div class="interval_30"></div>
+	<ul>
+		<?php
+		#ifndef (billing.single_department)
+		if (!$GLOBALS['preload']['billing.single_department']):?>
+		<p><span class="red">
+			<?php
+			if (Module::is_installed('billing')) {
+                $department = $equipment->billing_dept;
+
+                if (!$department->id) {
+                    echo I18N::HT('eq_charge', '%name未指定财务部门', ['%name'=>$equipment->name]);
+                }
+                else {
+                    $user = L('ME');
+                    $account = Q("$user lab billing_account[department=$department]");
+
+                    if (!$account->total_count()) {
+                        echo I18N::HT('eq_charge', '请确定您所在的实验室在 [%department] 开通帐号', [ '%department'=>$equipment->billing_dept->name]);
+                    }
+                }
+			}
+			?>
+        </span>
+		</p>
+		<?php endif;
+		#endif;
+		?>
+
+		<?php if($sections): ?>
+			<?php foreach($sections as $section): ?>
+				<?php if($section): ?>
+					<?php echo $section; ?>
+					<div class="interval_30"></div>
+				<?php endif; ?>
+			<?php endforeach; ?>
+		<?php endif; ?>
+
+		<li>
+		<?php
+            $standards =  EQ_Charge::charge_template_standards($equipment);
+
+            if ($equipment->accept_reserv && $standards['reserv']):?>
+				<span class="left">
+	                <?php if($equipment->charge_script['reserv'] && !$standards['record']):?>
+	                    <?php echo I18N::T('eq_charge', '预约 / 使用计费设置');?>
+	                <?php else:?>
+	                    <?php echo I18N::T('eq_charge', '预约计费设置');?>
+	                <?php endif;?>
+				</span>
+                <span class="right" style="margin-left:30px;">
+                    <?php
+                        echo $standards['reserv'];
+                    ?>
+                </span>
+            <?php endif;?>
+		</li>
+
+		<li>
+            <?php if($standards['record']):?>
+                <span class="left"><?php echo I18N::T('eq_charge', '使用计费设置');?></span>
+                <span class="right" style="margin-left:30px;">
+                    <?php
+                        echo $standards['record'];
+                    ?>
+                </span>
+            <?php endif;?>
+		</li>
+
+		<li>
+            <?php if ($equipment->accept_sample) :?>
+            	<span class="left"><?php echo I18N::T('eq_charge', '送样计费设置');?></span>
+                <span class="right" style="margin-left:30px;">
+	                <?php
+	                    echo $standards['sample'];
+                	?>
+				</span>
+            <?php endif;?>
+
+		</li>
+	</ul>
+    <?php if (Module::is_installed('technical_service')):?>
+    <ul>
+        <li>
+            <?php if($standards['service']):?>
+                <span class="left"><?php echo I18N::T('eq_charge', '服务计费设置');?></span>
+                <span class="right" style="margin-left:30px;">
+                    <?php
+                    echo $standards['record'];
+                    ?>
+                </span>
+            <?php endif;?>
+        </li>
+    </ul>
+    <?php endif;?>
+	<?php if (Module::is_installed('test_project')):?>
+    <ul>
+        <li>
+            <span class="left"><?php echo I18N::T('eq_charge', '测试项目计费');?></span>
+            <span class="right nowrap" style="margin-left:30px;">
+                <?php
+                echo $standards['test_project'];
+                ?>
+            </span>
+        </li>
+    </ul>
+    <?php endif;?>
+</div>
+</div>
+
+<!-- 使用限制 -->
+<?php if ($equipment->reserv_limit || $equipment->record_limit || $equipment->sample_limit) :?>
+<div class="equipments_info_style">
+	<div class="clearfix">
+        <h2 class="section_title">
+            <span class="border"></span>
+            <span class="black_title"><?php echo I18N::T('eq_charge', '使用限制')?></span>
+        </h2>
+		<div class="interval_30"></div>
+		<ul>
+			<li>
+	            <?php if ($equipment->reserv_limit && $equipment->charge_script['reserv'] && $equipment->accept_reserv) :?>
+	            <?php echo I18N::T('eq_charge', '<span class="left">预约所需的最低余额</span> <span class="right" style="margin-left: 70px;">%fee</span>', ['%fee'=> Number::currency($equipment->reserv_balance_required)]);?>
+	            <?php endif;?>
+	            <?php if ($equipment->record_limit && $equipment->charge_script['record']) :?>
+	            <?php echo I18N::T('eq_charge', '<span class="left">使用所需的最低余额</span> <span class="right" style="margin-left: 70px;">%fee</span>', ['%fee'=> Number::currency($equipment->record_balance_required)]);?>
+				<?php endif;?>
+	            <?php if ($equipment->sample_limit && $equipment->charge_script['sample'] && $equipment->accept_sample) :?>
+	            <?php echo I18N::T('eq_charge', '<span class="left">送样所需的最低余额</span> <span class="right" style="margin-left: 70px;">%fee</span>', ['%fee'=> Number::currency($equipment->sample_balance_required)]);?>
+				<?php endif;?>
+			</li>
+		</ul>
+	</div>
+</div>
+<?php endif;?>

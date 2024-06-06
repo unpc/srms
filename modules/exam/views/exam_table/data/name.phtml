@@ -1,0 +1,8 @@
+<div>
+  <a href="<?php echo H($ban->user->url() ) ?>">
+    <strong class="name"><?php echo H($ban->user->name) ?></strong>
+  </a>
+</div>
+<?php if ($ban->lab->id): ?>
+<div><a class="description" href="<?php echo H($ban->lab->url() ) ?>"><?php echo H($ban->lab->name) ?></a></div>
+<?php endif;?>

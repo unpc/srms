@@ -1,0 +1,10 @@
+<?php
+$users = Q("{$ap} capability_equipment_task_user user");
+$i=0;
+foreach ($users as $user) {
+    ?>
+    <?php if($i > 0)echo ',';?>
+    <a class="prevent_default" href="<?= H($user->url()) ?>"><?= H($user->name) ?></a>
+    <?php $i++;
+}
+?>

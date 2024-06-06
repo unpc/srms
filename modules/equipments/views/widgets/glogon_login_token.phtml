@@ -1,0 +1,25 @@
+<?php 
+if (!$backend_titles) {
+	$backends = Config::get('auth.backends');
+	$backend_titles = [];
+	foreach ($backends as $key=>$values) {
+		if (!$values['remote_auth'] || $this->show_remote_auth || $values['glogon_display']) {
+			$backend_titles[$key] = $values['title'];
+		}
+	}
+}
+$default_backend = $this->default_backend ? : 
+(Config::get('auth.glogon_default_backend') ? : Config::get('auth.default_backend'));
+$name = $this->name ?: 'token';
+$size = $this->size ?: 40;
+$backend_name = $this->backend_name ? : $name . '_backend';
+?>
+<input name="<?php echo H($name) ?>" class="text middle <?php echo $extra_class?>" size="<?php echo H($size) ?>" value="<?php echo H($this->token) ?>" <?php echo $extra?> tabindex="1" />
+<span class="separator middle">@</span>
+<select name="<?= $backend_name ?>" class="backend" style="width: 102px;">
+    <?php $de_backend = $this->backend?:$default_backend; ?>
+    <?php foreach ($backend_titles as $k => $v) : ?>
+        <option value="<?= $k ?>" <?php if ($de_backend == $k): ?>selected<?php endif; ?>><?= $v ?></option>
+    <?php endforeach; ?>
+</select>
+<?php // echo Form::dropdown($backend_name, T($backend_titles), $this->backend?:$default_backend, 'class="dropdown middle extra_dropdown"'); ?>

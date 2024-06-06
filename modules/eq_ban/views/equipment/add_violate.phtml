@@ -1,0 +1,74 @@
+<div class="form padding_1">
+  <form method="post" autocomplete="off" q-event="submit" q-object="add_eq_violate" >
+    <?php echo V('form_error', ['form'=>$form]);?>
+    <?php $require = (string) V('form_require'); ?>
+    <table class="form flexible">
+      <tbody>
+      <tr>
+        <td class="top label right nowrap">
+        <?php
+          echo I18N::T('eq_ban', '用户');
+        ?>
+        </td>
+        <td class="top toggle_status:type enable_on:user">
+          <?php
+            echo Widget::factory('user_selector', [
+              'autocomplete'=>URI::url('!eq_ban/autocomplete/user.eq'),
+              'name'=> 'user_id',
+              'user'=> O('user', $form['user_id']),
+            ]);
+          ?>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="top label right nowrap"><?php echo I18N::T('eq_ban', '违规仪器')?></td>
+        <td>
+          <?php
+            $eq_selected = $form['eq_type'] ? : 'all';
+            echo Form::radio('eq_type', 'all', $eq_selected, I18N::T('eq_ban', '负责的全部仪器'), 'class="monitor middle"');
+          ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="top label right nowrap"></td>
+        <td>
+          <?php
+            echo Form::radio('eq_type', 'select', $eq_selected, I18N::T('eq_ban', '选择仪器'), 'class="monitor middle"');
+          ?>
+        </td>
+      </tr>
+      <tr class="top toggle:eq_type show_on:select gray_tag_container">
+          <td></td>
+          <td class="top gray_tag_container">
+          <?php
+          echo Widget::factory('application:multi_equipment_selector', [
+              'name' => 'eqs',
+              'value' => $form['eqs'],
+              'autocomplete' => URI::url('!eq_ban/autocomplete/equipment'),
+          ]);
+          ?>
+          </td>
+      </tr>
+      <tr>
+        <td class="middle label right nowrap"><?php echo $require; ?><?php echo I18N::T('eq_ban', '违规原因')?></td>
+        <td class="top nowrap">
+            <textarea style="line-height: normal;" class="top autogrow reason" name="reason" rows="3" cols="37"><?php echo $form['reason'] ?></textarea>
+        </td>
+      </tr>
+      <tr>
+        <td class="middle label right nowrap"><?php echo $require;?><?php echo I18N::T('eq_ban', '违规时间')?></td>
+        <td class="top nowrap">
+          <input name="ctime" class="text date" value="<?php echo H($form['ctime']) ?>" q-date_format="<?php echo HT('$year/$month/$day')?>" />
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="float_right">
+          <input name="cancel" id="cancel" type='reset' class="font-button-default rmargin_2e4" value="<?php echo I18N::HT('eq_ban', '取消');?>" />
+          <input type="submit" name="submit" class="font-button-save" value="<?php echo H(I18N::T('eq_ban', '添加记录')) ?>" />
+        </td>
+      </tr>
+    </table>
+  </form>
+</div>

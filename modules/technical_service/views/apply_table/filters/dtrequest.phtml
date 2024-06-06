@@ -1,0 +1,4 @@
+<?php $form['dtrequest_s'] = $form['dtrequest_s'] ? date('Y-m-d', $form['dtrequest_s']) : ''; ?>
+<?php $form['dtrequest_e'] = $form['dtrequest_e'] ? date('Y-m-d', $form['dtrequest_e']) : ''; ?>
+
+<input id="dtrequest_s" name="dtrequest_s" date_type="date" class="text date small_search_text" value="<?php echo $form['dtrequest_s']; ?>" /><span class="middle description date_interval">-</span><input id="dtrequest_e" name="dtrequest_e" date_type="date" class="text date small_search_text" value="<?php echo $form['dtrequest_e']; ?>" />

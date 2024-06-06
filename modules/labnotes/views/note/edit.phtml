@@ -1,0 +1,46 @@
+<div class="hr_1">&#160;</div>
+<form method="post" action="">
+	<?php echo V('form_error', ['form'=>$form]);?>
+	<div class="form padding_1">
+		<?php echo $task_view; ?>
+	</div>
+	<div class="form padding_2">
+		<table class="form message_form">
+			<tbody>
+				<tr>
+					<td class="label right nowrap middle"><?php echo I18N::T('labnotes', '标题'); ?></td>
+					<td class="middle">
+						<input name="title" class="text" value="<?php echo H($note->title) ?>" size="50" />
+					</td>
+				</tr>
+				<tr>
+					<td class="label right nowrap top"><?php echo I18N::T('labnotes', '内容'); ?></td>
+					<td class="middle">
+						<textarea name="content" class="text autogrow" rows="4" cols="50"><?php echo $note->content?></textarea>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<?php echo $nfs_view; ?>
+	<?php echo $stock_view; ?>
+	<div class="form padding_2">
+		<input name="submit" type="submit" class="button button_save" value="<?php echo I18N::T('labnotes', '提交'); ?>" />
+	</div>
+</form>
+<style>
+a.build_button {
+	-moz-border-radius : 2px 2px 2px 2px;
+	background-color : #999999;
+	color : #FFFFFF !important;
+	cursor : pointer;
+	display : -moz-inline-box;
+	font-size : 12px;
+	font-weight : normal;
+	line-height : 1.231;
+	margin-right : 2px;
+	padding : 2px 4px;
+	text-decoration : none !important;
+	white-space : nowrap;
+}
+</style>

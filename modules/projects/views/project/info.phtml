@@ -1,0 +1,47 @@
+<?php 
+$task = $project->task; 
+$me = L('ME');
+?>
+<div class="hr_1">&#160;</div>
+<div class="panel padding_1 clearfix">
+	<div class="float_left">
+		<a href="<?php echo $task->url('', '', '', 'index'); ?>" class="button"><?php echo I18N::T('projects', '任务列表')?></a>
+	</div>
+</div>
+<div class="hr_1">&#160;</div>
+<h1 class="clearfix">
+	<a href="<?php echo $project->url('', '', '', 'edit'); ?>" class="button button_edit float_right"><?php echo I18N::T('projects', '编辑')?></a>
+	<?php echo H($task->name); ?>
+</h1>
+<div class="hr_1">&#160;</div>
+<hr/>
+<div class="padding_1">
+	<p>
+		<?php echo Date::format($task->dtstart, 'Y/m/d').' - '.Date::format($task->dtend, 'Y/m/d') ?>
+		<?php echo $task->locked ? I18N::T('projects', '(锁定)') : '' ?>
+		&#160;&#160;
+		<?php echo $task->approved ? I18N::T('projects', '结束') : I18N::T('projects', '未结束') ?>
+	</p>
+	<div class="description"><?php echo H($task->description, TRUE); ?></div>
+</div>
+<div class="hr_2">&#160;</div>
+<h3><?php echo I18N::T('projects','参与者');?></h3>
+<hr/>
+<?php echo V('projects:task/attendees', [
+			'users' => Q("$task user.supervisor"), 
+			'task' => $task, 
+			'title' => URI::anchor($task->url('supervisor', NULL, NULL, 'alert'), I18N::T('projects', '管理人')),
+		]); 
+?>
+<?php echo V('projects:task/attendees', [
+			'users' => Q("$task user.worker"), 
+			'task' => $task, 
+			'title' => URI::anchor($task->url('worker', NULL, NULL, 'alert'), I18N::T('projects', '执行人')),
+		]); 
+?>
+<?php echo V('projects:task/attendees', [
+			'users' => Q("$task user.attendee"), 
+			'task' => $task, 
+			'title' => URI::anchor($task->url('attendee', NULL, NULL, 'alert'), I18N::T('projects', '其他参与者')),
+		]); 
+?>

@@ -1,0 +1,40 @@
+<div class="form">
+<form method="post" autocomplete="off" q-event="submit" q-object="edit_announce" q-static="<?php echo H(['a_id'=>$announce->id])?>">
+<?php
+	echo V('form_error', ['form'=>$form]);
+?>
+<?php $require = (string) V('form_require'); ?>
+<table class="form">
+	<tbody>
+	<tr>
+		<td class="label left nowrap"><?= $require?><?php echo I18N::T('meeting', '标题'); ?></td>
+		<td class="top nowrap">
+			<input name="title" class="text" value="<?php echo H($form['title'] ? : $announce->title)?>" />
+		</td>
+	</tr>
+	<tr>
+		<td class="label left top nowrap"><?= $require?><?php echo I18N::T('meeting', '内容')?></td>
+		<td class="top">
+		<textarea name="content" class="text autogrow" rows="9" cols="60"><?php echo H($form['content'] ? : $announce->content) ?></textarea>
+		</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td class="top nowrap">
+			<?php echo Form::checkbox('important_edit', $form['important_edit'] == 'on' ? TRUE : FALSE, I18N::T('meeting', '重要修改'), 'class="middle checkbox"', 'class="middle"'); ?><br/><span class="description content_wrap"><?php echo I18N::T('meeting', ' * 若为重要修改，阅读过该公告的用户需重新确认，方可使用会议室')?></span>
+		</td>
+	</tr>
+	<tr>
+		<td class="left nowrap"></td>
+		<td class="top nowrap">
+			<?php echo Form::checkbox('stick', $form['stick'] ? ($form['stick'] == 'on' ? TRUE : FALSE) : (bool)$announce->is_sticky, I18N::T('meeting', '置顶公告'), 'class="middle checkbox"', 'class="middle"');?>
+		</td>
+	</tr>
+</table>
+<div class="button_container">
+    <div class="float_right">
+        <input type="submit" name="submit" class="font-button-save" value="<?php echo H(I18N::T('meeting', '保存修改')) ?>">
+    </div>
+</div>
+</form>
+</div>

@@ -1,0 +1,55 @@
+<?php $has_remote_billing = (bool) count(Config::get('billing.sources') ?: []);?>
+<div class="float_right">
+    <div class="inline-block transaction_count">
+        <?php
+        $status = Billing_Transaction_Model::STATUS_CONFIRMED;
+
+        //总收入=（远程充值—远程扣费）+（本地充值—本地扣费）
+        //有效收入有效收入= 总收入 — 未确定的收入
+        //总费用总费用 = 本地使用
+        //可用余额可用余额= 有效收入— 总费用
+
+        if ($has_remote_billing) {
+            echo I18N::T('billing', '总收入: %total_income, 有效收入: %confirmed_income, 总费用: %outcome_use, 可用余额: %balance', [
+                '%total_income'=> '<span class="eq_number">'. Number::currency(
+                        Q($form['selector'])->sum('income_remote')
+                        -
+                        Q($form['selector'])->sum('outcome_remote')
+                        +
+                        Q($form['selector'])->sum('income_local')
+                        -
+                        Q($form['selector'])->sum('outcome_local')
+                    ). '</span>',
+                '%confirmed_income'=> '<span class="eq_number">'. Number::currency(
+                        Q($form['selector'])->sum('income_remote_confirmed')
+                        +
+                        Q($form['selector'])->sum('income_local')
+                        -
+                        Q($form['selector'])->sum('outcome_remote')
+                        -
+                        Q($form['selector'])->sum('outcome_local')
+                    ). '</span>',
+                '%outcome_use' => '<span class="eq_number">'. Number::currency(
+                        Q($form['selector'])->sum('outcome_use')
+                    ). '</span>',
+                '%balance' => '<span class="eq_number">'. Number::currency(Q($form['selector'])->sum('balance')).'</span>',
+            ]);
+        }
+        else {
+            echo I18N::T('billing', '总收入: %total_income, 总费用: %outcome_use, 可用余额: %balance', [
+                '%total_income'=> '<span class="eq_number">'. Number::currency(
+                        Q($form['selector'])->sum('income_local')
+                        -
+                        Q($form['selector'])->sum('outcome_local')
+                    ). '</span>',
+                '%outcome_use' => '<span class="eq_number">'. Number::currency(
+                        Q($form['selector'])->sum('outcome_use')
+                    ). '</span>',
+                '%balance' => '<span class="eq_number">'. Number::currency(
+                        Q($form['selector'])->sum('balance')
+                    ).'</span>',
+            ]);
+        }
+        ?>
+    </div>
+</div>

@@ -1,0 +1,15 @@
+<?php if($calendar->allows['attendees']): ?>
+	<td class="label left top nowrap">
+		<?php echo $properties['label'] ?>
+
+		<div class="relative">
+		<input class="token token_parser:email" size="40" value="" />
+		<?php //echo Form::dropdown(NULL, Cal_Attendee_Model::roles(), 1); ?>
+		</div>
+		<div class="description title">* <?php echo I18N::T('calendars', '请输入参与者的email地址')?>
+		<?php $error=($form->errors[H($name)][0]);?>
+	<?php echo V('form_filter',['error'=>$error]);?>
+		</div>
+	</td>
+<?php endif; ?>
+

@@ -1,0 +1,190 @@
+<div class="hr_1">&#160;</div>
+<div class="padding_1 form">
+    <form method="post" autocomplete="off" action="<?php echo H(URI::url() ) ?>" enctype="multipart/form-data">
+    <div class="hr_2">&#160;</div>
+    <?php 
+        $no_error = $form->no_error;
+        $require = V('form_require');
+        echo V('form_error', ['form'=>$form]);
+    ?>
+    <fieldset class="bottom">
+        <legend><?= I18N::T('nrii', '服务记录') ?></legend>
+        <table class="form">
+            <tbody>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '设备（编号）')?></td>
+                    <td><input class="text" name="eq" disabled="disabled" size="30" value="<?php echo H($record->nrii_eq->eq_name . '(' . $record->nrii_eq->inner_id . ')' ) ?>" /></td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '服务金额') ?></td>
+                    <td><input class="text" name="amounts"  size="30" value="<?= H($no_error ? $record->amounts : $form['amounts']) ?>" /></td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '服务开始时间')?></td>
+                    <td><input class="text date" name="start_time" value="<?= H($no_error ? $record->start_time : $form['start_time']) ?>" q-date_format="<?php echo HT('$year/$month/$day $hour')?>" /></td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '服务结束时间')?></td>
+                    <td><input class="text date" name="end_time" value="<?= H($no_error ? $record->end_time : $form['end_time']) ?>" q-date_format="<?php echo HT('$year/$month/$day $hour')?>" /></td>
+                <tr/>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '服务方式')?></td>
+                    <td colspan="3">
+                        <?php 
+                            $_checkWay = function($key) use ($record, $form, $no_error) {
+                                if ($no_error) {
+                                    return (bool)in_array($key, explode(',', $record->service_way));
+                                }
+                                else {
+                                    return $form['service_way'][$key];
+                                }
+                            };
+                            foreach (Nrii_Record_Model::$service_way as $key => $name) :?>
+                            <div style='display: inline-block;width: 100px;'>
+                            <?php 
+                                echo Form::checkbox("service_way[{$key}]", $_checkWay($key), 
+                                $name, 'class="middle monitor" ', 'class="middle"'); 
+                            ?>
+                            &#160;
+                            </div>
+                        <?php endforeach; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '实际服务内容') ?></td>
+                    <td>
+                        <textarea class="text autogrow" rows="3" cols="30" name="service_content"><?= H($no_error ? $record->service_content : $form['service_content']) ?></textarea>
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '服务量') ?></td>
+                    <td>
+                        <textarea class="text autogrow" rows="3" cols="30" name="service_amount"><?= H($no_error ? $record->service_amount : $form['service_amount']) ?></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '课题名称')?></td>
+                    <td><input class="text" name="subject_name"  size="30" value="<?= H($no_error ? $record->subject_name : $form['subject_name']) ?>" /></td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '服务时间') ?></td>
+                    <td><input class="text" name="service_time"  size="30" value="<?= H($no_error ? $record->service_time : $form['service_time']) ?>" /></td>
+                </tr>
+
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '课题经费来源') ?></td>
+                    <td colspan="3">
+                        <?php 
+                        $_checkWay = function($key) use ($record, $form, $no_error) {
+                            if ($no_error) {
+                                return (bool)in_array($key, explode(',', $record->subject_income));
+                            }
+                            else {
+                                return $form['subject_income'][$key];
+                            }
+                        };
+                        foreach (Nrii_Record_Model::$subject_income as $key => $name) :?>
+                            <div style='display: inline-block'>
+                            <?php 
+                                echo Form::checkbox("subject_income[{$key}]", $_checkWay($key), 
+                                $name, 'class="middle monitor" ', 'class="middle"'); 
+                            ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '课题主要科学领域')?></td>
+                    <td>
+                        <?php
+                            echo Widget::factory('nrii:muti_selector',
+                                [
+                                    'name'=>'subject_area',
+                                    'autocomplete'=>URI::url('!nrii/autocomplete/search.subject'),
+                                    'value' => $no_error ? $record->subject_area : $form['subject_area'],
+                                    'extra'=>'token_verify'
+                                ]);
+                        ?>
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '课题研究内容')?></td>
+                    <td>
+                        <textarea class="text autogrow" rows="2" cols="30" name="subject_content"><?= H($no_error ? $record->subject_content : $form['subject_content']) ?></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '服务对象') ?></td>
+                    <td>
+                        <?= Form::dropdown('service_type', [-1 => '-- 请选择 --'] + I18N::T('nrii', Nrii_Record_Model::$service_types), $no_error ? ($record->service_type ? : -1) : $form['service_type'], 'class="dropdown" size="30" '); ?>
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '服务类型') ?></td>
+                    <td>
+                        <?= Form::dropdown('service_direction', [-1 => '-- 请选择 --'] + I18N::T('nrii', Nrii_Record_Model::$service_directions), $no_error ? ($record->service_direction ? : -1) : $form['service_direction'], 'class="dropdown" size="30" '); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '补税记录') ?></td>
+                    <td colspan="3">
+                        <textarea class="text autogrow" rows="3" cols="30" name="tax_record"><?= H($no_error ? $record->tax_record : $form['tax_record']) ?></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '是否在单位内使用') ?></td>
+                    <td>
+                        <?= Form::dropdown('address_type', [-1 => '-- 请选择 --'] + I18N::T('nrii', Nrii_Record_Model::$address_types), $no_error ? $record->address_type : $form['address_type'], 'class="dropdown monitor" size="30" '); ?>
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '是否签订协议') ?></td>
+                    <td>
+                        <?= Form::dropdown('sign_agreement', [-1 => '-- 请选择 --'] + I18N::T('nrii', Nrii_Record_Model::$sign_agreements), $no_error ? ($record->sign_agreement != -1 ? $record->sign_agreement : -1) : $form['sign_agreement'], 'class="dropdown" size="30" '); ?>
+                    </td>
+                </tr>
+                <tr class="toggle:address_type show_on:<?= Nrii_Record_Model::ADDRESS_TYPE_OUT ?>">
+                    <td class="nowrap right"><?= I18N::T('nrii', '对外服务地址')?></td>
+                    <td><input class="text" name="move_address"  size="30" value="<?= H($no_error ? $record->move_address : $form['move_address']) ?>" /></td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '非适用简易程序海关《通知书》编号') ?></td>
+                    <td>
+                        <input class="text" name="service_code"  size="30" value="<?= H($no_error ? $record->service_code : $form['service_code']) ?>" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </fieldset>
+    <div class="hr_2">&#160;</div>
+    <fieldset class="bottom">
+        <legend><?= I18N::T('nrii', '申请人信息') ?></legend>
+        <table class="form">
+            <tbody>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '申请人名称')?></td>
+                    <td>
+                        <input class="text" name="applicant" size="30" value="<?= H($no_error ? $record->applicant : $form['applicant']) ?>"/>
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '申请人电话')?></td>
+                    <td>
+                        <input class="text" name="applicant_phone" size="30" value="<?= H($no_error ? $record->applicant_phone : $form['applicant_phone']) ?>"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '电子邮箱')?></td>
+                    <td>
+                        <input class="text" name="applicant_email" size="30" value="<?= H($no_error ? $record->applicant_email : $form['applicant_email']) ?>"/>
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '申请人单位')?></td>
+                    <td>
+                        <input class="text" name="applicant_unit" size="30" value="<?= H($no_error ? ($record->applicant_unit ? : $record->user->group->name) : ($form['applicant_unit'] ? : $record->user->group->name)) ?>"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '用户评价')?></td>
+                    <td>
+                        <?= Form::dropdown('comment', [-1 => '-- 请选择 --'] + I18N::T('nrii', Nrii_Record_Model::$comment), $no_error ? ($record->comment ? : -1) : $form['comment'], 'class="dropdown" size="30" '); ?>
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '用户意见')?></td>
+                    <td colspan="3">
+                        <textarea class="text autogrow" rows="2" cols="30" name="comment2"><?= H($no_error ? $record->comment2 : $form['comment2']) ?></textarea>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </fieldset>
+    <fieldset style="width:680px; border:0">
+        <table class="form">
+            <tr>
+                <td><input type="submit" name="submit" class="button button_save" value="<?php echo H(I18N::T('nrii', '保存')) ?>" /></td>
+                <td><a href="<?php echo H(URI::url('!nrii/nrii.record') ) ?>" name="reset" class="button button_cancel"><?php echo H(I18N::T('nrii', '取消') ) ?></a></td>
+            </tr>
+        </table>
+    </fieldset>
+    </form>
+</div>

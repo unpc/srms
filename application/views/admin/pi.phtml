@@ -1,0 +1,29 @@
+<?php 
+	$pi_token = Config::get('lab.pi');
+	$pi = O('user',['token'=>$pi_token]);
+?>
+<div class="form padding_2">
+	<form method="post" action="">
+		<table class="form">
+			<tbody>
+				<tr>
+					<td colspan="2"><?php echo V('form_error', ['form'=>$form]);?></td>
+				</tr>
+				<tr>
+					<td class="top label right nowrap middle"><?php echo T('实验室PI')?></td>
+					<td class="top">
+					<?php
+			   			echo Widget::factory('application:user_selector', [
+			   					'name' =>'pi', 
+			   					'user' => $form['pi'] ? O('user', Q::quote($form['pi'])) : $pi,
+			   					'size' => 20,
+			   			]); 
+			   		?>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="hr_1">&#160;</div>
+		<input type="submit" name="submit" class="button button_save" value="<?php echo H(T('更新')) ?>" />
+	</form>
+</div>

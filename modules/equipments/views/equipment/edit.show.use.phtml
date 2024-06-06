@@ -1,0 +1,28 @@
+<?php
+	if(!in_array($equipment->control_mode, ['power', 'computer'])) $equipment->control_mode = "nocontrol"; 
+	switch ($equipment->control_mode) {
+		case 'power':
+			$control_mode = I18N::T('equipments', '电源控制');
+			$control_view = V('equipments:equipment/control/power', ['equipment'=>$equipment]);
+			break;
+		case 'computer':
+			$control_mode = I18N::T('equipments', '电脑控制');
+			$control_view = V('equipments:equipment/control/computer', ['equipment'=>$equipment]);
+			break;
+		case 'no_control':
+		default:
+			$control_mode = I18N::T('equipments', '不控制');
+			break;
+	}
+?>
+<div class="padding_2">
+	<div title="<?php echo H($control_mode) ?>">
+		<table class="form">
+			<tr>
+				<td class="label middle"><?php echo I18N::T('equipments', '当前控制方式'); ?></td>
+				<td class="description"><?php echo $control_mode?></td>
+			</tr>
+			<?php echo $control_view; ?>
+		</table>
+	</div>
+</div>

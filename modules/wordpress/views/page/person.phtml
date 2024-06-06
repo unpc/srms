@@ -1,0 +1,28 @@
+<div style="float:left"><img src="<?php echo H($icon->url ) ?>"/></div>
+<div>
+	<div>
+		<?php
+		$roles = L('ROLES');
+		$user_roles = $user->roles();
+		if (count($user_roles) > 0) :
+			foreach ($user_roles as $rid) {
+				if ($roles[$rid]) {
+					$role = $roles[$rid];
+					$roles_arr[] = H($role->name);
+				}
+			}
+		?>
+		<span><?php echo implode(', ', $roles_arr); ?></span>
+		<?php endif; ?>
+	</div>
+	<?php if($user->email): ?>
+		<span class="email"><?php echo URI::mailto($user->email); ?></span>
+	<?php endif; ?>
+	<?php echo I18N::T('people', '电话'); ?>
+    <?php
+        $phone_num = [];
+        if ($user->phone) $phone_num[] = H($user->phone);
+        if ($user->mobile) $phone_num[] = H($user->mobile);
+    ?>
+    <span><?php echo join(', ', $phone_num); ?></span>
+</div>

@@ -1,0 +1,28 @@
+<?php
+$q_static = [
+	'id'=>$portion->id,
+	'element_id'=>$element_id,
+	'max_width'=>$grant_width,
+];
+$q_static = http_build_query($q_static);
+$indent = count($tree) - 1;
+?>
+<tr id="<?php echo H($element_id) ?>">
+	<td>
+		<div class="inline_block" style="width:<?php echo $indent * 16 ?>px">&#160;</div>
+		<?php if ($portion->has_children()): ?>
+			<span class="button_list_children" q-static="<?php echo H($q_static) ?>">&#160;</span>
+		<?php else: ?>
+			<span class="button_blank">&#160;</span>
+		<?php endif; ?>
+		<a href="<?php echo $portion->grant->url('expenses', 'portion='.($portion->id?:$portion->parent->id)); ?>">
+			<?php echo H($portion->name); ?>
+		</a>
+	</td>
+	<td class="right">
+		<?php echo H(Number::currency($portion->amount)); ?>
+	</td>
+	<td class="portion_bar_container nowrap">
+		<?php echo V('grants:grant/portion', ['portion'=>$portion, 'grant_width'=>$grant_width, 'tree'=>$tree]);?>
+	</td>
+</tr>

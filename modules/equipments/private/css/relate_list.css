@@ -1,0 +1,132 @@
+div.relate_list {
+	*float:left;
+	border: 1px solid #E5E5E5;
+	display: -webkit-box;
+    height:100%;
+
+	/*width:600px;*/
+	.relate_left{
+		*float:left;
+		width:150px;
+		height:100%;
+	}
+
+	.relate_right{
+		/*width: 728px;*/
+		width: 80%;
+		height:100%;
+		border-left: 1px solid #E5E5E5;
+		min-height: 300px;
+       /* border-left: 1px solid #E5E5E5;*/
+	}
+
+	.equipment_tags {
+		/*position: absolute;
+		top:0px
+		left:0x;*/
+		width:150px;
+
+		.add_tags {
+			margin-bottom:2px;
+			border-bottom:2px solid #999;
+		}
+
+
+
+		.equipment_tag {
+			cursor:default;
+			/*background-color:#eff2f7;
+			border: 1px solid #ccd5e4;*/
+			/* margin-bottom:1px; */
+            height: 30px;
+            *height: 31px;
+			/* height: 35px; */
+			/* *height: 36px; */
+			vertical-align:middle;
+			font-size: 14px;
+			font-family: PingFangSC-Regular, PingFang SC;
+			font-weight: 400;
+			color: #333333;
+
+			.tag_name {
+				display: block;
+				float:left;
+				height: 30px;
+				line-height:30px;
+				/*width:0px;*/
+				margin-left: 20px;
+				overflow:hidden;
+				max-width: 64%;
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				input {
+					border:0px;
+					vertical-align:middle;
+				}
+			}
+
+			.remove_button {
+				display:inline-block;
+				float:right;
+				content: "\e780";
+				background-image:url(images/token/x.gif);
+				background-position: center center;
+				background-repeat:no-repeat;
+				text-decoration-line: none;
+				cursor:pointer;
+				width: 30px;
+				height: 30px;
+				line-height: 30px;
+				padding: 0;
+			}
+		}
+
+		.active {
+			background-color:rgba(43, 160, 127, 0.08);
+			/*color:var(--basiccolor);*/
+		}
+		:hover{
+			background-color: rgba(43, 160, 127, 0.08)
+		}
+	}
+
+	.relate_view {
+		margin-left:35px;
+		_display: inline-block;
+	}
+
+}
+
+.tag_drag_helper {
+	background-color: #eff2f7;
+	border: 2px solid #ccc;
+	width: 130px!important;
+	width: 130px;
+	min-width: 130px;
+	overflow: hidden;
+	height: 17px;
+	*height: 18px;
+	padding:2px 4px;
+}
+.tag_hide_item {
+	position: relative;
+	background-color: #F4F4F4;
+	border: 3px solid #CDCACA;
+}
+
+.tag_drag_handle{
+	float:left;
+	background-image:url('images/icons/handle.png');
+	background-position:0 0;
+	background-repeat:repeat-y;
+	*margin-right: 10px;
+	margin-right: 10px;
+	width:8px;
+	vertical-align:middle;
+	cursor:move;
+	display: inline-block;
+}
+span.tip_name{
+	width:100px
+}

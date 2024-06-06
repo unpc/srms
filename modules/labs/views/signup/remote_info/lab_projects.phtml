@@ -1,0 +1,42 @@
+<div class="projects">
+<?php
+	if (count($projects) > 0) {
+		foreach($projects as $key=>$project){
+			foreach ($project as $k => $p) {
+				$existing_data[$key][$k]['project'] = $p;
+			}
+			
+		}
+	}
+?>
+
+<?php 
+	$types = Lab_Project_Model::$types;
+	foreach ($types as $type => $name) :
+?>
+<div class="bpadding_2 clearfix">
+<?php
+$item_view = null;
+switch($type){
+	case Lab_Project_Model::TYPE_EDUCATION:
+		$item_view = 'labs:signup/lab/teaching_project';
+		break;
+	case Lab_Project_Model::TYPE_RESEARCH:
+		$item_view = 'labs:signup/lab/research_project';
+		break;
+	case Lab_Project_Model::TYPE_SERVICE:
+		$item_view = 'labs:signup/lab/service_project';
+		break;
+}
+if ($item_view) {
+	echo Widget::factory('flexform', [
+		'title' => I18N::T('labs', $name),
+		'template_data' => ['disabled'=>TRUE, 'type'=>$type],
+		'existing_data' => $existing_data[$type],
+		'item_view' => $item_view,
+	]);	
+}
+?>
+</div>	
+<?php endforeach;?>
+</div>

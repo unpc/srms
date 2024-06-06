@@ -1,0 +1,4 @@
+<?php
+$user = $duty->duty_teacher_id ? O('user', $duty->duty_teacher_id) : O('user');
+?>
+<a href="<?php echo H($user->url()) ?>" class="prevent_default"><?php echo H($user->name); ?></a>

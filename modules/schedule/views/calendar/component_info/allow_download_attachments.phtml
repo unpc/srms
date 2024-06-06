@@ -1,0 +1,10 @@
+<?php if (L('ME')->is_allowed_to('查看文件', $component)) :?>
+<tr>
+	<td colspan="2">
+        <div class="hr_1"></div>
+        <div class="text_like relative" style="display: block">    	
+            <?php echo V('nfs:nfs_lite/view', ['object'=>$component, 'path_type'=>'attachments']);?>
+        </div>
+	</td>
+</tr>
+<?php endif;?>

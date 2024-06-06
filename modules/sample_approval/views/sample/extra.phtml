@@ -1,0 +1,10 @@
+<div class="lmaigin_1e5">
+    <div class="interval_6"></div>
+    <?php echo Form::checkbox('sample_approval_enable',
+        $equipment->sample_approval_enable,
+        I18N::T('eq_sample', '开启测样报告审核'),
+        'class="middle checkbox monitor"' .
+        'class="middle"' .
+        $disabled
+    ); ?>
+</div>

@@ -1,0 +1,10 @@
+<div class="mini_form">
+		<div class="top icon float_left"><?php echo $user->icon('32'); ?></div>
+		<div class="top">
+			<span class="name"><?php echo H($user->name); ?></span>
+			<?php if (!$GLOBALS['preload']['people.multi_lab']) :?>
+			<br/>
+			<span class="lab"><?php echo H(Q("$user lab")->current()->name); ?></span>
+			<?php endif;?>
+		</div>
+</div>

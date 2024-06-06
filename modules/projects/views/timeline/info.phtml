@@ -1,0 +1,90 @@
+<?php if ($task->id): ?>
+<div class="padding_1" style="position:relative;">
+	<h1><?php echo I18N::T('projects', '基本信息') ?></h1>
+	<hr/>
+	<!-- 图示开始 -->
+	<div class="container clearfix padding_1">
+		<?php if ($task->prev->id): ?>
+		<div class="box left clearfix">
+			<div class="block prev"><a class="link" href="<?php echo H($task->prev->url() ) ?>"><?php echo H($task->prev->name) ?></a></div>
+			<div class="line"></div>
+		</div>
+		<?php endif; ?>
+		<div class="box middle">
+			<?php if ($task->parent->id): ?>
+			<div class="block parent"><a class="link" href="<?php echo H($task->parent->url() ) ?>"><?php echo H($task->parent->name) ?></a></div>
+			<div class="line"></div>
+			<?php endif; ?>
+			<div class="block current">
+				<?php echo Date::format($task->dtstart, 'Y/m/d').' - '.Date::format($task->dtend, 'Y/m/d') ?>
+				<h3><a class="link" href="<?php echo H($task->url() ) ?>"><?php echo H($task->name) ?></a></h3>
+				<p>
+					<?php echo $task->locked ? I18N::T('projects', '(锁定)') : '' ?>
+					&#160;&#160;
+					<?php echo $task->approved ? I18N::T('projects', '结束') : I18N::T('projects', '未结束') ?>
+					&#160;&#160;
+					<?php 
+					if($task->milestone): 
+						if($task->dtrealend):
+					?>
+						<span>灰旗</span>
+					<?php
+						else:
+					?>
+						<span>红旗</span>
+					<?php
+						endif;
+					endif;
+					?>
+				</p>
+			</div>
+		</div>
+		<?php if ($task->next->id): ?>
+		<div class="box right clearfix">
+			<div class="line"></div>
+			<div class="block next"><a class="link" href="<?php echo H($task->next->url() ) ?>"><?php echo H($task->next->name) ?></a></div>
+		</div>
+		<?php endif; ?>
+	</div>
+	<!-- 图示结束 -->
+	<?php
+		$supervisors = Q("$task user.supervisor");
+		$workers = Q("$task user.worker");
+		$attendees = Q("$task user.attendee");
+	?>
+	<?php if ($supervisors->total_count() > 0 || $workers->total_count() > 0 || $attendees->total_count() > 0): ?>
+	<h1><?php echo I18N::T('projects', '人员分配') ?></h1>
+	<hr/>
+	<?php endif; ?>
+	<?php if ($supervisors->total_count() > 0): ?>
+	<div class="hr_2">&#160;</div>
+	<?php echo V('projects:timeline/users', [
+				'users' => Q("$task user.supervisor"), 
+				'task' => $task, 
+				'title' => I18N::T('projects', '管理者'),
+				'alert_url' => $task->url('supervisor', NULL, NULL, 'alert'),
+			]); 
+	?>
+	<?php endif; ?>
+	<?php if ($workers->total_count() > 0): ?>
+	<div class="hr_2">&#160;</div>
+	<?php echo V('projects:timeline/users', [
+				'users' => Q("$task user.worker"), 
+				'task' => $task, 
+				'title' => I18N::T('projects', '执行者'),
+				'alert_url' => $task->url('worker', NULL, NULL, 'alert'),
+			]); 
+	?>
+	<?php endif; ?>
+	<?php if ($attendees->total_count() > 0): ?>
+	<div class="hr_2">&#160;</div>
+	<?php echo V('projects:timeline/users', [
+				'users' => Q("$task user.attendee"), 
+				'task' => $task, 
+				'title' => I18N::T('projects', '参与者'),
+				'alert_url' => $task->url('attendee', NULL, NULL, 'alert'),
+			]); 
+	?>
+	<?php endif; ?>
+</div>
+<?php endif; ?>

@@ -1,0 +1,22 @@
+<?php 
+$expense = $order->expense;
+if ($expense->id) {
+	$grant = $expense->grant;
+	$portion = $expense->portion;
+    $links = [];
+    while($portion->id) {
+        $url = URI::url('', 'grant_check=linked&grant_portion_select='.$portion->id);
+        $link = '<a href="'.H($url).'">'.H($portion->name).'</a>';
+        array_unshift($links, $link);
+        $portion = $portion->parent;
+    }
+
+	array_unshift($links, '<a href="'.H(URI::url('', 'grant_check=linked&grant_portion_select=&grant_select='.$grant->id)).'">'.H($grant->project).'</a>');   
+    echo implode(' &#187; ', $links);
+	if ($expense->invoice_no){
+		echo '<div class="quote">'.I18N::HT('grants','发票号').': '.H($expense->invoice_no).'</div>';
+	}
+}
+else {
+	echo URI::anchor(URI::url('', 'grant_check=unlinked'), I18N::T('orders', '未关联经费'), 'class="description"');
+}

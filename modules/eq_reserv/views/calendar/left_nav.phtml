@@ -1,0 +1,50 @@
+<div class="float_right">
+
+<?php
+$me = L('ME');
+if ($me->is_allowed_to('添加事件', $calendar)){
+    echo V('calendars:calendar/view_buttons', ['calendar'=>$calendar]);
+}
+?>
+<a class="middle button button_save reserv_calendar_left_nav_anchor prevent_default" type="csv" title="导出Excel">导出</a>
+<a class="middle button button_print reserv_calendar_left_nav_anchor prevent_default" type="print" title="打印">打印</a>
+</div>
+<script type="text/javascript">
+$(document).ready(function() {
+    raw_form_token = '<?= $form_token ?>';
+    final_form_token = '';
+    if (raw_form_token) {
+        final_form_token = raw_form_token;
+    } else {
+        final_form_token = Q.Calendar.form_token;
+    }
+
+    $('.reserv_calendar_left_nav_anchor').bind('click', function() {
+        Q.trigger({
+            url: '<?php echo URI::url('!eq_reserv/')?>',
+            object: 'export_components',
+            event: 'click',
+            data: {
+                type:  $(this).attr('type'),
+                dtstart:  Q.Calendar.dtstart,
+                dtend: Q.Calendar.dtend,
+                form_token: final_form_token,
+                calendar_id: '<?php echo $calendar->id;?>'
+            }
+        });
+        return false;
+    });
+
+    $('.reserv_calendar_left_nav_anchor_add').bind('click', function() {
+        Q.trigger({
+            url: '<?php echo URI::url('!calendars/Calendar')?>',
+            object: 'just_show_insert_component',
+            event: 'click',
+            data: {
+                calendar_id: '<?php echo $calendar->id;?>',
+            }
+        });
+        return false;
+    });
+});
+</script>

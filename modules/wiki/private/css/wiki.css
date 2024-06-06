@@ -1,0 +1,150 @@
+.wiki_textarea, wiki_content code, wiki_content pre {
+	font-family: monospace, courier new;
+	font-size: 14px;
+	line-height: 1;
+}
+
+.wiki_content h1,
+.wiki_content h2,
+.wiki_content h3,
+.wiki_content h4,
+.wiki_content h5,
+.wiki_content h6,
+.wiki_content p,
+.wiki_content pre,
+.wiki_content ul,
+.wiki_content table {
+	margin-bottom: 6px;
+}
+
+.wiki_content a.wiki_link {
+	color: #333 !important;
+	font-weight: bold !important;
+}
+
+.wiki_content a.wiki_link:hover {
+	text-decoration:underline;
+}
+
+.wiki_content a.wiki_link_missing {
+	border-bottom:1px dotted #999 !important;
+	color:#ccc !important;
+	text-decoration:none !important;
+}
+
+.wiki_content .wiki_toc {
+	position:relative;
+	overflow: hidden;
+	max-width: 200px;
+	background-color:#fff;
+	padding: 0 0 6px 6px;
+}
+
+.wiki_content .wiki_toc .content {
+	position:relative;
+	border:2px solid #eee;
+	background-color:#fff;
+	padding: 6px;
+	border-radius: 5px;
+}
+
+.wiki_content ul li {
+	list-style: square;
+	margin-left:2em;
+}
+
+.wiki_content ul li li{
+	list-style: disc;
+}
+
+.wiki_content ol li {
+	margin-left:2em;
+	list-style-type: decimal;
+}
+
+.wiki_content ol li li {
+	list-style-type: lower-alpha;
+}
+
+.wiki_content h1 {
+	font-size: 180%;
+	border-bottom: 2px solid #999;
+}
+
+.wiki_content h2 {
+	font-size: 160%;
+	border-bottom: 1px dotted #ccc;
+}
+
+.wiki_content h3 {
+	font-size: 140%;
+	border-bottom: 1px dotted #eee;
+}
+
+.wiki_content h4 {
+	font-size: 120%;
+}
+
+.wiki_content pre {
+	border: 1px solid #EEEECC;
+	background-color: #FFFFEB;
+	padding: .8em 1em;
+}
+
+.wiki_content div.level {padding-left:1em;}
+.wiki_content div.level1 {padding-left:0;}
+
+.wiki_content table {
+	border-collapse: collapse;
+	border-top: 2px solid #666;
+	border-bottom: 2px solid #666;
+}
+
+.wiki_content tr td {
+	border: 1px solid #ccc;
+	padding: 6px 6px 0 6px;
+}
+
+.wiki_content td.header { 
+	font-weight: bold; 
+	background-color: #eee; 
+}
+.wiki_content .right { text-align: right }
+.wiki_content .center { text-align: center }
+
+
+/* 附件对话框样式 */
+#attachment_dir {
+	padding: 10px;
+	border-right:1px solid #ccc;
+	background-color: #f4f4f4;
+	min-width: 100px;
+}
+
+#attachment_dir ul{
+	list-style: none;
+}
+
+#attachment_dir li{
+	padding-left: 0;
+	margin-left: 0;
+}
+
+#attachment_dir li li{
+	margin-left: 1em;
+}
+
+#attachment_list .thumbnail {
+	padding:5px;
+	border-bottom:1px solid #e7e7e7;
+}
+
+#attachment_list .thumbnail .image img{
+	display:block;
+}
+
+#attachment_list .thumbnail .information {
+	padding-left:5px;
+}
+
+

@@ -1,0 +1,106 @@
+<div class="hr_1">&#160;</div>
+
+<div class="panel padding_1">
+	<?php if ( count($panel_buttons) ) : ?>
+		<span><?php echo Widget::factory('application:links', ['links'=>$panel_buttons, 'separator'=>'&#160;']);?></span>
+	
+	<?php endif; ?>
+</div>
+
+<?php echo $pagination; ?>
+<?php
+
+$table = Widget::factory('table');
+$table->name = 'grants';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+
+/* BUG #928::课题名称，点击后不知道按什么规则排序的，来源，编号，负责人等都是这样
+   解决：取消除了总额之外的排序(kai.wu@2011.8.2) */
+$table->add_columns([
+	'@'=>NULL,
+	'project'=>[
+		'title'=>I18N::HT('grants', '课题名称'),
+		'sortable'=>TRUE,
+        'nowrap'=> TRUE,
+		'filter' => [
+			'form' => V('grants:grants_table/filters/project', ['form'=>$form]),
+			'value' => $form['project'] ? H($form['project']) : NULL
+		],
+		'nowrap'=>TRUE,
+	],
+	'source'=>[
+		'title'=>I18N::HT('grants', '来源'),
+		'sortable'=>TRUE,
+        'nowrap'=> TRUE,
+		'filter' => [
+			'form' => V('grants:grants_table/filters/source', ['form'=>$form]),
+			'value' => $form['source'] ? H($form['source']) : NULL
+		],
+		'nowrap'=>TRUE,
+	],
+	'ref'=>[
+		'title'=>I18N::HT('grants', '编号'),
+		'sortable'=>TRUE,
+		'nowrap'=>TRUE,
+		'filter' => [
+			'form' => V('grants:grants_table/filters/ref', ['form'=>$form]),
+			'value' => $form['ref'] ? H($form['ref']) : NULL
+		],
+		'extra_class'=>'tight',
+	],
+	'user'=>[
+		'title'=> I18N::HT('grants', '负责人'),
+		'align'=>'center',
+		'nowrap'=>TRUE,
+		'sortable'=>TRUE,
+		'filter'=> [
+			'form' => V('grants:grants_table/filters/user', ['name'=>'user', 'value'=>$form['user']]),
+			'value' => $form['user'] ? H($form['user']) : NULL
+		],
+		'nowrap'=>TRUE,
+	],
+	'amount'=>[
+		'title'=> I18N::HT('grants', '总额'),
+		'nowrap'=>TRUE,
+		'sortable'=>TRUE,
+	],
+	'usage'=>[
+		'title'=> NULL,
+		'nowrap'=>TRUE,
+		'invisible' => TRUE,
+	],
+	'expense'=>[
+		'nowrap'=>TRUE,
+		'align'=>'left',
+	],
+	'rest'=>[
+		'align'=>'right',
+		'nowrap'=>'TRUE',
+	],
+]);
+
+$table->empty_message = I18N::T('grants', '无符合条件的经费');
+
+$me = L('ME');
+foreach ($grants as $grant) { 
+	$links = $grant->links('index');
+	$table->add_row([
+		'@' => [
+			'view'=> URI::anchor($grant->url(), $grant->icon('32', 'style="display:block"')),
+			'extra'=>'style="padding:4px" align="right" align="right"',
+		],
+		'project' => V('grants:grants_table/data/project', ['grant'=>$grant]), 
+		'source' => H($grant->source),
+		'ref' => H($grant->ref),
+		'user' => $grant->user->render(NULL, TRUE),
+		'amount' =>  V('grants:grants_table/data/amount', ['grant'=>$grant]),
+		'expense' => V('grants:grant/simple_portion', ['portion'=>$grant, 'width'=>200]),
+		'rest'=> Widget::factory('application:links', ['links'=>$links]),
+	]);
+}
+
+echo $table;
+
+

@@ -1,0 +1,6 @@
+<a href="<?php echo $evaluate->equipment->url('records'); ?>">
+    <?php echo H($evaluate->equipment->name) ?>
+</a><br/>
+<small class="description">
+    <?php echo O('eq_record', ['evaluate' => $evaluate])->get_date();?>
+</small>

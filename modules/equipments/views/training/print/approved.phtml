@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C/DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+        <meta name="renderer" content="webkit" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1" />
+		<title><?php echo I18N::T('equipments', '已通过培训人员列表'); ?></title>
+		<base href="<?php echo H(Config::get('system.base_url') ) ?>" />
+		<link type="text/css" rel="stylesheet" href="<?php echo H(URI::url('css', ['f'=>'core'])) ?>" />
+		<style type="text/css">
+			a {
+				color:blue;
+				text-decoration:underline;
+			}
+			table.report {
+				font-size: 14px;
+				margin:auto;
+			}
+			thead{
+				border-top:2px solid	#000;
+				border-bottom:1px solid #000;
+			}
+			tbody{
+				border-bottom:2px solid #000;
+			}
+			thead#stat{
+				font-size: 10px;
+				border:none;
+			}
+			table.report caption {
+				font-size: 150%;
+				margin-bottom: 10px;
+			}
+			table.report tbody td {
+				vertical-align: top;
+				border-bottom: 1px dotted #CCC;
+			}
+			table.report .referred_charge {
+				background-color: #eee;
+				border:1px dotted #CCC;
+			}
+		</style>
+		<style media="print">
+			.buttons{
+				display:none;
+			}
+		</style>
+	</head>
+	
+	<body>
+		<div class="buttons">
+			<a href="#" onclick="window.print(); return false;"><?php echo I18N::HT('equipments', '打印'); ?></a>
+			<a href="#" onclick="window.close(); return false;"><?php echo I18N::HT('equipments', '关闭|:print'); ?></a>
+		</div>
+		<table class="report" cellpadding="5" cellspacing="5" style="border-collapse:collapse;">
+			<caption class="nowrap">
+                <?php echo I18N::HT('equipments', '已通过培训人员列表');?>
+            </caption>
+			<thead>
+				<tr>
+					<?php foreach($valid_columns as $p => $p_name) : ?>
+						<th class="left nowrap"><?php echo I18N::T('equipments', $p_name); ?></th>
+					<?php endforeach; ?>
+				</tr>
+			</thead>
+			<tbody>
+			<?php
+
+			foreach($objects as $object): ?>
+				<tr>
+				<?php if (array_key_exists('user', $valid_columns)) : ?>
+					<td class="left nowrap"><?php echo H($object->user->name); ?></td>
+				<?php endif; ?>
+                <?php if (array_key_exists('lab', $valid_columns)) :?>
+                    <td class="left nowrap"><?php echo H(join(' ', Q("$object->user lab")->to_assoc('id', 'name')));?></td>
+                <?php endif;?>
+                <?php if (array_key_exists('group', $valid_columns)) :?>
+                    <td class="left nowrap"><?php echo H($object->user->group->name);?></td>
+                <?php endif;?>
+				<?php if (array_key_exists('phone', $valid_columns)) : ?>
+					<td class="left nowrap"><?php echo H($object->user->phone);?></td>
+				<?php endif; ?>
+				<?php if (array_key_exists('email', $valid_columns)) : ?>
+					<td class="left nowrap"><?php echo H($object->user->email);?></td>
+				<?php endif; ?>
+				<?php if (array_key_exists('address', $valid_columns)) : ?>
+					<td class="left nowrap"><?php echo H($object->user->address);;?></td>
+				<?php endif; ?>
+				<?php if (array_key_exists('equipment', $valid_columns)) : ?>
+					<td class="left nowrap"><?php echo H($object->equipment->name);;?></td>
+				<?php endif; ?>
+				<?php if (array_key_exists('ctime', $valid_columns)) : ?>
+					<td class="left nowrap"><?php echo $object->ctime ? Date::format($object->ctime,'Y/m/d') :'-';?></td>
+				<?php endif; ?>
+				<?php if (array_key_exists('atime', $valid_columns)) : ?>
+					<td class="left nowrap"><?php echo $object->atime ? Date::format($object->atime,'Y/m/d') : I18N::T('equipments', '不过期');?></td>
+				<?php endif; ?>
+				<?php if (array_key_exists('description', $valid_columns)) : ?>
+					<td class="left nowrap"><?php echo $object->description;?></td>
+				<?php endif; ?>
+					<?php
+			endforeach;
+			?>
+				<tr>
+					<td colspan="<?php echo count($valid_columns) + 1; ?>" class="right nowrap">
+						<?php echo I18N::T('equipments', '总计:') . $objects->total_count(); ?>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</body>
+</html>

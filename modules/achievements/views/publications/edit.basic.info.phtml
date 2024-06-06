@@ -1,0 +1,85 @@
+<?php 
+$require = (string)V('form_require');
+$me = L("ME");
+$authors = (array) $publication->authors;
+if (empty($authors)) {
+	$ac_authors = Q("ac_author[achievement=$publication]");
+	$authors = [];
+	foreach ($ac_authors as $ac_author) {
+		if($ac_author->user->id) {
+			$authors[$ac_author->name] = [
+				'user_id'=>$ac_author->user->id,
+				'text'=>$ac_author->name,
+				'em'=>TRUE,
+			];
+		}
+		else{
+			$authors[$ac_author->name]=$ac_author->name;
+		}
+	}
+}
+?>
+<tr>
+	<td class="label left nowrap middle label_width">
+        <?php echo $require;?><?php echo I18N::T('achievements', '标题'); ?>
+        <br>
+        <?php echo V('form_filter',['error'=>$form->errors['title'][0]]); ?>
+    </td>
+	<td class="top" colspan="2">
+		<textarea name="title" class="text" rows="3" cols="53" style="height: auto;"><?php echo H(!$form->no_error ? $form['title'] : $publication->title); ?></textarea>
+	</td>
+</tr>
+<tr><td><div class="interval_20"></div> </td></tr>
+<tr>
+	<td class="label left nowrap middle">
+        <?php echo $require;?><?php echo I18N::T('achievements', '作者'); ?>
+        <br>
+        <?php echo V('form_filter',['error'=>$form->errors['authors'][0]]); ?>
+        <br>
+        <br>
+        <?php
+        $can = $publication->id
+            ? $me->is_allowed_to('修改', $publication)
+            : $me->is_allowed_to('添加成果', 'lab');
+        if ($can) : ?>
+            <input style="margin-left: 21px;" type="button" value="<?php echo H(I18N::T('achievements', '对应作者')) ?>" class="font-button-save middle button view object:select_author event:click static:object=<?php echo $publication->id?>&type=publication  src:<?php echo URI::url('!achievements/index')?>" />
+        <?php endif;?>
+    </td>
+	<td class="middle" colspan="2">
+		<div class="label nowrap middle">
+		<input name="authors" class="text token middle" q-token_tip='<?php echo I18N::T('achievements', '您可选择标签或按回车键输入作者')?>' size="50" value="<?php echo !$form->no_error ? H($form['authors']) : H(@json_encode($authors,TRUE))?>" />
+		</div>
+	</td>
+</tr>
+<tr><td><div class="interval_20"></div> </td></tr>
+<tr>
+	<td class="label left nowrap middle">
+        <?php echo $require;?><?php echo I18N::T('achievements', '期刊'); ?>
+        <br>
+        <?php echo V('form_filter', ['error'=>$form->errors['journal'][0]]); ?>
+    </td>
+	<td class="middle" colspan="2">
+		<input name="journal" class="text" size="50" value="<?php echo H(!$form->no_error ? $form['journal'] : $publication->journal)?>" />
+	</td>
+</tr>
+<tr><td><div class="interval_20"></div> </td></tr>
+<tr>
+	<td class="label left nowrap top lpadding_21"><?php echo I18N::T('achievements', '摘要'); ?></td>
+	<td class="top" colspan="2">
+		<textarea name="content" class="text autogrow" rows="3"  style="height:60px; width: 100%;"><?php echo H(!$form->no_error ? $form['content'] : $publication->content)?></textarea>
+	</td>
+</tr>
+<tr><td><div class="interval_20"></div> </td></tr>
+<tr>
+	<td class="label left nowrap middle lpadding_21"><?php echo I18N::T('achievements', '日期'); ?></td>
+	<td class="left nowrap">
+		<input name="date" class="middle text date" date_type="date" size="11" value="<?php echo H(!$form->no_error ? $form['date'] ?:time() : ($publication->date ?: '')); ?>" />
+		<span class="label middle"><?php echo I18N::T('achievements', '卷'); ?></span>
+		<input name="volume" class="middle text small_text" size="5" value="<?php echo H(!$form->no_error ? $form['volume'] : $publication->volume)?>" />
+		<span class="label middle"><?php echo I18N::T('achievements', '刊号'); ?></span>
+		<input name="issue" class="middle text small_text" size="5" value="<?php echo H(!$form->no_error ? $form['issue'] : $publication->issue)?>" />
+		<span class="label middle"><?php echo I18N::T('achievements', '页号'); ?></span>
+		<input name="page" class=" middle text small_text" size="5" value="<?php echo H(!$form->no_error ? $form['page'] : $publication->page)?>" />
+	</td>
+</tr>
+<tr><td><div class="interval_20"></div> </td></tr>

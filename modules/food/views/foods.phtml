@@ -1,0 +1,10 @@
+<?php
+
+if ($foods->length() == 0) {
+	echo I18N::T('food', '当天没有可预订的菜式');
+}
+
+foreach($foods as $food) {
+	echo Form::checkbox("fd_id[$food->id]",  array_key_exists($food->id, $checked) ? 1 : 0 , I18N::T('food',$food->name.'<br />'), 'class="middle"'.((time() > $lock_time) ? 'disabled="disabled"' : ''), 'class="middle" ');
+}
+

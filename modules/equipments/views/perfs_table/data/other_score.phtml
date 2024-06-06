@@ -1,0 +1,5 @@
+<?php 
+	$scores = (array)Perf::perf_score($equipment, $perf);
+	$other_sore = $scores['total'] - $scores['user_score'];
+	echo $other_sore;
+?>

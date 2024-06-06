@@ -1,0 +1,33 @@
+<tr class="row parent_stock_<?php echo $collection->id ?>">
+	<td>&nbsp;</td>
+	<td>
+		<div class="toggle_collapse show_child_stocks show_child_stocks_<?php echo $collection->id; ?> float_right" id="<?php echo $collection->id; ?>"  >
+		</div>
+	</td>
+	<td colspan="3">
+		<div class="show_collection">
+			<?php 
+				$msg = $collection->id ? I18N::T('inventory', "%name", ['%name'=>$collection->product_name]) : I18N::T('inventroty', '其他存货');	
+			?>
+			<span class="collection_name collection:<?php echo $collection->id?>"><?php echo H($msg);?></span>
+			<?php if($collection->id): ?>
+				<a class="hidden blue"><?php echo I18N::T('inventory', '修改名称'); ?></a>
+			<?php endif; ?>
+			<div id="<?php echo $collection->id; ?>" class="collection_count <?php echo $collection->id;?>">
+				<a style="color:#6FB1D5;cursor:pointer;">
+					<?php echo I18N::HT('inventory', '(共%count条)', ['%count'=>$child_stocks_count]); ?>
+				</a>
+			</div>
+		</div>
+	</td>
+	<td class="nowrap" align="center">
+		<span class="collection_expire_status_<?php echo $collection->id; ?>">
+		<?php 
+			echo V('inventory:stocks_table/data/expire_status', [
+					'collection_id' => $collection->id,
+			]);
+		?>
+		</span>
+	</td>
+	<td colspan="<?php echo H(Module::is_installed('extra') ? 3 : 2) ?>">&nbsp;</td>
+</tr>

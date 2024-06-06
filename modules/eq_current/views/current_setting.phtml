@@ -1,0 +1,81 @@
+<form class="edit" autocomplete="off" method="post">
+    <div class="form">
+        <table class="form">
+            <tr>
+                <td class="top icon" width="130">
+                    <div class="icon-radius"><?php echo $equipment->icon('104'); ?></div>
+                </td>
+                <td class="top">
+                    <div>
+                        <h2 class="section_title">
+                            <span class="border"></span>
+                            <span class="black_title">额定功率</span>
+                            <span class="gray" style="font-weight: normal;">（W）</span>
+                        </h2>
+                        <div class="interval_12"></div>
+
+                        <input
+                            name="rated_output"
+                            class="text number lmaigin_1e5"
+                            value="<?php echo H($form['rated_output']?:Config::get('equipment.default_rated_output')) ?>"/>
+                    </div>
+                    <div class="interval_20"></div>
+                    <div>
+                        <h2 class="section_title">
+                            <span class="border"></span>
+                            <span class="black_title">工作电压</span>
+                            <span class="gray" style="font-weight: normal;">（V）</span>
+                        </h2>
+                        <div class="interval_12"></div>
+                        <input
+                            name="voltage"
+                            class="text number lmaigin_1e5"
+                            value="<?php echo H($form['voltage']?:Config::get('equipment.default_voltage')) ?>"/>
+
+                    </div>
+                    <div class="interval_20"></div>
+                    <div>
+                        <h2 class="section_title">
+                            <span class="border"></span>
+                            <span class="black_title">电流阈值</span>
+                            <span class="gray" style="font-weight: normal;">（mA）</span>
+                        </h2>
+                        <div class="interval_12"></div>
+
+                        <input
+                            name="current_threshold"
+                            class="text number lmaigin_1e5"
+                            value="<?php echo H($form['current_threshold']?:Config::get('equipment.default_current_threshold')) ?>"/>
+
+                    </div>
+
+                </td>
+            </tr>
+        </table>
+        <div class="interval_20"></div>
+        <div class="form float_right">
+            <input
+            type="reset"
+            class="font-button-default rmargin_16"
+            value="取消"/>
+            <input
+            type="submit"
+            name="submit"
+            class="font-button-save"
+            value="<?php echo T('保存修改'); ?>"/>
+        </div>
+    </div>
+</form>
+<script>
+    $(function () {
+        /*var form = document.forms[0];
+        var rated_output = form['rated_output'].value;
+        var voltage = form['voltage'].value;
+        var current_threshold = form['current_threshold'].value;
+        $("#btn_cancel").click(function () {
+            form['rated_output'].value = rated_output;
+            form['voltage'].value = voltage;
+            form['current_threshold'].value = current_threshold;
+        });*/
+    });
+</script>

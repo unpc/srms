@@ -1,0 +1,69 @@
+<?php
+    $no_error = (!is_object($form) || !!$form->no_error);
+    //echo V('form_error', array('form'=>$form));
+    $to_new = $stock->parent->id ? 'old' : 'new';
+
+    $to_new = $no_error ? $to_new : $form['add_to_stock_mode'];
+
+    $s = $no_error ? $stock : O('stock', $form['stock']);
+
+    $stock_value = ($s->parent->id && $s->id != $s->parent->id ) ? $s->parent : $s;
+?>
+
+    <tr>
+        <td></td>
+        <td colspan="3">
+            <div class="toggle:add_to_stock show_on:on form padding_1">
+            <table>
+                <tr class="toggle:add_to_stock show_on:on">
+                    <td class="top nowrap left"><?php echo Form::radio('add_to_stock_mode', 'new', $to_new, I18N::T('inventory', '新建存货'), 'class="middle monitor"'); ?></td>
+                    <td></td>
+                </tr>
+                <tr class="toggle:add_to_stock show_on:on">
+                    <td class="label top nowrap right"><?php echo I18N::T('inventory', '条码')?></td>
+                    <td class="left">
+                        <input name="stock_barcode" class="text toggle_status:add_to_stock_mode enable_on:new" size="20" value="<?php echo H($no_error?$stock->barcode:$form['stock_barcode']); ?>" />
+                    </td>
+                </tr>
+
+                <tr class="toggle:add_to_stock show_on:on">
+                    <td class="label top nowrap right"><?php echo I18N::T('inventory', '存放位置')?></td>
+                    <td class="left">
+                        <input name="stock_location" class="text toggle_status:add_to_stock_mode enable_on:new" size="40" value="<?php echo H($no_error?$stock->location:$form['stock_location']); ?>" />
+                    </td>
+                </tr>
+
+                <tr class="toggle:add_to_stock show_on:on">
+                    <td class="label top nowrap right"><?php echo I18N::T('inventory', '库存状态')?></td>
+                    <td class="left">
+                        <?php echo Form::dropdown('stock_status', I18N::T('inventory', Stock_Model::$stock_status), ($no_error?$stock->status:$form['stock_status'])?:Stock_Model::UNKNOWN, 'class="toggle_status:add_to_stock_mode enable_on:new disable_on:on"'); ?>
+                    </td>
+                </tr>
+
+                <tr class="toggle:add_to_stock show_on:on">
+                    <td class="label top nowrap right"><?php echo I18N::T('inventory', '备注')?></td>
+                    <td class="left">
+                        <textarea name="stock_note" class="text autogrow toggle_status:add_to_stock_mode enable_on:new" cols="40"><?php echo H($no_error?$stock->note:$form['stock_note']); ?></textarea>
+                    </td>
+                </tr>
+                <tr class="toggle:add_to_stock show_on:on">
+                    <td class="top nowrap left"><?php echo Form::radio('add_to_stock_mode', 'old', $to_new, I18N::T('orders', '加入已有存货'), 'class="middle monitor"'); ?></td>
+                    <td></td>
+                </tr>
+                <tr class="toggle:add_to_stock show_on:on">
+                    <td class="label top nowrap right"></td>
+                    <td class="lpadding_3 toggle_status:add_to_stock_mode enable_on:old">
+                        <?php 
+                            echo Widget::factory('inventory:stock_selector', [
+                                'name' => 'stock',
+                                'autocomplete' => URI::url('!inventory/autocomplete/stock.' . $stock->id),
+                                'size' => 40,
+                                'stock' => $stock_value,
+                            ]);
+                        ?>
+                    </td>
+                </tr>
+            </table>
+            </div>
+        </td>
+    </tr>

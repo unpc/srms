@@ -1,0 +1,13 @@
+:root {
+    --basiccolor: #2BA07F;
+    --backgroundcolor: rgba(43, 160, 127, 0.00);
+    --loginbgcolor: rgba(43, 160, 127, 0.88);
+    --hovercolor: #228D66;
+
+    --bottonPaddingRight: 5px;
+
+    /*--basiccolor: #b75b32;*/
+    /*--hovercolor: #69331d;*/
+    /*--backgroundcolor: rgba(139, 43, 160, 0.08);*/
+    /*--loginbgcolor: rgba(139, 43, 160, 0.88);*/
+}

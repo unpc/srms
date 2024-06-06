@@ -1,0 +1,296 @@
+<?php 
+echo JS::load('eq_sample:dropdown_links');
+echo CSS::load_async('eq_sample:common'); 
+?>
+
+<?php	
+if ($form['dtsubmit_dtstart'] || $form['dtsubmit_dtend']) {
+	$form['dtsubmit_date'] = true;
+}
+
+if ($form['dtrial_submit_dtstart'] || $form['dtrial_dtend']) {
+	$form['dtrial_date'] = true;
+}
+
+if ($form['dtpickup_dtstart'] || $form['dtpickup_dtend']) {
+	$form['dtpickup_date'] = true;
+}
+
+$table = Widget::factory('table');
+$table->name = 'eq_sample_incharge';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+$field = [
+	'lab_group'=>[
+		'title'=>I18N::T('eq_sample', '实验室组织机构'),
+		'invisible'=>TRUE,
+		'filter'=>[
+			'form'=>V('eq_sample:samples_table/filters/lab_group', ['lab_group' => $form['lab_group']]),
+			'value'=>$form['lab_group'] ? O('tag_group', $form['lab_group'])->name : NULL,
+		],
+		'weight' => 10,
+	],
+	'equipment_group'=>[
+		'title'=>I18N::T('eq_sample', '仪器组织机构'),
+		'invisible'=>TRUE,
+		'filter'=>[
+			'form'=>V('eq_sample:samples_table/filters/equipment_group', ['equipment_group' => $form['equipment_group']]),
+			'value'=>$form['equipment_group'] ? O('tag_group', $form['equipment_group'])->name : NULL,
+		],
+		'weight' => 15,
+	],
+	'equipment_type'=>[
+		'title'=>I18N::T('eq_sample', '仪器分类'),
+		'invisible'=>TRUE,
+		'filter'=> [
+			'form'=>V('eq_sample:samples_table/filters/equipment_type', ['equipment_type' => $form['equipment_type']]),
+			'value'=>$form['equipment_type'] ? O('tag_equipment', $form['equipment_type'])->name : NULL,
+		],
+		'weight' => 16,
+	],
+	'serial_number' => [
+		'title' => I18N::T('eq_sample', '编号'),
+		'align' => 'left',
+		'sortable'=>TRUE,
+		'filter' => [
+			'form' => V('eq_sample:samples_table/filters/serial_number', ['value' => $form['id']]),
+			'value' => $form['id'] ? Number::fill(H($form['id']), 6) : NULL,
+			'field'=>'id'
+			],
+		'weight' => 20,
+		'nowrap' => TRUE
+	],
+	'equipment' => [
+		'title' => I18N::T('eq_sample', '仪器'),
+		'align' => 'left',
+		'sortable'=>TRUE,
+		/* 'filter' => array(
+			* 	'form' => V('eq_sample:samples_table/filters/equipment', array('equipment' => $form['equipment'])),
+			* 	'value' => $form['equipment'] ? : NULL
+			* 	), */
+		'weight' => 21,
+		'nowrap' => TRUE
+		],
+    'equipment_ref' => [
+        'title'    => I18N::T('eq_sample', '仪器编号'),
+        'nowrap'   => true,
+        'align'    => 'left',
+        'invisible' => true,
+        'filter'   => [
+            'form'  => V('eq_sample:samples_table/filters/equipment_ref', ['form' => $form]),
+            'value' => $form['equipment_ref'] ? H($form['equipment_ref']) : null,
+        ],
+        'weight'   => 25,
+    ],
+	'sender' => [
+		'title' => I18N::T('eq_sample', '申请人'),
+		'align' => 'left',
+		'sortable'=>TRUE,
+		'filter' => [
+			'form' => V('eq_sample:samples_table/filters/sender', ['sender' => $form['sender']]),
+			'value' => $form['sender'] ? H($form['sender']) : NULL
+			],
+		'weight' => 30,
+		'nowrap' => TRUE
+	],
+	'lab_name' => [
+		'title' => I18N::T('eq_sample', '课题组'),
+		'invisible' => TRUE,
+		'filter' => [
+			'form' => V('eq_sample:samples_table/filters/lab_name', ['lab_name'=>$form['lab_name']]),
+			'value' => $form['lab_name'] ? H($form['lab_name']) : NULL,
+		],
+		'nowrap' => TRUE,
+		'weight' => 35,
+	],
+	'count' => [
+		'title' => I18N::T('eq_sample', '样品数'),
+		'align' => 'right',
+		'sortable' => TRUE,
+		'filter' => [
+			'form' => V('eq_sample:samples_table/filters/count', ['count' => $form['count']]),
+			'value' => $form['count'] ? H($form['count']) : NULL
+			],
+		'weight' => 40,
+		'nowrap' => TRUE
+		],
+	'dtsubmit' => [
+		'title' => I18N::T('eq_sample', '送样时间'),
+		'align' => 'left',
+		'sortable' => TRUE,
+		'filter' =>  [
+			'form' => V('eq_sample:samples_table/filters/date', [
+							'name_prefix' => 'dtsubmit_',
+							'dtstart_check' => $form['dtsubmit_dtstart_check'],
+							'dtstart' => $form['dtsubmit_dtstart'],
+							'dtend_check' => $form['dtsubmit_dtend_check'],
+							'dtend' => $form['dtsubmit_dtend']					
+							]),
+			'value' => $form['dtsubmit_date'] ? H($form['dtsubmit_date']) : NULL,
+			'field'=>'dtsubmit_dtstart_check,dtsubmit_dtstart,dtsubmit_dtend_check,dtsubmit_dtend'
+			],
+		'weight' => 50,
+		'nowrap' => TRUE,
+		],
+		/*
+	'dtrial' => array(
+		'title' => I18N::T('eq_sample', '测样时间'),
+		'align' => 'left',
+		'sortable' => TRUE,
+		'filter' =>  array(
+			'form' => V('eq_sample:samples_table/filters/date', array(
+							'name_prefix' => 'dtrial_',
+							'dtstart_check' => $form['dtrial_dtstart_check'],
+							'dtstart' => $form['dtrial_dtstart'],
+							'dtend_check' => $form['dtrial_dtend_check'],
+							'dtend' => $form['dtrial_dtend']					
+							)),
+			'value' => $form['dtrial_date'] ? H($form['dtrial_date']) : NULL,
+			'field'=>'dtrial_dtstart_check,dtrial_dtstart,dtrial_dtend_check,dtrial_dtend'
+			),
+		'nowrap' => TRUE,
+		),
+		*/
+	'dtpickup' => [
+		'title' => I18N::T('eq_sample', '取样时间'),
+		'align' => 'left',
+		'sortable' => TRUE,
+		'filter' =>  [
+			'form' => V('eq_sample:samples_table/filters/date', [
+							'name_prefix' => 'dtpickup_',
+							'dtstart_check' => $form['dtpickup_dtstart_check'],
+							'dtstart' => $form['dtpickup_dtstart'],
+							'dtend_check' => $form['dtpickup_dtend_check'],
+							'dtend' => $form['dtpickup_dtend']
+							]),
+			'value' => $form['dtpickup_date'] ? H($form['dtpickup_date']) : NULL,
+			'field'=>'dtpickup_dtstart_check,dtpickup_dtstart,dtpickup_dtend_check,dtpickup_dtend'
+			],
+		'weight' => 60,
+		'nowrap' => TRUE,
+		],
+	'status' => [
+		'title' => I18N::T('eq_sample', '状态'),
+		'align' => 'center',
+		'extra_class' => 'status',
+		'sortable' => TRUE,
+		'filter' => [
+			'form' => V('eq_sample:samples_table/filters/status', [
+				'status' => $form['status'],
+				'_type' => 'incharge', //标记为 incharge
+			]),
+			'value' => V('eq_sample:samples_table/filters/status.value', ['status' => $form['status']]),
+			],
+		'weight' => 65,
+		'nowrap' => TRUE
+		],
+	'operator' => [
+		'title' => I18N::T('eq_sample', '操作者'),
+		'align' => 'center',
+		'sortable'=>TRUE,
+		'filter' => [
+			'form' => V('eq_sample:samples_table/filters/operator', ['operator' => $form['operator']]),
+			'value' => $form['operator'] ? H($form['operator']) : NULL
+			],
+		'weight' => 80,
+		'nowrap' => TRUE
+		],
+	'fee' => [
+		'title' => I18N::T('eq_sample', '收费'),
+		'align' => 'right',
+		'nowrap' => TRUE,
+		'weight' => 90,
+		],
+	'description' => [
+		'title' => I18N::T('eq_sample', '描述'),
+		'align' => 'left',
+		'nowrap' => TRUE,
+		'weight' => 100,
+	],
+	'rest' => [
+		'title' => I18N::T('eq_sample', '操作'),
+		'align' => 'left',
+		'nowrap' => TRUE,
+		'weight' => 110,
+		],
+	];
+
+$columns = new ArrayObject($field);
+Event::trigger('eq_sample.table_list.columns', $form, $columns);
+
+$table->add_columns((array)$columns);
+$table->empty_message = I18N::T('eq_sample', '没有送样信息');
+
+if (!$no_search_box) {
+    $param = [
+        'panel_buttons' => $panel_buttons,
+        'top_input_arr'=> ['serial_number', 'sender', 'equipment_ref'],
+        'columns'=> $table->columns,
+    ];
+    echo V('application:search_box', $param);
+}
+
+if (count($samples)) {
+	$sort_by_time = in_array($sort_by, ['dtsubmit', 'dtrial', 'dtpickup']); // 或按时间排序
+
+	if ($sort_asc) {
+		$flag_time = -1;
+	}
+	else {
+		$flag_time = 2147483647;
+	}
+
+	foreach ($samples as $sample) {
+		if ($sort_by_time) {
+			$sample_time = $sort_by == 'dtsubmit' ? $sample->dtsubmit : $sample->dtpickup;
+
+            $sample_trunk_time = $sample_time ? Date::get_day_start($sample_time) : 0;
+
+			if ($sample_trunk_time != $flag_time) {
+				if ($sample_trunk_time == 0 && $sort_by == 'dtpickup') {
+					$separator = I18N::T('eq_sample', '未设取样');
+				}
+				else {
+					$separator = H(Date::fuzzy($sample_trunk_time));
+				}
+
+				$table->add_row([
+									'#special_view' => $separator,
+									'#extra_class' => 'date_header',
+									]);
+
+				$flag_time = $sample_trunk_time;
+			}
+		}
+
+		$links = $sample->links();
+
+		$key = 'sample_incharge_' . $sample->id;
+
+		$row = [
+			'serial_number' => V('eq_sample:samples_table/data/serial_number', ['sample' => $sample]),
+			'equipment' => V('eq_sample:samples_table/data/equipment', ['equipment' => $sample->equipment]),
+			'sender' => V('eq_sample:samples_table/data/sender', ['sample' => $sample]),
+			'count' => V('eq_sample:samples_table/data/count', ['sample' => $sample]),
+			'dtsubmit' => V('eq_sample:samples_table/data/dtsubmit', ['sample' => $sample]),
+			//'dtrial' => V('eq_sample:samples_table/data/dtrial', array('sample' => $sample)),
+			'dtpickup' => ($sample->status != EQ_Sample_Model::STATUS_APPLIED && $sample->dtpickup) ? V('eq_sample:samples_table/data/dtpickup', ['sample' => $sample]) : '--',
+			'status' => V('eq_sample:samples_table/data/status', ['sample' => $sample, '_type'=> 'incharge']),
+			'fee' => V('eq_sample:samples_table/data/fee', ['sample' => $sample]),
+			'operator' => V('eq_sample:samples_table/data/operator', ['sample' => $sample]),
+			'description' => V('eq_sample:samples_table/data/description', ['sample' => $sample]),
+			'rest' =>  Widget::factory('application:links', ['links' => $links]),
+		];
+
+		$row = new ArrayIterator($row);
+		Event::trigger('eq_sample.table_list.row', $row, $sample);
+		$table->add_row_withkey($row, $key);
+	}
+}
+?>
+<div class="pages" ><?php echo $pagination; ?></div>
+<?php
+echo $table;
+?>
+<div class="pages" ><?php echo $pagination; ?></div>

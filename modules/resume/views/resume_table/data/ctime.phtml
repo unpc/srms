@@ -1,0 +1,6 @@
+<div style="margin-left:20px; margin-right:20px;">
+<?php $ctime_check = 1; ?>
+<a class="search_link" href="<?php echo URI::url('', ['ctime'=>$resume->ctime, 'ctime_check'=>$ctime_check]); ?>">
+<?php echo Date::format($resume->ctime, T('Y/m/d H:i:s')); ?>
+</a>
+</div>

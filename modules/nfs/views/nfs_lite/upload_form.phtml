@@ -1,0 +1,253 @@
+<?php
+$object_name = $object->name();
+$object_id = $object->id;
+$upload_form_uniqid = 'upload_form_'.uniqid();
+$upload_size = intval(ini_get('upload_max_filesize'));
+?>
+<div>
+	<div class="form" id="upload_area" class="prevent_default">
+		<form id="<?php echo H($upload_form_uniqid) ?>" method="post" action="<?php echo H(URI::url('!nfs/nfs_lite/upload.'.$object_name.'.'.$object_id.'.'.$path_type,['path'=>$path, 'form_token'=>$form_token])) ?>" class="nowrap">
+			<div class="upload_tips">
+				<div class="add_icon">
+					<span class="left icon-add"></span>
+					<span class="right">上传附件</span>
+				</div>
+				<div class="add_tips">
+					<span>可将文件拖拽到此区域内上传</span>
+				</div>
+			</div>
+			<input name="Filedata" type="file" class="middle" />
+			<input name="single" type="hidden" value="1" />
+		</form>
+	</div>
+</div>
+<script>
+jQuery(function($){
+
+	var $add_icon = $('.add_icon > .left');
+	var $right = $('.add_icon > .right');
+	var $tips = $('.add_tips > span');
+	var $form = $('#<?php echo $upload_form_uniqid?>:eq(0)');
+	var $file_data = $('input[name="Filedata"]');
+	var box = document.getElementById('upload_area');
+
+    $('input[name=Filedata]').change(function () {
+        let l = this.files[0].size;
+        if (l) {
+            let li = parseInt('<?= $upload_size?>' * 1024 * 1024);
+            if (li < l) {
+                alert('上传体积小于等于<?= $upload_size?>MB以下的文件');
+            }
+        }
+    });
+
+	// 拖拽上传
+	document.addEventListener('dragleave', function(e){cursor_leave(e);});
+	document.addEventListener('drop', function(e){cursor_leave(e);});
+	document.addEventListener('dragenter', function(e){cursor_over(e, 'document');});
+	document.addEventListener('dragover', function(e){cursor_over(e, 'document');});
+
+	box.addEventListener('dragleave', function(e){cursor_over(e, 'ducument');});
+	box.addEventListener('dragenter', function(e){cursor_over(e, 'upload_area');});
+	box.addEventListener('dragover', function(e){cursor_over(e, 'upload_area');});
+
+	//上传progress事件
+    function upload_progress(e) {
+        //loaded代表上传了多少
+        //total代表总数为多少
+        var percent = (e.loaded / e.total) * 100;
+
+        //通过设置进度条的宽度达到效果
+        $('.upload_progress_bar').css('width',percent + '%');
+        /*if (percent == 100){
+            var str = "<?php echo I18N::T('nfs', '上传结束，等待后台处理'); ?>";
+            $right.text(str);
+        }*/
+    }
+
+	// 鼠标在页面内
+	function cursor_over(e, position)
+	{
+		e.preventDefault();
+		e.stopPropagation();
+		$(box).removeClass('cursor_leave').addClass('cursor_over');
+		$add_icon.hide();
+		$tips.hide();
+		if (position == 'document') {
+			$right.text('请将文件移至此处放手').css('font-size', '30px').css('color', '#448EF6');
+		} else if (position == 'upload_area') {
+			$right.text('请放手').css('font-size', '32px').css('color', '#448EF6');
+		}
+	}
+
+	// 鼠标在页面外
+	function cursor_leave(e, position)
+	{
+		e.preventDefault();
+		e.stopPropagation();
+		$(box).removeClass('cursor_over').addClass('cursor_leave');
+		$add_icon.show();
+		$tips.show();
+		$right.text('上传附件').css('color', '#ABB7CA').css('font-size', '16px');
+	}
+
+	box.addEventListener("drop", function(e){
+        e.preventDefault();
+		e.stopPropagation();
+		$right.text('上传附件').css('color', '#ABB7CA').css('font-size', '16px');
+		$(box).removeClass('cursor_leave').removeClass('cursor_over');
+        var fileList = e.dataTransfer.files;
+        if(fileList.length == 0){
+            return false;
+        }
+
+		// 限制格式
+        /*if(fileList[0].type.indexOf('image') === -1){
+            alert("您拖的不是图片！");
+            return false;
+        }*/
+
+        var img = window.URL.createObjectURL(fileList[0]);
+        var filename = fileList[0].name;
+        var filesize = Math.floor((fileList[0].size)/1024);
+        if (filesize > 1000) {
+            alert("上传大小不能超过1M.");
+            return false;
+        }
+
+		var formData = new FormData();
+		formData.append('Filedata', fileList[0]);
+		formData.append('single', 1);
+
+		var str = "<?php echo I18N::T('nfs', '正在上传'); ?>" + '"' + filename + '"';
+		$right.text(str);
+		$tips.hide();
+		$add_icon.hide();
+
+		$.ajax({
+			url: $('#<?php echo $upload_form_uniqid?>:eq(0)').attr('action'),
+			type: 'post',
+			data: formData,
+			processData: false,
+            contentType: false,
+            beforeSend: function (e) {
+                progress_bar = '<tr class="upload_progress_tr"><td class="left nowrap"><span class="file">' +
+                    '<span style="font-size: 15px;padding-right: 10px;" class="fa fa-lage fa-file-o"></span><a>' + filename + '</a></span></td>' +
+                    '<td class="left nowrap description "><div class="upload_progress_box"><div class="upload_progress_bar"></div></div></td><td class="left nowrap"></td></tr>';
+                var $tbody = $('#<?php echo $form_id?>').find('tbody:eq(0)');
+                $tbody.prepend(progress_bar);
+            },
+            success : function (data) {
+                //$(".upload_progress_tr").remove();
+                //data = $.parseJSON($('<div />').html(data).text());
+                //var $tbody = $('#<?php echo $form_id?>').find('tbody:eq(0)');
+                //$tbody.prepend(data);
+                $("#<?php echo $no_file_uniqid?>").remove();
+                $('.description.center.nodata').remove();
+                var str = "<?php echo I18N::T('nfs', '上传成功'); ?>" + '"' + filename + '"';
+                $right.text(str);
+                $add_icon.show();
+                $form[0].reset();
+            },
+            xhr: function() {
+                var xhr = new XMLHttpRequest();
+                //使用XMLHttpRequest.upload监听上传过程，注册progress事件
+                xhr.upload.addEventListener('progress', upload_progress)
+
+                return xhr;
+            }
+		});
+
+    });
+
+	// 点击上传
+	$add_icon.bind('click', function() {$file_data.click();});
+	$file_data.bind('change', function() {
+		$this = $(this);
+		if (!$this.val()) return false;
+
+		var str = "<?php echo I18N::T('nfs', '正在上传'); ?>" + '"' + $this.val() + '"';
+		$right.text(str);
+		$tips.hide();
+		$add_icon.hide();
+
+		/*$form.ajaxSubmit({
+			dataType: 'json',
+			success : function(data) {
+				var $tbody = $('#<?php //echo $form_id?>').find('tbody:eq(0)');
+				$tbody.prepend(data);
+				$("#<?php //echo $no_file_uniqid?>").remove();
+				$('.description.center.nodata').remove();
+				var str = "<?php //echo I18N::T('nfs', '上传成功'); ?>" + '"' + $this.val() + '"';
+				$right.text(str);
+				$add_icon.show();
+				$form[0].reset();
+			}
+		});*/
+
+        var formData = new FormData();
+        formData.append('Filedata', $file_data[0].files[0]);
+        formData.append('single', 1);
+        var filename = $file_data[0].files[0].name;
+
+
+
+        $.ajax({
+            url: $('#<?php echo $upload_form_uniqid?>:eq(0)').attr('action'),
+            type: 'post',
+            data: formData,
+            processData: false,
+            contentType: false,
+            beforeSend: function (e) {
+                progress_bar = '<tr class="upload_progress_tr"><td class="left nowrap"><span class="file">' +
+                    '<span style="font-size: 15px;padding-right: 10px;" class="fa fa-lage fa-file-o"></span><a>' + filename + '</a></span></td>' +
+                    '<td class="left nowrap description "><div class="upload_progress_box"><div class="upload_progress_bar"></div></div></td><td class="left nowrap"></td></tr>';
+                var $tbody = $('#<?php echo $form_id?>').find('tbody:eq(0)');
+                $tbody.prepend(progress_bar);
+            },
+            success : function (data) {
+                $(".upload_progress_tr").remove();
+                //data = $.parseJSON($('<div />').html(data).text());
+                //var $tbody = $('#<?php echo $form_id?>').find('tbody:eq(0)');
+                //$tbody.prepend(data);
+                $("#<?php echo $no_file_uniqid?>").remove();
+                $('.description.center.nodata').remove();
+                var str = "<?php echo I18N::T('nfs', '上传成功，等待后台处理'); ?>" + '"' + filename + '"';
+                $right.text(str);
+                $add_icon.show();
+                $form[0].reset();
+            },
+            xhr: function() {
+                var xhr = new XMLHttpRequest();
+                //使用XMLHttpRequest.upload监听上传过程，注册progress事件
+                xhr.upload.addEventListener('progress', upload_progress)
+
+                return xhr;
+            }
+        });
+
+		return false;
+	});
+
+	$(document).bind('dialog_close', function(){
+		if (timer) {
+			clearInterval(timer)
+		}
+		return false;
+	});
+    $('input[name=submit]').click(function () {
+		if (timer) {
+			clearInterval(timer)
+		}
+	})
+
+    var timer = setInterval(function () {
+        Q.trigger({
+            object: 'check_result',
+            event: 'refresh',
+            global: false,
+            url: "<?php echo H(URI::url('!nfs/nfs')) ?>",
+        });
+    }, 2000);
+});
+</script>

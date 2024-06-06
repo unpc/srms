@@ -1,0 +1,7 @@
+<?php 
+$base_url = Config::get('system.base_url');
+$url = $base_url.'!orders/index';
+$count = URI::anchor($url, $count);
+$str = I18N::T( 'orders', $template, ['%count'=>$count] );
+?>
+<li>➡ &#160;&#160;&#160;<?php echo $str; ?></li>

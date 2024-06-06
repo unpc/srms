@@ -1,0 +1,23 @@
+<div class="interval_24"></div>
+<div class="form">
+    <table class="form" style="min-width: 1024px;">
+        <tbody>
+            <td class="top icon" width="130"></td>
+            <td class="top">
+                <div class="toggle:accept_sample show_on:on">
+                    <?php echo V('form_error', ['form' => $form, 'show_list' => true]) ?>
+                    <div class="form">
+                        <?php
+                            echo Widget::factory('flexform', [
+                                'title'         => I18N::T('eq_sample', '送样时间设置'),
+                                'template_data' => ['disabled' => true],
+                                'existing_data' => $times,
+                                'item_view' => 'eq_sample_time:time/item',
+                            ]);    
+                        ?>
+                    </div>
+                </div>
+            </td>
+        </tbody>
+    </table>
+</div>

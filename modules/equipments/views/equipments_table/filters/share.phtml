@@ -1,0 +1,7 @@
+<?php
+
+$status = array_map(function($v) {
+    return I18N::T('equipments', $v);
+}, ['-1' => '--'] + Equipment_Model::$share_status);
+
+echo Form::dropdown('share', $status, isset($form['share']) ? $form['share'] : -1, 'class="dropdown"');

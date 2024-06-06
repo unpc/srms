@@ -1,0 +1,22 @@
+<div class="hr_1">&#160;</div>
+<div class="form padding_1">
+	<table class="form">
+		<tr>
+			<td class="top icon">
+				<img src="<?php echo H($service->icon_url('64')) ?>" />
+			</td>
+			<td class="top">
+				<form autocomplete="off" action="<?php echo H(URI::url()) ?>" method="post" enctype="multipart/form-data">
+					<p>
+						<input name="file" type="file" class="file" />
+						<input type="submit" class="button button_import" name="submit" value="<?php echo H(I18N::T('technical_service', '上传图标')) ?>"/>
+					</p>
+					<div class="hr_1">&#160;</div>
+					<p>
+						<a class="font-button-delete" href="<?php echo H(URI::url('!technical_service/service/delete_photo.'.$service->id)) ?>" confirm="<?php echo H(I18N::T('labs', '确定要删除图标吗?')) ?>"><?php echo I18N::T('technical_service', '删除图标')?></a>
+					</p>
+				</form>
+			</td>
+		</tr>
+	</table>
+</div>

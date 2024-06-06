@@ -1,0 +1,38 @@
+<?php 
+$upload_form_uniqid = 'upload_form_'.uniqid();
+$error_msg = I18N::T('nrii', '异常原因: 文件上传中止!');
+?>
+<div class="form padding_2" class="prevent_default">
+    <form id="<?php echo H($upload_form_uniqid) ?>" method="post" action="<?php echo H(URI::url('!nrii/'.$mode.'/import')) ?>" class="nowrap" style="padding:1px">
+        <input name="file" type="file" class="middle" />
+        <input name="single" type="hidden" value="1" />
+        <a name="upload" href="#" class="button button_import middle prevent_default"><?php echo I18N::HT('nrii', '上传')?></a>
+    </form>
+</div>
+<script>
+jQuery(function($){
+    var $form = $('#<?php echo $upload_form_uniqid?>');
+    $form
+        .find('a[name=upload]')
+        .bind('click', function(){
+            $form.ajaxSubmit({
+                dataType: 'json',
+                complete: function (data) {
+                },
+                success : function(data, status, xhr) {
+                    // console.log(data)
+                    // console.log(status)
+                    // console.log(xhr)
+                    // alert('上传成功');
+                    Dialog.close();
+                    window.location.reload();      
+                },
+                error : function (data, b, c){
+                    alert('上传失败');
+                    Dialog.close(); 
+                }
+            });
+            return false;
+        });
+});
+</script>

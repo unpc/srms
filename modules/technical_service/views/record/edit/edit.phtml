@@ -1,0 +1,37 @@
+<tr class="begin">
+    <td class="label left top nowrap blue" colspan="2"><h1>
+            <?php echo I18N::HT('technical_service', '技术服务'); ?></h1>
+    </td>
+</tr>
+<tr>
+    <td class="label left top nowrap">
+        <?php
+        $require = (string)V('form_require');
+        echo $require;
+        ?><?php echo I18N::HT('technical_service', '是否关联服务申请'); ?>
+    </td>
+</tr>
+<tr>
+    <?php
+    $record = Q("{$sample} service_apply_record")->current();
+    ?>
+    <td class="label left top nowrap">
+        <?php echo Form::radio('connect_apply_record', 1, $form['connect_apply_record'] ?? $record->id ? 1 : 0,
+            I18N::T('technical_service', '是'), 'class="monitor middle radio"', 'class="middle"'); ?>
+        <span class="toggle:connect_apply_record show_on:1" style="display: block;padding-top: 24px;">
+            <?php
+            $equipment = O('eq_sample', $form['id'])->equipment;
+            echo Widget::factory('technical_service:apply_record_selector', [
+                'autocomplete' => URI::url('!technical_service/autocomplete/apply_record.' . ($form['sender'] ?: $sample->sender->id ?: L('ME')->id),['equipment'=>$equipment->id]),
+                'name' => 'apply_record',
+                'apply_record' => $form['apply_record'] ?? $record,
+                'size' => 36,
+            ]);
+            ?>
+        </span>
+    </td>
+    <td class="label left top nowrap">
+        <?php echo Form::radio('connect_apply_record', 0, $form['connect_apply_record'] ?? $record->id ? 1 : 0,
+            I18N::T('technical_service', '否'), 'class="monitor middle radio"', 'class="middle"'); ?>
+    </td>
+</tr>

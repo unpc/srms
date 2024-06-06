@@ -1,0 +1,7 @@
+<?php $credit_level = $credit->credit_level; ?>
+
+<?php if ($credit_level->id): ?>
+    <div><strong class="name"><?php echo str_repeat('A', $credit_level->level) ?></strong></div>
+<?php else: ?>
+    <div><strong class="name"><?php echo str_repeat('A', 1) ?></strong></div>
+<?php endif; ?>

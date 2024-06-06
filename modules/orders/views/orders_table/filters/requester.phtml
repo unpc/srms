@@ -1,0 +1,7 @@
+<?php
+
+echo Widget::factory('application:user_selector', [
+	 'name'=>'requester', 
+	 'size'=>'30',
+	 'user'=> $form['requester'] ? O('user', $form['requester']) : NULL,
+	 ]);

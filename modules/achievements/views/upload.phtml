@@ -1,0 +1,23 @@
+<?php
+$upload_form_uniqid = 'upload_form_'.uniqid();
+$file_input_uniqid = 'file_input_'.uniqid();
+?>
+<form id="<?php echo H($upload_form_uniqid) ?>" class="nowrap" action="<?php echo H(URI::url('!achievements/import.'.$template)) ?>" method="POST" enctype="multipart/form-data" style="display: inline-block">
+    <input id="<?php echo H($file_input_uniqid) ?>" type="file" name="file" style="display: none" onchange="uploadFiles();">
+</form>
+
+<script>
+    function inputFile() {
+        // 导入模板
+        $('#<?php echo H($file_input_uniqid) ?>').click();
+        return false;
+    }
+
+    // 导入模板后上传附件
+    function uploadFiles() {
+        if ($('#<?php echo H($file_input_uniqid) ?>')[0].files.length == 0) {
+            return
+        }
+        $('#<?php echo H($upload_form_uniqid) ?>').submit();
+    }
+</script>

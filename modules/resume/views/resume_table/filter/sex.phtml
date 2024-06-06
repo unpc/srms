@@ -1,0 +1,5 @@
+<?php 
+	$sex_set[0] = '--';
+	$sex_set += (array)Resume::$sex;	
+?>
+<?php echo Form::dropdown('sex', $sex_set, H($this->sex) ?: 0, ' class="drop middle"'); ?>

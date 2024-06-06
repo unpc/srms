@@ -1,0 +1,13 @@
+<form autocomplete="off" method="post" action="<?php echo H(URI::url() ) ?>">
+<?php echo V('form_error', ['form'=>$form])?>
+<div class="form">
+	<?php
+		echo Widget::factory('flexform', [
+			'title'         => I18N::T('eq_reserv', '预约次数&时长限制'),
+			'template_data' => ['disabled'=>TRUE],
+			'existing_data' => $times,
+			'item_view' => 'eq_time_counts:time/item',
+		]);
+	?>
+</div>
+</form>

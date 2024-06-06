@@ -1,0 +1,18 @@
+img.thumbnail {
+    margin: 1px;
+}
+
+img.alarm {
+    border-bottom: 1px solid rgb(255, 0, 0);
+}
+
+div.slide_container {
+
+    div.image {
+        float: left;
+        border: 1px solid #B9B9B9;
+        width: 88px;
+		height: 64px;
+		margin: 12px 0;
+    }
+}

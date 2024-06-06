@@ -1,0 +1,4 @@
+<?php 
+$me = L('ME');
+?>
+<input name="select[<?php echo $sample->id; ?>]" class="<?php echo H($select_all_id) ?> checkbox" type="checkbox" value="<?php echo $sample->id; ?>" style="padding:0; margin:0" <?php if(!($me->is_allowed_to('修改', $sample) || (Q("{$me}<incharge lab_project")->total_count() && Switchrole::user_select_role() == '项目负责人'))):?> disabled <?php endif; ?>  />

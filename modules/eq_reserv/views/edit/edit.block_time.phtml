@@ -1,0 +1,57 @@
+<div class="form <?php echo $hidden?>">
+	<h2 class="section_title">
+        <span class="border"></span>
+        <span class="black_title"><?php echo I18N::T('eq_reserv', '时间对齐设置')?></span>
+    </h2>
+	<div class="interval_12"></div>
+	<div class="lmaigin_1e5">
+		<?php echo Form::checkbox('accept_block_time', $equipment->accept_block_time, I18N::T('eq_reserv', '需要时间对齐'), 'class="middle checkbox monitor"', 'class="middle"'); ?>
+		<div class="hidden toggle:accept_block_time show_on:on">
+			<table class="form">
+				<tbody>
+					<tr>
+						<td class="nowrap middle">
+                            <div class="interval_6"></div>
+							<?php list($interval_time, $interval_time_format) = Date::format_interval($equipment->reserv_interval_time, 'ih')?>
+							<span class="middle rpadding_12"><?php echo I18N::T('eq_reserv', '时间长度对齐间距')?></span>
+							<input class="text number middle set_time_value" name="interval_time" size="2" value="<?php echo $interval_time ?: 1 ; ?>" />
+							<?php echo Form::dropdown('interval_time_format',Date::units('ih'),$interval_time_format,'class="middle set_time_format"');?>
+						</td>
+					</tr>
+                    <tr><td><div class="interval_6"></div></td></tr>
+					<tr>
+						<td class="nowrap middle">
+							<?php list($align_time, $align_time_format) = Date::format_interval($equipment->reserv_align_time, 'ih')?>
+							<span class="middle rpadding_12"><?php echo I18N::T('eq_reserv', '时间起始对齐间距')?></span>
+							<input class="text number middle set_time_value" name="align_time" size="2" value="<?php echo H($align_time ?: 1) ?>" />
+							<?php echo Form::dropdown('align_time_format',Date::units('ih'),$align_time_format,'class="middle set_time_format"');?>
+						</td>
+					</tr>
+                    <tr><td><div class="interval_6"></div></td></tr>
+                    <tr>
+                        <td class="nowrap middle">
+                            <span class="description" style="color: #E02020">
+                                <?php echo I18N::T('eq_reserv', '<span class="required">*</span> 时间段不允许跨天设置');?>
+                            </span>
+                        </td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+    <div class="interval_24"></div>
+	<div class="hidden toggle:accept_block_time show_on:on">
+	<?php
+		echo Widget::factory('flexform', [
+			'title' => I18N::T('eq_reserv', '个别时间段时间对齐设置'),
+			'description' => '(' . I18N::T('eq_reserv', '个别时间段之间的预约不能合并') . ')'. (Config::get('eq_reserv.block_day_cross') ? '时间段区间不能交叉' : ''),
+			'template_data' => ['disabled'=>TRUE],
+			'existing_data' => $equipment->reserv_block_data,
+			'item_view' => 'eq_reserv:edit/reserv_block_item',
+			'extra_vars' => [
+				'equipment' => $equipment,
+			],
+		]);
+	?>
+	</div>
+</div>

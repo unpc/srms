@@ -1,0 +1,59 @@
+<style>
+    span.door_open {
+        background:url(images/icons/door_open.png);
+        _background:url(images/icons/door_open.gif);
+    }
+
+    span.door_locked {
+        background:url(images/icons/door_locked.png);
+        _background:url(images/icons/door_locked.gif);
+    }
+
+    span.control_status {
+        width:24px;
+        height:24px;
+        display: inline-block;
+    }
+
+</style>
+<?php
+$table = Widget::factory('table');
+$table->name = 'entrance_doors';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+$table->add_columns([
+	'#'=>[
+		'nowrap'=>TRUE,
+		'align'=>'center',
+	],
+	'name'=>[
+		'title'=>I18N::T('entrance', '名称'),
+		'sortable'=>TRUE,
+		'nowrap'=>TRUE
+	],
+	'status'=>[
+		'title'=>I18N::T('entrance', '状态'),
+		'nowrap'=>TRUE
+	],
+	'location'=>[
+		'title'=>I18N::T('entrance', '地址'),
+		'nowrap'=>TRUE,
+	],
+]);
+
+$table->empty_message = I18N::T('entrance', '无符合条件的门禁');
+
+foreach ($doors as $door) { 
+	$table->add_row([
+		'#' => [
+			'view'=>$door->icon('32', 'style="display:block;"'),
+			'extra'=>'style="padding:4px"'
+		],
+		'name' => V('entrance:doors_table/data/name', ['door'=>$door]),
+		'status' => V('entrance:doors_table/data/status', ['door'=>$door]),
+		'location' => V('entrance:doors_table/data/location', ['door'=>$door]),
+	]);
+}
+
+echo $table;

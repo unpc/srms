@@ -1,0 +1,47 @@
+<tr>
+    <td class="label nowrap middle rpadding_label lpadding_8 bpadding_2">
+        <span class="lpadding_1"><?= I18N::T('equipments', '进驻仪器控')?>
+           <span style="cursor: pointer;" class="fa icon-question tgtip"></span>
+        </span>
+        <div style="position: relative">
+            <div class="tgtip_d" style="display: none;position: absolute;z-index: 500;top: -45px;left: 100px;background-color: rgba(0, 0, 0, 0.7);padding: 10px;box-shadow: #666 0 2px 4px;width: 400px;white-space: normal;color: #FFF;">
+                勾选表示您同意入驻协议，该设备将通过 “仪器控科研检测平台”（17kong.com） 对社会开放，社会用户将在仪器控平台检索到该设备。
+                <a class="blue" href="<?php echo URI::url('!equipments/index/openfile') ?>" target="_blank">点此查看</a>&nbsp;入驻协议详情
+            </div>
+        </div>
+    </td>
+</tr>
+
+<tr>
+    <td class="middle <?php echo !$disabled?'lpadding_3':'lpadding_2'?>" colspan="4">
+    <?php
+    if (!$disabled) {
+        echo '<span class="inline_block width_128">';
+        echo Form::radio('yiqikong_share', 1,
+        $no_error ? $equipment->yiqikong_share : $form['yiqikong_share'],
+        I18N::T('equipments', '是'), ' class="radio middle"', 'class="middle"');
+        echo '</span><span class="inline_block width_128">';
+        echo Form::radio('yiqikong_share', 0,
+        $no_error ? $equipment->yiqikong_share : $form['yiqikong_share'],
+        I18N::T('equipments', '否'), ' class="radio middle"', 'class="middle"');
+        echo '</span>';
+    }
+    else {
+    ?>
+    <div class="div_<?php echo $disabled ?>" style="width: 380px;">
+        <?= $equipment->yiqikong_share ? '是' : '否'; ?>
+    </div>
+    <?php
+    }
+    ?>
+    </td>
+</tr>
+
+<script>
+    $(function () {
+        $('.tgtip').click(function () {
+            $('.tgtip_d').toggle();
+        })
+    })
+</script>
+

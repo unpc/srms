@@ -1,0 +1,14 @@
+.refresh_loading {
+	background-image: url("images/loading.gif");
+	background-repeat: no-repeat;
+	background-position: 4px center;
+	padding-left: 22px;
+	display: block;
+	line-height: 1.231;
+	font-size: 1em;
+	color: #CCCCCC;
+}
+
+.cers input.text, .cers select {
+	line-height: 1.231;
+}

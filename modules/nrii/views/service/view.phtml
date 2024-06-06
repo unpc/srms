@@ -1,0 +1,115 @@
+<div class="hr_1">&#160;</div>
+<?php if (count($panel_buttons)) :?>
+  <div class="panel padding_1 clearfix">
+    <span><?= Widget::factory('application:links', ['links'=>$panel_buttons, 'separator'=>'&#160;']);?></span>
+  </div>
+<?php endif;?>
+<div class="padding_1 form">
+  <form method="post" autocomplete="off" action="<?php echo H(URI::url() ) ?>" enctype="multipart/form-data">
+  <div class="hr_2">&#160;</div>
+  <?php 
+    $no_error = $form->no_error;
+    $require = V('form_require');
+    echo V('form_error', ['form'=>$form]);
+  ?>
+  <fieldset class="bottom">
+    <legend><?= I18N::T('nrii', '平台对接') ?></legend>
+    <table class="form">
+      <tbody>
+        <tr>
+          <td class="nowrap right"><?= I18N::T('nrii', '在线服务平台网址')?></td>
+          <td><input disabled="disabled" class="text" name="serviceUrl"  size="25" value="<?= H($service['serviceUrl']) ?>" /></td>
+          <td class="nowrap right"><?= I18N::T('nrii', '在线平台建设年份') ?></td>
+          <td><input disabled="disabled" class="text" name="serviceUrlyear"  size="25" value="<?= H($service['serviceUrlyear']) ?>" /></td>
+        </tr>
+      </tbody>
+    </table>
+  </fieldset>
+  <div class="hr_2"></div>
+  <fieldset class="bottom">
+    <legend><?= I18N::T('nrii', '服务收入') ?></legend>
+    <table class="form">
+      <tbody>
+        <tr>
+          <td class="nowrap right"><?= I18N::T('nrii', '开放服务发票凭证数量（张）')?></td>
+          <td><input disabled="disabled" class="text" name="billNum"  size="25" value="<?= H($service['billNum']) ?>" /></td>
+          <td class="nowrap right"><?= I18N::T('nrii', '服务收入总金额（万元）') ?></td>
+          <td><input disabled="disabled" class="text" name="billWorth"  size="25" value="<?= H($service['billWorth']) ?>" /></td>
+        </tr>
+        <tr>
+          <td class="nowrap right"><?= I18N::T('nrii', '对外服务收入总金额（万元）') ?></td>
+          <td><input disabled="disabled" class="text" name="billWorthInstr"  size="25" value="<?= H($service['billWorthInstr']) ?>" /></td>
+          <td class="nowrap right"><?= I18N::T('nrii', '对外服务收入汇总表') ?></td>
+          <td><input disabled="disabled" class="text" name="intensityFileIdName"  size="25" value="<?= H($service['intensityFileIdName']) ?>" /></td>
+        </tr>
+      </tbody>
+    </table>
+  </fieldset>
+  <div class="hr_2"></div>
+  <fieldset class="bottom">
+    <legend><?= I18N::T('nrii', '资产明细') ?></legend>
+    <table class="form">
+      <tbody>
+        <tr>
+          <td class="nowrap right"><?= I18N::T('nrii', '50万元以上仪器总数量（台套）')?></td>
+          <td><input disabled="disabled" class="text" name="instrNum"  size="25" value="<?= H($service['instrNum']) ?>" /></td>
+          <td class="nowrap right"><?= I18N::T('nrii', '50万元以上仪器总原值（万元）')?></td>
+          <td><input disabled="disabled" class="text" name="instrWorth"  size="25" value="<?= H($service['instrWorth']) ?>" /></td>
+        </tr>
+        <tr>
+          <td class="nowrap right"><?= I18N::T('nrii', '50万元以上仪器资产明细表')?></td>
+          <td><input disabled="disabled" class="text" name="specializationFileIdName"  size="25" value="<?= H($service['specializationFileIdName']) ?>" /></td>
+        </tr>
+      </tbody>
+    </table>
+  </fieldset>
+  <div class="hr_2"></div>
+  <fieldset class="bottom">
+    <legend><?= I18N::T('nrii', '创新成效') ?></legend>
+    <table class="form">
+      <tbody>
+        <tr>
+          <td class="nowrap right"><?= I18N::T('nrii', '支撑本单位科技创新成效')?></td>
+          <td>
+            <textarea disabled="disabled" class="text autogrow" rows="3" cols="80" name="remark"><?= H($service['remark']) ?></textarea>
+          </td>
+        </tr>
+        <tr>
+          <td class="nowrap right"><?= I18N::T('nrii', '支撑外单位科技创新成效')?></td>
+          <td>
+            <textarea disabled="disabled" class="text autogrow" rows="3" cols="80" name="remarks"><?= H($service['remarks']) ?></textarea>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </fieldset>
+  <div class="hr_2"></div>
+  <fieldset class="bottom">
+    <legend><?= I18N::T('nrii', '重大设施') ?></legend>
+    <table class="form">
+      <tbody>
+        <tr>
+          <td class="nowrap right"><?= I18N::T('nrii', '重大科研基础设施开放共享情况')?></td>
+          <td>
+            <textarea disabled="disabled" class="text autogrow" rows="3" cols="80" name="remarkOne"><?= H($service['remarkOne']) ?></textarea>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </fieldset>
+  <div class="hr_2"></div>
+  <fieldset class="bottom">
+    <legend><?= I18N::T('nrii', '组织管理') ?></legend>
+    <table class="form">
+      <tbody>
+        <tr>
+          <td class="nowrap right"><?= I18N::T('nrii', '管理制度及实验队伍建设情况')?></td>
+          <td>
+            <textarea disabled="disabled" class="text autogrow" rows="3" cols="80" name="remarkTwo"><?= H($service['remarkTwo']) ?></textarea>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </fieldset>
+  </form>
+</div>

@@ -1,0 +1,15 @@
+<?php
+$priorities = Tn_Task_Model::$priority_labels;
+$translated_priorities = [];
+if ($this->allow_empty) {
+	$translated_priorities[0] = '--';
+}
+else {
+	$this->priority = $this->priority ?: TN_Task_Model::PRIORITY_NORMAL;
+}
+
+foreach ($priorities as $key => $value) {
+	$translated_priorities[$key] = I18N::T('treenote', $value);
+}
+
+echo Form::dropdown($this->name ? : 'priority', $translated_priorities, $this->priority);

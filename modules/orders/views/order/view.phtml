@@ -1,0 +1,155 @@
+<div class="hr_1">&#160;</div>
+<?php
+	$me = L('ME');
+	$order_links = (array)$order->links('view');
+	if (count($order_links)):
+?>
+<div class="panel padding_1">
+<?php
+	/* xiaopei.li@2011.03.03 */
+	echo Widget::factory('application:links', ['links' => $order_links, 'separator'=>' ']);
+?>
+</div>
+<?php endif; ?>
+<div class="inventory_info">
+<table>
+    <tr>
+    <td class="flexible">
+<?php
+	 // IMAGING can upload icon for inventories(material),
+	 // order links material,
+	 // so can display diffenrent icons here
+	 ?>
+	<h2>
+		<span class="product_name"><?php echo H($order->product_name); ?></span>
+	<?php
+		$source = $order->source;
+		$configs = Config::get('mall.sites');
+		$source_label = $configs[$source]['label'];
+		$mall_order = O('mall_order', ['order'=> $order]);
+		$mall_url = URI::url('mall/go', ['source'=> $order->source, 'oid'=> $mall_order->item_id]);
+		if ($source_label && $mall_order->id) :
+	?>
+            <?php if($me->is_allowed_to('进入商城', 'order')):?>
+			<a target="_blank" href="<?php echo H($mall_url ) ?>" class="mall_tag"><?php echo trim($source_label); ?></a>
+            <?php else:?>
+			<a target="_blank" class="mall_tag"><?php echo trim($source_label); ?></a>
+
+            <?php endif;?>
+		<?php endif; ?>
+	</h2>
+	<div class="hr_1">&#160;</div>
+	<div>
+	<?php if ($order->manufacturer): ?>
+		<span class="manufacturer middle"><?php echo H($order->manufacturer); ?></span>
+	<?php endif;?>
+	<?php if ($order->catalog_no):?>
+		<span class="catalog_no middle"> #<?php echo H($order->catalog_no); ?></span>
+		&#160;&#160;
+	<?php endif;?>
+		<?php $label_status = $order->get_label_status();?>
+		<span class="status_tag middle <?php echo Order_Model::$order_status_title[$label_status];?> "><?php echo I18N::T('orders', Order_Model::$order_status[$label_status]);?></span>
+	</div>
+	<div class="hr_2">&#160;</div>
+<div class="lpadding_3">
+	<ul class="product_info clearfix">
+	<li>
+		<span class="label"><?php echo I18N::T('orders', '型号'); ?>: </span>
+		<span class="value"><?php echo H($order->model);?></span>
+	</li>
+	<li>
+		<span class="label"><?php echo I18N::T('orders', '规格'); ?>: </span>
+		<span class="value"><?php echo H($order->spec);?></span>
+	</li>
+	<li>
+		<span class="label"><?php echo I18N::T('orders', '订单编号'); ?>: </span>
+		<span class="value"><?php echo H($order->order_no);?></span>
+	</li>
+	<li class="clear">&#160;</li>
+	<li>
+		<span class="label"><?php echo I18N::T('orders', '数量'); ?>: </span>
+		<span class="value"><?php echo H($order->quantity);?></span>
+	</li>
+	<li>
+		<span class="label"><?php echo I18N::T('orders', '单价'); ?>: </span>
+		<span class="value">
+			<?php
+				if ($order->unit_price < 0) {
+				    echo I18N::T('orders', '待询价');
+				}
+				else {
+				    echo H(Number::currency($order->unit_price));
+				}
+			?>
+		</span>
+	</li>
+	<li>
+        <span class="label"><?php echo I18N::T('orders', '运费'); ?>: </span>
+        <span class="value"><?php echo Number::currency($order->fare);?></span>
+    </li>
+    <li class="clear">&#160;</li>
+	<li class="nowrap">
+		<span class="label"><?php echo I18N::T('orders', '总价'); ?>: </span>
+		<span class="value">
+			<?php
+            if ($order->price < 0) {
+                echo I18N::T('orders', '待询价');
+            }
+            else {
+                echo V('orders:order/price_view', ['order'=> $order]);
+            }
+			?>
+		</span>
+	</li>
+	<li class="clear">&#160;</li>
+	<li class="nowrap">
+		<span class="label"><?php echo I18N::T('orders', '供应商'); ?>: </span>
+		<span class="value"><?php echo H($order->vendor);?></span>
+	</li>
+	<li class="clear">&#160;</li>
+	<li class="nowrap">
+		<span class="label"><?php echo I18N::T('orders', '链接地址'); ?>: </span>
+        <?php
+        //当未设定order的link的schema时
+        //需要补充schema
+        $parse_url  = parse_url($order->link);
+        if (!$parse_url['scheme']) $order_link = 'http://'. $order->link;
+        else $order_link = $order->link;
+        ?>
+        <span class="value"><a href="<?php echo H($order_link) ?>" target="_blank"><?php echo H($order->link);?></a></span>
+	</li>
+	<li class="clear">&#160;</li>
+	<li><span>&#160;</span></li>
+	<li class="clear"></li>
+	<li class="nowrap"><?php echo V('orders:order/view_links', ['order'=>$order]);?></li>
+	<li class="clear">&#160;</li>
+	<li>
+		<?php
+		$root = Tag_Model::root('inventory'); /* TODO fix inventory tag */
+		$tags = (array) Q("$order tag[root=$root]")->to_assoc('name','name');
+		if (count($tags)) {
+			echo '<div class="hr_2">&#160;</div><div class="clearfix">';
+			foreach ($tags as $tag) {
+				echo '<span class="inventory_tag">'.$tag.'</span> ';
+			}
+			echo '</div>';
+		}
+		?>
+	</li>
+	</ul>
+</div>
+	<div class="hr_3">&#160;</div>
+	<?php echo V('orders:order/track', ['order'=>$order]);?>
+	<div class="hr_3">&#160;</div>
+	<?php echo Widget::factory('application:comments', ['object'=>$order]); ?>
+    </td>
+    <?php if ($order->qrcode_enable()) :?>
+    <td class="top">
+        <div class="order_qrcode">
+            <img class="order_qrcode" src="<?php echo H($order->url(NULL, NULL, NULL, 'qrcode')) ?>" />
+        </div>
+    </td>
+    <?php endif;?>
+    </tr>
+</table>
+</div>

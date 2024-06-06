@@ -1,0 +1,66 @@
+<tr>
+    <td class="label left top nowrap" colspan="2"><h1><?php echo I18N::HT('eq_approval', '您有该仪器的预约凭证, 可使用预约凭证进行预约');?></h1></td>
+</tr>
+<?php 
+	$tr_approval_id = 'approval_reserv_'.uniqid();
+	$me = L('ME');
+	$vs = $me->getCanUseVoucher(EQ_Voucher_Model::RESERV, $component->calendar->parent);
+	$reserv = O('eq_reserv', ['component' => $component]);
+	$voucher = Q("{$reserv} eq_voucher:limit(1)")->current();
+	if ($voucher->id) $vs->append($voucher);
+	$vouchers = EQ_Approval::fill_voucher_labels($vs);
+?>
+<tr id="<?php echo $tr_approval_id; ?>" >
+	<td class="label right nowrap">
+		<div class="lpadding_3">
+    		<?php echo I18N::T('eq_approval', '预约凭证'); ?>
+		</div>
+	</td>
+    <td>
+    	<div class="middle nowrap">
+    		<?php $no_error = !$form->no_error === FALSE; ?>
+			<?php echo Form::dropdown('voucher', [ 0 => '--'] + $vouchers, $no_error ? (int)$voucher->id : (int)$form['voucher'], ''); ?>
+    	</div>
+    </td>
+</tr>
+<script>
+jQuery(function($){
+	var $tr = $("#<?= $tr_approval_id ?>")
+		, $item = $('[name=voucher]', $tr)
+		, $form = $tr.parents('form')
+		, $val = $item.val()
+		, fillForm = function(val) {
+			if (val == 0) return;
+			Q.trigger({
+                url: '<?= URI::url("!eq_approval/voucher")?>',
+                object: 'get_voucher',
+                event: 'info',
+                data: { 'id': val },
+                global: false,
+                success: function(data) {
+                    var info = data.info
+                    	, project = $('[name=project]', $form)
+                    
+
+                    project.find("option[selected]").removeAttr('selected')
+					project.find("option[value="+info.project+"]").attr('selected', 'selected')
+					project.change()
+					$(".dropdown_text", project.next('.dropdown_container')).html(
+						$("option[selected]", project).html()
+					)
+
+					$('[name=description]', $form).html(info.description)
+                }
+            })
+		}
+
+	$item.bind('change', function(e){
+		var val = $item.val()
+		if (val != $val) {
+			fillForm(val)
+			$val = val
+		}
+		return false
+	})
+});
+</script>

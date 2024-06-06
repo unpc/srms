@@ -1,0 +1,529 @@
+<?php
+echo CSS::load_async('orders:order');
+$me = L('ME');
+$no_error = (!is_object($form) || !!$form->no_error);
+$form_id = 'order_edit_form_'. uniqid();
+$grant_element_class = 'grant_element_' . uniqid();//bug4058, 未关联经费的订单，不能看见经费元素
+$grant_name = 'grant';
+$portion_name = 'grant_portion';
+$table_id = 'table_' . uniqid();
+?>
+<div class="hr_1">&#160;</div>
+<div class="order_form">
+<form q-src="<?php echo $order->url(); ?>" q-object="edit" q-event="submit" id="<?php echo H($form_id) ?>" autocomplete="off">
+<?php echo V('form_error', ['form'=>$form]);?>
+<div class="form padding_1 clearfix">
+	<div class="clear">&#160;</div>
+    <table class="form" id="<?php echo $table_id; ?>">
+        <tbody>
+            <tr>
+                <td class="label top nowrap right">
+                    <span class="title"><?php echo I18N::T('orders', '货品信息');?></span>
+                </td>
+                <td colspan="3">&#160;</td>
+            </tr>
+
+            <tr>
+                <td class="label top nowrap right">
+                    <?php echo $order->get_require('product_name'); echo I18N::T('orders', '产品名称') ?>
+                </td>
+                <td class="left nowrap" colspan="3">
+                    <input class="text" type="text" size="60" name="product_name" value="<?php echo H($no_error?$order->product_name : $form['product_name'])?>" />
+                    <input name="source" class="hidden" type="text" value="<?php echo H($order->source);?>" />
+                    <input name="order_id" class="hidden" type="text" value="<?php echo $order->id; ?>" />
+                    <input name="order_status" class="hidden" type="text" value="<?php echo $order->status; ?>" />
+                </td>
+            </tr>
+
+            <tr class="nowrap">
+                <td class="label top nowrap right">
+                    <?php echo $order->get_require('manufacturer'); echo I18N::T('orders', '生产商') ?>
+                </td>
+                <td class="left top nowrap">
+                    <input class="text remote" type="text" name="manufacturer" value="<?php echo H($no_error?$order->manufacturer:$form['manufacturer'])?>"/>
+                </td>
+                <td class="label top nowrap right">
+                    <?php echo $order->get_require('model'); echo I18N::T('orders', '型号') ?>
+                </td>
+                <td class="left">
+                    <input class="text remote" type="text" name="model" value="<?php echo H($no_error?$order->model:$form['model'])?>"/>
+                </td>
+
+            </tr>
+
+            <tr class="nowrap">
+                <td class="label top nowrap right">
+                    <?php echo $order->get_require('catalog_no'); echo I18N::T('orders', '目录号') ?>
+                </td>
+                <td class="left">
+		            <input class="text remote" type="text" name="catalog_no" value="<?php echo H($no_error?$order->catalog_no:$form['catalog_no'])?>"/>
+                </td>
+				<td class="label top nowrap right">
+                    <?php echo $order->get_require('spec'); echo I18N::T('orders', '规格')?>
+                </td>
+                <td class="left">
+		            <input class="text remote" type="text" name="spec" value="<?php echo H($no_error?$order->spec:$form['spec'])?>" />
+                </td>
+            </tr>
+            <tr class="nowrap">
+                <td class="label top nowrap right">
+                    <?php echo $order->get_require('order_no'); echo I18N::T('orders', '订单编号') ?>
+                </td>
+                <td class="left">
+		            <input class="text remote" type="text" name="order_no" value="<?php echo H($no_error?$order->order_no:$form['order_no'])?>" />
+               </td>
+                <td class="label top nowrap right">
+                    <?php echo $order->get_require('quantity'); echo I18N::T('orders', '数量') ?>
+                </td>
+                <td class="left">
+                <input class="text number remote" type="text" name="quantity" id="quantity" value="<?php echo H($no_error?$order->quantity:$form['quantity'])?>" />
+                </td>
+            </tr>
+            <tr>
+                <td class="label top nowrap right">
+                    <?php echo $order->get_require('unit_price'); echo I18N::T('orders', '单价') ?>
+                </td>
+                <td class="left">
+                    <?php if($order->source && $order->unit_price < 0):?>
+                        <input class="text" value="<?= I18N::T('orders', '待询价');?>" disabled/>
+                    <?php else:?>
+		            <input class="text currency remote" type="text" name="unit_price" value="<?php echo H($no_error ? $order->unit_price : $form['unit_price'])?>"/>
+                    <?php endif;?>
+                </td>
+                <td class="label top nowrap right">
+                    <?php echo $order->get_require('fare'); echo I18N::T('orders', '运费') ?>
+                </td>
+                <td class="left">
+                    <input class="text number currency remote" type="text" name="fare" value="<?php echo H($no_error?$order->fare:$form['fare'])?>" q-number_default_value="<?php echo $order->fare; ?>" />
+               </td>
+            </tr>
+            <tr>
+                <td class="label top nowrap right">
+                    <?php echo $order->get_require('price'); echo I18N::T('orders', '总价') ?>
+                </td>
+                <td class="left" colspan="3">
+                <?php if($order->source && !$order->price):?>
+                    <input class="text" value="<?= I18N::T('orders', '待询价');?>" disabled/>
+                <?php else:?>
+                <input class="text currency middle remote" type="text" name="price" value="<?php echo H($no_error ? $order->price : $form['price'])?>" />
+                    <?php if(!$order->source):?>
+                    <a href="#" class="button button_calculate middle prevent_default" name="calculate_price"><?php echo I18N::T('orders', '计算')?></a>
+                    <?php endif;?>
+                <?php endif;?>
+                </td>
+            </tr>
+	        <?php if ($me->is_allowed_to('编辑订单标签', 'order')) : ?>
+            <tr>
+                <td class="label top nowrap right">
+                    <?php echo $order->get_require('tags'); echo I18N::T('orders','标签') ?>
+                </td>
+                <td class="left" colspan="3">
+                    <?php
+                    /* xiaopei.li@2011.02.23 */
+                    $root = Tag_Model::root('inventory');
+                    if ($order->id) {
+                        $tags = (array) Q("$order tag[root=$root]")->to_assoc('name','name');
+                        if(count($tags)) {
+                            $tags = json_encode($tags,TRUE);
+                        }
+                    }
+                    else{
+                        $tags = '';
+                    }
+                    echo Widget::factory('application:multi_tag_selector',
+                        [
+                            'autocomplete'=> URI::url("!inventory/autocomplete/tags.$root->id"),
+                            'name'=>'tags',
+                            'value'=> $no_error ? $tags : $form['tags'],
+                            'size'=>'68',
+                            'allow_creating'=>TRUE,
+                            'token_tip' => I18N::T('orders', '您可选择标签或按回车键输入新的标签'),
+                        ]);
+                    ?>
+                </td>
+            </tr>
+            <?php endif;?>
+
+
+
+            <tr>
+                <td class="label top nowrap right">
+                    <?php echo $order->get_require('link'); echo I18N::T('orders', '链接地址') ?>
+                </td>
+                <td class="left" colspan="3">
+                    <?php if ($order->source): ?>
+                        <input size="60" name="link" class="text" value="<?php echo H($order->link)?>" disabled/>
+                    <?php else: ?>
+                        <input size="60" name="link" class="text" value="<?php echo H($no_error ? $order->link : $form['link'])?>" />
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <?php
+                $view = Event::trigger('get_extra_order_edit_view', $form, $order);
+                echo $view;
+            ?>
+            <tr>
+                <td colspan="4">
+                    <span class="title"><?php echo I18N::T('orders', '订单信息')?></span>
+                </td>
+            </tr>
+            <?php
+                if($order->source) {
+                    $disabled = 'disabled';
+                }
+                else {
+                    $disabled = null;
+                }
+            ?>
+            <tr>
+                <td class="label top nowrap right">
+                    <?php 
+                    if ($order->status >= Order_Model::READY_TO_TRANSFER) {
+                        echo "* ";
+                    }
+                    ?>
+                    <?php echo I18N::T('orders', '配送地址');?>
+                </td>
+                <td>
+                    <input name="address" type="text" class="text" value="<?php echo H(!$no_error ? $form['address'] : ($order->receive_address ? : Lab::get('orders.receive_address')));?>" size="30" <?php echo $disabled ?>/>
+                </td>
+                <td class="label top nowrap right">
+                    &#160;&#160;&#160;
+                    <?php 
+                    if ($order->status >= Order_Model::READY_TO_TRANSFER) {
+                        echo "* ";
+                    }
+                    ?><?php echo I18N::T('orders', '邮政编码');?>
+                </td>
+                <td>
+                    <input name="postcode" type="text" class="text" value="<?php echo H(!$no_error ? $form['postcode'] : ($order->receive_postcode ? : Lab::get('orders.receive_postcode')));?>" <?php echo $disabled ?>/>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="label top nowrap right">
+                    <?php 
+                    if ($order->status >= Order_Model::READY_TO_TRANSFER) {
+                        echo "* ";
+                    }
+                    ?><?php echo I18N::T('orders', '联系电话');?>
+                </td>
+                <td>
+                    <input name="phone" type="text" class="text" value="<?php echo H(!$no_error ? $form['phone'] : ($order->receive_phone ? : Lab::get('orders.receive_phone')));?>" <?php echo $disabled ?>/>
+                </td>
+                <td class="label top nowrap right">
+                    <?php 
+                    if ($order->status >= Order_Model::READY_TO_TRANSFER) {
+                        echo "* ";
+                    }
+                    ?><?php echo I18N::T('orders', '电子邮箱');?>
+                </td>
+                <td>
+                    <input name="email" type="text" class="text" value="<?php echo H(!$no_error ? $form['email'] : ($order->receive_email ? : Lab::get('orders.receive_email')));?>" <?php echo $disabled ?>/>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="label top nowrap right"><?php echo I18N::T('orders', '申购人') ?></td>
+                <td class="left" colspan="3">
+                <?php if ($order->source): ?>
+                <?php
+                    $user = $order->requester;
+                    if (!$user->id) $user = $me;
+                    echo Widget::factory('user_selector', [
+                    'autocomplete'=>'',
+                    'name'=>'requester',
+                    'user'=> $user,
+                    'size'=> 20,
+                    'disabled'=>TRUE
+                    ]);
+                ?>
+                <?php else: ?>
+                <?php
+                    $user = $no_error ? $order->requester : O('user',$form['requester']);
+                    if (!$user->id) $user = $me;
+                    echo Widget::factory('user_selector', [
+                    'autocomplete'=>'',
+                    'name'=>'requester',
+                    'user'=> $user,
+                    'size'=> 20,
+                    ]);
+                ?>
+                <?php endif;?>
+                </td>
+            </tr>
+            <tr>
+                <td class="label top nowrap right"><?php echo I18N::T('orders', '申购日期') ?></td>
+                <td class="left" colspan="3">
+                    <?php if ($order->source): ?>
+                  <input name="request_date" class="text date " value="<?php echo H($order->request_date ) ?>" disabled/>
+                    <?php  else: ?>
+                    <input name="request_date" class="text date " value="<?php echo H($no_error ? $order->request_date : $form['request_date']) ?>" />
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="label top nowrap right"><?php echo I18N::T('orders', '申购备注') ?></td>
+                <td class="left" colspan="3">
+			        <textarea cols="60" name="request_note" id="request_note" class="text" <?php echo $disabled ?>><?php echo H($no_error?$order->request_note:$form['request_note'])?></textarea>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="label top nowrap right"><?php echo I18N::T('orders', '确认人') ?></td>
+                <td class="left">
+                <?php
+                    // 由于user_selector的id在widget内生成，label不起作用
+                    $user = ($no_error ? $order->approver : (O('user',$form['approver'])));
+                    if (!$user->id && !in_array($order->status, 
+                        [Order_Model::REQUESTING, Order_Model::NEED_CUSTOMER_APPROVE])) 
+                        $user = $me;
+                    echo Widget::factory('user_selector', [
+                    'autocomplete'=>'',
+                    'name'=>'approver',
+                    'user'=> $user,
+                    'size'=> 20,
+                    'disabled'=> $order->source ? TRUE:FALSE,
+                    ]);
+                ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="label top nowrap right"><?php echo I18N::T('orders', '确认日期') ?></td>
+                <td class="left" colspan="3">
+                    <input name="approve_date" class="text date " value="<?php echo H($no_error ? $order->approve_date : $form['approve_date']) ?>"<?php echo $disabled ?> />
+                </td>
+            </tr>
+            <tr>
+                <td class="label top nowrap right"><?php echo I18N::T('orders', '确认备注') ?></td>
+                <td class="left" colspan="3">
+                    <textarea cols="60" name="approve_note" id="approve_note" class="text" <?php echo $disabled ?>><?php echo H($no_error?$order->approve_note:$form['approve_note'])?></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td class="label top nowrap right"><?php echo I18N::T('orders', '订购人') ?></td>
+                <td class="left">
+                <?php
+                     // 由于user_selector的id在widget内生成，label不起作用
+                     $user = ($no_error ? $order->purchaser : (O('user',$form['purchaser'])));
+                    if (!$user->id && !in_array($order->status, 
+                        [Order_Model::REQUESTING, Order_Model::NEED_CUSTOMER_APPROVE, Order_Model::READY_TO_ORDER])) 
+                        $user = $me;
+                    echo Widget::factory('user_selector', [
+                    'autocomplete'=>'',
+                    'name'=>'purchaser',
+                    'user'=> $user,
+                    'size'=> 20,
+                    'disabled'=> $order->source ? TRUE:FALSE,
+                    ]);
+                ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="label top nowrap right"><?php echo I18N::T('orders', '订购日期') ?></td>
+                <td class="left" colspan="3">
+                    <input name="purchase_date" class="text date " value="<?php echo H($no_error ? $order->purchase_date : $form['purchase_date']) ?>"<?php echo $disabled ?> />
+                </td>
+            </tr>
+            <tr>
+                <td class="label top nowrap right"><?php echo I18N::T('orders', '订购备注') ?></td>
+                <td class="left" colspan="3">
+	                <textarea cols="60" name="purchase_note" id="purchase_note" class="text" <?php echo $disabled ?>><?php echo H($no_error?$order->purchase_note:$form['purchase_note'])?></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td class="label top nowrap right"><?php echo I18N::T('orders', '到货情况') ?></td>
+                <td class="left" colspan="3">
+                <?php
+                    if ($order->deliver_status == Order_Model::RECEIVED) {
+                        $receive_status = Order_Model::RECEIVED;
+                    }
+                    else {
+                        $receive_status = Order_Model::NOT_RECEIVED;
+                    }
+                    // $receive_status = $order->receiver->id ? Order_Model::RECEIVED : Order_Model::NOT_RECEIVED;
+                    echo Form::radio('receive_status',
+                        Order_Model::NOT_RECEIVED,
+                        $receive_status,
+                        I18N::T('orders', Order_Model::$receive_status[Order_Model::NOT_RECEIVED]),
+                        'class="monitor middle"',
+                        'class="middle"');
+                    echo '&#160;&#160;';
+                    echo Form::radio('receive_status',
+                        Order_Model::RECEIVED,
+                        $receive_status,
+                        I18N::T('orders', Order_Model::$receive_status[Order_Model::RECEIVED]),
+                        'class="monitor middle"',
+                        'class="middle"');
+                ?>
+                </td>
+            </tr>
+            <tr class="toggle_status:receive_status enable_on:<?php echo Order_Model::RECEIVED ;?>">
+                <td class="label top nowrap right"><?php echo I18N::T('orders', '收货人') ?></td>
+                <td class="left" colspan="3">
+                <?php
+                    // 由于user_selector的id在widget内生成，label不起作用
+                    $user = $no_error ? $order->receiver : (O('user',$form['receiver']));
+                    if (!$user->id) {
+                        $user = $me;
+                    }
+                        echo Widget::factory('user_selector',
+                            [
+                                'autocomplete'=>'',
+                                'name'=>'receiver',
+                                'user'=> $user,
+                                'size'=> 20,
+                            ]);
+                ?>
+                </td>
+            </tr>
+
+            <tr class="toggle_status:receive_status enable_on:<?php echo Order_Model::RECEIVED ;?>">
+                <td class="label top nowrap right"><?php echo I18N::T('orders', '收货日期') ?></td>
+                <td class="left" colspan="3">
+		            <input name="receive_date" class="text date " value="<?php echo H($no_error ? $order->receive_date : $form['receive_date']); ?>" />
+                </td>
+            </tr>
+
+            <tr class="toggle_status:receive_status enable_on:<?php echo Order_Model::RECEIVED ;?>">
+                <td class="label top nowrap right"><?php echo I18N::T('orders', '收货备注') ?></td>
+                <td class="left" colspan="3">
+	                <textarea cols="60" name="receive_note" class="text"><?php echo H($no_error?$order->receive_note:$form['receive_note'])?></textarea>
+                </td>
+            </tr>
+
+            <?php if ($order->id) : ?>
+                <?php $stock = O('stock', ['order'=>$order]);?>
+                    <tr class="toggle_status:receive_status enable_on:<?php echo Order_Model::RECEIVED ;?>">
+                        <td class="label top nowrap right">&nbsp;</td>
+                        <td class="left" colspan="3">
+                            <?php echo Form::checkbox('add_to_stock', $stock->id ? TRUE :FALSE, I18N::T('orders', '加为存货'), 'class="middle monitor"','class="middle"' );?>
+                        </td>
+                    </tr>
+                    <?php echo V('orders:order/edit_stock', ['stock'=>$stock, 'form'=>$form]); ?>
+            <?php endif;//order->id?>
+
+
+            <?php if ($order->price != -1
+            	  && Q('grant')->total_count()
+            	  && $me->is_allowed_to('修改支出', $order->expense->grant)) :?>
+                <?php echo V('orders:order/edit_grant', ['order' => $order, 'form' => $form,
+                		 'grant_element_class' => $grant_element_class,
+                		 'grant_name' => $grant_name,
+                		 'portion_name' => $portion_name
+
+                	]); ?>
+	            <script type="text/javascript">
+	                	//控制关联经费相关元素的显示和隐藏
+						var $grant = $("select[name=<?php echo $grant_name ?>]");
+						var $grant_element_class = "<?php echo $grant_element_class; ?>";
+						var $table = $("#<?php echo $table_id; ?>");
+
+						$grant.bind('change', function() {
+
+							if ( $grant.val() ) {
+
+								setTimeout(function() {
+									var $portion = $("select[name=<?php echo $portion_name ?>]");
+									$portion.bind('change', function() {
+										if ( $portion.val() ) {
+											$table.find('.' + $grant_element_class).show();
+										}
+										else {
+											$table.find('.' + $grant_element_class).hide();
+										}
+
+									}).change();
+
+								}, 1000);
+							}
+							else {
+								$table.find('.' + $grant_element_class).hide();
+							}
+						}).change();
+
+	            	</script>
+            <?php endif;//修改支出 ?>
+
+            <tr>
+                <td colspan="4">&#160;</td>
+            </tr>
+            <tr>
+                <td class="label top nowrap right">&nbsp;</td>
+                <td class="left" colspan="3">
+		            <input type="submit" name="submit" value="<?php echo H(I18N::T('orders', '提交')) ?>" class="button button_save"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</form>
+</div>
+
+<script type="text/javascript">
+	jQuery(function($){
+        var source = '<?php echo $order->source ?>';
+        var disable = '<?php echo $disable ?>';
+        var $form = $('#<?php echo $form_id;?>');
+
+        if (source.length > 0) {
+            $form.find('.remote').prop('disabled', 'TRUE');
+            $form.find('[name=product_name]').prop('disabled', true);
+        }
+
+		$form.find("a[name=calculate_price]").bind('click', function(e) {
+			var n = parseInt($('input[name=quantity]', $form).val()) || 0;
+			var up = parseFloat($('input[name=unit_price]', $form).val()) || 0;
+            var fare = parseFloat($('input[name=fare]', $form).val()) || 0;
+			var total = (n * up + fare).toFixed(2);
+			$('input[name=price]', $form).prev().val(total).blur();
+			$('input[name=price]', $form).val(total).blur();
+            $('input[name=quantity]').val(n);
+			e.preventDefault();
+			return false;
+		});
+
+		//关联经费
+		var $grant = $("select[name=<?php echo $grant_name ?>]");
+		var $grant_element_class = "<?php echo $grant_element_class; ?>";
+		if ( $.trim($grant_element_class) != '' && $.trim($grant_element_class) != null  ) {
+			var $grant_value = $grant.val();
+			var $exist_portion_value = $("select[name=<?php echo $portion_name ?>]").val();
+
+			if ( ($.trim($grant_value) == '' || $.trim($grant_value) == null)
+				|| ($exist_portion_value != undefined &&
+					 ($.trim($exist_portion_value) == '' || $.trim($exist_portion_value) == null)) ) {
+				$(document).find('tr.' + $grant_element_class).css('display', 'none');
+			}
+			$grant.bind('change', function() {
+				if ( $(this).val() ) {
+					setTimeout(function() {
+						$portion = $("select[name=<?php echo $portion_name ?>]");
+						$portion_value = $portion.val();
+						if ( $portion_value == undefined ) return;
+						if ( $.trim($portion_value) == '' || $.trim($portion_value) == null ) {
+							$(document).find('tr.' + $grant_element_class).css('display', 'none');
+						}
+
+						$portion.bind('change', function() {
+							if ( $portion.val() ) {
+								$(document).find('tr.' + $grant_element_class).css('display', '');
+							}
+							else {
+								$(document).find('tr.' + $grant_element_class).css('display', 'none');
+							}
+						});
+
+					}, 1000);
+				}
+				else {
+					//$portion.unbind('change');
+					$(document).find('tr.' + $grant_element_class).css('display', 'none');
+
+				}
+			});
+
+		}
+
+	});
+</script>

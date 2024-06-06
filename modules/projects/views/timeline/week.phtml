@@ -1,0 +1,88 @@
+<div class="panel padding_1 clearfix">
+	<?php $query = H(['st'=>$dtprev, 'ed'=>$dtstart, 'uniqid'=>$uniqid, 'parent_task_id'=>$parent_task->id]); ?>
+	<a class="button float_left view object:week event:click static:<?php echo $query; ?> src:<?php echo URI::url('!projects/timeline') ?>">
+		<span>&#171; <?php echo I18N::T('entrance','上周') ?></span>
+	</a>
+	<?php $query = H(['st'=>$dtnext, 'ed'=>$dtnext + 604800, 'uniqid'=>$uniqid, 'parent_task_id'=>$parent_task->id]) ?>
+	<a class="button float_right view object:week event:click static:<?php echo $query; ?> src:<?php echo URI::url('!projects/timeline') ?>">
+		<span><?php echo I18N::T('entrance','下周') ?> &#187;</span>
+	</a>
+	<h1 class="center">
+		<?php echo Date::format($dtstart, I18N::T('projects', 'Y年m月d日'))?> - <?php echo Date::format($dtnext - 86400, I18N::T('projects', 'Y年m月d日'))?>
+	</h1>
+</div>
+<div class="timeline_view">
+	<div class="timeline_node_list"></div>
+	<div class="timeline_node_view">
+		<?php 
+			$date = getdate(time());
+			$week = $date['wday'];
+		?>
+		<div class="timeline_header">
+			<table class="flexible">
+				<thead><tr>
+					<?php
+					$headers = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+					$dt = $dtstart;
+					
+					for ($wday=0; $wday<7; $wday++):
+						$class = '';
+						if ($wday == 0) $class .= ' first';
+						if ($wday == 6) $class .= ' last';
+						if ($wday == $week && time() > $dtstart && time() < ($dtstart + 604800)) $class .= ' today';
+					?>
+						<th class="<?php echo $class ?> ">
+							<div>
+								<small><?php echo date('Y/m/d', $dt);?></small>
+								<br />
+								<?php echo I18N::T('projects', $headers[$wday]) ?>
+							</div>
+						</th>
+					<?php
+					$dt += 86400;
+					endfor;
+					?>	
+				</tr></thead>
+			</table>
+		</div>
+		
+		<div class="timeline_node_grid">
+			<table class="flexible">
+				<?php for ($count=0; $count < ($tasks->total_count() + 20); $count++): ?>
+				<tr>
+					<?php for ($i=0; $i<7; $i++): ?>
+						<?php 
+							
+							$class = 'timeline_block';
+							if (!$i) $class .= ' first';
+							if ($i == $week && time() > $dtstart && time() < $dt) $class .= ' today';
+						?>
+						<td style="height:22px;" class="<?php echo $class; ?>">&#160;</td>
+					<?php endfor; ?>
+				</tr>
+				<?php endfor; ?>
+			</table>
+		</div>
+
+	</div>
+	<div class="timeline_contextmenu"></div>
+</div>
+
+<?php
+$nodes = [];
+foreach($tasks as $task){
+	$nodes[] = [
+		'id' => (int) $task->id,
+		'url' => $task->url('timeline', NULL, NULL, 'view'),
+		'title' => $task->name,
+		'dtStart' => (int) $task->dtstart,
+		'dtEnd' => (int) $task->dtend,
+	];
+}
+echo JS::load('projects:timeline_index_instance', [
+	'dtStart'=>$dtstart,
+	'dtEnd'=>$dt,
+	'nodes'=>$nodes
+]);
+?>
+

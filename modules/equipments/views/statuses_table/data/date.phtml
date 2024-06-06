@@ -1,0 +1,3 @@
+<small class="description" style='width:250px;display:block'>
+<?php echo Date::relative($object->dtstart); ?> - <?php echo  $object->dtend ? Date::relative($object->dtend, $object->dtstart) : I18N::T('equipments', '现在'); ?>
+</small>

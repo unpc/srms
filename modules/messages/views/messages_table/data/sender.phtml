@@ -1,0 +1,2 @@
+<?php if ($message->sender->id) :?><a href="<?php echo H($message->sender->home_url()) ?>"><?php echo H($message->sender->name)?>
+    <?php else: echo I18N::T('messages', '系统');endif;?>

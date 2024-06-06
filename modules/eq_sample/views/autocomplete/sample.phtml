@@ -1,0 +1,13 @@
+<?php
+$user = $sample->sender;
+?>
+<div class="clearfix" style="width: 480px;height: 36px;line-height: 36px;">
+<div class="float_left">
+    <span class="label"><?php echo Number::fill(H($sample->id), 6);?></span>
+	<span class="label"><?php echo H($user->name); ?></span>
+	(<?php echo H($sample->count);?>)
+</div>
+<div class="right">
+	<?php echo Date::format($sample->dtsubmit, 'Y/m/d H:i'); ?>
+</div>
+</div>

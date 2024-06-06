@@ -1,0 +1,120 @@
+<div class="interval_60"></div>
+<div class="form margin-left-1"><form class="edit" method="post" action="" autocomplete="off">
+<?php
+$error = FALSE;
+if($form['type']==$type){
+	$error = ($form->no_error===FALSE);
+	if($error) echo V('form_error', ['form'=>$form]);
+}
+?>
+	<h4>
+		<?php echo Form::checkbox('enable_notification', H(isset($form['enable_notification']) ? $form['enable_notification'] : $enable_notification), I18N::T('billing', $description), 'class="middle monitor checkbox"', 'class="middle"'); ?>
+	</h4>
+	<table width="35%" class="form margin-left-1 toggle_status:enable_notification enable_on:on">
+        <tr><td><div class="interval_30"></div> </td></tr>
+		<tr>
+			<td class="nowrap left">
+                <?php echo Form::checkbox('enable_balance', H(isset($form['enable_balance']) ? $form['enable_balance'] : $enable_balance), '', 'class="checkbox middle monitor"', 'class="middle"'); ?>
+                <?php echo I18N::T('billing', '最小余额'); ?>&nbsp;&nbsp;
+                <input type="text" name="balance" size="10" class="text currency" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo H($error ? $form['balance'] : $balance) ; ?>" />
+            </td>
+
+            <td class="nowrap right" style="">
+                <?php echo Form::checkbox('enable_min_credit_per', H(isset($form['enable_min_credit_per']) ? $form['enable_min_credit_per'] : $enable_min_credit_per), '', 'class="checkbox middle monitor margin-left-1"', 'class="middle"'); ?>
+                <?php echo I18N::T('billing', '最低信用额度占比'); ?>
+            </td>
+            <td><input type="text" name="min_credit_per" size="4" class="text center toggle_status:enable_min_credit_per enable_on:on" value="<?php echo H($error ? $form['min_credit_per'] : $min_credit_per) ; ?>" /></td>
+            <td class="nowrap"><?php echo I18N::T('billing', '%'); ?></td>
+
+			<td class="nowrap left">
+                <?php echo I18N::T('billing', '提醒周期'); ?>&nbsp;&nbsp;
+                <input type="text" name="period" size="4" class="text right" value="<?php echo H($error ? $form['period'] : $period) ; ?>" />
+                &nbsp;&nbsp;<?php echo I18N::T('billing', '天'); ?>
+            </td>
+			<td></td>
+			<td></td>
+		</tr>
+        <tr><td><div class="interval_30"></div> </td></tr>
+    </table>
+	<table class="form" width="100%">
+	<tbody class="toggle_status:enable_notification enable_on:on">
+		<tr>
+            <td>
+                <div class="interval_12"></div>
+                <h2 class="section_title">
+                    <?php echo I18N::T('messages', '消息标题'); ?>
+                    <span class="red_tip" style="font-weight: normal;"><span class="required">*</span><span class="red"><?php echo I18N::T('messages', '此项是').I18N::T($module_name, $title); ?></span><span>
+                </h2>
+            </td>
+<!--			<td class="nowrap left">--><?php //echo I18N::T('billing', '消息标题'); ?><!--</td>-->
+<!--			<td><input type="text" name="title" size="40" class="text" value="--><?php //echo H($error ? $form['title'] : I18N::T($module_name, $title)) ; ?><!--" /></td>-->
+		</tr>
+        <tr><td><div class="interval_30"></div></td></tr>
+        <tr>
+            <td>
+                <input type="text" name="title" size="40" class="text margin-left-1-half" value="<?php echo H($error ? $form['title'] : I18N::T($module_name, $title)) ; ?>" />
+            </td>
+        </tr>
+        <tr><td><div class="interval_30"></div></td></tr>
+        <tr>
+            <td>
+                <h2 class="section_title"><?php echo I18N::T('messages', '消息内容'); ?></h2>
+            </td>
+        </tr>
+        <tr><td><div class="interval_30"></div></td></tr>
+        <tr>
+            <td><textarea name="body" cols="80" class="autogrow text margin-left-1-half"><?php echo H($error ? $form['body'] : I18N::T($module_name, $body)) ; ?></textarea></td>
+        </tr>
+        <tr><td><div class="interval_12"></div></td></tr>
+		<tr>
+            <td>
+        <?php
+            $handlers = Config::get('notification.handlers');
+            if(is_array($send_by)) foreach($send_by as $k=>$v){
+                $i18n_name = $handlers[$k]['module_name'] ?: 'financail';
+				echo Form::checkbox('send_by_'.$k, H($error ? $form['send_by_'.$k] : $v[1]), I18N::T($i18n_name, $v[0]), 'class="middle checkbox margin-left-1-half"', 'class="middle rmargin_40"');
+				echo '&#160;&#160;';
+			}
+		?>
+		  </td>
+        </tr>
+        <tr><td><div class="interval_40"></div></td></tr>
+		<tr>
+            <td class="description">
+            <p style="padding-bottom: 5px;"><span class="required red margin-left-1-half">*</span><span class="red"><strong><?php echo HT('消息内容中的变量名请勿修改!')?></strong></span></p>
+		    <?php 
+		        $descriptions = $strtr; 
+		        if(is_array($descriptions)):
+		    ?>
+		    	<ul>
+		    <?php
+					foreach($descriptions as $k=>$v):
+		    ?>
+		    		<li style="color: #333;margin-top: 12px;" class="margin-left-1-half"><?php echo $k; ?>: <?php echo I18N::T('billing', $v); ?></li>
+		    <?php			            
+		        	endforeach;
+		    ?>
+		    	</li></ul>
+		    <?php
+		        endif;
+		    ?>
+		</td></tr>
+	</tbody>
+	<tbody>
+    <tr><td><div class="interval_60"></div></td></tr>
+		<tr>
+            <td>
+			<input type="hidden" name="type" value="<?php echo H($type); ?>" />
+            <div>
+
+
+                    <input type="submit" name="submit" class="font-button-save float_right" value="<?php echo HT('保存修改'); ?>" />
+                    <input type="reset" name="cancel" class="font-button-default float_right rmargin_16" value="取消">
+                <button style="font-size: 14px;line-height: 30px;" type="submit" name="restore" class="icon-refresh font-button-default float_right rmargin_16"><div class="float_right" style="padding-left: 8px;font-size: 14px;"><?php echo HT('恢复为默认设置'); ?></div></button>
+                </div>
+            </td>
+        </tr>
+	</tbody>
+	</table>
+</form></div>
+

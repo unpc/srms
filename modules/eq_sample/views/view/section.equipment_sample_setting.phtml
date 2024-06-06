@@ -1,0 +1,55 @@
+<?php if($equipment->accept_sample):
+    $style = '';
+    if (Config::get('system.locale') == 'en_US') {
+        $style = 'style="width: 200px"';
+    }
+?>
+<div class="equipments_info_style">
+<div class="clearfix">
+	<h2 class="section_title">
+        <span class="border"></span>
+        <span class="black_title"><?php echo I18N::T('eq_sample', '送样设置') ?></span>
+	</h2>
+    <div class="interval_30"></div>
+	<ul>
+        <?php
+            $add_sample_earliest_limit = $equipment->get('add_sample_earliest_limit');
+            if (is_null($add_sample_earliest_limit)) {
+                $add_sample_earliest_limit = Lab::get('equipment.add_sample_earliest_limit', NULL, '@');
+            }
+
+            $add_sample_latest_limit = $equipment->get('add_sample_latest_limit');
+            if (is_null($add_sample_latest_limit)) {
+                $add_sample_latest_limit = Lab::get('equipment.add_sample_latest_limit', NULL, '@');
+            }
+
+            $modify_sample_latest_limit = $equipment->get('modify_sample_latest_limit');
+            if (is_null($modify_sample_latest_limit)) {
+                $modify_sample_latest_limit = Lab::get('equipment.modify_sample_latest_limit', NULL, '@');
+            }
+
+            list($add_sample_earliest_time, $add_sample_earliest_format) = Date::format_interval($add_sample_earliest_limit, 'hid');
+            list($add_sample_latest_time, $add_sample_latest_format) = Date::format_interval($add_sample_latest_limit, 'hid');
+            list($modify_sample_latest_time, $modify_sample_latest_format) = Date::format_interval($modify_sample_latest_limit, 'hid');
+        ?>
+        
+        <li><?php echo I18N::T('eq_sample', '<span class="left" '. $style .'>' . I18N::T('eq_sample', '添加送样最早可提前') . '</span> <span class="right" style="margin-left:70px;">%time %unit</span>', [
+            '%time'=>$add_sample_earliest_time,
+            '%unit'=>I18N::T('eq_sample', Date::unit($add_sample_earliest_format))
+        ]); ?></li>
+
+        <li><?php echo I18N::T('eq_sample', '<span class="left" '. $style .'>' . I18N::T('eq_sample', '添加送样最晚可提前') . '</span> <span class="right" style="margin-left:70px;">%time %unit</span>', [
+            '%time' => $add_sample_latest_time,
+            '%unit' => I18N::T('eq_sample', Date::unit($add_sample_latest_format))
+        ]); ?></li>
+
+        <li><?php echo I18N::T('eq_sample', '<span class="left" '. $style .'>' . I18N::T('eq_sample', '修改 / 删除送样最晚可提前') . '</span> <span class="right" style="margin-left:110px;">%time %unit</span>', [
+            '%time' => $modify_sample_latest_time,
+            '%unit' => I18N::T('eq_sample', Date::unit($modify_sample_latest_format))
+        ]); ?></li>
+	</ul>
+</div>
+</div>
+		
+<?php endif; ?>
+

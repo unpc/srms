@@ -1,0 +1,41 @@
+/*
+	NO. BUG#153 (Cheng.Liu@2010.11.12)
+	IE6下样式的调整，让视图可以正常显示。
+	增加了边框，因为ie6下不支持box-shadow;
+
+	BUG #175 Jia Huang@2010.11.20
+	阴影不支持webkit 调整设置
+	边框增加对IE8的支持
+*/
+.department_container {
+	background-color: #fff;
+	display: block;
+	position: relative;
+	z-index:1;
+	box-shadow: 0 2px 4px rgba(0,0,0,.5);
+	_width: 1px;
+	*overflow: visible;
+	*white-space: nowrap;
+	border: 1px solid #ccc\9;
+	filter: progid:DXImageTransform.Microsoft.Shadow (Color=#000000, Direction=135, Strength=1)\9; 
+}
+
+:root .department_container {
+	border: none;
+	filter: none; 
+}
+
+.department_container a {
+	display : block;
+	text-decoration : none;
+	padding : 3px 5px;
+	cursor : pointer;
+	background-color : #fff;
+	color : #000;
+}
+
+.department_container a:hover {
+	background-color: #7498E0;
+	color: #fff;
+	text-decoration : none;
+}

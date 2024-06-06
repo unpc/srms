@@ -1,0 +1,24 @@
+<?php 
+	$requires = (array)$form_config['requires'];
+
+	$_require = function($key) use ($requires) {
+		echo $requires[$key] ? V('form_require') : '';
+	}
+?>
+<tr class="group">
+    <td class="label right nowrap middle">
+        <?php $_require('group_id');?><?php echo I18N::T('people', '组织机构')?>
+    </td>
+    <td class="sinup_table_interval"></td>
+    <td class="middle">
+        <?php 
+            $root_tag = Tag_Model::root('group');
+            echo Widget::factory('application:tag_selector', [
+                'tag'=> O('tag_group', $form['group_id'] ?: ($user_group_id ? : $group)),
+                'root'=>$root_tag,
+                'name'=>'group_id',
+                'ajax'=>true,
+            ]);
+         ?>
+    </td>
+</tr>

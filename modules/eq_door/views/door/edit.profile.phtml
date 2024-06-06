@@ -1,0 +1,26 @@
+<div class="form clearfix">
+  <form class="edit" method="POST">
+    <?php 
+    echo V('form_error', ['form' => $form]);
+    $specific = [];
+    foreach ($doors as $key => $door) {
+        if (isset($specific[$key])) continue;
+        $specific[$key]['door'] = $door;
+    }
+    echo Widget::factory('flexform', [
+        'title' => I18N::T('eq_door', '关联门禁'),
+        'template_data' => [ 'disabled' => TRUE ],
+        'existing_data' => $specific,
+        'delete_message' => I18N::T('eq_door', '您确定要取消该门禁的关联吗？请谨慎操作！'),
+        'item_view' => 'entrance:door/door_special_item',
+        'extra_vars' => [
+          'user' => $user,
+        ],
+    ]);
+    ?>
+    <div class="interval_60">&#160;</div>
+    <div class="float_right">
+        <input type="submit" name="submit" class="font-button-save" value="<?php echo I18N::T('eq_door', '更新'); ?>" />
+    </div>
+  </form>
+</div>

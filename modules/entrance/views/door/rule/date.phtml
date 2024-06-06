@@ -1,0 +1,18 @@
+<?php $form=$_SESSION['form'];?>
+<div>
+<table class="form">
+<tr>
+	<td class="left nowrap middle" width="126"><?php echo I18N::T('entrance','起始时间') ?></td>
+	<td class="left nowrap middle">
+		<input name="dtstart[<?php echo $flexform_index ?>]" class="text date" value="<?php echo H($dtstart) ?>" >
+	</td>
+    <td class="table_interval"></td>
+	<td class="left nowrap middle" width="126"><?php echo I18N::T('entrance','截止时间') ?><br>
+	<?php echo V('form_filter',['error'=>$form->errors['dtend[1]'][0]])?>
+</td>
+	<td class="left nowrap middle">
+		<input name="dtend[<?php echo $flexform_index ?>]" class="text date" value="<?php echo H($dtend) ?>" >
+	</td>
+</tr>
+</table>
+</div>

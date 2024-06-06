@@ -1,0 +1,239 @@
+<style>
+.wid6 {
+    width: 7rem;
+}
+
+input {
+    width: 95.5% !important;
+    color: #333 !important;
+    ;
+    border: 0 !important;
+}
+
+textarea {
+    color: #333 !important;
+    ;
+    border: 0 !important;
+}
+</style>
+<div class="form" style="min-width:550px">
+    <table class="" width="100%">
+        <tr class="begin">
+            <td class="label left top nowrap blue">
+                <h1><?php echo I18N::HT('technical_service', '基础信息'); ?></h1>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="right wid6">
+                <?= I18N::T('technical_service', '预约者') ?>:
+            </td>
+            <td style="padding-left: 10px;">
+                <input type="text" value="<?= $apply->user->name ?>" name="samples" class="text" disabled />
+            </td>
+        </tr>
+        <tr>
+            <td class="right wid6">
+                <?= $require ?><?= I18N::T('technical_service', '样品数量') ?>:
+            </td>
+            <td style="padding-left: 10px;">
+                <input type="number" value="<?= $apply->samples ?>" name="samples" class="text number" disabled />
+            </td>
+
+        </tr>
+        <tr>
+            <td class="right wid6 top">
+                <?= I18N::T('technical_service', '样品描述') ?>:
+            </td>
+            <td style="padding-left: 10px;">
+                <textarea class="text"
+                    style="word-break: break-word;white-space: normal;line-height: normal;height: 60px;width: 99%;"
+                    cols="4" rows="20" name="samples_description" disabled><?= $apply->samples_description ?></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td class="right wid6">
+                <?= I18N::T('technical_service', '期望完成时间') ?>:
+            </td>
+            <td style="padding-left: 10px;">
+                <input type="text" value="<?= $apply->dtrequest ? date('Y-m-d H:i:s', $apply->dtrequest) : '-' ?>"
+                    name="samples" class="text" disabled />
+            </td>
+        </tr>
+        <tr>
+            <td class="right wid6">
+                <?= I18N::T('technical_service', '总金额') ?>:
+            </td>
+            <td style="padding-left: 10px;">
+                <input type="text"
+                    value="<?= $apply->status != Service_Apply_Model::STATUS_APPLY ? H($apply->totalAmount()) : '待定' ?>"
+                    name="samples" class="text" disabled />
+            </td>
+        </tr>
+        <?php
+            $extra = Extra_Model::fetch($apply->service, 'apply');
+            $has_extra = false;
+            $extra_param = json_decode($extra->params_json,true) ?: [];
+            foreach($extra_param as $e){
+                if(!empty($e)){
+                    $has_extra = true;
+                    break;
+                }
+            }
+            if($has_extra):
+        ?>
+        <?php foreach($extra->get_categories() as $category) :?>
+        <?php 
+                    $c_fields = $extra->get_fields($category);
+                    if (count($c_fields) == 0) continue; 
+                ?>
+        <tr>
+            <td class="right wid6" style="font-weight:500">
+                <?= I18N::T('technical_service', $category) ?>:
+            </td>
+        </tr>
+        <?php foreach($c_fields as $uniqid=>$field) :?>
+        <tr>
+            <td class="right wid6">
+                <?php echo I18N::T('technical_service', $field['title']);?>:
+            </td>
+            <?php
+                $wrap = ($field[adopted] && $uniqid == 'description') || (
+                        !$field[adopted] && $field[type] == Extra_Model::TYPE_TEXTAREA
+                    );
+                $class = !$wrap ? 'nowrap' : '';
+            ?>
+            <td class="left <?= $uniqid.' '.$class ?>">
+                <?php
+                    $values = '';
+                    if (!$field['adopted']) {
+                        $extra_value =  O('extra_value', ['object'=> $apply]);
+                        $values = $extra_value->values;
+                        $values =  $values[$uniqid];
+
+                        //过滤多选保存的值
+                        if($field['type'] == Extra_Model::TYPE_CHECKBOX){
+                            $values = array_filter($values, function($value){return ($value == 'on');});
+                            $values = array_keys($values);
+                        } 
+                        //过滤下拉表单未选的值
+                        else if($field['type'] == Extra_Model::TYPE_SELECT & $values == -1){
+                            $values = '--';
+                        }else if($field['type'] == Extra_Model::TYPE_DATETIME){
+                            $values = date('Y-m-d',$values);
+                        }
+                        if(is_array($values)) $values =  join(',', $values);
+                        echo H($values);
+                    }
+                    else {
+                        if($field['type'] == Extra_Model::TYPE_CHECKBOX) {
+                            $checkbox_value = array_values(json_decode($sample->$uniqid, TRUE));
+                            $res = in_array('on', $checkbox_value);
+                            if (!$res) {
+                                echo T('无');
+                            } else {
+                                H($apply->$uniqid);
+                            }
+                        } else {
+                            H($apply->$uniqid);
+                        }
+                    }
+                ?>
+            </td>
+        </tr>
+        <?php endforeach;?>
+        <?php endforeach;?>
+        <?php endif;?>
+        <tr class="begin">
+            <td class="label left top nowrap blue">
+                <h1><?php echo I18N::HT('technical_service', '项目服务进程'); ?></h1>
+            </td>
+        </tr>
+        <tr class="begin">
+            <td class="label left top nowrap blue">
+                <h1><?php echo I18N::HT('technical_service', ''); ?></h1>
+            </td>
+        </tr>
+    </table>
+</div>
+<?php
+$table = Widget::factory('table');
+$columns = [
+    'ref_no' => [
+        'weight' => 10,
+        'title' => I18N::T('technical_service', '项目编号'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'project_name' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '项目名称'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'operator' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '操作人'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'equipment' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '使用仪器'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'amount' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '金额'),
+        'align' => 'right',
+        'nowrap' => TRUE,
+    ],
+    'service_time_length' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '时长'),
+        'align' => 'right',
+        'nowrap' => TRUE,
+    ],
+    'samples' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '样品数'),
+        'align' => 'right',
+        'nowrap' => TRUE,
+    ],
+    'status' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '状态'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'result' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '检测结果'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+
+];
+
+$table->add_columns($columns);
+$table->empty_message = I18N::T('technical_service', '没有相关服务数据');
+
+foreach ($records as $record) {
+    $table->add_row([
+        'ref_no' => V('technical_service:apply_record_table/data/ref_no', ['record' => $record]),
+        'project_name' => V('technical_service:apply_record_table/data/project_name', ['record' => $record]),
+        'operator' => V('technical_service:apply_record_table/data/operator', ['record' => $record]),
+        'equipment' => V('technical_service:apply_record_table/data/equipment', ['record' => $record]),
+        'amount' => V('technical_service:apply_record_table/data/amount', ['record' => $record]),
+        'service_time_length' => V('technical_service:apply_record_table/data/service_time_length', ['record' => $record]),
+        'samples' => V('technical_service:apply_record_table/data/samples', ['record' => $record]),
+        'status' => V('technical_service:apply_record_table/data/status', ['record' => $record]),
+        'result' => V('technical_service:apply_record_table/data/result', ['record' => $record]),
+    ]);
+}
+
+echo $table;
+
+?>
+<div class="height_43"></div>

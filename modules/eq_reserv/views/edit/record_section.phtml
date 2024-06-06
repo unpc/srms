@@ -1,0 +1,25 @@
+<?php
+	$me = L('ME');
+	$equipment = $record->equipment;
+?>
+<tr>
+	<td class="top blue" colspan="2">
+		<h1>
+			<?php echo I18N::T('equipments','违规状态');?>
+			<span class="red" style="padding-left: 0.5rem;font-size: 12px;font-weight: normal;"><?= I18N::T('eq_reserv','*仅可在系统判定状态后的24H内修改此状态')?><span>
+		</h1>
+	</td>
+</tr>
+<tr>
+	<td  colspan="2" class="label top left nowrap"><?php echo I18N::T('eq_charge', '状态'); ?></td>
+</tr>
+<tr>
+	<td  colspan="2" class="label top left nowrap">
+		<?php 
+		if($record->reserv->id && !$record->reserv->has_ban && $record->reserv->last_status_judge_time >= time() - 24 * 3600):?>
+			<?php echo Form::dropdown('reserv_status',EQ_Reserv_Model::$reserv_status,$record->reserv->status);?>
+		<?php else:?>
+			<?= EQ_Reserv_Model::$reserv_status[$record->reserv->status] ?? '--' ?>
+		<?php endif?>
+	</td>
+</tr>

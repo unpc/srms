@@ -1,0 +1,79 @@
+<?php 
+	$charge_setting = EQ_Charge::get_charge_setting($equipment);
+	$reserv_setting = $charge_setting['reserv'] ?: $charge_default_setting;
+	$disabled = L('ME')->is_allowed_to('修改计费设置', $equipment) ? '' : 'disabled="disabled"';
+	$readonly = L('ME')->is_allowed_to('修改计费设置', $equipment) ? '' : '_readonly';
+?>
+<form method="post" autocomplete="off" action="<?php echo H(URI::url() ) ?>">
+<div class="interval_30">&#160;</div>
+<div class="form">
+<table class="form flexible">
+	<tbody>
+	<tr>
+		<td class="top lpadding_30">
+		<h2 class="section_title"><?php echo I18N::T('eq_charge', '计费参数设置')?> (<?php echo $charge_title?>)</h2>
+        <div class="interval_30">&#160;</div>
+		<div class="lmaigin_1e5">
+			<table class="form">
+				<tbody>
+					<tr>
+						<td class="left nowrap top"><?php echo I18N::T('eq_charge', '每小时需要金额')?></td>
+						<td class="top">
+							<input name="reserv_unit_price" class="text currency" size="10" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo H($reserv_setting['*']['unit_price']) ?>" <?php echo $disabled?> />
+						</td>
+					</tr>
+                    <tr>
+                        <td><div class="interval_20">&#160;</div></td>
+                    </tr>
+					<tr>
+						<td class="left nowrap top"><?php echo I18N::T('eq_charge', '每次使用的开机费用')?></td>
+						<td class="top">
+							<input name="reserv_minimum_fee" class="text currency" size="10" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo H($reserv_setting['*']['minimum_fee']) ?>" <?php echo $disabled?> />
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		</td>
+	</tr>
+	</tbody>
+</table>
+</div>
+<div class="interval_60">&#160;</div>
+<?php
+	unset($reserv_setting['*']);
+	$tags = $reserv_setting;
+	if ($tags) foreach ($tags as $k => $tag) {
+		if ($tag) {
+		       $key = serialize($tag);
+		       if (!isset($specific[$key])) {
+		               $specific[$key] = $tag;
+		       }
+		       $specific[$key]['special_tags'][] = $k;
+		}
+	}
+	$specific = (array)$specific;
+if ($specific || !$disabled) :?>
+<div class="form lpadding_30">
+<?php
+	echo Widget::factory('flexform' . $readonly, [
+        'title' => I18N::T('eq_charge', '个别收费标准'),
+        'title_class' => "section_title_span",
+       'template_data' => ['disabled'=>TRUE],
+       'existing_data' => array_values($specific),
+       'item_view' => 'eq_charge:edit/setup/reserv/charge_reserv_item' . $readonly,
+       'extra_vars' => [
+           'equipment' => $equipment,
+       ],
+	]); 
+?>
+</div>
+<?php endif;?>
+<div class="interval_60">&#160;</div>
+<?php if (!$disabled): ?>
+    <div class="form float_right">
+        <input type="reset" name="cancel" class="font-button-default rmargin_16" value="<?php echo H(T('取消')) ?>" />
+        <input type="submit" name="submit" class="font-button-save" value="<?php echo H(T('保存修改')) ?>" />
+    </div>
+<?php endif;?>
+</form>

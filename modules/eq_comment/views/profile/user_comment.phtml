@@ -1,0 +1,35 @@
+<?php
+$tip = Config::get('comment.rate')['tip'];
+$table = Widget::factory('table');
+$table->name = 'eq_comment_user';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+$table->add_columns((array) $columns);
+$table->empty_message = I18N::T('eq_comment', '没有评价信息');
+$table->comments = $comments;
+
+if ($comments->total_count()) {
+    foreach ($comments as $comment) {
+        $key = 'user_comment_' . $comment->id;
+
+        $row = [
+            'serial_number' => V('eq_comment:comments_table/data/serial_number', ['id' => $comment->id]),
+            'user_equipment_name' => V('eq_comment:comments_table/data/equipment_name', ['comment' => $comment]),
+            'service_attitude' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->service_attitude]),
+            'service_quality' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->service_quality]),
+            'technical_ability' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->technical_ability]),
+            'emergency_capability' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->emergency_capability]),
+            'detection_performance' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->detection_performance]),
+            'accuracy' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->accuracy]),
+            'compliance' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->compliance]),
+            'timeliness' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->timeliness]),
+            'sample_processing' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->sample_processing]),
+            'comment_suggestion' => V('eq_comment:comments_table/data/text', ['text' => $comment->comment_suggestion]),
+        ];
+        $table->add_row_withkey($row, $key);
+    }
+}
+?>
+<div class="pages"><?= $pagination ?></div>
+<?php echo $table;?>
+<div class="pages"><?= $pagination ?></div>

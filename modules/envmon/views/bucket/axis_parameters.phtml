@@ -1,0 +1,14 @@
+<fieldset class="bottom">
+	<legend><?php echo H($legend) ?></legend>
+	<div class="lpadding_1">
+		<?php if ($axis != 'xaxis'):?>
+			<p class="nowrap">
+				<input name="<?php echo $axis?>[min]" type="text" class="text small_text number" size="6" value="<?php echo H($data['min'] ) ?>"/> - 
+				<input  name="<?php echo $axis?>[max]"type="text" class="text small_text number" size="6" value="<?php echo H($data['max'] ) ?>" />
+			</p>
+		<?php else: ?>
+			<p class="nowrap middle"><?php echo I18N::T('envmon', '从'); ?>&#160;&#160;<input name="<?php echo $axis?>[min]"  class="text middle_text date" value="<?php echo H($data['min'] ?: time() - 3600 ) ?>"/></p>
+			<p class="nowrap middle"><?php echo I18N::T('envmon', '到'); ?>&#160;&#160;<input name="<?php echo $axis?>[max]"  class="text middle_text date" value="<?php echo H($data['max'] ) ?>"/></p>
+		<?php endif; ?>
+	</div>
+</fieldset>

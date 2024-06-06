@@ -1,0 +1,164 @@
+<div class="hr_1">&#160;</div>
+<div class="padding_1 form lpadding_3">
+	<form method="post">
+		<?php echo V('form_error', ['form'=>$form]); ?>
+		<?php $require = (string) V('form_require'); ?>
+		<table class="form">
+			<tr>
+				<td class="label nowrap"><?php echo I18N::T('accounts', '客户名称') ?></td>
+				<td>
+					<input class="text" size="40" name="lab_name" value="<?php echo H($form['lab_name']) ?>"/><?php echo $require;?>
+                    &#160;
+                    <?php echo I18N::T('accounts', '如 南开大学大型仪器管理系统');?>
+				</td> </tr>
+			<tr>
+				<td class="label nowrap"><?php echo I18N::T('accounts', '项目编号') ?></td>
+				<td>
+					<input class="text" name="lab_id" value="<?php echo H($form['lab_id']) ?>" /><?php echo $require; ?>
+                    &#160;
+                    <?php echo I18N::T('accounts', '如 CFA1022099');?>
+				</td>
+			</tr>
+			<tr>
+				<td class="label nowrap"><?php echo I18N::T('accounts', '程序代号') ?></td>
+				<td>
+					<input class="text" name="code_id" value="<?php echo H($form['code_id']) ?>" /><?php echo $require; ?>
+                    &#160;
+                    <?php echo I18N::T('accounts', '如 nankai');?>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" class="hr_1">
+					&#160;
+				</td>
+			</tr>
+			<tr>
+				<td class="label nowrap"><?php echo I18N::T('accounts', '客户类型') ?></td>
+				<td>
+					<?php
+					echo Form::dropdown('type', ['' => '--'] + $available_types, $form['type']);
+					echo $require;
+					?>
+				</td>
+			</tr>
+			<tr>
+				<td class="label nowrap"><?php echo I18N::T('accounts', '客户档案地址') ?></td>
+				<td>
+						<input class="text" name="archive_url" size="40" value="<?php echo H($form['archive_url'])?>"/>
+				</td>
+			</tr>
+			<tr>
+				<td class="label nowrap"><?php echo I18N::T('accounts', '站点地址') ?></td>
+				<td>
+						<input class="text" name="url" size="40" value="<?php echo H($form['url'])?>"/>
+                        &#160;
+                        <?php echo I18N::T('accounts', '站点访问地址. 若本管理站点包含开通新站点的功能, 则留空该项时会自动生成访问地址'); ?>
+
+				</td>
+			</tr>
+			<tr>
+				<td class="label nowrap"><?php echo I18N::HT('accounts', '站点语言') ?></td>
+				<td>
+						<?php echo Form::dropdown('language', LIMS_Account_Model::$language_type, ($form['language'] ?: $account->language) ?: LIMS_Account_Model::LANGUAGE_ZH);?>
+				</td>
+			</tr>
+			<tr>
+				<td class="label nowrap"><?php echo I18N::HT('accounts', '货币类型') ?></td>
+				<td>
+						<?php echo Form::dropdown('currency', LIMS_Account_Model::$currency, ($form['currency'] ?: $account->currency) ?: LIMS_Account_Model::CURRENCY_RMB);?>
+				</td>
+			</tr>
+			<tr>
+				<td class="label nowrap"><?php echo I18N::T('accounts', '管理员账号') ?></td>
+				<td>
+					<input class="text" name="admin_token" <?php if ($account->id) echo 'disabled="disabled"';?>value="<?php echo H($form['admin_token'] ? : Config::get('accounts.admin_token', 'genee|database')); ?>"/>
+                    &#160;
+                    <?php echo I18N::T('accounts', '该账号仅用于系统初始化创建使用, 独立站点修改账号后不会自动同步!');?>
+				</td>
+			</tr>
+			<tr>
+				<td class="label nowrap"><?php echo I18N::T('accounts', '管理员密码') ?></td>
+				<td>
+					<input class="text" name="admin_password" <?php if ($account->id) echo 'disabled="disabled"'?>value="<?php echo H($form['admin_password'] ? : Config::get('accounts.admin_password', '83719730')); ?>"/>
+                    &#160;
+                    <?php echo I18N::T('accounts', '该密码仅用于系统初始化创建使用, 独立账号修改密码后不会自动同步!');?>
+				</td>
+			</tr>
+            <tr>
+                <td class="label nowrap"><?php echo I18N::T('accounts', '时区设定');?></td>
+                <td>
+                    <?php $uniqid = 'timezone_'.uniqid();?>
+                    <input id="<?php echo H($uniqid) ?>" class="text middle select_on_focus autocomplete:<?php echo URI::url('!people/autocomplete/timezone') ?> autocomplete_alt:#<?php echo $uniqid?>_lab" value="<?php echo H($account->timezone ? : Config::get('accounts.default_timezone')) ?>" name="timezone" q-tooltip="<?php echo H(I18N::T('accounts', '请输入关键字并选择')) ?>" />
+                </td>
+            </tr>
+			<tr>
+				<td class="label nowrap"><?php echo I18N::T('accounts', '到期时间') ?></td>
+				<td>
+					<?php
+					$has_etime = $form['etime_check'] ? TRUE : ($form['etime'] ? TRUE : FALSE);
+					echo Form::checkbox('etime_check', $has_etime , NULL,
+										'class="middle monitor"', 'class="middle"');
+					?>
+					<input class="text date toggle_status:etime_check enable_on:on" <?php echo $has_etime ? 'disable="disable"' : ''; ?> name="etime" value="<?php echo H($form['etime']); ?>" q-date_format="<?php echo H(T('$year/$month/$day')) ?>"/>
+                    &#160;
+                    <?php
+                    echo I18N::T('accounts', '提前 %day 天提醒过期', [
+                        '%day'=> V('accounts:account/edit.info.notice', [
+                            'account'=> $account,
+                            'form'=> $form,
+                            'has_etime'=> $has_etime,
+                        ]),
+                    ])?>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" class="hr_1">
+                    <div class="modules">
+                        <div class="title">
+                            <?php echo I18N::T('accounts', '开启站点时, 默认开通已勾选模块')?>
+                        </div>
+                        <ul class="list">
+                            <?php
+                            $modules = Config::get('accounts.modules');
+                            foreach($modules as $name => $items) :
+                            if ($account->id) {
+                                $_m = $account->modules;
+                                $checked = in_array($name, $_m);
+                            }
+                            else {
+                                $checked = $items['default'];
+                            }
+
+                            ?>
+                                <li class="item"><?php echo Form::checkbox("modules[$name]", $checked, I18N::T('accounts', $items['title']), 'class="middle"', 'class="middle"')?></li>
+                            <?php endforeach;?>
+                        </ul>
+                        <div class="clearfix"></div>
+                        <div class="description tmargin_2">
+                            <?php echo I18N::T('accounts', '* 请注意模块之间的依赖关系, 如供应商管理和订单管理、订单管理和存货管理、订单管理和经费管理');?>
+                        </div>
+                    </div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" class="hr_1">
+					&#160;
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+				<?php if ($account->id): ?>
+					<input type="submit" class="button button_save" name="submit" value="<?php echo H(I18N::T('accounts', '更新') ) ?>" />&#160;&#160;
+					<?php if ($account->status == LIMS_Account_Model::STATUS_NORMAL): ?>
+						<a class="font-button-delete" href="<?php echo H($account->url(NULL, NULL, NULL, 'delete')) ?>" confirm="<?php echo H(I18N::T('accounts', '您是否确认删除该LIMS客户，请谨慎操作！')) ?>"><?php echo H('删除')?></a>
+					<?php elseif ($account->status == LIMS_Account_Model::STATUS_DELETED): ?>
+						<a class="button button_add" href="<?php echo H($account->url(NULL, NULL, NULL, 'recovery')) ?>" confirm="<?php echo H(I18N::T('accounts', '您是否确认恢复该LIMS客户，请谨慎操作！')) ?>"><?php echo H('恢复')?></a>
+					<?php endif; ?>
+				<?php else: ?>
+	 				<input type="submit" class="button button_save" name="submit" value="<?php echo H(I18N::T('accounts', '添加') ) ?>" />
+				<?php endif; ?>
+				</td>
+			</tr>
+		</table>
+	</form>
+</div>

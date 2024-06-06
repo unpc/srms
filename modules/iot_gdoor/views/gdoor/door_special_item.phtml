@@ -1,0 +1,28 @@
+<div style="width: 100%">
+<table class="form" width="80%;">
+    <tbody>
+        <tr>
+<!--			<td class="middle icon" width="50">-->
+<!--				--><?php //$icon_door = $door->id ? $door : O('door');?>
+<!--				--><?php //echo $icon_door->icon('32'); ?>
+<!--			</td>-->
+			<td class="middle">
+                <table class="form">
+                    <tr>
+                        <td width="300">
+                            <div><?php echo I18N::T('iot_gdoor', '门牌'.$flexform_index)?></div>
+                            <div class="interval_10"></div>
+                            <?php
+                            echo Widget::factory('iot_gdoor:door_selector', [
+                                'name' => 'special_doors['.$flexform_index.']',
+                                'door' => $door
+                            ]);?>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<div class="interval_10"></div>

@@ -1,0 +1,48 @@
+<?php echo CSS::load_async('billing:common');?>
+<?php
+	$table = Widget::factory('table', ['extra_class'=>'account_grid']);
+
+	$table->transactions = $transactions;
+
+    $table->name = 'billing_transactions';
+    $table->sort_asc = $sort_asc;
+	$table->sort_by = $sort_by;
+
+    $table->add_columns($column);
+    $me = L('ME');
+	$table->empty_message = I18N::T('billing','没有符合条件的明细');
+
+	if (count($transactions) > 0) {
+		foreach ($transactions as $transaction) {
+			if ($me->is_allowed_to('查看', $transaction)) {
+				$links = $transaction->links();
+        		$key = 'transaction_'. $transaction->id;
+                $row = [
+			    	/* '@'=> [
+						'view' => V('billing:transactions_table/data/id', ['object'=>$transaction]),
+						'extra' => 'style="padding:4px" align="right" align="right"',
+					], */
+                    'id'=>V('billing:transactions_table/data/id', ['object'=>$transaction]),
+					'department'=>V('billing:transactions_table/data/department', ['object'=>$transaction]),
+					'date'=>V('billing:transactions_table/data/date', ['object'=>$transaction]),
+                    'income'=>V('billing:transactions_table/data/income', ['object'=>$transaction]),
+                    'outcome'=>V('billing:transactions_table/data/outcome', ['object'=>$transaction]),
+					'description'=>V('billing:transactions_table/data/description', ['object'=>$transaction]),
+					'certificate'=>V('billing:transactions_table/data/certificate', ['object'=>$transaction]),
+					'rest'=>Widget::factory('application:links', ['links' => $links])
+			    ];
+                $extra_row = Event::trigger('extra.transactions.row', $transaction);
+                if ($extra_row) {
+                    $row += $extra_row;
+                }
+			    $table->add_row_withkey($row, $key);
+			}
+		}
+	}
+
+	echo $table;
+
+?>
+
+<div class="pages"><?= $pagination ?></div>
+

@@ -1,0 +1,23 @@
+<?php
+if (!is_object($apply_record)) $apply_record = O('service_apply_record', $apply_record);
+
+if ($this->apply_records):
+    $projects = $this->apply_records;
+    $projects = $this->no_apply_record ? [0 => '-----'] + $projects : $projects;
+    $projects = $this->all_apply_records ? ['*' => I18N::T('technical_service', '--')] + $projects : $projects;
+    echo Form::dropdown($this->name, $projects, $apply_record->id, 'class="middle dropdown ' . ($this->is_autosubmit ? 'autosubmit ' : '') . '"');
+else:
+    $uniqid = 'projectsel_' . uniqid();
+    $size = $this->size ?: '';
+    $autocomplete = $this->autocomplete ?: URI::url('!technical_service/autocomplete/apply_record');
+    $lp = $this->lpadding;
+    ?>
+    <input id="<?php echo $uniqid ?>_project" name="<?php echo H($this->name) ?>" type="hidden"
+           value="<?php echo H($apply_record->id) ?>"/>
+    <input id="<?php echo $uniqid ?>_project_name" placeholder="<?php echo I18N::T('projects', '请选择检测任务') ?>"
+           class="text middle <?php echo $lp ? 'lpadding_30' : '' ?> select_on_focus autocomplete:<?php echo H($autocomplete) ?> autocomplete_alt:#<?php echo $uniqid ?>_project"
+           size="<?php
+           echo $size ?>"
+           value="<?php echo $apply_record->id ? H($apply_record->ref_no . ' ' . $apply_record->apply->service->name) : '' ?>"
+           q-tooltip="<?php echo H(I18N::T('projects', '请输入关键字并选择')) ?>" <?php echo $extra ?> />
+<?php endif;

@@ -1,0 +1,73 @@
+<?php 
+$uniqid = uniqid();
+$container_id = "blueprint_$uniqid";
+$dev_info_id = "blueprint_dev_info_$uniqid";
+$button_upstairs_id = "blueprint_button_upstairs_$uniqid"; 
+$button_downstairs_id = "blueprint_button_downstairs_$uniqid"; 
+$button_zoomin_id = "blueprint_button_zoomin_$uniqid"; 
+$button_zoomout_id = "blueprint_button_zoomout_$uniqid"; 
+$fullscr_id = "fullscr_$uniqid";
+$device_is_draggable = FALSE;
+$allow_edit = L('ME')->is_allowed_to('修改', 'gis_device');
+?>
+<div class="interval_20"></div>
+<div id="<?php echo H($fullscr_id) ?>" style="position:relative">
+	<div class="gismon_blueprint_toolbar clearfix">
+		<div class="float_right">
+		<?php 
+		if ($allow_edit): 
+			$button_add_id = "blueprint_button_add_$uniqid"; 
+			$button_lock_devices_id = "blueprint_button_lock_{$uniqid}";
+			$button_unlock_devices_id = "blutprint_button_unlock_{$uniqid}";
+		?>
+			<a id="<?php echo H($button_unlock_devices_id ) ?>" href="#" title="<?php echo I18N::HT('gismon', '解锁') ?>" onclick="return false" class="hidden icon-unlock"></a>
+			<a id="<?php echo H($button_lock_devices_id ) ?>" href="#" title="<?php echo I18N::HT('gismon', '锁定')?>" onclick="return false" class="icon-lock hidden"></a>
+			<a id="<?php echo H($button_add_id) ?>" href="#" title="<?php echo I18N::HT('gismon', '添加设备')?>" onclick="return false;" class="hidden"
+				q-event="click" q-object="add_equipment" q-static="<?php echo H(['location'=>$building->name]) ?>"
+				q-global="false"></a>
+		<?php 
+		endif; ?>
+			<a href="#" onclick="return false;" title="<?php echo I18N::HT('gismon', '全屏')?>" class="button icon-full_screen" q-fullscreen="<?php echo H($fullscr_id) ?>"></a>
+		</div>
+		<a id="<?php echo H($button_upstairs_id) ?>" title="<?php echo I18N::HT('gismon', '上楼')?>" href="#" onclick="return false;" class="button button_upstairs"></a>
+		<a id="<?php echo H($button_downstairs_id) ?>" title="<?php echo I18N::HT('gismon', '下楼')?>" href="#" onclick="return false;" class="button button_downstairs"></a>
+		<a id="<?php echo H($button_zoomin_id) ?>" href="#" title="<?php echo I18N::HT('gismon', '放大')?>" onclick="return false;" class="button button_zoomin"></a>
+		<a id="<?php echo H($button_zoomout_id) ?>" href="#" title="<?php echo I18N::HT('gismon', '缩小')?>" onclick="return false;" class="button button_zoomout"></a>
+	</div>
+	<div style="position:relative">
+		<div class="gismon_blueprint_dev_info">
+			<div id="<?php echo H($dev_info_id) ?>" class="padding_1"></div>
+		</div>
+		<div class="gismon_blueprint_content">
+			<div id="<?php echo H($container_id) ?>" style="position: relative"></div>
+		</div>
+	</div>
+</div>
+<?php
+echo JS::load('gismon:view_2d', [
+	'fullscr_id' => $fullscr_id,
+	'container_id' => $container_id,
+	'dev_info_id' => $dev_info_id,
+	'button_upstairs_id' => $button_upstairs_id,
+	'button_downstairs_id' => $button_downstairs_id,
+	'button_zoomin_id' => $button_zoomin_id,
+	'button_zoomout_id' => $button_zoomout_id,
+	'building' => [
+		'floors' => $building->floors,
+		'width' => $building->width,
+		'height' => $building->height,
+	],
+	'default_device_icon' => '!gismon/images/icons/device.png',
+	'device_is_draggable' => $device_is_draggable,
+	'tile_url' =>
+        Event::trigger('db_sync.transfer_to_master_url', '!gismon/tile/index.'.$building->id, "x=%x&y=%y&zoom=%zoom&floor=%floor", true)?:
+        URI::url('!gismon/tile/index.'.$building->id, 'x=%x&y=%y&zoom=%zoom&floor=%floor&_='.$building->mtime),
+	'device_url' => URI::url('!gismon/device/index.'.$building->id, 'l=%left&t=%top&w=%width&h=%height&floor=%floor'),
+	
+	'allow_edit' => $allow_edit,
+	'button_lock_devices_id' => $button_lock_devices_id,
+	'button_unlock_devices_id' => $button_unlock_devices_id,
+	'button_add_id' => $button_add_id,
+]);
+
+

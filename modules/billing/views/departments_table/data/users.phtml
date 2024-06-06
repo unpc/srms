@@ -1,0 +1,8 @@
+<?php 
+	$users = Q("{$object} user", null, $db);
+	if (count($users)) foreach($users as $user) {
+		$users_url[] = URI::anchor($user->url(), H($user->name));
+	}
+
+	echo implode(', ', (array)$users_url)?:"--";
+?>

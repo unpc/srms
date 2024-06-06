@@ -1,0 +1,295 @@
+<style>
+    div.tab_content {
+        position: inherit !important;
+    }
+    .calendar_pad_bottom {
+        padding-bottom: 75px;
+    }
+    #toggle_button {
+        position: relative;
+        top: 0;
+    }
+</style>
+<?php
+$now = strtotime('midnight', Date::time());
+$left_id = 'calendar_left_nav_'.uniqid();
+$right_id = 'calendar_right_nav_'. uniqid();
+?>
+<div class="overlay" id="<?php echo H($cal_week_rel).'overlay' ?>" >
+</div>
+<script>
+    var o = document.getElementById("layout_body");
+    var w = o.clientWidth || o.offsetWidth;
+    document.getElementById("calendar_time_center").style.cssText='width: ' + (w - 270 -500) + 'px;';
+    $(".calendar_week_header_left").removeClass("display_with_calendar_week_header_left");
+    $(".calendar_week_header_left").addClass("display_with_calendar_week_header_left");
+    $(".calendar_week_header_right").removeClass("display_with_calendar_week_header_right");
+    $(".calendar_week_header_right").addClass("display_with_calendar_week_header_right");
+</script>
+<table id="<?php echo H($cal_week_rel) ?>" class="calendar_week calendar_day flexible datetime:<?php echo $dtstart?>" cellpadding="0" cellspacing="0">
+	<thead class="header">
+        <tr>
+            <td colspan="8">
+                <div style="background-color: #fff;position: absolute;height: 60px;top: -60px;width: 100%;">
+                    <div class="panel clearfix calendar_pad_bottom">
+                        <div class = "float_left toggle_view week_month" id="week_month">
+                            <?php if (!$form['disable_day']): ?>
+                                <a href="<?php echo H($calendar->url('day', ['st'=>$now] + Input::get())) ?>" class="calendar_button calendar_active">
+                                    <span><?php echo I18N::T('calendars', '日')?> </span>
+                                </a>
+                            <?php endif;?>
+                            <?php if (!$form['disable_week']): ?>
+                                <a href="<?php echo H($calendar->url('week', ['st'=>$now] + Input::get())) ?>" class="calendar_button">
+                                    <span><?php echo I18N::T('calendars', '周')?> </span>
+                                </a>
+                            <?php endif;?>
+                            <?php if (!$form['disable_month']): ?>
+                                <a href="<?php echo H($calendar->url('month', ['st'=>$now] + Input::get())) ?>" class="calendar_button" style="margin-left: 11px;">
+                                    <span><?php echo I18N::T('calendars', '月')?> </span>
+                                </a>
+                            <?php endif;?>
+                        </div>
+                        <div class="center time_center" id="calendar_time_center">
+                            <a href="<?php echo H(URI::url('', ['st'=>$dtprev] + Input::get())) ?>">
+                                <span class="icon-left rpadding_1"></span>
+                            </a>
+                            <span class="center_date"><?php echo Date::format($dtstart, I18N::T('calendars', 'Y/m/d')); ?></span>
+                            <a href="<?php echo H(URI::url('', ['st'=>$dtnext] + Input::get())) ?>">
+                                <span class="icon-right lpadding_1"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+		<tr>
+			<td colspan="8">
+				<div class="panel clearfix calendar_pad_bottom">
+				</div>
+			</td>
+		</tr>
+		<tr style="bottom: 52px;">
+			<th style="height:48px; width:95px; border-left: 1px solid #f0f2f5;">&#160;</th>
+            <?php
+			$headers = ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00'
+            , '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'];
+			$dt = $dtstart;
+			$norule = true;
+			$norule_starttime = mktime(0, 0, 0, 1, 1, 1971);
+			$norule_endtime = mktime(23, 59, 59, 1, 1, 1971);
+
+            /**
+             * @todo 这里是加载什么规则，先不考虑规则的情况
+             */
+			for ($whour=0; $whour<24; $whour++) {
+				if(is_array($rules)) {
+					if(!array_key_exists($whour, $rules) || $rules[$whour][0] != $norule_starttime || $rules[$whour][1] != $norule_endtime) {
+						$norule = false;
+						break;
+					}
+			    }
+			}
+            
+			for ($whour=0; $whour<24; $whour++) : ?>
+			<th class="header<?php echo $whour == $whour_now ? ' today' : '' ?>"
+			<?php
+				if(!$norule && is_array($rules)&& array_key_exists($whour, $rules)) {
+					echo 'q-preview="'.URI::url('!calendars/calendar').'"';
+				}
+			?>
+				q-static="<?php echo H(['wday'=> $whour, 'calendarid'=> $calendar->id, 'dtstart'=>$dtstart]);?>">
+				<span style="padding-left: 2px;"><?php echo I18N::T('calendars', $headers[$whour]); ?>
+					<?php
+						if(!$norule && array_key_exists($whour, $rules)) {
+							echo '<img src=\'images/workingtime.png\'>';
+						}
+					?>
+					</span>
+				<!-- <span class="float_right title_time"><?php // echo Date::format($dt, I18N::T('calendars', 'm/d')); ?></span> -->
+			</th>
+            <?php
+			$gd = getdate($dt);
+			$dt = mktime(0,0,0,$gd['mon'], $gd['mday'] + 1, $gd['year']);
+			endfor; ?>
+		</tr>
+	</thead>
+	<tbody>
+		<tr><td colspan="25"></td></tr>
+	</tbody>
+	<tbody>
+		<tr>
+			<td></td>
+			<td colspan="24">
+				<div class="hour_components">
+				</div>
+			</td>
+		</tr>
+	</tbody>
+
+    <?php
+        $status = EQ_Status_Model::IN_SERVICE;
+        $equipments = Q("{$user}<incharge equipment[status={$status}]");
+        $equipments_count = $equipments->total_count();
+    ?>
+	<tbody class="hour_grid">
+	<?php
+        $count = 1;
+        foreach ($equipments as $equipment) :
+		// for($hh=0; $hh<$equipments_count; $hh++):
+			// $class = $hh < WORKING_HOUR_START || $hh >= WORKING_HOUR_STOP ? ' off_hour':'';
+			// $class .= ($hh % 2) ? '':' half_hour_line';
+	?>
+        <?php // $line_height = Config::get('calendar.line.height');?>
+        <?php $line_height = 8; ?>
+        <tr class="<?php echo H($class) ?>" <?php if ($line_height) echo 'style="line-height:' . $line_height . '"';?>>
+			<td class="tick <?php echo 'tick_' . $equipment->id; ?>" data-id="<?php echo $equipment->id  ?>">
+				<div>
+                    <a class="blue prevent_default" href="<?php echo $equipment->url() ?>"><?php echo H($equipment->name) ?></a>
+				</div>
+			</td>
+            <?php
+			$dt = $dtstart;
+			for($whour=0; $whour<24; $whour++):
+				$cc = "hour_cell";
+				if ($dt < $now) $cc .= ' past';
+				if ($whour == $whour_now ) $cc .= ' today';
+				$cc .= " R{$hh}C{$whour}";
+			?>
+				<td class="<?php echo H($cc) ?>"></td>
+            <?php
+				$gd = getdate($dt);
+				$dt = mktime(0,0,0,$gd['mon'], $gd['mday'] + 1, $gd['year']);
+			endfor;
+			?>
+		</tr>
+	<?php
+        endforeach;
+		// endfor;
+	?>
+	</tbody>
+</table>
+<script type="text/javascript">
+
+    /**
+	 * 无奈之举，和month.phtml对应，后面再调整
+	 */
+	$('#toggle_button .button_save').show();
+	$('#toggle_button .button_print').show();
+
+
+Q.js_ready('calendars:day', function() {
+
+	Q.globals.cal_week_rel = '#<?php echo $cal_week_rel?>';
+	var blocks = <?php echo JS::quote($blocks) ?>;
+	// var blocks = {"7":{"dtstart":{"h":"21","i":"00"},"dtend":{"h":"23","i":"59"},"interval_time":7200,"align_time":86400},"default":{"interval_time":3600,"align_time":3600}};
+	var url = <?php echo JS::quote(URI::url('!calendars/calendar')) ?>;
+	var calendar = <?php echo (int)$calendar->id ?>;
+	var dtstart = <?php echo (int)$dtstart ?>;
+	var user_id = <?php echo (int)$user->id ?>;
+	var dtend = <?php echo (int)$dtnext - 1 ?>;
+
+	Q.Calendar.dtstart = dtstart;
+    Q.Calendar.dtend = dtend;
+
+    var $ = jQuery;
+
+    if ($('.reserv_calendar_left_nav_anchor')) {
+        var $export_buttons = $('.reserv_calendar_left_nav_anchor');
+        $.each($export_buttons, function(i, export_button) {
+            var $export_button = $(export_button);
+
+            var $str = $export_button.attr('q-static');
+            var $subStr = '&dtstart=';
+            $index = $str.indexOf($subStr)
+            if ($index != -1) {
+                $str = $str.substring(0, $index);
+            }
+
+            $export_button.attr('q-static', $str + '&dtstart=' + dtstart + '&dtend=' + dtend);
+            $export_button.replaceWith($export_button.clone().get(0)); // DOM元素替换来触发livequery重新绑定[q-object]
+        })
+    }
+
+    if (Q.Calendar && Q.Calendar.left_nav_area) {
+        $left = $('#<?php echo $left_id?>');
+        $(Q.Calendar.left_nav_area).appendTo($left);
+    }
+
+    if (Q.Calendar && Q.Calendar.right_nav_area) {
+        $right = $('#<?php echo $right_id;?>')
+        $(Q.Calendar.right_nav_area).appendTo($right);
+	}
+
+    var day = new Q.Calendar.Day(Q.globals.cal_week_rel);
+    day.bindBlockEvent(blocks, /* submit_tip */ 1);
+    day.bindLineEvent();
+
+	function day_components_get(start, step) {
+		var hasError = true;
+		$.ajax({
+			url: url,
+			data: {
+				_ajax: 1,
+				_object: 'day_components',
+				_event: 'get',
+				user_id: user_id,
+				dtstart: dtstart,
+				dtend: dtend,
+				calendar: calendar,
+				start: start,
+				step: step
+			},
+			success: function(data) {
+                hasError = false;
+				var cdata = data.components;
+				if (cdata.length > 0) {
+					for (var i in cdata) {
+                        // console.log(cdata[i]);
+						day.getComponent(cdata[i]).render();
+					}
+					delete data.components;
+					day_components_get(start + step, step);
+				}
+			},
+			complete: function() {
+				/**
+				 * 猜测：
+				 * 这段代码虽然具有错误弥补的作用
+				 * 但是在高并发情况下如果失败还会再次尝试，会再次导致失败 造成死循环
+				 * 别告诉产品
+				 */
+				// if (hasError) day_components_get(start, step);
+			}
+		});
+	}
+
+	setTimeout(function () {
+		day_components_get(0, 50);
+		$overlay = '#<?php echo $cal_week_rel."overlay"?>';
+		$($overlay).remove();
+		$('.browser_wrapper').css('position', 'inherit');
+	}, 1000);
+
+    Q.trigger({
+        url: url,
+        object: 'week_lines',
+        event: 'get',
+        data: {
+            dtstart: dtstart,
+            dtend: dtend,
+            calendar: calendar
+        },
+        success: function(data) {
+            var ldata = data.lines;
+            for(var i in ldata) {
+                day.getLine(ldata[i]).render();
+            }
+            delete data.lines;
+        }
+    });
+    <?php if($hh = Config::get('calendar.hourStart', 0)): ?>
+        window.scrollTo(0, $(".R<?= $hh * 2?>C0").offset().top - 35 - <?php echo (int)Config::get('calendar.line.height', 24);?>);
+    <?php endif;?>
+});
+</script>
+<?php echo JS::load_async('calendars:day');

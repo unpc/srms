@@ -1,0 +1,65 @@
+<?php /*
+<div class="panel padding_1 clearfix">
+	<div class="float_left">
+		<?php
+			echo Widget::factory('application:links', ['links' => $links, 'separator'=>' ']);
+		?>
+	</div>
+</div>
+*/ ?>
+
+<?php
+// 姓名、课题组、学院、考试状态（通过/未通过）、考试通过时间
+// 搜索项包括：姓名、课题组、学院、考试状态（通过/未通过）、考试通过时间
+	$table = Widget::factory('table');
+	$table->name = 'exam_user_list';
+	$table->add_columns([
+		'name'=>[
+			'title'=>I18N::T('exam', '姓名'),
+			'align'=>'left',
+			'nowrap'=>TRUE,
+		],
+		'lab'=>[
+			'title'=>I18N::T('labs', '实验室'),
+		],
+		'group'=>[
+			'title'=>I18N::T('eq_ban', '用户机构'),
+		],
+		'exam'=>[
+			'title'=>I18N::T('eq_ban', '考试名称'),
+		],
+		'status'=>[
+			'title'=>I18N::T('equipment', '考试通过状态'),
+			'nowrap'=>TRUE,
+            'align'=> 'center'
+		],
+		'ftime'=>[
+			'title'=>I18N::T('equipment', '考试通过时间'),
+			'nowrap'=>TRUE,
+            'align'=> 'center'
+		]
+	]);
+	$table->empty_message = I18N::T('equipment', '没有符合条件的用户');
+	if (count($users)) {
+		foreach($users as $user) {
+			$table->add_row([
+				// '@' => [
+				// 	'view'=>$user->icon('32', 'style="display:block"'),
+				// 	'extra'=>'style="padding:4px" align="right"',
+				// ],
+				'name'=>$user['name'],
+				'lab' => $user['lab'],
+				'group' => $user['group'],
+				'exam' => $user['exam']?:'--',
+				'status' => $user['status'],
+				'ftime' => $user['status'] == '通过' ? $user['finish_time']: '--',
+			]);
+		}
+	}
+	echo $table;
+?>
+<div class="pages">
+<?php
+	echo $pagination;
+?>
+</div>

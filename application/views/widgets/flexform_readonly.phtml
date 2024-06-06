@@ -1,0 +1,41 @@
+<?php $root_id = 'flexform_'.uniqid(); ?>
+<div id="<?php echo H($root_id) ?>" class="flexform">
+    <?php if ($this->title): ?>
+    	<h2 class="section_title"><span class="middle"><?php echo H($this->title) ?></span></h2>
+    <?php endif; ?>
+    <?php if($this->description): ?>&#160;<span class="description middle"><?php echo H($this->description) ?></span><?php endif;?>
+	<?php if($this->description || $this->title): ?>
+		<div class="interval_30"></div>
+	<?php endif; ?>
+    <?php 
+    	/*
+    		BUG#158 (Cheng.Liu@2010.11.12)
+    		IE6下panel样式的DIV背景色无法正常显示，加上clearfix清除
+    	*/
+    ?>
+    <div class="flexform_container">
+	<?php
+		$index = 0;
+		if(is_array($this->existing_data)) foreach($this->existing_data as $data) {
+            $index ++; 
+			echo V('widgets/flexform_item_readonly', [
+				'data'=> $data, 
+				'index'=>$index, 
+				'view'=>$this->item_view,
+				'extra_vars'=> $this->extra_vars, 
+				'no_delete_confirm'=>$this->no_delete_confirm,
+			]); 
+		}
+	?>
+    </div>
+	<script class="flexform_template" type="text/html">
+	<?php echo V('widgets/flexform_item', [
+		'data'=> $this->template_data, 
+		'view'=>$this->item_view, 
+		'extra_vars'=> $this->extra_vars, 
+		'index'=>'@INDEX',
+		'no_delete_confirm'=>$this->no_delete_confirm,
+	]); ?>
+	</script>
+</div>
+<?php echo JS::load('widgets/flexform', ['index'=>$index, 'index_token'=>'@INDEX', 'root_id'=>$root_id, 'delete_message'=> $this->delete_message ?: T("你确定要删除吗333？请谨慎操作！")]);

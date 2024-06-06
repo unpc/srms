@@ -1,0 +1,45 @@
+<?php if (count($tabs) > 0): ?>
+    <div class="tabs_container_wrapper<?php echo $class?' '.$class:''?>">
+        <div class="tabs_container">
+            <span class="tabs">
+                <span class="tabs_body">
+                    <span class="tabs_content">
+                        <span class="order_search">
+                            <form q-object="order_search" q-event="submit" q-src="<?php echo H(URI::url('!orders/order')) ?>" method="post">
+                                <input class="text middle hint margin_1" size="20" q-hint="<?php echo H(I18N::T('orders', '请输入订单ID/编号')) ?>" name="order_no" />
+                            </form>
+                        </span>
+                        <?php foreach($tabs as $tab):
+                        if (isset($tab['*'])) {
+                            $links = [];
+                            foreach ($tab['*'] as $t) {
+                                $links[]= URI::anchor($t['url'], $t['title'], 'class="middle"');
+                            }
+                            $content = implode(' <span class="separator middle">►</span> ', $links);
+                        }
+                        ?>
+                        <?php if(!isset($tab['*'])) { ?>
+                            <a href="<?php echo H($tab['url'] ) ?>" class="middle">
+                                <?php } ?>
+                                <span class="tab_wrapper"><span class="tab<?php echo $tab['active']?' active_tab':''?>">
+                                <?php if(!isset($tab['*'])) {echo $tab['title'];} else {echo $content;} ?>
+                                </span><?php
+                                if($tab['number']):
+                                if ($tab['number'] > 99) {
+                                    $tab['number'] = '...';
+                                    $len = 2;
+                                }
+                        else {
+                            $len = strlen($tab['number']);
+                        }
+                        ?><span class="tab_superscript num_notif num_notif_<?php echo $len;?>"><?php echo $tab['number'] ?></span><?php
+                        endif;
+                        ?></span>
+                    <?php if(!isset($tab['*'])) { echo "</a>"; } ?><?php
+                    endforeach; ?>
+                    </span>
+                </span>
+            </span>
+        </div>
+    </div>
+<?php endif;

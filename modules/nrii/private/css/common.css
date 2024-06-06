@@ -1,0 +1,32 @@
+fieldset {
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	padding: 6px;
+	margin: 0;
+	line-height: 1;
+	display: block;
+	vertical-align: top;
+	margin-bottom: .5em;
+	width: 750px;
+	margin: auto;
+
+	legend {
+		color: #000000;
+		font-weight: bold;
+		font-size: 1.5em;
+		padding: 0 4px;
+		text-align: center;
+	}
+	
+	p {
+		margin-bottom: .5em;
+	}
+
+	table {
+		width: 100%;
+	  }
+	.form td {
+		width: 25%;
+	}
+	
+}

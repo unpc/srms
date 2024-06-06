@@ -1,0 +1,207 @@
+.privacy {
+    color: #999;
+}
+
+span.count_result {
+	float: right;
+	line-height: 24px;
+	margin-right:10px;
+}
+
+span.number {
+	color:#f6b439;
+}
+
+ul.labs_triple {
+    width: 380px;
+    overflow: hidden;
+    li {
+        width: 30%;
+        float: left;
+        display:inline;
+        white-space: nowrap;
+  }
+}
+
+div.is_agent {
+	vertical-align: middle;
+	background: url('images/icons/agent.gif') center center no-repeat;
+}
+
+.signup_body{
+    border: 2px solid #fff;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    background-color: #fff;
+    width: 450px;
+    height: auto;
+}
+
+.signup_change{
+    border: 1px solid #E5E5E5;
+    border-radius: 5px;
+    width: 170px;
+    text-align: center;
+    height: 80px;
+    color: #8c8888;
+    i{
+        font-size: 30px;
+        display: block;
+        margin: 10px 0;
+    }
+    p{
+        display: inline-block;
+    }
+}
+
+.signup_change_active{
+    border: 1px solid var(--basiccolor);
+    border-radius: 5px;
+    width: 170px;
+    text-align: center;
+    height: 80px;
+    i{
+        font-size: 30px;
+        display: block;
+        margin: 10px 0;
+    }
+    p{
+        display: inline-block;
+    }
+}
+
+.sinup_table_interval{
+    width: 50px;
+}
+
+.sinuplab_table_interval{
+    width: 20px;
+}
+
+.sinuptit_table_interval{
+    width: 10px;
+}
+
+/*common css*/
+.pageCont{
+   margin-top: 20px;
+}
+.stepPage{
+    display:none;
+    height:100%;
+}
+.stepCont{
+    width:100%;
+}
+.ystep-container {
+    font-family: "Helvetica Neue",Helvetica,"Hiragino Sans GB","Wenquanyi Micro Hei","Microsoft Yahei",Arial,sans-serif;
+    display: inline-block;
+    position: relative;
+    color: #000;
+}
+.ystep-container ul {
+    list-style: none;
+}
+.ystep-container ul,.ystep-container li,.ystep-container p {
+    margin: 0;
+    padding: 0;
+}
+
+/*size css*/
+.ystep-lg {
+    /*width: 700px;*/
+    width:100%;
+    height: 60px;
+    font-size: 18px;
+    /*left: 15%;*/
+    line-height: .3;
+}
+
+.ystep-container-steps{
+    position: relative;
+    top: 2px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+/*large size css*/
+.ystep-lg{
+    position: relative;
+    top: 2px;
+    cursor: pointer;
+    z-index: 10;
+li{
+    float: left;
+    width: 100px;
+    height: 55px;
+    margin-right: 100px;
+    line-height: 60px;
+    background-color: white;
+}
+li:last-child{
+    margin-right: 0px!important;
+    padding-right: 15px;
+}
+
+li:first-child{
+    padding-left: 15px;
+}
+}
+
+.ystep-lg .ystep-progress {
+    width: 400px;
+    height: 5px;
+    position: absolute;
+    top: 30px;
+    /*left: 15px;*/
+    float: left;
+    /*margin-right: 10px;*/
+    overflow: hidden;
+}
+.ystep-lg .ystep-progress-bar {
+    width: 400px;
+    height: 5px;
+    background: #e4e4e4;
+    display: inline-block;
+    float: left;
+}
+.ystep-lg .ystep-progress-highlight {
+    height: 5px;
+    display: block!important;
+}
+
+.ystep-blue .ystep-progress-highlight {
+    background: #60baff;
+}
+/*按钮样式*/
+.ystep {
+    padding: 20px;
+    /*min-width: 1114px;*/
+}
+.step-button{
+    position: relative;
+    /*top: -85px;*/
+}
+.step-button button{
+    margin-bottom: 30px;
+}
+
+.sinup_min{
+    width: 125px!important;
+}
+
+.ystep-desc{
+    margin-top: 70px;
+    font-size: 14px;
+    span{
+        display: table-cell;
+    }
+    span:last-child{
+        text-align: right;
+    }
+
+    span:not(:first-child):not(:last-child){
+        text-align: center;
+    }
+}

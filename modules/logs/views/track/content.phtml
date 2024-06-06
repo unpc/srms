@@ -1,0 +1,32 @@
+<?php
+	$row_odd = TRUE;
+?>
+
+<?php foreach($log_content as $content):  $class = $row_odd ? ' row_odd':' row_even';  ?>
+<tr>
+	<td class="left nowrap <?php echo $class?>">
+		<?php echo $content; ?>
+	</td>
+</tr>
+<?php $row_odd = !$row_odd; endforeach; ?>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+	
+			setInterval(function() {
+				Q.trigger({
+					url: '<?php echo URI::url('!logs/track'); ?>',
+					object: 'content',
+					event: 'refresh',
+					global: false,
+					data: {
+			 			mtime: '<?php echo $mtime; ?>',
+			 			path: '<?php echo $full_path; ?>',
+			 			tbody: '<?php echo $tbody_id; ?>'
+
+					},
+				});
+			}, 3000);
+		}
+	);
+</script>

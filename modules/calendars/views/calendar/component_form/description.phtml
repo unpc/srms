@@ -1,0 +1,9 @@
+<tr>
+
+    <td class="label left top nowrap" colspan="2">
+    <div class="title"><?php echo $properties['label'] ?></div>
+
+    <textarea name="<?php echo H($name) ?>" type="text" class="text autogrow"><?php echo $component->id ? $component->description : $properties['default_value']; ?></textarea>
+    </td>
+
+</tr>

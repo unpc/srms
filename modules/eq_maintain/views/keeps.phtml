@@ -1,0 +1,103 @@
+<div class="hr_1">&#160;</div>
+<div class="panel padding_1 clearfix">
+    <?php if(count($panel_buttons) > 0) : ?>
+    <div class="float_left">
+    <?= Widget::factory('application:links', ['links'=>$panel_buttons, 'separator'=>' ']); ?>
+    </div>
+    <?php endif; ?>
+    <div class="float_right record_count">
+        <div class="inline_block">
+        <?= I18N::T('eq_maintain', '共有 %total_count 条保养记录',  [
+            '%total_count' => '<span class="eq_number">'.intval($total_count).'</span>'
+            ]);?>
+        </div>
+    </div>
+</div>
+<?php 
+    echo $pagination;
+    $table = Widget::factory('table');
+    $table->name = 'equipment_maintains';
+    
+    if ($form['dtstart_check'] && $form['dtend_check']) {
+        $form['date'] = H(date('Y/m/d',$form['dtstart'])).'~'.H(date('Y/m/d',$form['dtend']));
+    }
+    elseif ($form['dtstart_check']) {
+        $form['date'] = H(date('Y/m/d',$form['dtstart'])).'~'.I18N::T('equipments','最末');
+    }
+    elseif ($form['dtend_check']) {
+        $form['date'] = I18N::T('equipments','最初').'~'.H(date('Y/m/d',$form['dtend']));
+    }
+
+    if ($form['sstart'] && $form['send']) {
+        $form['score'] = H($form['sstart']) . '~' . H($form['send']);
+    }
+    elseif ($form['sstart']) {
+        $form['score'] = H($form['sstart']) . '~' . H(100);
+    }
+    elseif ($form['send']) {
+        $form['score'] = H(0) . '~' . H($form['end']);
+    }
+    
+    $columns = [
+        '@'=>NULL,
+        'time'=>[
+            'title'=>I18N::T('eq_maintain', '时间'),
+            'filter'=> [
+                'form' => V('eq_maintain:maintains_table/filters/date', [
+                    'dtstart_check'=>$form['dtstart_check'],
+                    'dtstart'=>$form['dtstart'],
+                    'dtend_check'=>$form['dtend_check'],
+                    'dtend'=>$form['dtend']
+                ]),
+                'value' => $form['date'] ? H($form['date']) : NULL,
+                'field'=>'dtstart,dtend,dtstart_check,dtend_check',
+            ],
+            'align'=>'center',
+            'nowrap'=>TRUE,
+            'extra_class'=> 'lmargin_1',
+        ],
+        'amount'=>[
+            'title' => I18N::T('eq_maintain', '金额'),
+            'align' => 'center',
+            'nowrap' => TRUE,
+            'extra_class'=> 'lmargin_1',
+        ],
+        'rate'=>[
+            'title' => I18N::T('eq_maintain', '学校资助比例'),
+            'align' => 'center',
+            'nowrap' => TRUE,
+            'extra_class'=> 'lmargin_1',
+        ],
+        'description'=>[
+            'title' => I18N::T('eq_maintain', '描述'),
+            'align' => 'center',
+            'nowrap' => FALSE,
+            'extra_class'=> 'flexible lmargin_1',
+        ],
+        'rest'=>[
+            'align'=>'right',
+            'nowrap'=>TRUE,
+            'weight' => 110,
+            'extra_class'=> 'lmargin_1',
+        ],
+    ];
+
+    Event::trigger('keep.custom.fields', $table, $columns, $form);
+    $table->add_columns($columns);
+    $table->empty_message = I18N::T('eq_maintain', '无符合条件的维修记录');
+
+    if (count($keeps) > 0) foreach ($keeps as $keep) {
+        $links = $keep->links();
+        $row = [
+            '@' => V('eq_maintain:keeps_table/data/serial_number', ['id'=>$keep->id]),
+            'time' => V('eq_maintain:keeps_table/data/time', ['keep'=>$keep]),
+            'amount' => V('eq_maintain:keeps_table/data/amount', ['amount' => $keep->amount]),
+            'rate'=> V('eq_maintain:keeps_table/data/rate', ['keep' => $keep]),
+            'description'=>V('eq_maintain:keeps_table/data/description', ['keep'=>$keep]),
+            'rest'=> Widget::factory('application:links', ['links'=>$links]),
+        ];
+        Event::trigger('keep.custom.fields.value', $table, $keep, $row);
+        $table->add_row($row);
+    }
+
+    echo $table;

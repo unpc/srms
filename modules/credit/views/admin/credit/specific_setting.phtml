@@ -1,0 +1,102 @@
+<div class="margin-left-1-half">
+<?php
+    if ($limit_1->enable) $enable_limit = $limit_1;
+    elseif ($limit_2->enable) $enable_limit = $limit_2;
+    elseif ($limit_3->enable) $enable_limit = $limit_3;
+    else $enable_limit = $limit_4;
+    $f = $special[$flexform_index];
+    $users = $f['users'] ? json_decode($f['users'], true) : $enable_limit ? Q("{$enable_limit} user")->to_assoc('id', 'name'):[];
+    $labs = $f['labs'] ? json_decode($f['labs'], true) : $enable_limit ? Q("{$enable_limit} lab")->to_assoc('id', 'name'):[];
+    $root = Tag_Model::root('group');
+    $groups = $f['groups'] ? json_decode($f['groups'], true) : $enable_limit ? Q("{$enable_limit} tag_group[root={$root}]")->to_assoc('id', 'name'):[];
+    ?>
+    <div class="left nowrap middle label tpadding_1 bpadding_1"><?php echo I18N::T('equipments', '用户')?></div>
+    <div class="user_box">
+        <?php
+        $tooltip = I18N::T('equipments', '请输入关键字并选择');
+        echo Widget::factory('multi_user_selector', [
+            'autocomplete'=> URI::url('!credit/autocomplete/user'),
+            'name'=>'special['.$flexform_index.'][users]',
+            'size'=>'60',
+            'value'=>@json_encode($users),
+            'tooltip'=>$tooltip,
+            'extra'=>'token_verify'
+        ]);
+        ?>
+    </div>
+<?php if (!$GLOBALS['preload']['people.multi_lab'] && Module::is_installed('labs')): ?>
+        <div class="left nowrap middle label tpadding_1 bpadding_1"><?php echo I18N::T('equipments', '实验室')?></div>
+        <div class="lab_box">
+            <?php
+            echo Widget::factory('credit:tag_selector', [
+                'autocomplete'=> URI::url('!credit/autocomplete/labs'),
+                'name'=>'special['.$flexform_index.'][labs]',
+                'value'=>@json_encode($labs),
+            ]);
+            ?>
+        </div>
+<?php endif ?>
+<?php
+#ifdef (equipment.enable_group_specs)
+if (Config::get('equipment.enable_group_specs')):
+    ?>
+        <div class="left nowrap middle label tpadding_1 bpadding_1"><?php echo I18N::T('equipments', '组织机构')?></div>
+        <div class="group_box">
+            <?php
+            echo Widget::factory('credit:tag_selector', [
+                'autocomplete'=> URI::url('!credit/autocomplete/groups'),
+                'name'=>'special['.$flexform_index.'][groups]',
+                'value'=>@json_encode($groups),
+            ]);
+            ?>
+        </div>
+<?php
+endif;
+#endif
+?>
+<div class="clearfix"></div>
+<div class="interval_24"></div>
+<div class="form">
+    <table class="form">
+        <tr>
+            <td class="nowrap middle rpadding_2">
+                <?php echo Form::hidden('special['.$flexform_index.'][can_not_reserv_id]', $limit_1->id)?>
+                <?php echo Form::checkbox('special['.$flexform_index.'][can_not_reserv]', $f['can_not_reserv'] ?: $limit_1->enable, I18N::T('credit', '当信用分低于'), 'class="middle checkbox monitor"'); ?>
+                <input type="text" name="special[<?= $flexform_index?>][can_not_reserv_score]" size="5" class="text number" value="<?php echo H((int) $f['can_not_reserv_score'] ?: $limit_1->score) ?>" />
+                <?php echo I18N::T('credit', '分, 禁止用户预约仪器') ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="nowrap middle rpadding_2">
+                <?php echo Form::hidden('special['.$flexform_index.'][ban_id]', $limit_2->id)?>
+                <?php echo Form::checkbox('special['.$flexform_index.'][ban]', $f['ban'] ?: $limit_2->enable, I18N::T('credit', '当信用分低于'), 'class="middle checkbox monitor"'); ?>
+                <input type="text" name="special[<?= $flexform_index?>][ban_score]" size="5" class="text number" value="<?php echo H((int) $f['ban_score'] ?: $limit_2->score) ?>" />
+                <?php echo I18N::T('credit', '分, 自动加入系统黑名单, 默认封禁时长') ?>
+                <input type="text" name="special[<?= $flexform_index?>][ban_day]" size="5" class="text number" value="<?php echo H((int) $f['ban_day'] ?: $limit_2->ban_day) ?>" />
+                <?php echo I18N::T('credit', '天') ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="nowrap middle rpadding_2">
+                <?php echo Form::hidden('special['.$flexform_index.'][unactive_user_id]', $limit_3->id)?>
+                <?php echo Form::checkbox('special['.$flexform_index.'][unactive_user]', $f['unactive_user'] ?: $limit_3->enable, I18N::T('credit', '当信用分低于'), 'class="middle checkbox monitor"'); ?>
+                <input type="text" name="special[<?= $flexform_index?>][unactive_user_score]" size="5" class="text number" value="<?php echo H((int) $f['unactive_user_score'] ?: $limit_3->score) ?>" />
+                <?php echo I18N::T('credit', '分, 用户账号变为未激活') ?>
+            </td>
+        </tr>
+    </table>
+    <div class="interval_10"></div>
+    <hr>
+    <div class="interval_10"></div>
+    <table class="form">
+        <tr>
+            <td class="nowrap middle">
+                <?php echo Form::hidden('special['.$flexform_index.'][send_msg_id]', $limit_4->id)?>
+                <?php echo Form::checkbox('special['.$flexform_index.'][send_msg]', $f['send_msg'] ?: $limit_4->enable, I18N::T('credit', '通知阈值提醒, 当信用分低于'), 'class="middle checkbox monitor"'); ?>
+                <input class="text number" name="special[<?= $flexform_index?>][send_msg_score]" size="5" value="<?php echo H($f['send_msg_score'] ?: $limit_4->score)?>" />
+                <?php echo I18N::T('credit', '分时, 系统自动发送消息通知用户') ?>
+            </td>
+        </tr>
+    </table>
+</div>
+</div>

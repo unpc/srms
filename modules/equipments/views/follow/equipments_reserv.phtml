@@ -1,0 +1,128 @@
+<?php echo CSS::load_async('equipments:common');?>
+<?php
+	$table = Widget::factory('table');
+
+	$table->name = 'equipments_follow_equipments';
+    
+    $columns = [
+		'icon'=>NULL,
+		'name'=>[
+			'title'=>I18N::T('equipments', '仪器名称'),
+			'align'=>'left',
+			'nowrap'=>true,
+		],
+		'permission_check'=>[
+			'title'=>I18N::T('equipments', '预约资格'),
+			'align'=>'left',
+			'nowrap'=>true,
+		],
+		'control'=>[
+			'title'=>I18N::T('equipments', '控制'),
+			'align'=>'center',
+			'nowrap'=>TRUE,
+		],
+		'current_user' => [
+			'title'=> I18N::T('equipments', '当前使用者'),
+			'align'=>'center',
+			'nowrap'=>TRUE,
+		],
+		'location'=>[
+			'title'=>I18N::T('equipments', '放置房间'),
+			'align'=>'left',
+			'nowrap'=>TRUE,
+        ],
+    ];
+
+    if (Module::is_installed('db_sync')) {
+        $columns += [
+            'site'=>[
+                'title'=> I18N::T('db_sync', '所属站点'),
+                'align'=>'left',
+                'nowrap'=>TRUE,
+            ],
+        ]; 
+    }
+
+    $columns += [
+		'contact'=>[
+			'title'=> I18N::T('equipments', '联系人'),
+			'align'=>'left',
+			'nowrap'=>TRUE,
+			'extra_class'=>'filter_right',
+		],
+		'rest'=>[
+            'title' => I18N::T('equipments', '操作'),
+			'align'=>'left',
+			'nowrap'=>TRUE,
+		],
+	];
+
+	$table->add_columns($columns);
+	
+	$table->empty_message = I18N::T('equipments', '您没有关注的仪器, 请%clickhere选择您关注的仪器', ['%clickhere'=>URI::anchor('!equipments', I18N::HT('equipments', '点击这里'), 'class="blue"')]);
+
+	foreach ($follows as $follow) {
+		$equipment = $follow->name() == 'equipment' ? $follow : $follow->object;
+		if (!$equipment->id) {
+			$follow->delete();
+			continue;
+		}
+		$calendar = O('calendar', ['parent' => $equipment, 'type' => 'eq_reserv']);
+        if (!$calendar->id) {
+            $calendar         = O('calendar');
+            $calendar->parent = $equipment;
+            $calendar->type   = 'eq_reserv';
+            $calendar->name   = I18N::T('eq_reserv', '%equipment的预约', ['%equipment' => $equipment->name]);
+            $calendar->save();
+        }
+
+		$reserv_permission = true;
+		$permission_check = (object)['calendar' => $calendar];
+		Event::trigger('view[calendar/permission_check].prerender', $permission_check);
+		foreach ($permission_check->check_list as $check) {
+			if (!$check['result']) {
+				$reserv_permission = false;
+			}
+		}
+
+		$links = $equipment->links('index') + L('ME')->follow_links($equipment);
+
+		if ($reserv_permission) {
+			$links[] = [
+                'text' => I18N::T('reserv_approve', '去预约'),
+                'url' => $equipment->url('reserv'),
+				'extra' =>'class="blue"',
+            ];
+		} else {
+			$links[] = [
+                'text' => I18N::T('reserv_approve', '去检查'),
+				'extra' => 'q-object="permission_check" q-event="click"' .
+							' q-src="' . H(URI::url('!calendars/calendar')) . '"' .
+							' q-static="' . H(['id' => $calendar->id]) . '"' .
+							' class="blue"',
+            ];
+		}
+
+		$table->add_row([
+			'icon' => [
+				'view'=>$equipment->icon('32', 'style="display:block"'),
+				'extra'=>'style="padding:4px" align="right"',
+			],
+			'name' => V('equipments:equipments_table/data/name', ['equipment'=>$equipment]),
+			'permission_check' => V('equipments:equipments_table/data/permission_check', ['reserv'=>$reserv_permission]),
+			'control' => V('equipments:equipments_table/data/control', ['equipment'=>$equipment]),
+			'current_user' => V('equipments:equipments_table/data/current_user', ['equipment'=>$equipment]),
+			'location' => V('equipments:equipments_table/data/location', ['equipment'=>$equipment]),
+			'site' => H(Config::get('site.map')[$equipment->site]) ?: '--',
+			'contact' => V('equipments:equipments_table/data/contacts', ['equipment'=>$equipment]),
+			'rest'=> Widget::factory('application:links', ['links' => $links]),
+		]);
+	}
+
+	echo $table;
+?>
+
+
+<?php if ($follows->total_count() > 20) : ?>
+    <div class="pages"><?= $pagination ?></div>
+<?php endif; ?>

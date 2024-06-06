@@ -1,0 +1,83 @@
+<?php
+$charge_setting = EQ_Charge::get_charge_setting($equipment);
+$test_project_setting = $charge_setting['test_project'];
+$disabled = L('ME')->is_allowed_to('修改计费设置', $equipment) ? '' : 'disabled="disabled"';
+?>
+<div class="interval_24"></div>
+<form method="POST" autocomplete="off" action="<?php echo H(URI::url() ) ?>">
+    <div class="form padding_1">
+        <table class="form flexible">
+            <tbody>
+            <tr>
+                <td class="top lpadding_30">
+                <h2 class="section_title"><?php echo I18N::T('test_project', '计费参数设置')?> (<?php echo $charge_title?>)</h2>
+                <div class="padding_2">
+                    <div class="interval_20"></div>
+                    <table class="form">
+                        <tbody>
+                            <?php if (!count($test_projects)): ?>
+                            <tr>
+                                <td class="left nowrap middle"><?= I18N::T('test_project', '请到测试项目中添加项目'); ?></td>
+                            </tr>
+                            <?php else: ?>
+                                <?php foreach ($test_projects as $id => $test_project):?>
+                                <tr>
+                                    <td class="middle right nowrap"><?= $test_project->name; ?></td>
+                                    <td class="middle lpadding_8">
+                                        &nbsp;&nbsp;&nbsp;&nbsp;
+                                        <?= I18N::T('test_project', '每一样品需要金额'); ?>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input name="<?= 'price['.$id.']'?>" class="text currency" size="10" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?= H($test_project->price) ?>" <?= $disabled?>/>
+                                    </td>
+                                </tr>
+                                <tr><td><div class="interval_20">&#160;</div></td></tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <?php
+    unset($test_project_setting['*']);
+    $tags = $test_project_setting;
+    if ($tags) foreach ($tags as $k => $tag) {
+        if ($tag) {
+            $key = serialize($tag);
+            if (!isset($specific[$key])) {
+                $specific[$key] = $tag;
+            }
+            $specific[$key]['special_tags'][] = $k;
+        }
+    }
+    $specific = (array)$specific;
+    if ($specific || !$disabled) :?>
+        <div class="form lpadding_30">
+            <?php
+            echo Widget::factory('flexform', [
+                'title' => I18N::T('test_project', '个别收费标准'),
+                'template_data' => ['disabled'=>TRUE],
+                'existing_data' => array_values($specific),
+                'item_view' => 'test_project:charge/item',
+                'title_class' => 'middle',
+                'extra_vars' => [
+                    'equipment' => $equipment,
+                    'test_projects' => $test_projects,
+                ],
+            ]);
+            ?>
+        </div>
+    <?php endif;?>
+
+    <div class="interval_60">&#160;</div>
+    <?php if (!$disabled): ?>
+        <div class="form float_right">
+            <input type="reset" name="cancel" class="font-button-default rmargin_16" value="<?php echo H(T('取消')) ?>" />
+            <input type="submit" name="submit" class="font-button-save" value="<?php echo H(T('保存修改')) ?>" />
+        </div>
+    <?php endif;?>
+</form>

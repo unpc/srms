@@ -1,0 +1,34 @@
+<div class="clearfix">
+	<?php echo CSS::load_async('achievements:publication'); ?>
+	<h2 class="general_title">
+		<span class="middle"><?php echo I18N::T('achievements', '发表文献') ?></span>
+	</h2>
+	<div class="publication_template">
+		<ol class='publications'>
+			<?php foreach ($publications as $publication): ?>
+			<li class="publication">
+				<?php echo V('achievements:author_name', ['achievement'=>$publication]);?>
+				<span class="title">
+					<?php if(L('ME')->is_allowed_to('查看成果', $publication->lab)):?>
+					<a href="<?php echo $publication->url(); ?>"><?php echo H($publication->title)?></a>
+					<?php else:?>
+					<?php echo H($publication->title); ?>
+					<?php endif;?>.
+				</span>
+				<span class="source">
+					<?php echo H($publication->journal); ?>.
+				</span>
+				<span class="year">
+					<?php echo Date::format($publication->date, H('Y')); ?>
+				</span>
+				<?php /*?>
+				<span>
+					<?php echo H($publication->volume . ' (' . $publication->issue .') ' . $publication->page); ?>
+				</span>
+				<?php */?>
+			</li>
+			<?php endforeach; ?>
+		</ol>
+	</div>
+	<div class="hr_3">&#160;</div>
+</div>

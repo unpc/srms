@@ -1,0 +1,15 @@
+<div class="user_card clearfix">
+	<div class="icon icon_48"><?php echo $object->icon('48') ?></div>
+	<div class="information">
+		<?php
+			$user_info = (array)lab::get('lab.customize_user_info');
+			$name =  count($user_info) ? $user_info['name'] : $object->name;
+		?>
+		<span class="name tooltip_position:left" q-tooltip="<?= $name ?>">
+			<?php echo $name; ?>
+		</span>
+		<?php if ($object->title): ?>
+		<span class="title">(<?php echo HT($object->title) ?>)</span>
+		<?php endif ?>
+	</div>
+</div>

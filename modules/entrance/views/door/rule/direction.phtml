@@ -1,0 +1,16 @@
+<table class="form">
+<tr>
+	<td class="left nowrap" width="126" height="30"><?php echo I18N::T('entrance','方向') ?></td>
+	<td class="left nowrap">
+	<?php echo Form::checkbox('direction['.$flexform_index.'][1]', in_array(1, (array) $directions) ? TRUE : FALSE, I18N::T('entrance','进门'), 'class="middle checkbox"', 'class="top rmargin_10"'); ?>
+	<?php echo Form::checkbox('direction['.$flexform_index.'][0]', in_array(0, (array) $directions) ? TRUE : FALSE, I18N::T('entrance','出门'), 'class="middle checkbox"', 'class="top"'); ?>
+	</td>
+</tr>
+<tr>
+	<td class="left nowrap" height="30"><?php echo I18N::T('entrance','操作') ?></td>
+	<td class="left nowrap">
+	<?php echo Form::radio('access['.$flexform_index.']','1',$access ? TRUE : FALSE,I18N::T('entrance','通过').'&nbsp;&nbsp;&nbsp;','class="middle radio"','class="middle rmargin_152"') ?>
+	<?php echo Form::radio('access['.$flexform_index.']','0',$access ? TRUE : FALSE,I18N::T('entrance','禁止'),'class="middle radio"','class="middle"') ?>
+	</td>
+</tr>
+</table>

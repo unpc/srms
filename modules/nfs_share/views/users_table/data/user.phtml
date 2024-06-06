@@ -1,0 +1,4 @@
+<strong class="name"><?php $user->render() ?></strong>
+<?php if (Module::is_installed('labs') && !$GLOBALS['preload']['people.multi_lab']): ?>
+	<div class="description"><?php echo H(Q("$user lab")->current()->name)?></div>
+<?php endif; ?>

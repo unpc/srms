@@ -1,0 +1,517 @@
+<style>
+    .tag_selector {
+        width: 402px;
+    }
+</style>
+<?php $me = L('ME');?>
+<div class="form">
+    <form method="post" action="<?php echo H(URI::url() ) ?>" autocomplete="off" <?php echo Config::get('file.equipment');?>>
+        <table class="form" style="width: 100%;">
+            <tbody>
+            <tr>
+                <td class="top equipments_icon" width="130" rowspan="2">
+                    <!-- <a href="<?php // echo H($equipment->url('photo', NULL, NULL, 'edit') ) ?>">
+                    </a> -->
+                    <div class="short_container">
+                        <div class="img_icon" style="position: relative;">
+                                <?php echo $equipment->icon('104'); ?>
+                            <div class="icon_cover" style="display: none;">
+                                <div class="modify_icon">+</div>
+                                <div class="interval_8"></div>
+                                <div class="modify_font">修改图标</div>
+                            </div>
+                        </div>
+
+	                    <input class="upload_icon" name="file" type="file" class="file" style="display: none;" />
+                    </div>
+
+                    <script>
+                        $.upload_icon(<?php echo '"'.URI::url().'"'; ?>);
+                    </script>
+
+                    <div class="short_info short_container">
+                        <a style="padding: 0 9px;" class="font-button-delete" href="<?php echo H(URI::url('!equipments/equipment/delete_photo.'.$equipment->id)) ?>" confirm="<?php echo H(I18N::T('equipments', '确定要删除图标吗?')) ?>"><?php echo I18N::T('equipments', '删除仪器图标')?></a>
+                    </div>
+
+                    <div class="interval_24"></div>
+
+                </td>
+                <td class="top">
+                    <?php
+                    echo V('form_error', ['form' => $form]);
+                    ?>
+
+                    <?php
+                    $no_error = ($form->no_error !== FALSE);
+                    $allowed_edit = $me->is_allowed_to('锁定基本', $equipment);
+                    $require = trim((string) V('form_require', ['extra_class' => 'top']));
+                    $requires = Config::get('form.equipment_edit')['requires'];
+                    $disables = Config::get('form.equipment_edit')['disables'];
+                    $_getDisable = function ($key = '') use ($disables, $equipment, $allowed_edit) {
+                        if (Event::trigger('equipment.edit.get.disable', $key, $equipment)) {
+                            return 'disabled';
+                        }
+                        if ($allowed_edit) {
+                            return '';
+                        } elseif (!$equipment->info_lock) {
+                            return '';
+                        } else {
+                            return array_key_exists($key, $disables) ? 'disabled' : '';
+                        }
+                    };
+
+                    if ($allowed_edit) :
+                    ?>
+                    <h2 class="section_title">
+                        <span class="border"></span>
+                        <span class="black_title"><?= I18N::T('equipments', '锁定设置')?></span>
+                    </h2>
+
+
+                    </div>
+
+                    <div class="interval_8"></div>
+                    <div class="lpadding_8">
+                        <?= Form::checkbox('info_lock',  $equipment->info_lock,
+                        I18N::T('equipments', '锁定仪器负责人对该仪器的基本设置'), 'class="middle checkbox"', 'class="middle"');?>
+                    </div>
+                    <?php endif; ?>
+                    <div class="interval_24"></div>
+                </td>
+            </tr>
+            <tr>
+                <td class="top">
+                    <h2 class="section_title">
+                        <span class="border"></span>
+                        <span class="black_title"><?= I18N::T('equipments', '基本设置')?></span>
+                        <span class="float_right red" style="font-size: 14px;font-weight: normal;color: #666;margin-right: 140px;"><span class="required" style="vertical-align: text-top;">*</span>必填</span>
+                    </h2>
+                    <div class="interval_12"></div>
+                    <table class="form"  >
+                        <tbody>
+                        <?php if(Config::get("equipment.first_ref_no")): ?>
+                            <tr>
+                                <td class="label right nowrap middle"><?php echo I18N::T('equipments', '仪器编号')?></td>
+                                <td class="middle">
+                                    <input name="ref_no" class="text" size="40" <?= $_getDisable('ref_no') ?>
+                                           value="<?php echo H($form['ref_no'] ? ($no_error?$equipment->ref_no:$form['ref_no']): $equipment->ref_no) ?>" />
+                                    <?php if ($_getDisable('ref_no')): ?>
+                                        <input type="hidden" name="ref_no" value="<?= $equipment->ref_no ?>" />
+                                    <?php endif; ?>
+                                    <?= array_key_exists('ref_no', $requires) ? $require : ''; ?>
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                            <tr>
+                                <td class="label nowrap middle rpadding_label lpadding_8">
+                                    <?php echo I18N::T('equipments', '仪器名称')?></span>
+                                    <?= array_key_exists('name', $requires) ? $require : '<span class="lpadding_18"></span>'; ?><span>
+                                    <?php echo '<br>'.V('form_filter',['error'=>$form->errors['name'][0]])?>
+                                </td>
+                                <td class="table_interval"></td>
+                                <td class="label nowrap middle rpadding_label lpadding_8" width="124">
+                                    <span><?php echo I18N::T('equipments', '英文名称')?></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="top lpadding_8">
+                                    <input name="name" class="text wide tmargin_2" <?= $_getDisable('name') ?> value="<?= H($form['name'] ?: $equipment->name)?>" />
+                                </td>
+                                <td class="table_interval"><div style="width: 10px;"></td>
+                                <td class="top lpadding_8">
+                                    <input name="en_name" class="text wide tmargin_2" value="<?php echo H($form['en_name'] ?: $equipment->en_name)?>" <?= $_getDisable('en_name') ?>/>
+                                </td>
+                            </tr>
+
+                            <tr><td colspan="5"><div class="interval_16"></div></td></tr>
+
+                            <tr>
+                                <td class="label nowrap middle rpadding_label">
+                                    <span class="lpadding_2"><?php echo I18N::T('equipments', '型号')?></span>
+                                </td>
+                                <td class="table_interval"></td>
+                                <td class="label nowrap middle rpadding_label">
+                                    <span class="lpadding_2">
+                                        <?php echo I18N::T('equipments', '规格')?>
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="middle lpadding_8"><input name="model_no" class="text wide tmargin_2" value="<?php echo H($no_error?$equipment->model_no:$form['model_no']) ?>"  <?= $_getDisable('model_no') ?>/></td>
+                                <td class="table_interval"></td>
+                                <td class="middle lpadding_8"><input name="specification" class="text wide tmargin_2" value="<?php echo H($no_error?$equipment->specification:$form['specification']) ?>"  <?= $_getDisable('specification') ?>/></td>
+                            </tr>
+
+                            <tr><td colspan="5"><div class="interval_16"></div></td></tr>
+
+                            <tr>
+                                <td class="label nowrap middle rpadding_label">
+                                    <?= array_key_exists('price', $requires) ? '<span class="required">*</span>' : '<span class="lpadding_2"></span>'; ?>
+                                    <?php echo I18N::T('equipments', '价格')?>
+                                </td>
+                                <td class="table_interval"></td>
+                                <td class="label nowrap middle rpadding_label">
+                                    <span class="lpadding_2"><?php echo I18N::T('equipments', '制造国家')?></span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="middle lpadding_8">
+                                    <input name="price" class="text currency wide tmargin_2" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>"   value="<?php echo H($no_error?$equipment->price:$form['price']) ?>"  <?= $_getDisable('price') ?>/>
+                                </td>
+                                <td class="table_interval"></td>
+                                <td class="middle lpadding_8"><input name="manu_at" class="text wide tmargin_2" value="<?php echo H($no_error?$equipment->manu_at:$form['manu_at']) ?>"  <?= $_getDisable('manu_at') ?>/></td>
+                            </tr>
+
+                            <tr><td colspan="5"><div class="interval_16"></div></td></tr>
+
+                            <tr>
+                                <td class="label nowrap middle rpadding_label"><span class="lpadding_2"><?php echo I18N::T('equipments', '生产厂家')?></span></td>
+                                <td class="table_interval"></td>
+                                <td class="label nowrap middle rpadding_label"><span class="lpadding_2"><?php echo I18N::T('equipments', '出厂日期')?></span></td>
+                            </tr>
+
+                            <tr>
+                                <td class="middle lpadding_8"><input name="manufacturer" class="text wide tmargin_2" value="<?php echo H($no_error?$equipment->manufacturer:$form['manufacturer']) ?>"  <?= $_getDisable('manufacturer') ?>/></td>
+                                <td class="table_interval"></td>
+                                <td class="middle lpadding_8">
+                                <?php $manu_date = date('Y-m-d', $no_error ? $equipment->manu_date : $form['manu_date'] ?: time()); ?>
+                                <input id="manu_date" name="manu_date" date_type="date" class="text date wide tmargin_2" value="<?= $manu_date ?>"  <?= $_getDisable('manu_date') ?> /></td>
+                            </tr>
+
+                            <tr><td colspan="5"><div class="interval_16"></div></td></tr>
+
+                            <tr>
+                                <td class="label nowrap middle rpadding_label"><span class="lpadding_2"><?php echo I18N::T('equipments', '购置日期')?></span></td>
+                                <td class="table_interval"></td>
+                                <td class="label nowrap middle rpadding_label"><span class="lpadding_2"><?php echo I18N::T('equipments', '入网日期')?></span></td>
+                            </tr>
+
+                            <tr>
+                                <td class="middle lpadding_8">
+                                    <?php
+                                        $purchased_date = $no_error ? $equipment->purchased_date : $form['purchased_date'];
+                                        $purchased_date = $purchased_date ? date('Y-m-d', $purchased_date) : date('Y-m-d', Date::time());
+                                     ?>
+                                <input id="purchased_date" date_type="date" name="purchased_date" class="text date wide tmargin_2" value="<?= $purchased_date ?>" <?= $_getDisable('purchased_date') ?>> </td>
+                                <td class="table_interval"></td>
+                                <td class="middle lpadding_8">
+                                    <?php $atime = date('Y-m-d', $no_error ? $equipment->atime : ($form['atime'] ?: time())); ?>
+                                    <input id="atime" name="atime" date_type="date" class="text date wide tmargin_2" value="<?= $atime ?>" <?= $_getDisable('atime') ?>/>
+                                </td>
+                            </tr>
+
+                            <tr><td colspan="5"><div class="interval_16"></div></td></tr>
+
+                            <?php if ($GLOBALS['preload']['tag.group_limit'] >= 0 && $me->is_allowed_to('修改组织机构', $equipment)): ?>
+                                <tr>
+                                <td class="label nowrap middle rpadding_label"><span class="lpadding_2"><?php echo I18N::T('equipments', '所属单位')?></span></td>
+                            </tr>
+                            <tr><td colspan="5"><div class="interval_16"></div></td></tr>
+
+                            <tr>
+                                <td class="middle lpadding_8"><div class="gray_tag_container div_<?php echo $_getDisable('group_id') ?>">
+                                <?php
+                                if (!$me->is_allowed_to('修改组织机构', $equipment, ['@ignore'=>'修改下属机构的仪器'])) {
+                                    $group_root = $me->group;
+                                }
+
+                                if (!$_getDisable('group_id')) {
+                                    echo Widget::factory('application:tag_selector', [
+                                        'tag'=>$form['group_id'] ? O('tag_group', $form['group_id']) : $equipment->group,
+                                        'root'=>$group_root,
+                                        'name'=>'group_id',
+                                        'ajax'=>true,
+                                    ]);
+                                }
+                                else {
+                                    echo V('application:tag/path', [
+                                        /**
+                                         * 这里不能采用名称搜索
+                                         * 上科大的院内机构同时也在校级下(本身就有问题)，出现重名，导致显示的路径就不正确了
+                                         */
+                                        // 'tag' => O('tag', ['name' => $equipment->group->name, 'root' => $group_root])
+                                        'tag' => O('tag_group', ['id' => $equipment->group->id, 'root' => $group_root])
+                                    ]);
+                                }
+                                ?>
+                                <?= array_key_exists('group_id', $requires) ? $require : ''; ?>
+                                </div></td>
+                                <td colspan="3"></td>
+                            </tr>
+                            <tr><td colspan="5"><div class="interval_16"></div></td></tr>
+
+                            <?php endif ?>
+
+                            <tr>
+                                <td class="label nowrap middle rpadding_label"><span class="lpadding_2"><?php echo I18N::T('equipments', '分类号')?></span></td>
+
+                                <td class="table_interval"></td>
+
+                                <?= Event::trigger('equipment[edit].view.performance', $form, $equipment); ?>
+                                <td class="label nowrap middle rpadding_label"><span class="lpadding_2"><?php echo I18N::T('equipments', '仪器编号')?></span></td>
+                            </tr>
+
+                            <tr>
+                                <td class="middle lpadding_8"><input name="cat_no" class="text wide tmargin_2" value="<?php echo H($no_error?$equipment->cat_no:$form['cat_no']) ?>"  <?= $_getDisable('cat_no') ?>/></td>
+
+                                <td class="table_interval"></td>
+
+                                <?= Event::trigger('equipment[edit].view.performance', $form, $equipment); ?>
+                                <td class="middle lpadding_8">
+                                    <input name="ref_no" class="text wide tmargin_2" <?= $_getDisable('ref_no') ?>
+                                    value="<?php echo H($form['ref_no'] ? ($no_error?$equipment->ref_no:$form['ref_no']): $equipment->ref_no) ?>" />
+                                    <?php if ($_getDisable('ref_no')): ?>
+                                    <input type="hidden" name="ref_no" value="<?= $equipment->ref_no ?>" />
+                                    <?php endif; ?>
+                                    <?= array_key_exists('ref_no', $requires) ? $require : ''; ?>
+                                </td>
+                            </tr>
+
+                            <tr><td colspan="5"><div class="interval_16"></div></td></tr>
+
+                            <tr>
+                                <td class="label nowrap middle rpadding_label"><span class="lpadding_2"><?php echo I18N::T('equipments', '放置房间')?></span></td>
+                                <td class="table_interval"></td>
+                            </tr>
+
+                            <tr>
+                                <?php if (Config::get('equipment.location_type_select')):?>
+                                    <td class="middle lpadding_8">
+                                        <?php
+                                        $location_root = Tag_Model::root('location');
+                                        if (!$_getDisable('location')) {
+                                            echo Widget::factory('application:tag_selector', [
+                                                'tag'=>$form['location_id'] ? O('tag_location', $form['location_id']) : $equipment->location,
+                                                'root'=>$location_root,
+                                                'name'=>'location_id',
+                                                'ajax'=>true,
+                                            ]);
+                                            /* echo Widget::factory('equipments:tag_selector', [
+                                                'autocomplete'=> URI::url('!equipments/autocomplete/tag_location'),
+                                                'name'=>'location',
+                                                'value'=> $no_error ? $tags : $form['location']
+                                            ]); */
+                                        }
+                                        else { ?>
+                                            <div  class="tmargin_2 div_<?php echo $_getDisable('location') ?>">
+                                                <?php echo $equipment->location->name; ?>
+                                            </div>
+                                            <?php
+                                        }
+                                        ?>
+                                        <?= array_key_exists('location', $requires) ? $require : ''; ?>
+                                    </td>
+                                <?php else:?>
+                                    <td class="middle lpadding_8">
+                                        <input name="location" class="text tooltip_position:left wide tmargin_2" value="<?php echo H($no_error ? $equipment->location : $form['location']) ?>" q-tooltip="<?php echo H(I18N::T('equipments', '楼宇')) ?>" <?= $_getDisable('location') ?> />
+                                        <?= array_key_exists('location', $requires) ? $require : ''; ?>
+                                    </td>
+                                <?php endif;?>
+                                <td class="table_interval"></td>
+                            </tr>
+
+                            <tr><td colspan="5"><div class="interval_16"></div></td></tr>
+
+                            <tr>
+                                <td class="label nowrap rpadding_label lpadding_8"><span class="lpadding_1"><?php echo I18N::T('equipments', '主要规格及技术指标')?></span></td>
+                            </tr>
+
+                            <tr>
+                                <td class="top lpadding_8" colspan="4">
+                                    <textarea class="text autogrow tmargin_2" rows="3" name="tech_specs" <?= $_getDisable('tech_specs') ?>><?= H($no_error ? $equipment->tech_specs : $form['tech_specs']) ?></textarea>
+                                </td>
+                            </tr>
+
+                            <tr><td colspan="5"><div class="interval_16"></div></td></tr>
+
+                            <tr>
+                                <td class="label nowrap rpadding_label lpadding_8"><span class="lpadding_1"><?php echo I18N::T('equipments', '主要功能及特色')?></span></td>
+                            </tr>
+
+                            <tr>
+                                <td class="top lpadding_8" colspan="4"><textarea class="text autogrow tmargin_2" rows="3" name="features" <?= $_getDisable('features') ?>><?= H($no_error?$equipment->features:$form['features']) ?></textarea></td>
+                            </tr>
+
+                            <tr><td colspan="5"><div class="interval_16"></div></td></tr>
+
+                            <tr>
+                                <td class="label nowrap rpadding_label lpadding_8"><span class="lpadding_1"><?php echo I18N::T('equipments', '主要附件及配置')?></span></td>
+                            </tr>
+
+                            <tr>
+                                <td class="top lpadding_8" colspan="4">
+                                    <textarea class="text autogrow tmargin_2" rows="3" name="configs" <?= $_getDisable('configs') ?>><?= H($no_error ? $equipment->configs : $form['configs']) ?></textarea>
+                                </td>
+                            </tr>
+
+                            <tr><td colspan="5"><div class="interval_16"></div></td></tr>
+
+                            <tr>
+                                <td class="label nowrap rpadding_label lpadding_8"><span class="lpadding_1"><?php echo I18N::T('equipments', '开放预约')?></span></td>
+                            </tr>
+
+                            <tr>
+                                <td class="top lpadding_8" colspan="4">
+                                    <textarea class="text autogrow tmargin_2" rows="3" name="open_reserv" <?= $_getDisable('open_reserv') ?>><?= H($no_error ? $equipment->open_reserv : $form['open_reserv']) ?></textarea>
+                                </td>
+                            </tr>
+
+                            <tr><td colspan="5"><div class="interval_16"></div></td></tr>
+
+                            <tr>
+                                <td class="label nowrap rpadding_label lpadding_8"><span class="lpadding_1"><?php echo I18N::T('equipments', '计费信息')?></span></td>
+                            </tr>
+
+                            <tr>
+                                <td class="top lpadding_8" colspan="4">
+                                    <textarea class="text autogrow tmargin_2" rows="3" name="charge_info" <?= $_getDisable('charge_info') ?>><?= H($no_error ? $equipment->charge_info : $form['charge_info']) ?></textarea>
+                                </td>
+                            </tr>
+
+                            <tr><td colspan="5"><div class="interval_16"></div></td></tr>
+
+                            <?php if(L('ME')->is_allowed_to('修改', $equipment)): ?>
+                            <tr>
+                                <td class="label nowrap rpadding_label lpadding_8">
+                                    <?php echo I18N::T('equipments', '负责人')?>
+                                    <?= array_key_exists('incharges', $requires) ? $require : '<span class="lpadding_2"></span>'; ?>
+                                    <?php echo '<br>'.V('form_filter',['error'=>$form->errors['incharges'][0]])?>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="top lpadding_8" colspan="4">
+                                    <div class="tmargin_2 div_<?php echo $_getDisable('incharges')?>"><?= V('equipment/view/incharge', ['equipment' => $equipment, 'form' => $form, 'no_error' => $no_error, 'disabled' => $_getDisable('incharges')]) ?></div>
+                                </td>
+                            </tr>
+
+                            <tr><td colspan="5"><div class="interval_16"></div></td></tr>
+
+                            <tr>
+                                <td class="label nowrap rpadding_label lpadding_8">
+                                    <?php echo I18N::T('equipments', '联系人')?>
+                                    <?= array_key_exists('contacts', $requires) ? $require : '<span class="lpadding_1"></span>'; ?>
+                                    <?php echo '<br>'.V('form_filter',['error'=>$form->errors['contacts'][0]]);?>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="top lpadding_8" colspan="4">
+                                    <div class="tmargin_2 div_<?php echo $_getDisable('contacts') ?>"><?= V('equipment/view/contact', ['equipment' => $equipment, 'form' => $form, 'no_error' => $no_error, 'disabled' => $_getDisable('contacts')]); ?></div>
+                                </td>
+                            </tr>
+                            <?php endif; ?>
+
+                            <tr><td colspan="5"><div class="interval_16"></div></td></tr>
+
+                            <tr>
+                                <td class="label nowrap middle rpadding_label lpadding_8"><span class="lpadding_1"><?php echo I18N::T('equipments', '联系电话')?></span></td>
+                                <td class="table_interval"></td>
+                                <td class="label nowrap middle rpadding_label lpadding_8"><span class="lpadding_1"><?php echo I18N::T('equipments', '联系邮箱')?></span></td>
+                            </tr>
+
+                            <tr>
+                                <td class="middle lpadding_8">
+                                    <input name="phone" class="text wide tmargin_2" value="<?php echo H($form['phone'] ?: $equipment->phone)?>" <?= $_getDisable('phone') ?>/>
+                                </td>
+                                <td class="table_interval"></td>
+                                <td class="middle lpadding_8">
+                                    <input name="email" class="text wide tmargin_2" value="<?php echo H($no_error ? $equipment->email : $form['email']) ?>" <?= $_getDisable('email') ?>/>
+                                </td>
+                            </tr>
+
+                            <tr><td colspan="5"><div class="interval_16"></div></td></tr>
+
+                            <?= V('equipment/view/tag', ['equipment' => $equipment, 'form' => $form, 'no_error' => $no_error, 'disabled' => $_getDisable('tag')]) // 仪器分类 ?>
+
+                            <tr><td colspan="5"><div class="interval_16"></div></td></tr>
+
+                            <?php if (Config::get('eq_struct.require.struct')) :?>
+                            <tr>
+                                <td class="label nowrap middle rpadding_label lpadding_8" style="<?= Config::get('eq_struct.require.struct') ? 'vertical-align: top;' : ''?>">
+                                    <span class="lpadding_1"><?php echo I18N::T('eq_struct', '仪器隶属机组'); ?></span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="top lpadding_8" colspan="4">
+                                    <?php echo Widget::factory('eq_struct:struct_selector', [
+                                        'name' => "Struct",
+                                        'autocomplete' => URI::url('!eq_struct/autocomplete/struct'),
+                                        'struct' => $no_error ? $equipment->struct : $form['Struct'],
+                                        'disabled' => !$me->is_allowed_to('修改仪器入账', $equipment)
+                                    ]);?>
+                                </td>
+                            </tr>
+                            <tr><td colspan="5"><div class="interval_16"></div></td></tr>
+                            <?php endif; ?>
+                            <?= $this->other_view; ?>
+                            <tr><td colspan="5"><div class="interval_16"></div></td></tr>
+
+                            <?= V('equipments:add.extra' ,
+                            ['form' => $form, 'equipment' => $equipment, 'no_error' => $no_error]) ?>
+                            <?php
+                            if($me->is_allowed_to('进驻仪器控', 'equipment')) {
+                                echo V('equipment/view/yiqikong', ['equipment' => $equipment, 'form' => $form,
+                                'no_error' => $no_error, 'disabled' => $_getDisable('yiqikong_share')]);
+                            }
+                            ?>
+                            <?php if ($me->is_allowed_to('隐藏', 'equipment')): ?>
+
+                                <tr>
+                                    <td class="label nowrap middle rpadding_label lpadding_8 bpadding_2">
+                                        <span class="lpadding_1"><?php echo I18N::T('equipments', '是否隐藏')?></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="middle lpadding_3" colspan="4">
+                                        <span class="inline_block width_128">
+                                        <?php echo Form::radio('hidden', 1,
+                                            $no_error ? $equipment->hidden : $form['hidden'],
+                                            I18N::T('equipments', '是'), ' class="middle radio"', 'class="middle"'); ?>
+                                        </span><span class="inline_block width_128">
+                                        <?php echo Form::radio('hidden', 0,
+                                            $no_error ? $equipment->hidden : $form['hidden'],
+                                            I18N::T('equipments', '否'), ' class="middle radio"', 'class="middle"'); ?>
+                                        </span>
+                                    </td>
+                                </tr>
+
+                            <?php endif; ?>
+                            <?php if ($equipment->control_mode=='computer' && $equipment->offline_password): ?>
+                                <tr><td colspan="5"><div class="interval_16"></div></td></tr>
+                                <tr>
+                                    <td class="label nowrap middle rpadding_label"><span class="lpadding_2"><?php echo I18N::T('equipments', '当前离线密码'); ?></span></td>
+                                    <td class="table_interval"></td>
+                                </tr>
+                                <tr>
+                                    <td class="middle lpadding_8">
+                                        <?php echo V('equipment/offline_password/view', ['offline_password'=>$form['offline_password'] ?: $equipment->offline_password, 'equipment'=>$equipment]);?>
+                                    </td>
+                                    <td class="table_interval"></td>
+                                </tr>
+                            <?php endif; ?>
+
+                            <?php if (!$disabled): ?>
+                                <tr>
+                                    <td colspan="5">
+                                        <input type="submit" name="submit" class="float_right font-button-save" value="<?php echo H(I18N::T('equipments', '保存修改')) ?>" />
+                                        <?php if(L('ME')->is_allowed_to('删除', $equipment)): ?>
+                                            <a class="font-button-delete lmargin_10 rmargin_10 float_right" confirm="<?php echo H(I18N::T('equipments', '您确定删除该仪器吗?')) ?>" href="<?php echo H($equipment->url(NULL, NULL, NULL, 'delete') ) ?>"><?php echo I18N::T('equipments', '删除仪器')?></a>
+                                        <?php endif; ?>
+                                        <div class="interval_60"></div>
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+

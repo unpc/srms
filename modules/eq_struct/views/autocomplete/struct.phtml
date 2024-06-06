@@ -1,0 +1,12 @@
+<table class="mini_form">
+	<tr>
+		<td class="middle">
+			<span class="name"><?php echo H($struct->name);?></span>
+			<?php if ($struct->code): ?>
+			<div class="description" style="padding-top:2px">
+				<?php echo H($struct->code); ?>
+			</div>
+			<?php endif; ?>
+		</td>
+	</tr>
+</table>

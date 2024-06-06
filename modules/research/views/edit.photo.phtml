@@ -1,0 +1,21 @@
+<div class="form padding_1">
+  <table class="form">
+    <tr>
+      <td class="top icon">
+        <?php echo $research->icon('64'); ?>
+      </td>
+      <td class="top">
+        <form action="<?php echo H(URI::url()) ?>" method="post" enctype="multipart/form-data">
+          <p>
+            <input name="file" type="file" class="file" />
+            <input type="submit" class="button button_import" name="submit" value="<?php echo H(I18N::T('research', '上传图标')) ?>"/>
+          </p>
+          <div class="hr_1">&#160;</div>
+          <p>
+            <a class="button button_delete" href="<?php echo H(URI::url('!research/research/delete_photo.'.$research->id)) ?>" confirm="<?php echo H(I18N::T('research', '确定要删除图标吗?')) ?>"><?php echo I18N::T('research', '删除图标')?></a>
+          </p>
+        </form>
+      </td>
+    </tr>
+  </table>
+</div>

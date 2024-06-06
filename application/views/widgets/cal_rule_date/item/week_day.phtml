@@ -1,0 +1,37 @@
+<style>
+    .dialog_content div.week_day tr td {
+        padding-top: 10px;
+    }
+</style>
+<?php if(!is_array($week_day)) $week_day = []; ?>
+<div class="">
+    <div class="panel week_day">
+        <table class="form">
+            <tr>
+                <td class="left nowrap" style="width: 66px;">&nbsp;</td>
+                <td class="left nowrap" style="padding-left: 0;">
+                    <?php echo Form::checkbox('week_day[0]', in_array(0, $week_day) ? TRUE : FALSE , I18N::T('application','周日'), 'class="middle checkbox"', 'class="rmargin_10"') ?>
+                </td>
+                <td class="left nowrap">
+                    <?php echo Form::checkbox('week_day[1]', in_array(1, $week_day) ? TRUE : FALSE, I18N::T('application','周一'), 'class="middle checkbox"', 'class="rmargin_10"') ?>
+                </td>
+                <td class="left nowrap">
+                    <?php echo Form::checkbox('week_day[2]', in_array(2, $week_day) ? TRUE : FALSE, I18N::T('application','周二'), 'class="middle checkbox"', 'class="rmargin_10"') ?>
+                </td>
+                <td class="left nowrap">
+                    <?php echo Form::checkbox('week_day[3]', in_array(3, $week_day) ? TRUE : FALSE, I18N::T('application','周三'), 'class="middle checkbox"', 'class="rmargin_10"') ?>
+                </td>
+                <td class="left nowrap">
+                    <?php echo Form::checkbox('week_day[4]', in_array(4, $week_day) ? TRUE : FALSE, I18N::T('application','周四'), 'class="middle checkbox"', 'class="rmargin_10"') ?>
+                </td>
+                <td class="left nowrap">
+                    <?php echo Form::checkbox('week_day[5]', in_array(5, $week_day) ? TRUE : FALSE, I18N::T('application','周五'), 'class="middle checkbox"', 'class="rmargin_10"') ?>
+                </td>
+                <td class="left nowrap">
+                    <?php echo Form::checkbox('week_day[6]', in_array(6, $week_day) ? TRUE : FALSE, I18N::T('application','周六'), 'class="middle checkbox"', 'class="rmargin_10"') ?>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="interval_6"></div>

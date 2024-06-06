@@ -1,0 +1,12 @@
+<?php 
+
+$positions = Q('position')->to_assoc('id', 'name');
+$positions_filter = [];
+
+foreach($positions as $id=>$name) {
+	$positions_filter[$id] = H($name);
+}
+
+$position_id = $this->position_id ?: 0;
+echo Form::dropdown('position_id', ['--']+$positions_filter, $position_id, ' class="drop middle"');
+?>

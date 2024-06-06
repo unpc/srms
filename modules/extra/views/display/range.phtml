@@ -1,0 +1,7 @@
+<?php $name = 'extra_fields['.$uniqid.']';?>
+<input name="<?= $name?>[0]" type="text" class="text number" size="<?php echo H($size ? : 14) ?>" 
+value="<?= isset($value[0]) ? $value[0] : $field['default_value'][0] ?>" q-number_default_value="" />
+&nbsp;-&nbsp;
+<input name="<?= $name?>[1]" type="text" class="text number" size="<?php echo H($size ? : 14) ?>" 
+value="<?= isset($value[1]) ? $value[1] : $field['default_value'][1] ?>" q-number_default_value=""  />
+<?php if($field['remarks']):?><div class="description"><?= H($field['remarks']); ?></div><?php endif; ?>

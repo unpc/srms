@@ -1,0 +1,30 @@
+<table class="form lmaigin_1e5">
+<tbody>
+	<tr>
+		<td class="top left nowrap"><?php echo I18N::T('eq_charge', '用户标签')?></td>
+		<td colspan="2">
+			<?php echo join($special_tags, ',');?>
+		</td>
+	</tr>
+    <tr>
+        <td><div class="interval_20">&#160;</div></td>
+    </tr>
+	<tr>
+		<td class="top left nowrap">
+			<?php echo I18N::T('eq_charge', '每小时需要金额')?> 
+		</td>
+		<td>
+			<input class="text currency" name="special_unit_price[]" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo H((float)$unit_price) ?>" disabled="disabled"/>
+		</td>
+	</tr>
+    <tr>
+        <td><div class="interval_20">&#160;</div></td>
+    </tr>
+	<tr>
+		<td class="left nowrap middle"><?php echo I18N::T('eq_charge', '每次使用的开机费用')?></td>
+		<td >
+			<input class="text currency" name="special_minimum_fee[]" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo H((float)$minimum_fee) ?>" disabled="disabled"/>
+		</td>
+	</tr>
+</tbody>
+</table>

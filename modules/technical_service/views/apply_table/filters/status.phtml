@@ -1,0 +1,8 @@
+<style>
+    .tt {
+        width: 180px;
+    }
+</style>
+<?php
+echo Form::dropdown('status', [-1 => '--'] + Service_Apply_Model::$status_labels, $form['status'] ?? -1, 'class="tt"');
+?>

@@ -1,0 +1,65 @@
+<?php 
+$vidcam_id = 'vidcam_'.uniqid(); 
+$url = $vidcam->url();
+$img_url = $vidcam->url(NULL, NULL, NULL, 'snapshot');
+$timeout = Config::get('vidmon.preview_capture_timeout', 1000);
+?>
+<div class="interval_20">&#160;</div>
+<div class="single_video float_left">
+    <?php echo V('vidcam/restart', ['vidcam'=> $vidcam]);?>
+    <div class="single_video_body loading">
+		<img id="<?php echo H($vidcam_id); ?>" src="" width="352" height="288"/>
+        <?php echo V('vidcam/alarm');?>
+	</div>
+</div>
+<script type="text/javascript">
+jQuery(function($) {
+
+	var img_url = <?php echo JS::quote($img_url); ?>;
+	var img_id = <?php echo JS::quote($vidcam_id); ?>;
+	var id = <?php echo JS::quote($vidcam->id); ?>;
+	var img_loaded = true;
+	var $img = $('#' + img_id);
+	var timeout = <?php echo $timeout;?>;
+
+	$img
+	.bind('load', function(){
+		img_loaded = true;
+	});
+
+
+	function _preview() {
+		if (img_loaded) {
+			img_loaded = false;
+			var timestamp = new Date().getTime();
+			$img.attr('src', img_url + '&_=' + timestamp);
+		}
+		else {
+			img_loaded = true;
+		}
+
+		setTimeout(_preview, timeout);
+	}
+
+	_preview();
+
+
+	function _snapshot_refresh() {
+		Q.trigger({
+			object: 'snapshot',
+			event: 'refresh',
+			global: false,
+			data: {
+				id: id,
+                img_id: '<?php echo $vidcam_id;?>'
+			},
+			complete: function() {
+				setTimeout(_snapshot_refresh, 5000);
+			}
+		});
+
+	}
+
+	_snapshot_refresh();
+});
+</script>

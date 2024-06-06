@@ -1,0 +1,4 @@
+<?php $name = 'extra_fields['.$uniqid.']';?>
+<input name="<?= $name?>" type="text" class="text" size="<?php echo H($size ? : 40) ?>" 
+value="<?= strlen($value) ? $value : $field['default_value'] ?>" />
+<?php if($field['remarks']):?><div class="description"><?= H($field['remarks']); ?></div><?php endif; ?>

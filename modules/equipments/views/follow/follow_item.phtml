@@ -1,0 +1,47 @@
+<tr class="check_hover">
+	<td class="icon middle"><?php echo $object->icon('48') ?></td>
+	<td class="middle nowrap ">
+		<a href="<?php echo H($object->url() ) ?>"><strong class="name"><?php echo $object->name ?></strong></a>
+	</td>
+	<?php if($show_controll): ?>
+	<td class="center middle nowrap">
+		<?php echo V('equipments:equipment/control_status', ['equipment'=>$object]); ?>
+	</td>
+	<?php endif; ?>
+	<td class="center middle nowrap">
+		<?php  
+		$now = time();
+		if($object->status==EQ_Status_Model::IN_SERVICE){
+			if (!$object->is_using) {
+				echo T('--');
+			}
+			else {
+				$user = $object->current_user();
+				if ($user->id) $user->render();
+				else echo T('--');
+			}
+		}
+		else {
+			$user = $object->last_user();
+			if ($user->id) $user->render();
+			else echo T('--');
+		}
+		?>
+	</td>
+	<td class="middle nowrap">
+		<p class="description"><?php echo H($object->location)?></p>
+	</td>
+	
+	<td class="left middle nowrap">
+		<?php $object->contact->render(); ?>
+	</td>
+	<td class="middle nowrap">
+		<span class="date"><?php echo Date::fuzzy($param->dtstart, TRUE) ?></span>
+	</td>
+	<td class="middle right nowrap">
+		<?php 
+			$links = $follower->follow_links($object) + $object->links('index');
+			echo Widget::factory('links', ['links'=>$links]);
+		?>
+	</td>
+</tr>

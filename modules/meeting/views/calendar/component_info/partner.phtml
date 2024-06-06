@@ -1,0 +1,27 @@
+<?php 
+$reserv = O('me_reserv', ['component' => $component]);
+$type = $reserv->type ? : 'all';
+$roles = @json_decode($reserv->roles, true);
+$groups = @json_decode($reserv->groups, true);
+$users = @json_decode($reserv->users, true);
+?>
+<tr>
+	<td class="label right nowrap top">
+    <strong class="description">
+      <?= I18N::T('meeting', $properties['label']) ?>
+    </strong>
+  </td>
+	<td style="padding-top: 5px;">
+    <?php 
+    if ($type == 'all') {
+      echo I18N::T('meeting', '全部成员');
+    }
+    else {
+      echo I18N::T('meeting', '部分成员') . '<br/>';
+      echo '角色: ' . implode(',', $roles) . '<br/>';
+      echo '组织机构: ' . implode(',', $groups) . '<br/>';
+      echo '用户: ' . implode(',', $users) . '<br/>';
+    }
+    ?>
+	</td>
+</tr>

@@ -1,0 +1,46 @@
+<?php 
+	$num = 0;
+	foreach ($child_stocks as $child_stock) :
+		if ($num >= $per_page) continue;
+		$links = L('ME')->follow_links($child_stock) + $child_stock->links();
+?>
+	<tr class="child_<?php echo $stock->id; ?> row">
+		<td class="nowrap">
+			<?php echo V('inventory:stocks_table/data/status', ['stock'=>$child_stock]); ?>
+		</td>
+		<td class="nowrap">
+			<?php echo V('inventory:stocks_table/data/ref_no', ['stock'=>$child_stock]); ?>
+		</td>
+		<td class="nowrap">
+			<?php echo V('inventory:stocks_table/data/second_product_name', ['stock'=>$child_stock]); ?>
+		</td>
+		<td class="nowrap">
+			<?php echo H($child_stock->vendor); ?>
+		</td class="nowrap">
+		<td class="right nowrap">
+			<?php echo H($child_stock->quantity);?>
+		</td>
+        <?php if (Module::is_installed('extra')) :?>
+		<td class="right nowrap">
+			<?php echo H($child_stock->type ? : '--');?>
+		</td>
+        <?php endif;?>
+		<td class="nowrap" align="center">
+			<?php echo V('inventory:stocks_table/data/expire_status', ['stock' => $child_stock]); ?>
+		</td>
+		<td class="nowrap">
+			<?php echo H($child_stock->location); ?>
+		</td>
+		<td class="nowrap">
+			<?php echo Widget::factory('application:links', ['links'=>$links]); ?>
+		</td>
+	</tr>
+<?php
+	$num++;
+	endforeach;
+?>
+<?php if (!$load_end): ?>
+	<tr class="child_<?php echo $stock->id; ?> replace_tr_<?php echo $stock->id; ?> " >
+		<td colspan="7"></td>
+	</tr>
+<?php endif; ?>

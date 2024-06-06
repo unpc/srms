@@ -1,0 +1,42 @@
+<div class="hr_1">&#160;</div>
+<div class="clearfix lpadding_2">
+<table class="form flexible">
+	<tbody>
+	<tr>
+		<td class="top flexible">
+			<h2>
+				<?php echo H($perf->name); ?>
+			</h2>
+			<div class="hr_1">&#160;</div>
+			<p>
+				<?php echo I18N::T('eq_stat', '评估范围')?>:
+				<?php
+					$tag =  $perf->collection;
+					if ($tag->root->id) {
+						echo V('application:tag/path', ['tag'=>$perf->collection]);
+					}
+					else {
+						echo T('所有');
+					}
+				?>
+			</p>
+			<p>
+				<?php echo I18N::T('eq_stat', '评估时段')?>:
+				<?php echo Date::format($perf->dfrom, 'Y/m/d').' - '.Date::format($perf->dto, 'Y/m/d')?>
+			</p>
+			<?php if($perf->rating_from):?>
+			<p>
+				<?php echo I18N::T('eq_stat', '评分时段')?>:
+				<?php echo Date::format($perf->rating_from, 'Y/m/d').' - '.Date::format($perf->rating_to, 'Y/m/d')?>
+			</p>
+			<?php endif;?>
+			<div class="hr_2">&#160;</div>
+			<?php echo Widget::factory('application:links', ['links' => $perf->links('view'), 'separator'=>' ']) ?>
+			<div class="hr_2">&#160;</div>
+		</td>
+	</tr>
+	</tbody>
+</table>
+</div>
+<?php echo $secondary_tabs ?>
+<?php echo $secondary_tabs->content ?>

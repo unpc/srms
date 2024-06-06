@@ -1,0 +1,5 @@
+<?php if ($record->evaluate_user->cleanliness): ?>
+<strong><?= I18N::T('eq_evaluate_user', Config::get('eq_evaluate_user')['rate.tip'][$record->evaluate_user->cleanliness - 1]); ?></strong>
+<?php else: ?>
+<span class="description"><?= I18N::T('eq_evaluate_user', '未评价') ?></span>
+<?php endif; ?>

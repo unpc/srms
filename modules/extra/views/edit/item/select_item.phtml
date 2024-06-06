@@ -1,0 +1,25 @@
+<?php
+    $confirm = $options_confirm ?: I18N::T('extra', '是否确定要删除该选项?');
+    $size = L('ME')->locale == 'en_US' ? 49 : 46;
+?>
+
+<div class="select_container">
+    <div class="interval_12"></div>
+
+    <input type="text" name="field[<?php echo $prefix?>][select][<?php echo $subprefix ? : 0;?>]" class="text" value="<?php echo H($item) ?>" style="width: 260px" /></span>
+
+    <span class="panel_container">
+        <span class="panel panel_add">
+            <a class="color-grey pointer" title="添加选项" id="<?php echo H($add_select) ?>" style="font-size: 22px; padding: 0 5px; font-weight: lighter;">+</a>
+        </span>
+        <span class="panel panel_delete">
+            <a class="radio_delete color-grey pointer" title="删除" confirm="<?php echo H($confirm ) ?>" style="font-size: 22px; padding-right: 5px; font-weight: lighter;">-</a>
+        </span>
+        <span class="panel panel_up" data-prefix="<?php echo $prefix ? : 0;?>" data-subprefix="<?php echo $subprefix ? : 0;?>">
+            <a class="icon-up color-grey pointer" title="上移"><?php echo I18N::T('extra', '')?></a>
+        </span>
+        <span class="panel panel_down" data-prefix="<?php echo $prefix ? : 0;?>" data-subprefix="<?php echo $subprefix ? : 0;?>">
+            <a class="icon-down color-grey pointer" title="下移"><?php echo I18N::T('extra', '')?></a>
+        </span>
+    </span>
+</div>

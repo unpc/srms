@@ -1,0 +1,135 @@
+<div class="padding_1">
+	<table class="form">
+        <tbody>
+        	<?php /* ?>
+            <tr>
+                <td class="floa_left">
+                    <input type="button" class="button more_chat"  value="<?php echo H(I18N::T('eq_mon', '查看早期聊天记录')) ?>" />
+                </td>
+                <td class="float_right">
+                    <input type="button" class="button refresh_chat button_refresh" value="<?php echo H(I18N::T('eq_mon', '刷新')) ?>" />
+                </td>
+            </tr>
+            <?php */?>
+			<tr>
+				<td colspan="2" class="top message">
+					<div id="chat">
+						<?php echo V('eq_mon:client/show_message', ['equipment'=>$equipment])?>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<input class="text" name="chat" size="40"  />
+				</td>
+				<td>
+					<a class="button button send_chat"><?php echo I18N::T('eq_mon', '发送')?></a>
+				</td>
+			</tr>
+		</tbody>
+	<table>
+</div>
+
+
+<script type="text/javascript">
+jQuery(function($){
+
+	var $send = $('.<?php echo $class?> .send_chat');
+	var $input = $('.<?php echo $class?> input[name=chat]');
+	
+	var _send_message = function(e) {
+		var content = $input.val();
+		if (content) {
+			Q.trigger({
+				object: 'chat_send',
+				event: 'click',
+				global: false,
+				data: {
+					content: content,
+					eid: <?php echo $equipment->id?>
+				},
+				url: '<?php echo URI::url("!eq_mon/index")?>',
+				complete: function() {
+					$input.val('').focus();
+				}
+			});
+		}
+	};
+	
+	$send.bind('click', function(e){
+		_send_message(e);
+		e.preventDefault();
+		return false;
+	});
+
+	$input.bind('keydown', function(e){
+		switch (e.which) {
+			case 13:
+				_send_message(e);
+				e.preventDefault();
+				return false;
+				break;
+			default:
+				break;
+		}
+		
+	});
+	
+
+	var _chat_timer_handle;
+	var $chat = document.getElementById('chat');
+	
+	var ajax_get_chat = false;
+	var _chat_timer = function() {
+        if (ajax_get_chat) return false;
+        ajax_get_chat = true;
+        Q.trigger({
+            object: 'chat',
+            event: 'get',
+            global: false,
+            data: {
+                eid: <?php echo $equipment->id?>,
+                container: 'talk_container'
+            },
+            url: '<?php echo URI::url('!eq_mon/index');?>',
+            success: function(data) {
+            	if (data.chats) {
+            		$('#chat').append(data.chats);
+            		$chat.scrollTop = $chat.scrollHeight;
+            	}
+            	ajax_get_chat = false;
+            }
+        });
+	};
+
+    _chat_timer_handle = setInterval(_chat_timer, 1000);
+    
+	
+	/*
+    var $more_chat = $('.<?php echo $class?> .more_chat');
+    
+    $more_chat.bind('click', function() {
+        Q.trigger({
+            object: 'chat',
+            event: 'get',
+            global: false,
+            data: {
+                eid: <?php echo $equipment->id?>,
+                container: 'talk_container',
+                chat_count: chat_count + 20
+            },
+            url: '<?php echo URI::url("!eq_mon/index");?>'
+        });
+		
+		if(_chat_timer_handle) clearInterval(_chat_timer_handle);
+    });
+
+    var $refresh_chat = $('.<?php echo $class?> .refresh_chat');
+
+    $refresh_chat.bind('click', function() {
+        _chat_timer_handle = setInterval(_chat_timer, 1000);
+		
+    });
+	*/
+});	
+</script>

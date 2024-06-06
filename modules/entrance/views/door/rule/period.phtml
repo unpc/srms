@@ -1,0 +1,11 @@
+<table class="form">
+<tr>
+	<td class="left nowrap middle"><?php echo I18N::T('entrance','有效时间') ?></td>
+	<td class="left nowrap middle">
+		<input name="dtfrom[<?php echo $flexform_index ?>]" class="text date" value="<?php echo H($dtfrom ) ?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/>
+		-
+		<input name="dtto[<?php echo $flexform_index ?>]" class="text date" value="<?php echo H($dtto ) ?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/>
+	</td>
+</tr>
+</table>
+

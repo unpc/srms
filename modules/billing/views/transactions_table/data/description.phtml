@@ -1,0 +1,36 @@
+<div class="billing_markup_content">
+<?php echo $object->description() ?: I18N::T('billing', '无'); ?>
+<?php $reference = $object->reference; if($reference->id): ?>
+	<div class="hr_1">&#160;</div>
+	<div class="referred_transaction padding_1">
+		<div><?php echo I18N::T('billing', '该记录产生自');?>: </div>
+		<?php echo '#'.Number::fill($reference->id, 6);?>
+		<?php echo Date::format($reference->ctime); ?>
+		<br />
+		<?php echo '<span class="label">'.T('说明').'</span>: '.( $reference->description ? (new Markup($reference->description,TRUE)): I18N::T('billing', '无')); ?>
+	</div>
+<?php endif; ?>
+<?php
+	$references = Q("billing_transaction[reference={$object}]");
+	if($references->total_count()):
+?>
+	<div class="hr_1">&#160;</div>
+	<div class="referred_transaction padding_1">
+	<?php echo I18N::T('billing', '该记录的后续记录');?>:
+	<ul>
+	<?php
+		foreach($references as $reference):
+	?>
+		<li>
+			<?php echo '#'.Number::fill($reference->id, 6);?>
+			<?php echo Date::format($reference->ctime); ?>
+			<br />
+			<?php echo '<span class="label">'.T('说明').'</span>: '.( $reference->description ? (new Markup($reference->description,TRUE)) : I18N::T('billing', '无')); ?>
+		</li>
+	<?php
+		endforeach;
+	?>
+	</ul>
+	</div>
+<?php endif; ?>
+</div>

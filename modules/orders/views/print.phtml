@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C/DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <meta name="renderer" content="webkit" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1" />
+	<title><?php echo I18N::T('orders', '订单报表打印'); ?></title>
+	<base href="<?php echo H(Config::get('system.base_url') ) ?>" />
+	<script src="<?php echo URI::url('js', ['f'=>'jquery']); ?>" type="text/javascript"></script>
+	<link type="text/css" rel="stylesheet" href="<?php echo H(URI::url('css', ['f'=>'core button'])) ?>" />
+	<style>
+		body{
+			text-align: center;
+		}
+        a {
+        color:blue;
+              text-decoration:underline;
+        }
+		table {
+			margin: 0 auto;
+			font-size: 14px;
+			border-collapse:collapse;
+		}
+
+		thead , tbody{
+			border-bottom:2px solid #000;
+		}
+	
+		table caption {
+			font-size: 150%;
+			margin-bottom: 10px;
+		}
+		
+		table tbody td {
+			vertical-align: top;
+			border-bottom: 1px dotted #CCC;
+		}
+		
+		thead tr#stat{
+			text-align: left;
+			font-size: 10px;
+			border-bottom:2px solid #000;
+		}
+		
+	</style>
+	<style media="print">
+		.buttons{
+			display:none;
+		}
+	</style>
+</head>
+
+<body>
+
+    <div class="buttons float_left">
+        <a href="#" onclick="window.print(); return false;"><?php echo I18N::HT('inventory', '打印'); ?></a>
+        <a href="#" onclick="window.close(); return false;"><?php echo I18N::HT('inventory', '关闭'); ?></a>
+    </div>
+	<div class="padding_4">
+		<table cellpadding="5">
+		<caption class="nowrap"><?php echo I18N::T('orders', '订单报表打印'); ?></caption>
+
+		<thead>
+			<tr id="stat"><td colspan="<?php echo H(count($columns)) ?>">
+				<?php echo I18N::T('orders', '时间范围:'); ?>
+                <?php if ($form['dtstart'] && $form['dtend']) :?>
+                    <?php echo date('Y/m/d',$form['dtstart']); ?> ～ <?php echo date('Y/m/d',$form['dtend']); ?>
+                <?php elseif ($form['dtstart'] && !$form['dtend']) :?>
+                    <?php echo date('Y/m/d',$form['dtstart']); ?> ～ <?php echo I18N::T('orders', '最末'); ?>
+                <?php elseif (!$form['dtstart'] && $form['dtend']) :?>
+                    <?php echo I18N::T('orders', '最初');?> ～ <?php echo date('Y/m/d',$form['dtend']); ?>
+                <?php else :?>
+                    <?php echo I18N::T('orders', '最初'); ?> ～ <?php echo I18N::T('orders', '最末'); ?>
+                <?php endif;?>
+			</td></tr>
+			<tr>
+			<?php foreach ($columns as $key => $value) :?>
+			<td class="left nowrap"><?php echo I18N::T('orders', $value); ?></td>
+			<?php endforeach; ?>
+			</tr>
+		</thead>
+		<tbody>
+			<?php
+				$columns = array_flip($columns);
+					foreach($orders as $object):
+				?>	
+                    <tr>
+                        <?php if (in_array('product_name', $columns)): ?>
+                        <td class="nowrap left"><?php echo H($object->product_name); ?></td>
+                        <?php endif; ?>
+                        <?php if (in_array('manufacturer', $columns)): ?>
+                        <td class="nowrap left"><?php echo H($object->manufacturer); ?></td>
+                        <?php endif; ?>
+                        <?php if (in_array('catalog_no', $columns)): ?>
+                        <td class="left nowrap"><?php echo H($object->catalog_no); ?></td>
+                        <?php endif; ?>
+                        <?php if (in_array('vendor', $columns)): ?>
+                        <td class="nowrap left"><?php echo H($object->vendor); ?></td>
+                        <?php endif; ?>
+                        <?php if (in_array('unit_price', $columns)): ?>
+                        <td class="nowrap right"><?php echo H(Number::currency($object->unit_price)); ?></td>
+                        <?php endif; ?>
+                        <?php if (in_array('quantity', $columns)): ?>
+                        <td class="nowrap right"><?php echo H($object->quantity); ?></td>
+                        <?php endif; ?>
+                        <?php if (in_array('spec', $columns)): ?>
+                        <td class="nowrap left"><?php echo H($object->spec); ?></td>
+                        <?php endif; ?>
+                        <?php if (in_array('price', $columns)): ?>
+                        <td class="nowrap right"><?php echo H(Number::currency($object->price)); ?></td>
+                        <?php endif; ?>
+                        <?php if (in_array('fare', $columns)): ?>
+                        <td class="nowrap right"><?php echo H(Number::currency($object->fare)); ?></td>
+                        <?php endif; ?>
+                        <?php if (in_array('order_status', $columns)): ?>
+                        <td class="nowrap left"><?php echo I18N::T('orders', Order_Model::$order_status[$object->status]); ?></td>
+                        <?php endif; ?>
+                        <?php if (in_array('requester', $columns)): ?>
+                        <td class="nowrap left"><?php echo H($object->requester->name); ?></td>
+                        <?php endif; ?>
+                        <?php if (in_array('request_date', $columns)): ?>
+                        <td class="nowrap left"><?php echo H(date('Y/m/d',$object->request_date)) ?></td>
+                        <?php endif; ?>
+                        <?php if (in_array('purchaser', $columns)): ?>
+                        <td class="nowrap left"><?php echo H($object->purchaser->name); ?></td>
+                        <?php endif; ?>
+                        <?php if (in_array('purchase_date', $columns)): ?>
+                        <td class="nowrap left"><?php echo $object->purchase_date ? H(date('Y/m/d',$object->purchase_date)) : I18N::T('orders', '--'); ?></td>
+                        <?php endif; ?>
+                </tr>
+            <?php endforeach;?>
+		</tbody>
+		</table>
+	</div>
+
+</body>
+</html>

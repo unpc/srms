@@ -1,0 +1,45 @@
+<div class="group_prevent_default clearfix">
+<div class="quick_note check_hover">
+<table class="form flexible">
+<tr>
+	<td class="top icon" style="padding:2px"><?php echo $note->user->icon('32') ?></td>
+	<td class="top flexible">
+		<?php if ($task->id != $note->task->id): ?>
+		<div>
+			<a href="<?php echo H($note->task->url()) ?>"><strong>&#187; <?php echo H($note->task->title); ?></strong></a>
+		</div>
+		<?php endif; ?>
+		<div>
+		<?php $note->user->render(); ?> @ 
+		<span class="description small"><?php echo Date::format($note->mtime) ?></span>
+<?php if ($note->actual_time): ?>
+		<span class="description"><?php echo I18N::HT('treenote', '耗时')?></span>
+		<strong><big><?php echo round($note->actual_time/3600, 1) ?></big></strong> hr
+<?php endif; ?>
+		&#160;&#160;
+		<span class="nowrap show_on_hover">
+			<a class="button button_view" href="<?php echo $note->url(); ?>"><?php echo I18N::HT('treenote', '详细'); ?></a>
+			<?php echo Widget::factory('application:links', ['links'=>$note->links('view'), 'separator'=>' ']); ?>
+		</span>
+		</div>
+
+<?php if (L('ME')->is_allowed_to('查看', $note)) : ?>
+		<?php if ($note->content): ?>
+		<?php echo H($note->content, TRUE); ?>
+		<?php endif; ?>
+		</div>
+		<div class="hr_1">&#160;</div>
+		<?php 
+			if (Module::is_installed('nfs')) {
+				echo V('nfs:nfs_lite/downloads', ['object'=>$note, 'path_type'=>'attachments']); 
+			}
+?>
+
+<?php else: ?>
+	<div class="description"><?php echo I18N::HT('treenote', '您没有权限查看该内容')?></div>
+<?php endif; ?>
+	</td>
+</tr>
+</table>
+</div>
+</div>

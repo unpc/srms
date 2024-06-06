@@ -1,0 +1,14 @@
+<style>
+.dropdown_container {
+    width: 52% !important;
+}
+</style>
+<?php $name = 'extra_fields[' . $uniqid . ']';?>
+<?php
+    // [0 =>'a',1=>'b'] 转换成 ['a'=>'a','b'=>'b']
+    foreach ($field['params'] as $option) {
+        $params[$option] = $option;
+    }
+?>
+<?php echo Form::dropdown($name, ['-1' => '--'] + (array)$params, $value, ''); ?>
+<?php if($field['remarks']):?><div class="description"><?= H($field['remarks']); ?></div><?php endif; ?>

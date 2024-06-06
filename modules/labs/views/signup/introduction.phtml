@@ -1,0 +1,64 @@
+<?php $has_read = $_SESSION['has_read_registeration_announcement'];?>
+<div class="padding_2" style="width: 600px;margin: 0px auto">
+  <div class="clearfix">
+    <div class="center" style="margin-bottom: 20px;">
+      <H3 style="font: 30px bold;font-family:helvetica,arial"><?php echo I18N::T('people', (Lab::get('people.signup.title', Config::get('people.signup.title')))); ?>
+      </H3>
+    </div>
+    <div style="padding: 10px; height: 300px; overflow: auto;">
+      <?php echo H(Lab::get('people.signup.doc', Config::get('people.signup.doc')), TRUE); ?> 
+    </div>
+  </div>
+  <form method="post" autocomplete="off" q-event="submit" q-object="new_user_register" class="center" q-src="<?php echo H(URI::url('!labs/signup') ) ?>">
+  	<input type="hidden" value="<?php echo H(Input::form()['register_user']); ?>" name="register_user" />
+  	<input type="hidden" value="<?php echo H(Input::form()['register_user_type']); ?>" name="register_user_type" />
+    <input type="hidden" value="<?php echo $signup_object; ?>" name="signup_object" />
+
+      <div class="button_container">
+          <div class="float_left">
+              <?php if (!$has_read) :?>
+                  <?php echo Form::checkbox('has_read', FALSE, I18N::T('labs','我已阅读过此注册须知'), ' class="middle checkbox monitor"', 'class="middle"'); ?>
+              <?php endif;?>
+          </div>
+          <div class="float_right">
+              <input type="submit" name="submit" <?php if (!$has_read) :?>disabled="disabled" style="opacity:0.3" <?php endif;?> class="font-button-save sm" value="<?php echo H(I18N::T('labs', '确定')) ?>" />
+          </div>
+      </div>
+
+  </form> 
+</div>
+<script>
+jQuery(function(){
+  if("<?=$has_read?>"){
+    $('.dialog_close').show();
+  }else{
+    //$('.dialog_close').hide();
+    $('.dialog_close').show();
+    <?php $timeout = Config::get('labs.introduction_read_timeout', 0) ?>
+    var timeout = <?= $timeout ?>;
+    if (timeout > 0) {
+      $('[name=submit]').val('确认(' + timeout + ')')
+      var interval = setInterval(function () {
+        timeout -= 1;
+        if (timeout == 0) {
+          $('[name=submit]').val('<?= H(I18N::T('labs', '确认')) ?>')
+          if ($('[name=has_read]').prop('checked')) $('[name=submit]').removeAttr('disabled').removeAttr('style')
+          clearInterval(interval)
+        }
+        else {
+          $('[name=submit]').val('确认(' + timeout + ')')
+        }
+      }, 1000)
+    }
+    $('[name=has_read]').change(function (e) {
+      var val = $(this).prop('checked')
+      if (val && timeout == 0) {
+        $('[name=submit]').removeAttr('disabled').removeAttr('style')
+      }
+      else {
+        $('[name=submit]').attr('disabled','disabled').attr('style','opacity:0.5')
+      }
+    })
+  }
+})
+</script>

@@ -1,0 +1,15 @@
+div.form{
+	span.placeholder{
+		display: inline-block;
+		text-align: right;
+		min-width: 60px;
+	}
+	.en_US_placeholder {
+		width: 140px;
+	}
+	.inline_block {
+		display: inline-block;
+		
+	}
+	
+}

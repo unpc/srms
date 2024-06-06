@@ -1,0 +1,9 @@
+<?php 
+$status = $sample->status;
+$status_color = Event::trigger('sample.colors');
+echo '<span class="panel panel_uniqid" style="color: #fff;background-color:#' . 
+$status_color[$status] .'">';
+$status_list = Event::trigger('sample.status');
+echo I18N::HT('eq_sample', $status_list[$status]); 
+echo '</span>';
+?>

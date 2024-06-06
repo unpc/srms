@@ -1,0 +1,9 @@
+<?php echo V('application:widgets/rule_date/item/month', ['flexform_index'=>$flexform_index, 'month'=>$month]) ?>
+
+<div class="interval_20"></div>
+
+<?php echo V('application:widgets/rule_date/item/month_week', ['flexform_index'=>$flexform_index, 'month_week'=>$month_week]) ?>
+
+<div class="interval_20"></div>
+<div><?php echo I18N::T('application','指定周几'); ?></div>
+<?php echo V('application:widgets/rule_date/item/week_day', ['flexform_index'=>$flexform_index, 'week_day'=>$week_day])?>

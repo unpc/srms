@@ -1,0 +1,21 @@
+<?php
+    $size = L('ME')->locale == 'en_US' ? 17 : 15;
+?>
+<div class="range_container nowrap">
+    <div class="interval_12"></div>
+    <?php echo H('第一值取值范围:') ?>
+    <input name="field[<?php echo $prefix?>][range][0]" type="text" class="text"
+    value="<?php echo H($params[0]) ?>" />
+    &nbsp;-&nbsp;
+    <input name="field[<?php echo $prefix?>][range][1]" type="text" class="text"
+    value="<?php echo H($params[1]) ?>" />
+</div>
+<div class="interval_12"></div>
+<div class="range_container nowrap">
+    <?php echo H('第二值取值范围:') ?>
+    <input name="field[<?php echo $prefix?>][range][2]" type="text" class="text"
+    value="<?php echo H($params[2]) ?>" />
+    &nbsp;-&nbsp;
+    <input name="field[<?php echo $prefix?>][range][3]" type="text" class="text"
+    value="<?php echo H($params[3]) ?>" />
+</div>

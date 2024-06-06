@@ -1,0 +1,7 @@
+<?php if (L('ME')->is_allowed_to('查看', $object->account->department)): ?>
+<a href="<?php echo H($object->account->department->url() ) ?>">
+	<?php echo H($object->account->department->name); ?>
+</a>
+<?php else: ?>
+	<?php echo H($object->account->department->name); ?>
+<?php endif; ?>

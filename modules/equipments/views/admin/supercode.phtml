@@ -1,0 +1,41 @@
+<div class="form padding_2">
+	<form method="post" action="<?php echo URI::url(); ?>">
+	<table class="form">
+		<tr>
+			<td class="label left nowrap padding_2">
+				<?php echo I18N::HT('equipments', '随机码'); ?>
+			</td>
+			<td class="padding_2">
+				<input name="rand_code" style="width: 8rem;" class="text" value="<?php echo H($rand_code); ?>" />
+			</td>
+            <td class="padding_2">
+                <input type="submit" class="float_right font-button-save" name="submit" value="<?php echo $super_code ? I18N::HT('equipments', '重新生成') : I18N::HT('equipments', '生成超级密码'); ?>" />
+            </td>
+		</tr>
+        <?php if ($super_code): ?>
+		<tr>
+			<td class="label left nowrap paddding_2">
+				<?php echo I18N::HT('equipments', '超级密码'); ?>
+			</td>
+			<td class="padding_2">
+				<div class="center padding_1" style="background-color:#eee;color: var(--basiccolor);"><pre><strong><big><big><?php echo H($super_code); ?></big></big></strong></pre></div>
+			</td>
+            <td></td>
+		</tr>
+        <?php endif; ?>
+        <?php if ($super_code_new): ?>
+            <tr>
+                <td class="label right nowrap">
+                    <?php echo I18N::HT('equipments', 'veronica超级密码'); ?>
+                </td>
+                <td class="padding_2">
+                    <div class="center padding_1" style="background-color: #eee;color: var(--basiccolor);"><pre><strong><big><big><?php echo H($super_code_new); ?></big></big></strong></pre></div>
+                </td>
+            </tr>
+        <?php endif; ?>
+	
+	</table>
+	</form>
+    <div class="interval_12"></div>
+    <p class="red lpadding_2"><strong><?php echo I18N::HT('equipments', '请将登录终端中提示的随机码输入, 点击确定获得对应超级密码');?></strong></p>
+</div>

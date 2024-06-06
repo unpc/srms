@@ -1,0 +1,146 @@
+
+<?php $vds = []; ?>
+<div class="message message_normal">
+    <p><?php echo I18N::T('vidmon', '视频中若出现A标识, 则表示该视频当前处于 "报警" 状态')?></p>
+</div>
+<div style="display:flex;flex-wrap: wrap;width: calc(100vw - 265px);"?>
+<?php if ($vidcams->total_count()) :?>
+	<?php foreach ($vidcams as $vidcam) : ?>
+        <?php if($vidcam->type == Vidcam_Model::TYPE_GENEE): ?>
+            <?= V('vidmon:monitor/item/genee', ['vidcam' => $vidcam]); ?>
+        <?php elseif($vidcam->type == Vidcam_Model::TYPE_STREAM): ?>
+            <?php $vds[] = $vidcam->uuid; ?>
+            <?= V('vidmon:monitor/item/stream', ['vidcam' => $vidcam]); ?>
+        <?php endif; ?>
+	<?php endforeach; ?>
+<?php else :?>
+	<span class="red center">
+		<h1><?php echo I18N::T('vidmon', '无监控对象');?></h1>
+	</span>
+<?php endif;?>
+</div>
+
+<?php $vds = json_encode($vds, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES); ?>
+
+<script>
+jQuery(function($) {
+	var ids = <?php echo JS::quote(array_values($vidcams->to_assoc('id', 'id'))); ?>;
+	var $images = $('.list_video_monitor img');
+	var timeout = <?php echo Config::get('vidmon.preview_capture_timeout')?>;
+    var vds = <?= $vds ?>;
+
+    // 多屏监控没有做对截图机制的兼容，因为考虑负载原因
+    <?php if (Config::get('stream')['use_stream']): ?>
+        var start = function() {
+            Q.trigger({
+                object: 'stream_address',
+                event: 'click',
+                url: '<?= URI::url('!vidmon/vidcam'); ?>',
+                global: false,
+                data: {
+                    id: $('video').first().data('id'),
+                },
+                success: function(res) {
+                    var its = vds.concat();
+                    _preview(res.token, its);
+                }
+            });
+        }
+
+        function _preview(token, its) {
+            if (its.length == 0) return;
+
+            id = its.shift();
+
+            var video = $('.' + id)[0];
+            var source = $('.' + id).data('src') + '?token=' + token;
+            if(Hls.isSupported()) {
+                var hls = new Hls();
+                hls.loadSource(source);
+                hls.attachMedia(video);
+                hls.once(Hls.Events.MANIFEST_PARSED, function() {
+                    video.play()
+                    .then(function() {
+                        _preview(token, its);
+                    })
+                    .catch(function(e) {
+                        window.location.replace(window.location.href);
+                    });
+                });
+
+                hls.once(Hls.Events.ERROR, function(event, data) {
+                    if (data.fatal) {
+                        _preview(token, its);
+                    }
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = source;
+                video.addEventListener('loadedmetadata',function() {
+                    video.play()
+                    .then(function() {
+                        _preview(token, its);
+                    })
+                    .catch(function(e) {
+                        window.location.replace(window.location.href);
+                    });
+                });
+            }
+        }
+
+        // 流地址 token 续期，提前 5 秒续期，避免出现 401 错误
+        setInterval(start, <?= Config::get('stream.renew.interval') - 5 ?>);
+
+        start();
+    <?php else: ?>
+    function _snapshot_refresh() {
+        $.ajax({
+            url: '<?php echo Config::get('vidmon.snapshot_get_url');?>',
+            dataType: 'jsonp',
+            jsonp: 'callback',
+            success: function(data) {
+                //id为vidcam的id
+                //url为新的url
+                $.each(data, function(id, src) {
+                    $('img[_id='+ id +']').attr('src', src);
+                });
+
+                setTimeout(_snapshot_refresh, timeout);
+            }
+        });
+
+        Q.trigger({
+            url: '<?php echo URI::url('!vidmon/monitor');?>',
+            object: 'alarm',
+            event: 'get',
+            global: false,
+            data: {
+                ids: ids
+            },
+            success: function(data) {
+                $.each(data.vidcam_alarm, function(id, alarm) {
+                    $div_alarm = $('img[_id='+ id +']').next('div.alarm');
+                    if (alarm) $div_alarm.removeClass('hidden');
+                    else $div_alarm.addClass('hidden');
+                })
+            }
+        });
+    }
+
+    _snapshot_refresh();
+    <?php endif; ?>
+
+    function _adjust_snapshot_video() {
+
+        var max_height = height = 0;
+
+        $('.list_video_title').each(function(){
+            height = $(this).outerHeight();
+            max_height = height > max_height ? height : max_height;
+        })
+        .height(max_height);
+
+    }
+
+    _adjust_snapshot_video();
+});
+</script>

@@ -1,0 +1,4 @@
+<?php 
+if ($announce->sender->id) :?><a href="<?php echo H($announce->sender->url) ?>"><?php echo H($announce->sender->name);
+?>
+<?php else: echo I18N::T('announces', '系统');endif;?>

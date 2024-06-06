@@ -1,0 +1,17 @@
+<div class="form padding_2">
+  <?php foreach (Config::get('support_system.command_list', []) as $key => $info) :?>
+  <?php $container_id = uniqid();?>
+  <div class="item" >
+    <div style="padding-bottom: 5px;">
+      <span style="font-size: 14px;font-weight:bold"><?= I18N::T('support', $info['name']) ?></span>
+      <a  style="cursor:pointer" title="<?= I18N::T('support', '查看')?>" class="icon-eye" q-object="system_info" q-event="click"
+        q-src="<?= URI::url('!support/system')?>"
+        q-static="<?= H(['container_id' => $container_id, 'key'=>$key])?>">
+        <!-- <?= I18N::T('support', '查看')?> -->
+      </a>
+      <div id="<?= $container_id; ?>"?></div>
+    </div>
+    <hr style="padding: 5px 0;" />
+  </div>
+  <?php endforeach;?>
+</div>

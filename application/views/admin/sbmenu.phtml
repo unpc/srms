@@ -1,0 +1,62 @@
+<?php $uniqid = 'sbmenu_admin_' . uniqid();?>
+<div style="display: flow-root;">
+    <a class="button button_add" q-object="add_sbmenu_category" q-event="click" q-src="<?= H(URI::url('admin')) ?>">添加</a>
+</div>
+<form method="post" action="">
+<div id="<?php echo H($uniqid)?>">
+	<!--<div class="panel clearfix">
+		<div class="float_left">
+			<a class="button button_add" title="<?php // echo T('添加')?>"></a>
+		</div>
+	</div>-->
+<ul id="sbmenu_categories" class="sbmenu_categories">
+<?php
+$index = 0;
+foreach ($categorized_items as $name => $items) {
+    $items = (array) $items;
+    $count = count($items);
+    foreach ($items as $id => $item) {
+        $mid = $item['#module'] = $item['#module'] ?: $id;
+        if (!Module::is_accessible($mid)) {
+            unset($items[$id]);
+            $count--;
+        }
+    }
+    $index++;
+    echo V('application:admin/sbmenu/category', [
+        'index' => ($name == '@others' ? '@others' : $index),
+        'name'  => $name,
+        'items' => $items,
+    ]);
+}
+?>
+</ul>
+<script class="sbmenu_category_template" type="text/html">
+	<?php echo V('application:admin/sbmenu/category', ['index' => '@INDEX']);?>
+</script>
+</div>
+<div class="form">
+<!--<ul>
+	<li class="description">* <?php // echo HT('您可以通过切换图标下方的复选框修改模块在左侧菜单中的显示状态。');?></li>
+	<li class="description">* <?php // echo HT('您可以设置每一个分类的名称和它的位置，拖动每一个功能到不同分类下面。'); ?></li>
+</ul>-->
+</div>
+
+<div class="interval_60"></div>
+<div class="form float_right">
+<input type="reset" class="font-button-default rmargin_16" value="<?php echo H(T('取消'))?>" />
+<input type="submit" class="font-button-save" value="<?php echo H(T('保存修改'))?>" name="submit" />
+
+<?php if(L('ME')->access('管理所有内容')):?>
+ <input type="submit" class="font-button-save" value="<?php  echo H(T('设为系统默认')) ?>" name="save" />
+<?php endif;?>
+ <input type="submit" class="font-button-save button_cancel" value="<?php  echo H(T('恢复系统默认')) ?>" name="reset" />
+</div>
+<div class="interval_60"></div>
+</form>
+<?php echo JS::load('application:sbmenu_admin', [
+    'index'             => $index,
+    'container_id'      => $uniqid,
+    'delete_message'    => T('您确实要删除吗？请谨慎操作！'),
+    'undeletable_error' => T('请先移除该分类中的其它模块！'),
+]);

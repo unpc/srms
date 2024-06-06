@@ -1,0 +1,329 @@
+<script>
+    var o = document.getElementById("layout_body");
+    var w = o.clientWidth || o.offsetWidth;
+</script>
+<?php
+$columns = (array) $this->columns;
+$thead_class = $this->columns_invisible ? 'hidden':'';
+$order = [];
+$weight = [];
+$i = 0;
+foreach($columns as $k=>$v) {
+	$order[$k] = $i++;
+	$weight[$k] = $columns[$k]['weight'];
+}
+
+uksort($columns, function($ak, $bk) use($weight, $order) {
+	$aw = $weight[$ak];
+	$bw = $weight[$bk];
+
+	if ($aw != $bw) {
+		return $aw - $bw;
+	}
+
+	return $order[$ak] - $order[$bk];
+});
+$this->columns = $columns;
+
+$this->extra_class = (string) $this->extra_class;
+$this->rows = (array) $this->rows;
+$this->form_url = $this->form_url ?: URI::url('');
+$this->visible_count = $this->count_visible_columns();
+$this->filters_count = $this->count_filters();
+?>
+<div class="interval_1"></div>
+<div id="table_layout">
+<table id="table_<?php echo H($this->name)?>" class="<?php echo $this->extra_class ?> sticky flexible">
+<thead class="<?php echo $thead_class; ?>">
+<!-- Header -->
+<!--
+<?php if ($this->filters_count > 0): ?>
+	<tr><th colspan="<?php echo H($this->visible_count + 1 ) ?>" class="tabs">
+	<span class="tab_wrapper"><a href="<?php echo H(URI::url($this->form_url, 'reset_search=1')) ?>"><?php echo $this->reset_search_label ? : HT('全部') ?></a></span><span class="tab_wrapper"><a class="selected" href="<?php echo H(URI::url($this->form_url)) ?>"><?php echo HT('搜索结果')?></a><?php echo $this->total_count > 0 ? '<span class="num_notif">'.$this->total_count.'</span>':'';?></span>
+	</th></tr>
+<?php endif; ?>-->
+<tr>
+<?php 
+    $this->sub_columns = $this->sub_columns ?: [];
+    $has_sub_column = count($this->sub_columns);
+?>
+<?php $col_count = 0; foreach ($columns as $key => $column):  
+		$class = [];
+		if ($column['invisible']) :
+			continue;
+		elseif ($key == '@'):
+			$col_count ++;
+			if ($column['align']) $class['align'] = $column['align'];
+			if ($column['extra_class']) $class['extra_class'] = $column['extra_class'];
+			$uniqid = 'search_'.uniqid();
+	?>
+	<th class="<?php echo implode(' ', $class) ?> filter filter_search tight" <?php if ($has_sub_column && ! count((array) $this->sub_columns[$key])) echo "rowspan=\"2\""; ?>> <div class="filter_container clearfix" style="overflow:hidden">
+		<span class="header header_search unselectable" q-tooltip="<?php echo HT('点击搜索')?>">
+            <?php echo HT('搜索'); ?>
+        </span>
+			<div id="<?php echo H($uniqid) ?>" class="left filter_panel padding_1">
+				<form method="post" action="<?php echo H($this->form_url ) ?>">
+				<div class="form padding_1">
+					<table class="form">
+					<?php foreach ($columns as $key => $column): if ($key == '@' || !$column['title'] || (!$column['suppressible'] && !$column['filter']['form']) ) continue;?>
+					<tr>
+						<td class="label nowrap top">
+							<?php
+								if ($this->toggle_suppressible) {
+									echo Form::checkbox("table_col_visible[{$this->name}][$key]", !$column['invisible'], $column['title'], ($column['suppressible'] ? '':'disabled="disabled"').' class="middle"', 'class="label middle"');
+								}
+								else {
+									echo '<span class="label">'.$column['title'].'</span>';
+								}
+							?>
+						</td>
+						<td class="<?= isset($column['filter']['nowrap']) ? ($column['filter']['nowrap'] ? 'nowrap' : '') : 'nowrap'?> top table_key_<?php echo $key?>">
+							<?php
+								if ($column['filter']) echo $column['filter']['form'];
+							?>
+						</td>
+					</tr>
+					<?php endforeach; ?>
+					</table>
+					<div class="hr_1">&#160;</div>
+					<p class="right">
+						<?php $close_id = 'table_close_'. uniqid(); ?>
+						<input name="close" id="<?php echo $close_id ; ?>" class="button button_stat_close" type="button" value="<?php echo HT('关闭') ?>" />
+						<input name="search" class="button button_search" type="submit" value="<?php echo HT('查询')?>" />
+					</p>
+					<?php if ($this->filter_footer): ?>
+					<div class="hr_1">&#160;</div>
+					<hr/>
+					<div class="hr_1">&#160;</div>
+					<?php foreach ($this->filter_footer as $ff): ?>
+						<?php if ($ff['title']) echo '<h4>'.$ff['title'].'</h4>'; ?>
+						<?php echo $ff['form']; ?>
+					<?php endforeach; ?>
+					<?php endif; ?>
+				</div>
+				</form>
+			</div>
+		</div>
+	</th>
+	<?php
+		else :
+			$col_count ++;
+			if ($col_count == $this->visible_count && !$column['noLast']) $class['last'] = 'last';
+			if ($column['hr_filter'] || $column['sortable']) $class['filter'] = 'filter';
+			if ($column['hr_filter']) $class['check_hover'] = 'check_hover';
+			if ($column['align']) $class['align'] = $column['align'];
+			if ($column['nowrap']) $class['nowrap'] = 'nowrap';
+			if ($column['extra_class']) $class['extra_class'] = $column['extra_class'];
+            if (is_array($this->sub_columns[$key]) && count((array) $this->sub_columns[$key])) $class['border'] = 'border';
+			if ($this->sort_by == $key) $class['sort_by'] = 'sort_by';
+            if ($has_sub_column && count((array) $column['include'])) $class['rowspan'];
+	?>		
+		<th <?php if ($column['tooltip']) echo 'q-tooltip="'. $column['tooltip'] .'"';?> class="<?php echo H(implode(' ', $class) ) ?>" <?php if ($has_sub_column && count((array) $this->sub_columns[$key])) echo 'colspan="'. count((array) $this->sub_columns[$key]). '"';?> <?php if ($has_sub_column && ! count((array) $this->sub_columns[$key])) echo 'rowspan="2"';?> >
+		<?php if ($column['title']): ?>
+			<?php if ($column['hr_filter'] || $column['sortable']): ?>
+				<div class="filter_container clearfix">
+				<?php
+				if ($column['sortable']) {
+					$title = $column['title'];
+					$header_class = 'strong header';
+
+					if ($this->sort_by == $key) {
+                        $sort_asc = !$this->sort_asc;
+                        if ($_GET['sort_asc']) {
+                            if ($this->sort_asc == $_GET['sort_asc']) {
+                                $sort_asc = !$this->sort_asc;
+                            } else {
+                                $sort_asc = $this->sort_asc;
+                            }
+                        } else {
+                            $sort_asc = 1;
+                        }
+						$header_class .=  !$sort_asc ? ' header_sort_asc':' header_sort_desc';
+					} else {
+                        $sort_asc = 1;
+                    }
+
+                    $get_attr = $_GET;
+                    $get_attr['sort'] = $key;
+                    $get_attr['sort_asc'] = $sort_asc;
+					echo URI::anchor(URI::url($column['url'], $get_attr), $title, 'class="'.$header_class.'"');
+				}
+				else {
+					echo  '<span class="header strong">'.$column['title'].'</span>';
+				}
+				?>
+				<?php if ($column['hr_filter']): ?>
+					<div class="show_on_hover filter_panel padding_1">
+						<?php echo $column['hr_filter']; ?>
+					</div>
+				<?php endif; ?>
+				</div>
+			<?php else: ?>
+				<span class="header strong"><?php echo  $column['title']; ?></span>
+			<?php endif; ?>
+		<?php elseif ($column['type'] == 'checkbox'): ?>
+			<input type="checkbox" class="checkbox" name="<?php echo $column['name']; ?>" style="padding: 0; margin: 0;" id="<?php echo $column['id']; ?>">
+		<?php else: ?>
+			&#160;
+		<?php endif; ?>
+		</th>
+	<?php endif; ?>
+<?php endforeach; ?>
+</tr>
+
+<?php if (count($this->sub_columns)) : ?>
+<tr>
+    <?php
+    $c = [];
+
+    foreach($this->columns as $key => $column) {
+        if (!count((array) $this->sub_columns[$key])) {
+            $c[$key] = $column;
+        }
+        else {
+            $last = end($this->sub_columns[$key]);
+            $first = reset($this->sub_columns[$key]);
+            foreach($this->sub_columns[$key] as $name => $sc) :
+
+                $c[$name] = $sc;
+                $sclass = ['header'];
+
+                $th_class = [];
+
+                if ($sc['align']) $th_class['align'] = $sc['align'];
+                if ($sc['nowrap']) $th_class['nowrap'] = 'nowrap';
+                if ($sc['sortable']) $th_class['sortable'] = 'filter';
+
+                if ($this->sort_by == $name) {
+                    $sclass[] = $this->sort_asc ? ' header_sort_asc':' header_sort_desc';
+                }
+                if ($sc == $last) $th_class[] = 'last';
+                if ($sc == $first) $th_class[] = 'first';
+
+                ?>
+                <th <?php if (count($th_class)) echo 'class="'. join(' ', $th_class). '"';?>>
+                    <div class="filter_container clearfix <?php echo $sc['extra_class']?>">
+                        <?php if ($sc['sortable']) :
+                            if ($_GET['sort_asc']) {
+                                if ($this->sort_asc == $_GET['sort_asc']) {
+                                    $sort_asc = !$this->sort_asc;
+                                } else {
+                                    $sort_asc = $this->sort_asc;
+                                }
+                            } else {
+                                $sort_asc = 1;
+                            }
+
+                            $get_attr = $_GET;
+                            $get_attr['sort'] = $name;
+                            $get_attr['sort_asc'] = $sort_asc;
+
+                            echo URI::anchor(URI::url($column['url'], $get_attr), $sc['title'], 'class="'. join(' ', $sclass).'"');
+                        ?>
+                        <?php else :?>
+                            <?php echo H($sc['title']);?>
+                        <?php endif;?>
+                    </div>
+                </th>
+            <?php endforeach;
+        }
+    }
+
+    $this->columns = $c;
+    ?>
+</tr>
+
+<?php endif;?>
+
+<!-- Current Filters -->
+<?php /*if ($this->count_filters() > 0): ?>
+<tr>
+<td colspan="<?php echo H($this->visible_count)?>" class="search_filters">
+	<?php
+		foreach ($this->columns as $key => $column):
+			if ($key == '@' || !$column['title'] || !(string)$column['filter']['value'] || (!$column['suppressible'] && !$column['filter']) ) continue;
+			$field = $column['filter']['field'] ?: $key;
+	?>
+	<span class="tag">
+		<span class="description nowrap"><?php echo $column['title']?></span>
+		<span class="nowrap"><?php echo $column['filter']['value']?></span>
+		<a
+			class="remove"
+			href="<?php echo URI::url($this->form_url, 'reset_field='.$field); ?>"
+		>&#160;</a></span>
+	<?php endforeach ?>
+</td>
+</tr>
+<?php endif;*/ ?>
+</thead>
+<tbody>
+<?php
+if (count($this->rows)>0) {
+		foreach ($this->rows as $row) {
+			echo V('widgets/table/row', [
+				'row' => $row,
+				'table' => $this,
+			]);
+		}
+}
+else {
+	echo '<tr><td colspan="'.H($this->visible_count)
+		. '" class="description center">'
+		. ($this->empty_message ?: '&#160;')
+		. '</td></tr>'
+		;
+}
+?>
+</tbody>
+</table>
+</div>
+<script type="text/javascript">
+jQuery(function($){
+	var $panel = $("#<?php echo $uniqid?>");
+	var $span = $panel.prev('span');
+	var $container = $panel.parents('.filter_container');
+	var $th = $panel.parents('th:eq(0)');
+    $span.bind('click', function(e){
+
+       $th.toggleClass('active');
+       if ($th.hasClass('active')) {
+           $container.css({'overflow':'visible'});
+       }
+       else {
+           $container.css({'overflow':'hidden'});
+       }
+    });
+
+	$(document).bind('clean.float.view', function($){
+		if($th.hasClass('active')){
+			$th.toggleClass('active');
+			$container.css({'overflow':'hidden'});
+		}
+	});
+    var $btn_close = $("#<?php echo $close_id ;?>");
+
+    $btn_close.bind('click', function(){
+		$span.trigger('click');
+    });
+	if (<?= Module::is_installed('uno') ? 1 : 0 ?>) {
+		document.getElementById("table_layout").style.cssText='width: ' + (w - 65) + 'px;overflow: auto;';
+	} else {
+		document.getElementById("table_layout").style.cssText='width: ' + (w - 270) + 'px;overflow: auto;';
+	}
+	if (<?= $fix_header ? 1 : 0 ?>) {
+		$("#table_layout").css('height', Math.min($("#table_layout").height(), $(window).height() - 200))
+		let t_width = 0;
+		$("#table_layout").find('thead').find('tr').find('th').each(function(){
+			t_width += $(this).width();
+			$(this).css('width', $(this).width())
+    	});
+		$("#table_layout").find('tbody').find('tr').find('td').each(function(){
+			$(this).css('width', $(this).width())
+    	});
+		$("#table_layout").find('table').css('table-layout', "fixed")
+		$("#table_layout").find('thead').css('position', 'sticky')
+		$("#table_layout").find('thead').css('top', '0')
+		$("#table_layout").find('thead').css('z-index', '3')
+	}
+});
+</script>

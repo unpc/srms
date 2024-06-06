@@ -1,0 +1,9 @@
+<?php
+$me = L('ME');
+$show_privacy = $me->is_allowed_to('查看联系方式', $user);
+if ($show_privacy):
+?>
+<div class="phone"><?php echo H($user->phone) ?></div>
+<?php else: ?>
+<?php echo I18N::T('people', '您没有权限查看');?>
+<?php endif;?>

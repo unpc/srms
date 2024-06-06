@@ -1,0 +1,61 @@
+<form method="post"  q-object="add_build" q-event="submit" q-src="<?php echo H(URI::url('!gismon/buildings')) ?>"  autocomplete="off">
+<table class="form">
+	<tbody>
+	<?php echo V('form_error', ['form'=>$form]);?>
+    <?php $require = (string) V('form_require'); ?>
+	<tr>
+		<td class="top">
+		<form method="post" autocomplete="off" action="">
+		<table class="form" style="margin-top: -1rem;">
+			<tbody>
+	        <tr>
+		        <td class="left nowrap middle"><?php echo I18N::T('gismon', '组织机构')?></td>
+		        <td class="top"><div class="gray_tag_container">
+		        <?php
+		        echo Widget::factory('application:tag_selector', [
+		        	'tag'=>$form['group_id'] ? O('tag_group', $form['group_id']) : $building->group,
+		        	'root'=>$group_root,
+		        	'name'=>'group_id',
+		        	'ajax'=>true,
+		        ]);
+		        ?>
+		        </div></td>
+	        </tr>			
+			<tr>
+				<td class="left nowrap middle">
+				<?php echo V('form_require');?>
+				<?php echo I18N::T('gismon','楼宇名称') ?>
+				<br>
+				<?php echo V('form_filter',['error'=>$form->errors['name'][0]])?>
+				</td>
+                <td class="top">
+                    <input class="text" name="name" size="50" value="<?php echo H($form['name'] ?: $building->name ) ?>" />
+                </td>
+			</tr>
+			<tr>
+				<td class="left nowrap middle"><?php echo I18N::T('gismon', '经度'); ?></td>
+				<td class="middle">
+				<input class="text  " name="longitude" size="20" value="<?php echo $form['longitude'] ?: Config::get('gis.longitude'); ?>" />
+				</td>
+			</tr>
+			<tr>
+				<td class="left nowrap middle"><?php echo I18N::T('gismon', '纬度'); ?></td>
+				<td class="middle">
+					<input class="text  " name="latitude" size="20" value="<?php echo $form['latitude'] ?: Config::get('gis.latitude'); ?>" />
+				</td>
+			</tr>
+            <?= Event::trigger('gismon_building[edit].view.extra', $form, $building); ?>
+		
+		</tbody>
+		</table>
+		<div class="button_container">
+		<div class="float_right">
+		<input name="cancel" id="cancel" type='reset' class="font-button-default sm rmargin_2e4" value="<?php echo I18N::HT('gismon', '取消');?>" />
+		<input name="submit" type='submit' class="font-button-save sm" value="<?php echo I18N::HT('gismon', '添加');?>" />
+		</div>
+		</div>
+		</form>
+		</td>
+	</tr>
+	</tbody>
+</table>

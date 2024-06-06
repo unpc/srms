@@ -1,0 +1,16 @@
+<?php
+	if($status) {
+		$all_status =  Event::trigger('sample.status');
+		$keys = array_keys($status);
+		$show_status = [];
+		foreach($keys as $v) {
+			$show_status[] = $all_status[$v];
+		}
+		if ($keys) {
+			echo I18N::HT('eq_sample', implode(', ', $show_status));
+		}
+		else {
+			echo $all_status[0];
+		}
+	}
+?>

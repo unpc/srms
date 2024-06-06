@@ -1,0 +1,9 @@
+<?php 
+$uniqid = 'user_'.uniqid();
+$autocomplete = $this->autocomplete ?: URI::url('autocomplete/user');
+?>
+<input id="<?php echo $uniqid?>_user" name="<?php echo H($this->name ) ?>" type="hidden" value="" />
+<input 
+	id="<?php echo $uniqid?>_user_name" size="20"
+	class="text middle focus select_on_focus autocomplete:<?php echo $autocomplete?> autocomplete_alt:#<?php echo $uniqid?>_user<?php echo $this->labs ? " dynamic:{$this->lab_name}=#{$uniqid}_lab":'' ?>"
+ 	value="" />

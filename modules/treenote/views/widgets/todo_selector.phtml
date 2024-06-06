@@ -1,0 +1,20 @@
+<?php 
+$user = $this->user->id ? $this->user : L('ME');
+$task = $this->task;
+
+$autocomplete = URI::url('!treenote/autocomplete/todo.'.$user->id);
+$uniqid = 'task_' . uniqid();
+$name = ($this->name ?: 'task_id');
+?>
+<input 
+	id="<?php echo H($uniqid) ?>" 
+	name="<?php echo H($name ) ?>" 
+	type="hidden" value="<?php echo H($task->id) ?>" />
+<input 
+	id="<?php echo $uniqid?>_name" 
+	class="text middle select_on_focus 
+		autocomplete:<?php echo H($autocomplete) ?> 
+		autocomplete_alt:#<?php echo $uniqid?>"
+	value="<?php echo H($task->title) ?>"
+    />
+<div class="description" style="margin-top: 2px">* <?php echo I18N::T('treenote', '请输入关键字并选择'); ?></div>

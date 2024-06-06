@@ -1,0 +1,23 @@
+<span id="<?php echo $prev_uniqid; ?>">
+<?php 
+	// 接口：
+	// 接收 $tasks 对象集合
+	// 接收 编辑的时候接收 task 对象 
+	
+	$selector = "task[parent={$parent_task}]";
+
+	if($current->id){
+		$selector .= "[id!={$current->id}]";
+	}
+
+	$selector .= "[!next]";
+
+	$tasks = Q($selector);
+
+	if (count($tasks) > 0){
+		echo I18N::T('projects', '上一个节点');
+		echo Form::dropdown('prev', ['--'] + $tasks->to_assoc('id','name'), $prev_task_id ?: $current->prev->id, 'class="middle view object:prev_select event:change"');
+	}
+?>
+</span>
+

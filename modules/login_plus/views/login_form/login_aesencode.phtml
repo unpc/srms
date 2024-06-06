@@ -1,0 +1,26 @@
+<script>
+    $().ready(function () {
+        var $token = $("input[name=token]");
+        var $password = $("input[name=password]");
+        var $btn = $("input[name=submit]");
+        var $form = $("form");
+        var key = CryptoJS.enc.Utf8.parse("<?=$aes_key?>");
+        var iv = CryptoJS.enc.Utf8.parse("<?=$aes_iv?>");
+        function Encrypt(word){
+            var encrypted = CryptoJS.AES.encrypt(word, key, {
+                iv: iv,
+                mode: CryptoJS.mode.CBC,
+                padding: CryptoJS.pad.ZeroPadding
+            });
+            return encrypted.toString();
+        }
+        $btn.bind('click', function(e) {
+            if ($token.val() != '') {
+                $token.val(Encrypt($token.val()));
+            }
+            if ($password.val() != '') {
+                $password.val(Encrypt($password.val()));
+            }
+        });
+    })
+</script>

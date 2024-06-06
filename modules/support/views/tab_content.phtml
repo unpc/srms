@@ -1,0 +1,30 @@
+<?php echo V('form_error', ['form'=>$form]);?>
+<div class="form tpadding_6 margin-left-half">
+    <form class="edit" method="post" action="<?php echo H(URI::url('')) ?>"  enctype="multipart/form-data">
+        <div>
+            <?php foreach ($configs as $prekey => $subconfigs) :?>
+            <div class="item">
+                <div style="padding-bottom: 5px; font-weight: bold;">
+                    <div><?php echo T($subconfigs['subname']);?></div>
+                </div>
+                <hr/>
+                <?php foreach ($subconfigs['subitems'] as $key => $item) :
+                    $disabled = '';
+                    if($GLOBALS['preload']['people.multi_lab'] && in_array($key,['must_connect_lab_project'])){
+                        $disabled  = ' disabled ';
+                    }
+                ?>
+                <div style="padding: 5px 0;">
+                    <?php echo V('support:item/'. ($item['type'] ? : 'checkbox'), ['prekey'=>$prekey, 'key'=>$key, 'item'=>$item,'extra'=> $disabled ? $disabled : '']); ?>
+                </div>
+                <div class="clearfix"></div>
+                <?php endforeach; ?>
+            </div>
+            <?php endforeach; ?>
+            <!-- <hr/> -->
+            <div style="padding-top: 15px;padding-bottom: 75px;">
+                <input type="submit" name="submit" class="font-button-save float_left" value="<?php echo HT('保存修改')?>" />
+            </div>
+        </div>
+    </form>
+</div>

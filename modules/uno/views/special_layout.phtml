@@ -1,0 +1,95 @@
+<?php
+if (Input::route() != $_SESSION['system.current_layout_url']) {
+    $_SESSION['system.last_layout_url'] = $_SESSION['system.current_layout_url'];
+}
+$_SESSION['system.current_layout_url'] = Input::route();
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="<?php echo Config::get('system.base_url') ?>gini-ui/iconfont.css" rel="stylesheet"/>
+    <title>
+        <?php echo H($title ? T(Config::get('page.title_pattern'), ['%title' => $title]) : Config::get('page.title_default'));
+        ?>
+    </title>
+    <meta http-equiv="Content-Style-Type" content="text/css"/>
+    <meta http-equiv="Content-Script-Type" content="text/javascript"/>
+    <?php /*web app中去除浏览器上地址栏选项的设置*/ ?>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <?php /*web app中去除iphone对连串数字拨号映射设置*/ ?>
+    <meta name="format-detection" content="telephone=no"/>
+    <?php /*web app中固定显示页面的定义方式*/ ?>
+    <?php /*<meta name="viewport" content="user-scalable=yes, width=device-width, minimum-scale=1.0, maximum-scale=1.0" /> */ ?>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1"/>
+    <base href="<?php echo H(Config::get('system.base_url')) ?>"/>
+    <link rel="shortcut icon" href="<?php echo H(_C('favicon.ico')) ?>" type="image/x-icon"/>
+    <?php /*web app 中定义app图片的方式*/ ?>
+    <link rel="apple-touch-icon" href="<?php echo H(_C('images/icon_touch.png')) ?>"/>
+    <?php echo $this->controller->load_css(); ?>
+    <?php echo $this->controller->load_js(TRUE); ?>
+    <script>
+        (function ($) {
+            Q['mousewheelEventDuration'] = <?php echo JS::quote(Config::get('datebox.mousewheel_event_duration', 0.2));?>;
+            Q['24hour'] = <?php echo JS::quote(!!Config::get('system.24hour')); ?>;
+            // 系统时区与utc的时间差
+            Q['utc_offset'] = <?php echo Date::get_timezone_offset('UTC') * 1000;//毫秒数?>
+        })(jQuery);
+    </script>
+
+    <?php
+    if (Lab::get('online.kf5')) {
+        echo Event::trigger('support.online.kf5');
+    }
+    ?>
+
+</head>
+<body style="background-image: url(images/background.png);">
+<?php
+if ($_SESSION['system.current_layout_url'] == 'login'
+    || $_SESSION['system.current_layout_url'] == 'error/401'
+    || $_SESSION['system.current_layout_url'] == '!labs/signup'
+    || $_SESSION['system.current_layout_url'] == '!labs/signup/lab'
+    || (!Auth::logged_in() && $_SESSION['system.current_layout_url'] == '')
+) :
+    ?>
+    <div class="center_content login_page">
+        <?php echo V('message'); ?>
+        <div class="center_pos"><?php echo $this->body ?></div>
+    </div>
+<?php else: ?>
+    <div style="width: 100%;height: 100%;min-width:1280px;" id="layout_body">
+        <div class="center_content">
+            <?php echo $this->breadcrumb; ?>
+            <?php if ($this->title): ?>
+                <div style="background-color: #ffffff;padding:12px 0 0 23px;">
+                    <span class="header_title"><?php echo T($this->title); ?></span>
+                </div>
+            <?php endif; ?>
+            <?php echo V('message'); ?>
+            <?php echo $this->header_content ?></div>
+        <div class="body"><?php echo $this->body ?></div>
+    </div>
+    <?php echo $this->controller->load_js(FALSE); ?>
+
+    <script>
+        var current = <?php echo JS::quote($_SESSION['system.current_layout_url']); ?>;
+        var cur = current.split(/[!/]/);
+        cur.splice(0, 1);
+        for (var i = cur.length; i > 0; i--) {
+            var cur_class = '.list_item_' + cur.join("_");
+            if ($('#sidebar ' + cur_class).length > 0) {
+                $('#sidebar ' + cur_class + ' a span').addClass('cur_class');
+                $('#sidebar ' + cur_class).addClass('active');
+                $('#sidebar ' + cur_class).parent().addClass('items_color_select');
+                $('#sidebar ' + cur_class).parent().prev().addClass('category_color_select');
+                break;
+            }
+            cur.splice(i - 1, 1);
+        }
+        $('#layout_body').css('width', Math.max(document.body.clientWidth, $('div.tabs_container .tabs .tabs_body .tabs_content').width() + 16, 1200));
+    </script>
+<?php endif; ?>
+</body>
+</html>

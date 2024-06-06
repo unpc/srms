@@ -1,0 +1,12 @@
+<div role="alert" class="message message_success" style="z-index: 2000;display:none">
+    <i class="message_icon icon_success"></i>
+    <p class="message_content"><?php echo I18N::T('equipments', '用户标签设置成功!')?></p>
+</div>
+
+<script>
+  $('.message').slideToggle();
+  setTimeout(() => {
+    $('.message').slideToggle();
+  }, 2000);
+</script>
+

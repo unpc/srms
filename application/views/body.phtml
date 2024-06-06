@@ -1,0 +1,8 @@
+<?php 
+
+if (!Auth::logged_in()) {
+	echo Event::trigger('login.view') ? : V('application:login');
+}
+else {
+	echo V('application:menu', $this->vars);
+}

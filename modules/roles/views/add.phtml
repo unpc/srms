@@ -1,0 +1,26 @@
+<div class="form">
+    <form method="post" q-object="add_role" q-event="submit" action="<?php echo H(URI::url('!roles/index')) ?>"
+          autocomplete="off">
+        <?php echo V('form_error', ['form' => $form]);?>
+        <table class="form">
+            <tbody>
+            <tr>
+                <td class=" left nowrap label">
+                    <?php echo I18N::T('roles', '角色名称') ?>
+                </td>
+                <td>
+                    <input name="name" placeholder="请输入" class="text" value="<?php echo H($form['name']) ?>"/></td>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="button_container">
+            <div class="float_right">
+                <input type="button" name="cancel" id="cancel" class="font-button-default  sm rmargin_2e4"
+                       value="<?php echo H(I18N::T('labs', '取消')) ?>"/>
+                <input type="submit" name="submit" class="font-button-save sm"
+                       value="<?php echo H(I18N::T('labs', '保存')) ?>"/>
+            </div>
+        </div>
+    </form>
+</div>

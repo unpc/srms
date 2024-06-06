@@ -1,0 +1,115 @@
+<?php
+	$me = L("ME");
+	$require = (string)V('form_require');
+?>
+<div class="form">
+    <div class="interval_20"></div>
+	<h2 class="section_title"><?php echo I18N::HT('achievements', '从公共数据库导入')?></h2>
+	<div class="interval_20"></div>
+	<div>
+		<?php 
+			$basic_info_tbody_id = 'tbody_' . uniqid();
+			$q_static = [
+				'basic_info_tbody_id'=>$basic_info_tbody_id
+			];
+			$sites = (array) Config::get('achievements.publication.collect.sites');
+			foreach ($sites as $site_name=>$site_info) :
+				$q_static['type'] = $site_name;
+		?>
+		<a q-object="site_logo" q-event="click" q-static="<?php echo H($q_static);?>" href="#"><img src="<?php echo H($site_info['logo']) ?>" /></a>
+		<?php endforeach;?>
+	</div>
+    <div class="interval_40"></div>
+</div>
+<form method="post"  class="edit" action="<?php echo H(URI::url()) ?>">
+<div class="form">
+<table class="flexible">
+<tr>
+<td>
+	<h2 class="section_title"><?php echo I18N::HT('achievements', '或直接录入') ?></h2>
+	<div class="interval_20">&#160;</div>
+	<?php echo V('form_error', ['form'=>$form]);?>
+	<table class="form flexible">
+		<tbody id="<?php echo H($basic_info_tbody_id) ?>">
+			<?php echo V('publications/edit.basic.info', ['form'=>$form, 'publication'=>$publication]);?>
+		</tbody>
+		<tbody>
+			<?php
+				echo $GLOBALS['preload']['people.multi_lab'] ?
+					V("publications/edit.mlab.info", ['form' => $form, 'publication' => $publication]) :
+					V("publications/edit.lab.info", ['form' => $form, 'publication' => $publication]);
+			?>
+            <tr><td><div class="interval_20"></div> </td></tr>
+			<tr>
+				<td class="label left nowrap top lpadding_21"><?php echo I18N::T('achievements', '标签')?></td>
+				<?php
+					$root = Tag_Model::root('achievements_publication');
+					$tags = (array) Q("$publication tag_achievements_publication[root=$root]")->to_assoc('id','name');
+					if(count($tags)) {
+						$tags = json_encode($tags, TRUE);
+					}
+					else{
+						$tags = '';
+					}
+				?>
+				<td class="middle" colspan="2">
+				<?php
+					echo Widget::factory('achievements:tag_selector', [
+							'autocomplete'=> URI::url('!achievements/publications/autocomplete/tags'),
+							'name'=>'tags',
+							'value'=> $form->no_error ? $tags : $form['tags']
+					]);
+				?>
+				</td>
+			</tr>
+			<tr><td><div class="interval_20"></div> </td></tr>
+			<tr>
+				<td class="label left nowrap top lpadding_21">
+					<?php echo I18N::T('achievements', '影响因子') ?>
+					<br>
+        			<?php echo V('form_filter', ['error'=>$form->errors['impact'][0]]); ?>
+				</td>
+				<td class="middle" colspan="2">
+					 <input type="text" name="impact" size="50" class="text" value="<?php echo H($form->no_error ? $publication->impact : $form['impact'] ) ?>" />
+				</td>
+			</tr>
+            <tr><td><div class="interval_20"></div> </td></tr>
+			<tr> 
+				<td class="label left nowrap top lpadding_21">
+					<?php echo I18N::T('achievements', '备注') ?>
+				</td>
+				<td  class="middle" colspan="2">
+					<textarea name="notes" class="text autogrow"  rows="3"  style="height:60px; width: 100%"><?php echo $form->no_error ? $publication->notes : $form['notes'] ?></textarea>
+				</td>
+			</tr>
+			<?php if (Module::is_installed('nfs')) : ?>
+            <tr><td><div class="interval_20"></div> </td></tr>
+			<tr>
+				<td class="left nowrap top label lpadding_21">
+					<?php echo I18N::T('achievements', '附件'); ?>
+				</td>
+				<td class="left nowrap">
+					<?php echo V('achievements:attachments', ['achievement'=> $publication->id ? $publication : O('publication')]);?>
+				</td>
+			</tr>
+			<?php endif;?>
+            <tr><?php echo $view; ?></tr>
+            <tr><td><div class="interval_60"></div> </td></tr>
+			<tr>
+				<td></td>
+			    <td>
+				<div class="float_right">
+   					<input type="reset" name="reset" class="font-button-default rmargin_16" value="取消">
+    				<input type="submit" name="submit" class="font-button-save" value="<?php echo H(I18N::T('achievements','提交')) ?>">
+				</div>
+				<div class="interval_60"></div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</td>
+</tr>
+</table>
+</div>
+
+</form>

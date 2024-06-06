@@ -1,0 +1,15 @@
+<div class="form">
+	<form action="<?php echo H(URI::url('!eq_charge/report', ['type'=>'csv', 'form_token'=>$form_token])) ?>" class="prevent_default" method="post">
+		<div class="hr_2"></div>
+		<ul class="ep_triple">
+			<?php
+			foreach ($columns as $p => $p_name) :?>
+				<li class="nowrap"> 
+					<?php echo Form::checkbox("columns[{$p}]", TRUE, I18N::T('eq_charge', $p_name), 'class="middle monitor"', 'class="middle"');?>
+				</li>
+			<?php endforeach;?>
+		</ul>
+		<div class="hr_2"></div>
+		<input type="submit" name="submit" class="button button_edit middle" value="<?php echo H(I18N::T('eq_charge', '提交')) ?>" />
+	</form>
+</div>

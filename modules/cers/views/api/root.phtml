@@ -1,0 +1,79 @@
+<?php 
+	echo '<?xml version="1.0" encoding="UTF-8"?>'; 
+	$xmlencode = function ($string) { return htmlspecialchars($string); };
+?>
+<Root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="InstrusAndGroups.xsd">
+	<Instrus>
+		<?php foreach ($instrusConfigs as $config): ?>
+		<Instru>
+			<SchoolCode><?php echo $xmlencode($config['SchoolCode'])?></SchoolCode>
+			<InnerID><?php echo $xmlencode($config['InnerID'])?></InnerID>
+			<AssetsCode><?php echo $xmlencode($config['AssetsCode'])?></AssetsCode>
+			<ClassificationCode><?php echo $xmlencode($config['ClassificationCode'])?></ClassificationCode>
+			<CHNName><?php echo $xmlencode($config['CHNName'])?></CHNName>
+			<ENGName><?php echo $xmlencode($config['ENGName'])?></ENGName>
+			<Alias><?php echo $xmlencode($config['Alias'])?></Alias>
+			<Model><?php echo $xmlencode($config['Model'])?></Model>
+			<TechParameter><?php echo $xmlencode($config['TechParameter'])?></TechParameter>
+			<ApplicationArea><?php echo $xmlencode($config['ApplicationArea'])?></ApplicationArea>
+			<ApplicationCode><?php echo $xmlencode($config['ApplicationCode'])?></ApplicationCode>
+			<Accessory><?php echo $xmlencode($config['Accessory'])?></Accessory>
+			<Certification><?php echo $xmlencode($config['Certification'])?></Certification>
+			<Manufacturer><?php echo $xmlencode($config['Manufacturer'])?></Manufacturer>
+			<ManuCertification><?php echo $xmlencode($config['ManuCertification'])?></ManuCertification>
+			<ManuCountryCode><?php echo $xmlencode($config['ManuCountryCode'])?></ManuCountryCode>
+			<PriceRMB><?php echo $xmlencode($config['PriceRMB'])?></PriceRMB>
+			<PriceUnit><?php echo $xmlencode($config['PriceUnit'])?></PriceUnit>
+			<Price><?php echo $xmlencode($config['Price'])?></Price>
+			<ProduceDate><?php echo $xmlencode($config['ProduceDate'])?></ProduceDate>
+			<PurchaseDate><?php echo $xmlencode($config['PurchaseDate'])?></PurchaseDate>
+			<ServiceDate><?php echo $xmlencode($config['ServiceDate'])?></ServiceDate>
+			<ImageURL><?php echo $xmlencode($config['ImageURL'])?></ImageURL>
+			<Organization><?php echo $xmlencode($config['Organization'])?></Organization>
+			<GroupID><?php echo $xmlencode($config['GroupID'])?></GroupID>
+			<Location><?php echo $xmlencode($config['Location'])?></Location>
+			<ZIPCode><?php echo $xmlencode($config['ZIPCode'])?></ZIPCode>
+			<ContactPerson><?php echo $xmlencode($config['ContactPerson'])?></ContactPerson>
+			<Telephone><?php echo $xmlencode($config['Telephone'])?></Telephone>
+			<Email><?php echo $xmlencode($config['Email'])?></Email>
+			<ShareLevel><?php echo $config['ShareLevel'] ? join('', (array)$config['ShareLevel']) : 0?></ShareLevel>
+			<OpenCalendar><?php echo $xmlencode($config['OpenCalendar'])?></OpenCalendar>
+			<ServiceCharge><?php echo $xmlencode($config['ServiceCharge'])?></ServiceCharge>
+			<ServiceUsers><?php echo $xmlencode($config['ServiceUsers'])?></ServiceUsers>
+			<ServiceAchievements><?php echo $xmlencode($config['ServiceAchievements'])?></ServiceAchievements>
+			<State><?php echo $xmlencode($config['State'])?></State>
+			<URL><?php echo $xmlencode($config['URL'])?></URL>
+			<UpdateDate><?php echo $xmlencode($config['UpdateDate'])?></UpdateDate>
+			<OtherInfo><?php echo $xmlencode($config['OtherInfo'])?></OtherInfo>
+		</Instru>
+		<?php endforeach; ?>
+	</Instrus>
+	<Groups>
+		<?php foreach ($groupsConfigs as $group): ?>
+		<Group>
+			<SchoolCode><?php echo $group['SchoolCode']?></SchoolCode>
+			<InnerID><?php echo $group['InnerID']?></InnerID>
+			<Name><?php echo $xmlencode($group['Name'])?></Name>
+			<ShortName><?php echo $xmlencode($group['ShortName'])?></ShortName>
+			<Type><?php echo $xmlencode($group['Type'])?></Type>
+			<Principal><?php echo $xmlencode($group['Principal'])?></Principal>
+			<ContactPerson><?php echo $xmlencode($group['ContactPerson'])?></ContactPerson>
+			<Address><?php echo $xmlencode($group['Address'])?></Address>
+			<ZIPCode><?php echo $xmlencode($group['ZIPCode'])?></ZIPCode>
+			<Telephone><?php echo $xmlencode($group['Telephone'])?></Telephone>
+			<Fax><?php echo $xmlencode($group['Fax'])?></Fax>
+			<Email><?php echo $xmlencode($group['Email'])?></Email>
+			<StartDate><?php echo $xmlencode($group['StartDate'])?></StartDate>
+			<ImageURL><?php echo $xmlencode($group['ImageURL'])?></ImageURL>
+			<Introduction><?php echo $xmlencode($group['Introduction'])?></Introduction>
+			<Strength><?php echo $xmlencode($group['Strength'])?></Strength>
+			<Expert><?php echo $xmlencode($group['Expert'])?></Expert>
+			<Instrument><?php echo $xmlencode($group['Instrument'])?></Instrument>
+			<Achievement><?php echo $xmlencode($group['Achievement'])?></Achievement>
+			<WebSite><?php echo $xmlencode($group['WebSite'])?></WebSite>
+			<UpdateDate><?php echo $xmlencode($group['UpdateDate'])?></UpdateDate>
+			<OtherInfo><?php echo $xmlencode($group['OtherInfo'])?></OtherInfo>
+		</Group>
+		<?php endforeach; ?>
+	</Groups>
+</Root>

@@ -1,0 +1,40 @@
+<?php
+echo CSS::load_async('eq_sample:common');
+echo JS::load('eq_sample:dropdown_links');
+?>
+
+<?php $me = L('ME'); ?>
+<?php
+	$table = Widget::factory('table');
+	$table->name = 'eq_sample_tested';
+	$table->add_columns($columns->getArrayCopy());
+	$table->empty_message = I18N::T('eq_sample', '没有送样信息');
+	if (count($samples)) {
+
+		// 将$sample存放到table对象中
+		$table->samples = $samples;
+
+		foreach ($samples as $sample) {
+			$links = $sample->links();
+
+			$key = 'sample_' . $sample->id;
+			$row = [
+				'serial_number'=> V('eq_sample:samples_table/data/serial_number', ['sample'=>$sample]),
+				'equipment_name'=>V('eq_sample:samples_table/data/equipment_name', ['sample'=>$sample]),
+				'count' => V('eq_sample:samples_table/data/count', ['sample'=>$sample]),
+                'sender' => V('eq_sample:samples_table/data/sender', ['sample'=>$sample]),
+                'dtctime' => V('eq_sample:samples_table/data/ctime', ['sample'=>$sample]),
+				'dtsubmit' => V('eq_sample:samples_table/data/dtsubmit', ['sample'=>$sample]),
+				'dtpickup' => ($sample->status != EQ_Sample_Model::STATUS_APPLIED && $sample->dtpickup) ? V('eq_sample:samples_table/data/dtpickup', ['sample'=>$sample]) : '--',
+				'operator' => V('eq_sample:samples_table/data/operator', ['sample'=>$sample]),
+				'description' => V('eq_sample:samples_table/data/description', ['sample'=>$sample]),
+				'rest'=> Widget::factory('application:links', ['links'=>$links]),
+            ];
+            $row = new ArrayIterator($row);
+            $table->add_row_withkey($row, $key);
+		}
+	}
+
+	echo $table;
+?>
+<div class="pages"><?= $pagination ?></div>

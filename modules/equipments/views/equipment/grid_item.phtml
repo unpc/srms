@@ -1,0 +1,19 @@
+<div class="image_display content">
+<ul class="nolist">
+	<li class="icon middle">
+		<a href="<?php echo H(URI::url('!equipments/equipment/index.'.$object->id.'?view_mode='.$view_mode)) ?>"><?php echo $object->icon('64') ?></a>
+		<?php if ($object->control_mode && $object->control_mode != 'nocontrol'): ?>
+		<div class="control_status_box"><?php echo V('equipments:equipment/control_status', ['equipment'=>$object]); ?></div>
+		<?php
+		endif;
+		$status_tags = (string) $object->status_tags(); 
+		if ($status_tags): ?>
+		<div class="nowrap status_tags"><?php echo $status_tags ?></div>
+		<?php endif; ?>
+	</li>
+	<li class="title nowrap">
+		<strong class="name"><?php $object->render() ?></strong>
+	</li>
+	<li class="hr_1">&#160;</li>
+</ul>
+</div>

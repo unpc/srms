@@ -1,0 +1,43 @@
+<div class="form lpadding_2 rpadding_2 tpadding_2" style="width: 438px">
+  <form method="post" autocomplete="off" q-event="submit" q-object="edit_violate_eq" q-static="<?php echo H(['id'=>$violate->id])?>" >
+    <?php echo V('form_error', ['form'=>$form]);?>
+    <?php $require = (string) V('form_require'); ?>
+    <table class="form flexible">
+      <tbody>
+      <tr>
+        <td class="top label left nowrap"><?php echo I18N::T('eq_ban', '用户')?></td>
+        <td class="nowrap">
+          <?php echo H($violate->user->name)?>
+        </td>
+      </tr>
+      <tr>
+        <td class="top label left nowrap"><?php echo I18N::T('eq_ban', '违规仪器')?></td>
+        <td>
+          <?php
+            echo $violate->equipment->name; 
+          ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="top label left nowrap"><?php echo I18N::T('eq_ban', '违规原因')?></td>
+        <td class="top nowrap">
+          <textarea class="top" name="reason" rows="3" cols="37" class="autogrow"><?php echo $form['reason'] ? : $violate->reason ?></textarea>
+          <?php echo $require; ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="top label left nowrap"><?php echo I18N::T('eq_ban', '违规时间')?></td>
+        <td class="top nowrap">
+          <input name="ctime" class="text date" value="<?php echo H($form['ctime'] ? : $violate->ctime) ?>" q-date_format="<?php echo HT('$year/$month/$day')?>" />
+          <?php echo $require;?>
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="float_right">
+          <input type="submit" name="submit" class="font-button-save sm" value="<?php echo H(I18N::T('eq_ban', '保存')) ?>" />
+        </td>
+      </tr>
+    </table>
+  </form>
+</div>

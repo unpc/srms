@@ -1,0 +1,77 @@
+<div class="clearfix">
+    <ul class="stat">
+        <a href="<?= URI::url()?>" q-object="todo" q-event="click" q-src="" q-static="<?= H(['uid'=>$user->id])?>">
+            <li>
+                <div class="up">
+                    <span class="num"><?php echo H($stat['todo']); ?></span>
+                </div>
+                <div class="down"><?php echo I18N::HT('people', '待办事宜|:stat'); ?><span class="unit">（个）</span></div>
+            </li>
+        </a>
+        <li>
+            <a href="<?= H($user->url('eq_training.approved')); ?>">
+                <div class="up">
+                    <span class="num"><?php echo H($stat['job']); ?></span>
+                </div>
+                <div class="down"><?php echo I18N::HT('people', '上岗资质|:stat'); ?><span class="unit">（个）</span></div>
+            </a>
+        </li>
+        <?php if (Module::is_installed('achievements')): ?>
+        <li>
+            <div class="up">
+                <span class="num"><?php echo H($stat['research']); ?></span>
+            </div>
+            <div class="down"><?php echo I18N::HT('people', '科研成果|:stat'); ?><span class="unit">（个）</span></div>
+        </li>
+        <?php endif; ?>
+        <?php if (Module::is_installed('credit')): ?>
+            <li class="last">
+                <a href="<?= H($user->url('credit_record')); ?>">
+                <div class="up">
+                    <?php if (true || (!$user->access('管理所有内容') && !$user->access('管理组织机构'))):?>
+                        <span class="num" style="padding-right: 16px;"><?php echo H($stat['credit_score']); ?></span>
+                    <?php else: ?>
+                        <span class="num"><?php echo H($stat['credit_score']); ?></span>
+                    <?php endif; ?>
+                </div>
+                <div class="down brief_tip_div">
+                    <?php echo I18N::HT('people', '个人信用|:stat'); ?><span class="unit">（<?php echo I18N::T('credit', '分'); ?>）</span>
+                    <?php if (true || (!$user->access('管理所有内容') && !$user->access('管理组织机构'))):?>
+                        <a class="fa icon-tips" href="#" onclick="(function($,t){$(t).toggle();$(this).toggleClass('link_fade');}).apply(this, [jQuery, '#brief_tip']); return false;" title="<?php echo HT('提示')?>"></a>
+                        <div id="brief_tip" class="tip hidden brief_tip" style="height: auto; width: 350px; padding-bottom: 10px;">
+                            <?php
+                            echo I18N::HT('credit', '信用分使用资格限制阀值:');
+                            $credit_measures = Q("credit_measures[ref_no!=send_msg][type=" . Credit_Measures_Model::TYPE_PUNISHMENT . "]");
+                            foreach ($credit_measures as $measure) {
+                                $credit_limit = Credit_Limit::get_punishment_limit($user, $measure);
+                                if ($credit_limit->id) {
+                                    switch($measure->ref_no) {
+                                        case 'can_not_reserv':
+                                        case 'ban':
+                                        case 'unactive_user':
+                                            echo "</br>当您的信用分降至{$credit_limit->score}时, 您将被{$measure->name}";
+                                            break;
+                                        case 'system_ban':
+                                            echo "</br>当您同时存在于{$credit_limit->score}台仪器黑名单内时, 您将被自动被加入系统黑名单";
+                                            break;
+                                        case 'eq_ban':
+                                            echo "</br>当您触发单台仪器扣分项{$credit_limit->score}次时，您将被自动加入该仪器黑名单";
+                                            break;
+                                        case 'lab_ban':
+                                            echo "</br>当您所在课题组成员出现{$credit_limit->score}人及以上被加入系统黑名单时, 您将被自动被加入系统黑名单";
+                                            break;
+                                    }
+                                }
+                            }
+                            ?>
+                        </div>
+                    <?php endif;?>
+                </div>
+                <div>
+                </div>
+            </a>
+        </li>
+        <?php endif; ?>
+    </ul>
+</div>
+<div class="interval_12"></div>

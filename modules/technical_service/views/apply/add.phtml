@@ -1,0 +1,94 @@
+<style>
+    .wid6 {
+        width: 7rem;
+    }
+</style>
+<div class="form" style="min-width:550px">
+    <?php
+    $form_id = 'add_sample_' . uniqid();
+    $notice = Event::trigger('service.notice');
+    if ($notice) :
+        ?>
+        <div class="message message_normal clearfix nowrap"><?= H($notice); ?></div>
+    <?php
+    endif;
+    if (isset($message)):
+        ?>
+        <div class="message message_error clearfix nowrap"><?php echo H($message); ?></div>
+    <?php endif; ?>
+    <?php $require = (string)V('form_require', ['extra_class' => 'right']); ?>
+    <form q-object="add" q-event="submit" q-src="<?php echo H(URI::url('!technical_service/apply')) ?>"
+          autocomplete="off" method="post" id="<?php echo H($form_id) ?>">
+        <?php echo V('form_error', ['form' => $form]); ?>
+        <input name="service_id" type="hidden" value="<?php echo H($service->id) ?>"/>
+        <table class="form" width="100%">
+            <tr class="begin">
+                <td class="label left top nowrap blue"><h1><?php echo I18N::HT('technical_service', '基础信息'); ?></h1>
+                </td>
+                <td class="right description middle red">*&nbsp;必填项</td>
+            </tr>
+            <tr>
+                <td class="right wid6">
+                    <?= $require ?><?= I18N::T('technical_service', '样品数量') ?>
+                </td>
+                <td>
+                    <input type="number" value="<?= $form['samples'] ?? 1 ?>" name="samples" class="text number"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="right wid6 top">
+                    <?= I18N::T('technical_service', '样品描述') ?>
+                </td>
+                <td>
+                    <textarea class="text"
+                              style="word-break: break-word;white-space: normal;line-height: normal;height: 60px;width: 100%;"
+                              cols="4" rows="20"
+                              name="samples_description"><?= $form['samples_description'] ?></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td class="right wid6">
+                    <?= $require ?><?= I18N::T('technical_service', '期望完成时间') ?>
+                </td>
+                <td>
+                    <input id="dtrequest" name="dtrequest" class="text date small_search_text" style="width: 95%"
+                           value="<?php echo (int)$form['dtrequest'] ?: time(); ?>"/>
+                </td>
+            </tr>
+            <?php
+            $extra = Extra_Model::fetch($service, 'apply');
+            $has_extra = false;
+            $extra_param = json_decode($extra->params_json,true) ?: [];
+            foreach($extra_param as $e){
+                if(!empty($e)){
+                    $has_extra = true;
+                    break;
+                }
+            }
+            if($has_extra):
+            ?>
+            <?php
+            $extra_value = O('extra_value', ['object' => $apply]);
+            if ($extra_value->id) $values = $extra_value->values;
+            echo V('technical_service:extra/display', ['extra' => $extra, 'form' => $form, 'values' => $values, 'sample' => $sample]);
+            ?>
+            <?php endif;?>
+            <tr>
+                <td></td>
+                <td>
+                    <div class="button_container">
+                        <div class="float_right">
+                            <input type="button" name="cancel" id="cancel" class="font-button-default sm"
+                                   value="<?php echo H(I18N::T('labs', '取消')) ?>"/>
+                            <input type="submit" name="submit" class="font-button-save"
+                                   value="<?php echo H(I18N::T('labs', '确认预约')) ?>"/>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+
+    </form>
+
+</div>

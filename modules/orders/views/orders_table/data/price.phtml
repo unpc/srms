@@ -1,0 +1,7 @@
+<?php
+if ($order->price < 0) {
+    echo I18N::T('orders', '待询价');
+}
+else {
+    echo H(Number::currency($order->price));
+}

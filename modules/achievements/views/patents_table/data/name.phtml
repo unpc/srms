@@ -1,0 +1,5 @@
+<?php if(L('ME')->is_allowed_to('查看成果', $patent->lab)):?>
+<a href="<?php echo H($patent->url(NULL,NULL,NULL,'view') ) ?>"><?php echo H($patent->name); ?></a>
+<?php else:?>
+<strong><?php echo H($patent->name);?></strong>
+<?php endif;?>

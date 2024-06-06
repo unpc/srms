@@ -1,0 +1,27 @@
+<?php
+if (Config::get('equipment.location_type_select')):
+    ?>
+    <p>
+        <?php
+            $tag_location_root = Tag_Model::root('location');
+            $ls = Q("{$equipment} tag_location:not({$tag_location_root})")->to_assoc('id', 'name');
+            if (count($ls)) {
+                echo join('  &#187; ', $ls);
+            }else{
+                echo '--';
+            }
+        ?>
+    </p>
+    <p>
+    </p>
+<?php else: ?>
+    <p>
+        <?php
+        if (!$equipment->location) echo "--";
+        else {
+            if ($equipment->location) echo H($equipment->location);
+        }
+
+        ?>
+    </p>
+<?php endif; ?>

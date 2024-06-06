@@ -1,0 +1,6 @@
+<?php
+if ($lab->auditor->id): ?>
+<a href="<?php echo H($lab->auditor->url()) ?>"><?php echo H($lab->auditor->name) ?></a>
+<?php else:
+	echo '--';
+endif;

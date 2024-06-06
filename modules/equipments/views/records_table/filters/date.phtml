@@ -1,0 +1,5 @@
+<?php
+    $this->dtstart = $this->dtstart ? date('Y-m-d', $this->dtstart) : '';
+    $this->dtend = $this->dtend ? date('Y-m-d', $this->dtend) : '';
+ ?>
+<input id="dtstart" autocomplete="off" name="dtstart" date_type="date" class="text date small_search_text" value="<?php echo H($this->dtstart) ?>" /><span class="middle description date_interval">-</span><input autocomplete="off" id="dtend" name="dtend" date_type="date" class="text small_search_text date" value="<?php echo H($this->dtend); ?>" />

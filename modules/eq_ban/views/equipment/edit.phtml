@@ -1,0 +1,60 @@
+
+<div class="form lpadding_2 rpadding_2 tpadding_2">
+<form method="post" autocomplete="off" q-event="submit" q-object="edit_ban_eq" q-static="<?php echo H(['id'=>$ban->id])?>" >
+    <?php echo V('form_error', ['form'=>$form]);?>
+    <?php $require = (string) V('form_require'); ?>
+    <table class="form flexible">
+      <tbody>
+      <tr>
+        <td class="top label left nowrap"><?php echo I18N::T('eq_ban', '用户')?></td>
+        <td class="middle nowrap">
+          <?php echo H($ban->user->name)?>
+          <?php if (Module::is_installed('labs') && $ban->lab->id): ?>
+            <span class="description"><?php echo H($ban->lab->name)?></span>
+          <?php endif;?>
+        </td>
+      </tr>
+      <tr>
+        <td class="top label left nowrap"><?php echo I18N::T('eq_ban', '封禁仪器')?></td>
+        <td>
+          <?php
+            echo Widget::factory('application:equipment_selector', [
+              'name' => 'eq_id',
+              'equipment' => $form['eq_id'] ? : $ban->object->id,
+              'autocomplete' => URI::url('!eq_ban/autocomplete/equipment'),
+            ]); 
+          ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="top label left nowrap">
+        <?php echo I18N::T('eq_ban', '封禁原因')?>
+          <?php echo $require; ?>
+          <br>
+          <?php echo V('form_filter',['error'=>$form->errors['reason'][0]])?>
+        </td>
+        <td class="top">
+          <textarea style="line-height: normal;" class="top autogrow reason" name="reason" rows="3" cols="37"><?php echo $form['reason'] ? : $ban->reason ?></textarea>
+        </td>
+      </tr>
+      <tr>
+        <td class="top label left nowrap"><?php echo I18N::T('eq_ban', '到期时间')?><?php echo $require;?>
+        <br>
+        <?php echo V('form_filter',['error'=>$form->errors['atime'][0]])?>
+        </td>
+
+        <td class="top nowrap">
+          <input name="atime" class="text date" date_type="date" value="<?php echo H($form['atime'] ? : $ban->atime) ?>" />
+          
+        </td>
+      </tr>
+     
+    </table>
+    <div class="button_container">
+    <div class="float_right">
+    <input name="cancel" id="cancel" type='reset' class="font-button-default sm rmargin_2e4" value="<?php echo I18N::HT('eq_ban', '取消');?>" />
+    <input name="submit" type='submit' class="font-button-save sm" value="<?php echo I18N::HT('eq_ban', '保存');?>" />
+    </div>
+    </div>
+  </form>
+</div>

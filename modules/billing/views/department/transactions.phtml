@@ -1,0 +1,67 @@
+<?php echo CSS::load_async('billing:common'); ?>
+<!--<div class="clearfix">-->
+<!--	<div class="float_left">-->
+<!--		<a class="button button_save" q-object="export" q-event="click" q-src="!billing/transactions" q-static="--><?php //echo H(['type'=>'csv','form_token'=>$form_token]) ?><!--">--><?php //echo I18N::T('billing', '导出Excel')?><!--</a>-->
+<!--		<a class="button button_print " q-object="export" q-event="click" q-src="!billing/transactions" q-static="--><?php //echo H(['type'=>'print','form_token'=>$form_token, 'dept'=>$department->id]) ?><!--" target="_blank" >--><?php //echo I18N::T('billing', '打印')?><!--</a>-->
+<!--	</div>-->
+<!--	<div class="float_right transaction_count">-->
+<!--		<div class="inline_block">-->
+<!--           --><?php
+//           echo I18N::T('billing', '共有 %total_count 条明细', [
+//               '%total_count' => '<span class="eq_number">'.intval($transactions->total_count()).'</span>'
+//           ]);
+//           ?>
+<!--		</div>-->
+<!--	</div>-->
+<!--</div>-->
+<?php //echo $pagination; ?>
+<?php
+/*
+	NO. TASK#249 (Cheng.Liu@2010.11.18)
+	billing模块 transaction列表转换成 table widget
+*/
+$table = Widget::factory('table', ['extra_class'=>'account_grid']);
+$table->name = 'billing_transactions';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+//传递 transactions
+$table->transactions = $transactions;
+
+//传递 department
+$table->department = $department;
+
+//传递 form
+$table->form = $form;
+
+$table->add_columns($column);
+
+$table->empty_message = I18N::T('billing','没有符合条件的明细');
+
+if (count($transactions) > 0) {
+	foreach ($transactions as $transaction) {
+		$links = $transaction->links();
+        $key = 'transaction_'. $transaction->id;
+        $row = [
+//			'@'=> [
+//				'view' => V('billing:transactions_table/data/id', ['object'=>$transaction]),
+//				'extra' => 'style="padding:4px" align="right" align="right"',
+//			],
+            'transaction_id'=>V('billing:transactions_table/data/id', ['object'=>$transaction]),
+			'certificate'=>V('billing:transactions_table/data/certificate', ['object'=>$transaction]),
+			'lab_id'=>V('billing:transactions_table/data/lab_name', ['object'=>$transaction]),
+            'date'=>V('billing:transactions_table/data/date', ['object'=>$transaction]),
+            'income'=>V('billing:transactions_table/data/income', ['object'=>$transaction]),
+            'outcome'=>V('billing:transactions_table/data/outcome', ['object'=>$transaction]),
+			'description'=>V('billing:transactions_table/data/description', ['object'=>$transaction]),
+			'rest'=>Widget::factory('application:links', ['links' => $links])
+        ];
+        $extra_row = Event::trigger('extra.transactions.row', $transaction);
+        if ($extra_row) {
+            $row += $extra_row;
+        }
+        $table->add_row_withkey($row, $key);
+	}
+}
+echo '<div class="pages">'.$pagination.'</div>';
+echo $table;

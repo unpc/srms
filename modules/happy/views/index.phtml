@@ -1,0 +1,93 @@
+	<div class="hr_1">&nbsp;</div>
+	<div style="padding-top:0px">
+		<?php $me = L('ME');if ($me->is_allowed_to('创建', 'happyhour')): ?>
+			<div class="panel clearfix">
+				<div class="float_left padding_1 nowrap" style="line-height:24px">
+					<a href="<?php echo H(URI::url('!happy/add') ) ?>" class="button button_add middle"><?php echo I18N::T('happy', '创建活动')?></a>
+				</div>
+			</div>
+		<?php endif; ?>
+	<?php echo $pagination; ?>
+	</div>
+	<?php
+	$me = L('ME');
+	$table = Widget::factory('table');
+	$table->name = 'happyhour';
+	$table->sort_asc = $sort_asc;
+	$table->sort_by = $sort_by;
+   
+	$columns = [
+     	'@' => NULL,
+	    'creater' => [
+			'weight' => 20,
+			'title' => I18N::T('happyhour', '发起人'),
+			'sortable' => TRUE,
+			'align' =>' left',
+			'nowrap' => TRUE,
+			'filter' => [
+				'form' => V('happy:search_filter/creater', ['form' => $form]),
+				'value' => $form['creater'] ? H($form['creater']) : NULL,
+	            'field' => 'creater'
+			]
+		],
+		'title' => [
+			'weight' => 20,
+			'title' => I18N::T('happyhour', '标题'),
+			'sortable' => TRUE,
+			'align' => 'left',
+			'nowrap' => TRUE,
+			'filter' => [
+				'form' => V('happy:search_filter/title', ['form' => $form]),
+				'value' => $form['title'] ? H($form['title']) : NULL,
+	            'field' => 'title'
+			]
+		],
+		'ctime' => [
+			'weight' => 20,
+			'title' => I18N::T('happyhour', '发起时间'),
+			'sortable' => TRUE,
+			'align' => 'left',
+			'nowrap' => TRUE,
+		],
+		'dtime' => [
+			'weight' => 20,
+			'title' => I18N::T('happyhour', '截至时间'),
+			'sortable' => TRUE,
+			'align' => 'left',
+			'nowrap' => TRUE,
+		],
+
+	];
+	
+	if ($me->is_allowed_to('创建', 'happyhour')) {
+	    $columns['rest'] = [
+		'align'=>'right', 
+		'nowrap'=>TRUE,
+	    ];
+	}
+
+        foreach ($happyhours as $happyhour) { 
+        	//$links = '';
+        	//if($happyhour->dtime > time()) {
+       			$links = $happyhour->links('edit');
+       		//}	
+			$table->add_row([
+			'@' => [
+				'view' => $happyhour->icon('32', 'style="display:block"'),
+				'extra' => 'style="padding:4px" align="right"'
+			],
+			'creater' => V('happy:happy_table/data/creater', ['happyhour' => $happyhour]),
+			'title' => V('happy:happy_table/data/title', ['happyhour' => $happyhour]),
+			'body' => V('happy:happy_table/data/body', ['happyhour' => $happyhour]),
+			'ctime' => Date::format($happyhour->ctime),
+			'dtime' => Date::format($happyhour->dtime),
+			'rest' => Widget::factory('application:links', ['links' => $links])
+				]);
+		}
+	    $table->add_columns($columns);
+	    $table->empty_message = I18N::T('happyhour', '没有活动安排');
+	    echo $table;
+	    echo $pagination;
+		?>
+
+

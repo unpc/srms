@@ -1,0 +1,21 @@
+<div class="form padding_2">
+	<table class="form" style="width: 100%">
+        <?php foreach ($confirms as $key=>$confirm) {?>
+            <tr>
+                <td>
+                    <div class="nowrap padding_2"><?=H($confirm['message'])?></div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="float_right">
+                    <a class="font-button-default rmargin_2e4 close_dialog" href="javascript:return;" onclick="$(this).parents('.dialog').find('.dialog_close').click();"><?php echo I18N::T('eq_sample','关闭')?></a>
+                    <a href="<?=$confirm['url']?>"
+                        target="_blank"
+                        class="prevent_default font-button-save"
+                    ><?=$confirm['confirm']?></a>
+                </td>
+            </tr>
+        <?php } ?>
+	</table>
+</div>

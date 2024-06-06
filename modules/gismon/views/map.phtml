@@ -1,0 +1,25 @@
+<?php $fullscr_id = 'fullscr_'.uniqid(); ?>
+<div id="<?php echo H($fullscr_id) ?>">
+<div class="panel clearfix">
+	<div class="float_right padding_1">
+<?php if (L('ME')->is_allowed_to('修改', 'gis_building')): ?>
+		<a class="button icon-eye button_empty middle" title="查看" id="enter_edit_mode"></a>
+		<a class="button icon-edit button_empty middle" title="编辑" id="exit_edit_mode" style="display:none;"></a>
+<?php endif; ?>
+		<a class="button icon-full_screen middle" title="<?php echo I18N::HT('gismon', '全屏') ?>" href="#" q-fullscreen="<?php echo H($fullscr_id) ?>" onclick="return false"></a>
+	</div>
+	<div class="float_left padding_1">
+		<a class="button middle icon-positioning" title="<?php echo I18N::HT('gismon', '回到中心') ?>" id="goto_center"></a>
+
+		<a class="button middle icon-road" title="<?php echo I18N::HT('gismon', '道路') ?>" id="map_mode_road"></a>
+		<a class="button middle icon-satellite" title="<?php echo I18N::HT('gismon', '卫星') ?>" id="map_mode_hybrid"></a>
+	</div>
+</div>
+<?php $map_id = 'gismon_'.uniqid(); ?>
+<div class="interval_20"></div>
+<div class="gismon_map_container">
+<div id="<?php echo H($map_id) ?>" class="gismon_map">
+</div>
+</div>
+</div>
+<?php echo JS::load('gismon:map', ['map_id' => $map_id, 'latitude'=> (float) $latitude, 'longitude'=> (float) $longitude, 'building_url'=>URI::url('!gismon/building/index.%id.2d')]);

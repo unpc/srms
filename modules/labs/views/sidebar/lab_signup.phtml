@@ -1,0 +1,5 @@
+<?php if (!L('ME')->id && !Config::get('lab.disable_signup_lab', FALSE)): ?>
+<div class="padding_1 center">
+	<h1><a href="<?php echo Module::is_installed('db_sync') ? Event::trigger('db_sync.get_lab_signup_href') : URI::url('!labs/signup/lab') ?>"><?php echo I18N::T('labs', '注册新实验室'); ?></a></h1>
+</div>
+<?php endif; ?>

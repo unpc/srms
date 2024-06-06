@@ -1,0 +1,74 @@
+<?php
+    $users = Q("{$subsite}<incharge user");
+    $incharges = [];
+    
+    foreach ($users as $incharge) {
+        $incharges[$incharge->id] = $incharge->name.'('.Q("{$incharge} lab")->current()->name.')';
+    }
+?>
+<div class="hr_1">&nbsp;</div>
+
+<div style="padding-top:0px">
+<?php $require = V('form_require', ['form' => $form]);?>
+    <div class="form padding_2">
+        <form method="post" q-object="edit_subsite" q-event="submit" q-src="<?php echo H(URI::url('!db_sync/subsite')) ?>">
+            <?php echo V('form_error', ['form' => $form]) ?>
+            <?php $form_table_id = 'form_table_id' . uniqid();?>
+            <input name="id" type="hidden" value="<?php echo $subsite->id ?>"/>
+            <table class="form" id="<?php echo H($form_table_id) ?>">
+                <tbody>
+                    <tr>
+                        <td class="label right nowrap middle"><?php echo I18N::T('vote', '站点标识') ?></td>
+                        <td class="label left top">
+                            <input name="ref_no" class="text" size="40" value="<?php echo H($form['ref_no'] ?: $subsite->ref_no) ?>"/>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="label right nowrap middle"><?php echo I18N::T('vote', '站点名称') ?></td>
+                        <td class="label left top">
+                            <input name="name" class="text" size="40" value="<?php echo H($form['name'] ?: $subsite->name) ?>" /><?php echo $require; ?>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="label right nowrap middle"><?php echo I18N::T('vote', '关联地址') ?></td>
+                        <td class="label left top">
+                            <input name="links" class="text" size="40" value="<?php echo H($form['links'] ?: $subsite->links) ?>" <?php echo $subsite->status == Subsite_Model::CONNECTED ? 'disabled' : '' ?> /><?php echo $require; ?>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="label right nowrap middle"><?php echo I18N::T('vote', '分站管理员') ?></td>
+                        <td class="label left top">
+                            <?php
+                                $user = O('user', $form['user_id']);
+                                if (!$form['user_id']) $user = $subsite->user;
+                                echo Widget::factory('multi_user_selector', [
+                                    'autocomplete' => URI::url('!db_sync/autocomplete/users'),
+                                    'name' => 'incharges',
+                                    'value' => $incharges ? json_encode($incharges) : $form['incharges'],
+                                    'extra'=>'token_verify middle',
+                                    'size'=>'40',
+                                ]);
+                                echo $require;
+                            ?>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="label right nowrap top"><?php echo I18N::T('vote', '备注') ?></td>
+                        <td class="top"><textarea class="text autogrow" rows="3" cols="60" name="description"><?php echo H($form['description'] ?: $subsite->description) ?></textarea></td>
+                    </tr>
+
+                    <tr>
+                        <td class="label right nowrap middle"></td>
+                        <td>
+                            <input type="submit" value="<?php echo H(I18N::T('vote', '保存')) ?>" class="button button_save" name="submit">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>

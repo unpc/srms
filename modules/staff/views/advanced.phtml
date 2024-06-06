@@ -1,0 +1,68 @@
+<h2 class="section_title">
+		<span class="middle"><?php echo I18N::T('staff', '在职信息') ?></span>
+</h2>
+<div class="padding_2" style="padding-top:5px">
+<table class="form staff_info_form" style="min-width:400px">
+	<tr>
+		<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::T('staff', '身份证号')?></span></td> 
+		<td style="padding-right:4em"><?php echo H($staff->IDnumber) ?></td>
+	</tr>
+<?php	if( $staff->practice_time ){ ?>
+	<tr>
+		<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::T('staff', '实习开始时间')?></span></td> 
+		<td style="padding-right:4em"><?php echo Date::format($staff->practice_time, 'Y/m/d'); ?></td>
+	</tr>
+<?php } ?>
+<?php	if( $staff->trial_time ){ ?>
+	<tr>
+		<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::T('staff', '试用开始时间')?></span></td> 
+		<td style="padding-right:4em"><?php echo Date::format($staff->trial_time, 'Y/m/d'); ?></td>
+	</tr>
+<?php	} ?>
+<?php	if( $staff->normal_time != 0 ){ ?>
+	<tr>
+		<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::T('staff', '正式录用时间')?></span></td> 
+		<td style="padding-right:4em"><?php echo Date::format($staff->normal_time, 'Y/m/d'); ?></td>
+	</tr>
+<?php	} ?>
+<?php	if( L('ME')->is_allowed_to('查看', $staff, ['@ignore'=>['查看基本人事信息'] ] ) ) { ?>
+	<?php	if( $staff->start_time != 0 ){ ?>
+		<tr>
+			<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::T('staff', '合同开始时间')?></span></td> 
+			<td style="padding-right:4em"><?php echo Date::format($staff->start_time, 'Y/m/d'); ?></td>
+		</tr>
+	<?php	} ?>
+	<?php	if( $staff->contract_time != 0 ){ ?>
+		<tr>
+			<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::T('staff', '合同到期时间')?></span></td> 
+			<td style="padding-right:4em">
+				<?php echo Date::format($staff->contract_time, 'Y/m/d'); ?>
+				<?php echo '(距到期还有'.V('staff:staffs_table/data/effective_time', ['staff'=>$staff]).')';?>
+			</td>
+		</tr>
+	<?php	} ?>
+		<tr>
+			<td class="nowrap tight top"><span class="status_tag status_tag_label"><?php echo I18N::T('staff', '薪金信息')?></span></td>
+			<td><?php echo H($staff->salary, TRUE); ?></td>
+		</tr>
+		<tr>
+			<td class="nowrap tight top"><span class="status_tag status_tag_label"><?php echo I18N::T('staff', '合同信息')?></span></td> 
+			<td><?php echo H($staff->positions, TRUE) ?></td>
+		</tr>
+<?php	} ?>
+	<tr>
+		<td class="nowrap tight top"><span class="status_tag status_tag_label"><?php echo I18N::T('staff', '保险信息')?></span></td> 
+		<td><?php echo H($staff->insurance, TRUE) ?></td>
+	</tr>
+	<tr>
+		<td class="nowrap tight top"><span class="status_tag status_tag_label"><?php echo I18N::T('staff', '备注')?></span></td> 
+		<td><?php echo H($staff->remarks ,TRUE); ?></td>
+	</tr>
+</table>
+</div>
+<h2 class="section_title">
+		<span class="middle"><?php echo I18N::T('staff', '附件') ?></span>
+</h2>
+<div class="padding_2" style="padding-top:5px">
+	<?php echo V('nfs:nfs_lite/view', ['object'=>$user, 'path_type'=>'attachments'] );?>
+</div>

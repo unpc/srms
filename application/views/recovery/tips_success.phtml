@@ -1,0 +1,48 @@
+<style>
+    .dialog_close_border {
+        background-color: #ffffff;
+    }
+    .success_content {
+        font-size: 16px;
+        font-family: PingFangSC-Medium, PingFang SC;
+        font-weight: 500;
+        color: #333333;
+        line-height: 30px;
+        vertical-align: top;
+    }
+
+    .success_icon:before
+    {
+        color:#67c23a;
+        font-family: 'iconfont' !important;
+        content: "\e75e";
+        font-size: 22px;
+        line-height: 30px;
+    }
+    .success_text {
+        font-size: 14px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #4D4D4D;
+        padding: 2px 26px 26px 26px;
+        line-height: 22px;
+    }
+</style>
+<div style="width: 320px;">
+    <div class="clearfix">
+    <div style="display: inline;"> 
+        <span class="success_icon"></span>
+        <span class="success_content">重置申请提交成功!</span>
+    </div>
+    </div>
+    <div class="clearfix">
+        <div class="success_text">
+            <span><?= H('请尽快到您的邮箱查看邮件，并通过邮件重设密码。'); ?></span>
+        </div>
+    </div>
+    <form method="post" autocomplete="off" q-src="<?php echo H(URI::url('recovery')) ?>" q-event="submit" q-object="close" class="center">
+        <div class="tmargin_1 right">
+            <input type="submit" id="<?php echo H($submit_id) ?>" name="submit" class="button button_edit font-button-save" value="<?php echo H(I18N::T('announces', '我已知晓')) ?>" />
+        </div>
+    </form>
+</div>

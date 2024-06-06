@@ -1,0 +1,16 @@
+<?php
+if ($tab == Szu_EQ_Reserv_Model::STATE_REJECT) {
+    $action = '驳回';
+} else {
+    $action = '未审';
+}
+
+// 审核记录表有pi通过的记录说明驳回和未审均由机主造成
+$reserv_approve = Q("reserv_approve[reserv_id={$reserv->old_id}][status=".Reserv_Approve_Model::STATUS_PI_APPROVE."]");
+if ($reserv_approve->total_count()) {
+    $user = '机主';
+} else {
+    $user = 'PI';
+}
+
+echo H($user), H($action);

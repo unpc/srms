@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C/DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <meta name="renderer" content="webkit" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1" />
+	<title><?php echo $title; ?></title>
+	<base href="<?php echo H(Config::get('system.base_url') ) ?>" />
+	<link type="text/css" rel="stylesheet" href="<?php echo H(URI::url('css', ['f'=>'core'])) ?>" />
+</head>
+
+<body>
+	<div class="center">
+		<h2><?php echo $title; ?></h2>
+		<strong><?php echo I18N::T('billing', '您选择数据超过%print_limit条, 不适合打印, 请选择%csv_link或调整您的%return_url', [
+		'%print_limit' => $max_print_count, 
+		'%csv_link' => $csv_link, 
+		'%return_url' => $return_url]);?>
+		</strong>
+	</div>
+</body>
+</html>

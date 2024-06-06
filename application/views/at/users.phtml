@@ -1,0 +1,23 @@
+<ul class="autocomplete">
+	<?php foreach($users as $user) :?>
+	<li >
+		<div class="autocomplete_item">
+			<table class="mini_form">
+				<tr>
+					<td class="top icon"><?php echo $user->icon('16');?></td>
+					<td class="middle">
+						<span class="name"><?php echo in_array($user->name, $repeat_names) ? $user->name.'|'.$user->id :$user->name;?></span>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</li>
+	<?php endforeach;?>
+	<?php if ($rest > 0) :?>
+		<li class="special">
+			<div class="autocomplete_item">
+			<div class="rest"><?php echo T('还有 %n 个候选项', ['%n'=>$rest]);?></div>
+			</div>
+		</li>
+	<?php endif;?>
+</ul>

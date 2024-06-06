@@ -1,0 +1,47 @@
+<?php
+$uniqid = 'localesel_'.uniqid();
+$autocomplete = URI::url('!equipments/autocomplete/building');
+$name=$this->name?:'location';
+$id=$this->id?:0;
+$value=$this->value?:''
+?>
+<input  id="<?php echo $uniqid?>_id"  value=<?php echo $id;?>  name="building_id" hidden/>
+
+<input id="<?php echo $uniqid?>_name" 
+name="<?php echo H($name);?>"  
+ value="<?php echo H($value); ?>"
+ type="hidden"   />
+
+
+<input id="<?php echo $uniqid?>_locale_name" 
+class="text middle select_on_focus" 
+ value="<?php echo H($value); ?>"
+ placeholder='楼宇'
+ q-tooltip="<?php echo H(I18N::T('billing', '楼宇') ) ?>" />
+ 
+ <script>
+
+$(function() {
+        var autocomplete="<?php echo $autocomplete;?>"
+        $("#<?php echo $uniqid?>_locale_name").autocomplete({
+            ajax: autocomplete,
+            alt:"#<?php echo $uniqid?>_name",
+        });
+})
+function autocomplete_callback(val){
+     var li=val.parentNode
+     var data=$.data(li,"originalObject")
+     
+     $('input[name='+data.flag+'_id]').val(data.id);
+     switch(data.flag)
+     {
+         case 'building':
+         var $location2=$('input[name=location2]')
+         $location2.trigger('update');
+
+         break;
+         case 'room':
+         break;
+     }
+ }
+ </script>

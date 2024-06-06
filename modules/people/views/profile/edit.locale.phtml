@@ -1,0 +1,37 @@
+<?php $me = L('ME');?>
+<div class="form">
+<form method="post" class="edit" action="<?php echo URI::url(); ?>" autocomplete="off">
+<?php
+$error = ($form->no_error===FALSE);
+if($error) echo V('form_error', ['form'=>$form]);
+?>
+<table class="form margin-left-half" width="100%">
+	<tr>
+		<td>
+			<h2 class="section_title"><?php echo I18N::T('people', '语言')?></h2>
+            <div class="interval_10"></div>
+			<?php echo Form::dropdown('locale',$locale_arr, $me->locale ?: Config::get('system.locale'),'class="middle margin-left-1"','class="middle"');?>
+		</td>
+	</tr>
+	<?php if($me->access('管理所有内容')):?>
+    <tr><td><div class="interval_24"></div></td></tr>
+	<tr>
+		<td>
+			<h2 class="section_title"><?php echo I18N::T('people', '时区')?></h2>
+            <div class="interval_10"></div>
+			<?php $uniqid = 'timezone_'.uniqid();?>
+			<input id="<?php echo H($uniqid) ?>" class="margin-left-1 text middle select_on_focus autocomplete:<?php echo URI::url('!people/autocomplete/timezone') ?> autocomplete_alt:#<?php echo $uniqid?>_lab" value="<?php echo H($form['timezone'] ?: $timezone ) ?>" name="timezone" q-tooltip="<?php echo H(I18N::T('labs', '请输入关键字并选择')) ?>" />
+		</td>
+	</tr>
+	<?php endif;?>
+	<tr>
+		<td>
+            <div class="interval_36"></div>
+			<div>
+			<input type="submit" name="submit" class="font-button-save" value="<?php echo H(I18N::T('people', '保存修改')) ?>" />
+			</div>
+		</td>
+	</tr>
+</table>
+</form>
+</div>

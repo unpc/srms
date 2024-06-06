@@ -1,0 +1,10 @@
+div.eq_reserv_preview {
+    tr {
+        td {
+            span.title {
+                font-size: 14px;
+                font-weight: bold;
+            }
+        }
+    }
+}

@@ -1,0 +1,61 @@
+<div class="interval_6"></div>
+<div class="rpadding_5 lpadding_1e5" style="height:30px;line-height: 30px">
+	<lable class="middle_text float_left">
+	重复
+    </lable>
+	<div class="float_left">
+		<input type="checkbox" name="repeat[<?php echo $flexform_index?>]" class="monitor checkbox middle" <?php if($rtype) echo 'checked';?>/>
+		<?php echo I18N::T('application','每'); ?>
+        &nbsp;
+		<input type="text " name="rnum[<?php echo $flexform_index ?>]" value="<?php echo H($rnum ?: 1 ) ?>" class="text number set_time_value toggle_status:repeat[<?php echo $flexform_index?>] disable_on:off" disable/>
+        &nbsp;
+        <?php
+			$uniqid = uniqid();
+			$rrule_uniqid = 'rrule_'.$uniqid;
+			$rtypes = WT_RRule::$rtype;
+			$static = H(['rrule_uniqid'=>$rrule_uniqid, 'flexform_index'=>$flexform_index]);
+			echo Form::dropdown('rtype['.$flexform_index.']',
+			 T($rtypes), 
+			 $rtype,
+			 'class="top mdrop_width  set_time_format view event:change object:wtrtype src:'.URI::url('rrule').' static:'.$static.' toggle_status:repeat['.$flexform_index.'] disable_on:off" disable');
+		?>
+        &nbsp;
+		<?php echo I18N::T('application','重复一次'); ?>
+	</div>
+</div>
+<div id="<?php echo H($rrule_uniqid ) ?>" style="margin-left:150px">
+<?php
+	switch ($rtype) {
+		case WT_RRule::RRULE_DAILY:   //按照日计算
+			break;
+		case WT_RRule::RRULE_WEEKDAY:	//每工作日
+			echo V('application:widgets/rule_date/weekly/wt_weekday', ['flexform_index'=>$flexform_index,
+												  'week_day'=>$week_day,
+											]);
+			break;
+		case WT_RRule::RRULE_WEEKEND_DAY:		//每周末
+			echo V('application:widgets/rule_date/weekly/wt_weekend', ['flexform_index'=>$flexform_index,
+												  'week_day'=>$week_day,
+											]);
+			break;
+		case WT_RRule::RRULE_WEEKLY:  //按照周计算
+			echo V('application:widgets/rule_date/weekly/wt_week', ['flexform_index'=>$flexform_index,
+												  'week_day'=>$week_day,
+											]);
+			break;
+		case WT_RRule::RRULE_MONTHLY: //按照月计算
+			echo V('application:widgets/rule_date/monthly/wt_month', ['flexform_index'=>$flexform_index, 
+													'month_day'=>$month_day,
+											]);
+			break;
+		case WT_RRule::RRULE_YEARLY:  //按照年计算
+			echo V('application:widgets/rule_date/yearly/wt_year', ['flexform_index'=>$flexform_index, 
+												  'year_month'=>$year_month,
+											]);
+			break;
+		default:
+			break;
+	}
+?>
+</div>
+<div class="interval_6">&nbsp</div>

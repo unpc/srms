@@ -1,0 +1,93 @@
+<?php
+	$root = Tag_Model::root('achievements_publication');
+	$tags = (array) Q("$publication tag_achievements_publication[root=$root]")->to_assoc('id','name');	
+?>
+<?php echo CSS::load_async('achievements:info'); ?>
+<div class="publication">
+    <div class="tab_content">
+	<div class="brief">
+		<?php echo H($publication->journal)?>
+	</div>
+    <div class="interval_12"></div>
+	<div class="publication_info">
+		<div class="title">
+			<?php echo H($publication->title)?>
+		</div>
+		<div class="authors">
+			<?php 
+				$ac_authors = Q("ac_author[achievement=$publication]:sort(position A)");
+				$authors = [];
+				foreach ($ac_authors as $ac_author) {
+					if ($ac_author->user->id) {
+						$authors[] = URI::anchor($ac_author->user->url(), H($ac_author->name));
+					} else {
+						$authors[] = H($ac_author->name);
+					}
+				}
+		
+				$links = empty($authors) ? '' : implode(', ',$authors);
+		
+				echo $links;
+			?>
+		</div>
+		<div class="description">
+			<?php if($publication->date):?>
+			<span class="middle">
+				<?php echo I18N::T('achievements', '年份')?>&#160;<?php echo Date::format($publication->date, 'Y')?>
+			</span>
+			&#160;&#160;
+			<?php endif;?>
+			<?php if($publication->volume):?>
+			<span class="middle">
+				<?php echo I18N::T('achievements', '卷')?>&#160;<?php echo H($publication->volume)?>
+			</span>
+			&#160;&#160;
+			<?php endif;?>
+			<?php if($publication->issue):?>
+			<span class="middle">
+				<?php echo I18N::T('achievements', '刊号')?>&#160;<?php echo H($publication->issue)?>
+			</span>
+			&#160;&#160;
+			<?php endif;?>
+			<?php if($publication->page):?>
+			<span class="middle">
+				<?php echo I18N::T('achievements', '页号')?>&#160;<?php echo H($publication->page)?>
+			</span>
+			<?php endif;?>
+		</div>
+	</div>
+	<?php if ($publication->content): ?>
+	<div class="abstract">
+		<?php echo H($publication->content)?>
+	</div>
+	<?php endif; ?>
+	<div class="tags">
+		<?php foreach($tags as $id => $name):?>
+			<span class="status_tag status_tag_normal"><?php echo URI::anchor(URI::url('!achievements/publications/index', ['tag_id'=>$id]), $name,' style="color: var(--basiccolor)"')?></span>
+		<?php endforeach;?>
+	</div>
+        <div class="achievements_info_style dashboard-info">
+		<h2 class="section_title">
+            <span class="border"></span>
+            <span class="black_title"><?php echo I18N::T('equipments', '基本信息') ?></span>
+        </h2>
+        <div class="interval_30"></div>
+            <ul class="form achievement_info_form clearfix" style="min-width: 400px">
+                <?php
+                    if (isset($relations)) echo $relations;
+                ?>
+				 <?php if (Module::is_installed('nfs')) :?>
+				<li class="li_1_12">
+                	<span class="left" style="width: 100px;"><?php echo I18N::T('achievements', '附件'); ?></span>
+                	<div style="margin-left: 110px;">
+                    	<?php echo V('achievements:attachments', ['achievement'=>$publication]);?>
+                	</div>
+            	</li>
+            	<?php endif;?>
+            </ul>
+        </div>
+        <div style="float: left; padding-left: 110px">
+            <?php echo Widget::factory('application:links', ['links' => $publication->links('view'), 'separator'=>' ']); ?>
+        </div>
+    </div>
+</div>

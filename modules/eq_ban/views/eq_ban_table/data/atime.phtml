@@ -1,0 +1,8 @@
+<?php
+if ($ban->atime) {
+	echo Date::format($ban->atime, 'Y/m/d');
+}
+else {
+	echo I18N::T('eq_ban', '不过期');
+}
+

@@ -1,0 +1,71 @@
+<?php
+$script_uniqid = 'script_' . uniqid();
+$script_edit_uniqid = 'script_' . uniqid() . uniqid();
+?>
+<div class="reserv_script_edit" style="display: <?= $isGenee ? '' : 'none' ?>">
+    <input type="hidden" class="custom_type" name="custom_type" value="<?= $custom_type ?>"/>
+    <span style="margin-left: .5rem;">
+        <a style="margin-bottom: .5rem;" class="button button_add"
+           q-object="create_input"
+           q-event="click"
+           q-static="<?php echo H(['eid' => $equipment->id]) ?>"
+           q-src="<?php echo H(URI::url('!equipments/equipment')) ?>"><?php echo I18N::T('equipments','插入输入框') ?></a>
+        <a src="#" onclick="javascript:preview();return;" style="margin-bottom: .5rem;" class="button"><?php echo I18N::T('equipments','预览') ?></a>
+        <div class="interval_2"></div>
+    <span class="description middle"><?php echo I18N::T('equipments',"插入的文本框name建议设置统一前缀用于区分，如使用\"s_test\"来替代\"test\"") ?></span>
+    <textarea id="<?php echo H($script_edit_uniqid) ?>" name="custom_content" class="text code tab_ok" rows="15"
+              cols="80" <?php echo $disabled; ?> ><?php echo $equipment->custom_content[$custom_type]; ?></textarea>
+</div>
+
+<script type="text/javascript">
+  var $editor_edit;
+  (function ($) {
+    if (!Q.browser.msie || Q.browser.version > 6) {
+      Q.js_ready('codemirror codemirror.lua', function () {
+        setTimeout(function () {
+          $editor_edit = CodeMirror.fromTextArea($('#<?php echo $script_edit_uniqid; ?>')[0], {
+            mode: 'text/html',
+            indentUnit: 2,
+            lineNumbers: true
+          });
+          setTimeout(function () {
+            $editor_edit.refresh();
+          }, 250);
+        }, 250);
+      });
+    }
+  })(jQuery);
+
+  function addElement() {
+    let name = $("#var_name").val();
+    if (!name) {
+      return false;
+    }
+    name = $.trim(name);
+    let element = '{' + name + '}';
+    $editor_edit.setValue($editor_edit.getValue() + element);
+    Dialog.close();
+  }
+
+  function preview() {
+    let text = $editor_edit.getValue();
+    let data = {
+      _object: 'script_visualization',
+      _event: 'click',
+      _ajax: '1',
+      custom_content: text,
+      custom_type: $('.custom_type').val(),
+      eid: <?php echo $equipment->id;?>,
+    };
+    $.ajax({
+      type: 'POST',
+      url: '<?php echo H(URI::url('!equipments/equipment')) ?>',
+      data: data,
+      success: function (data) {
+        data = JSON.parse(data);
+        $('#preview_div').empty().append(data.data);
+      },
+      dataType: 'html'
+    });
+  }
+</script>

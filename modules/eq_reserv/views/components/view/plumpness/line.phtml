@@ -1,0 +1,20 @@
+<g-chart type="line">
+  <g-tooltip>
+    <g-formatter value="<?= H('{b} <br> {a}: {c}%') ?>"></g-formatter>
+  </g-tooltip>
+  <g-xaxis name="<?= H(I18N::T('eq_reserv', '仪器')) ?>" type="category">
+  <?php foreach ($data as $item) : ?>
+    <g-param value="<?= H($item['name']) ?>"></g-param>
+  <?php endforeach ?>
+  </g-xaxis>
+  <g-yaxis name="<?= H(I18N::T('eq_reserv', '饱满度(%)')) ?>" type="value">
+  </g-yaxis>
+  <g-series name="<?= H($title) ?>" type="line">
+    <g-color value="#3983d4"></g-color>
+    <g-data>
+    <?php foreach ($data as $item) : ?>
+      <g-param value="<?= H($item['value']) ?>"></g-param>
+    <?php endforeach ?>
+    </g-data>
+  </g-series>
+</g-chart>

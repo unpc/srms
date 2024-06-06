@@ -1,0 +1,73 @@
+<div class="hr_1">&#160;</div>
+<div class="panel clearfix">
+    <div class="float_left padding_1 nowrap" style="line-height:24px">
+        <?php if (count($buttons)) : ?>
+        <span>
+        <?= Widget::factory('application:links', ['links' => $buttons, 'separator' => '&#160;']);?>
+        </span>
+        <?php endif; ?>
+    </div>
+</div>
+<?php 
+echo $pagination;
+
+$table = Widget::factory('table');
+
+$table->name = 'pf_users';
+
+$table->add_columns([
+    '@' => NULL,
+    'name' => [
+        'title' => I18N::T('people', '姓名'),
+        'filter' => [
+			'form' => V('people:users_table/filters/name', ['name' => $form['name']]),
+			'value' => $form['name'] ? H($form['name']) : NULL
+		],
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'contact_info' => [
+        'title' => I18N::T('people', '联系方式'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'address' => [
+        'title' => I18N::T('people', '地址'),
+        'filter' => [
+			'form' => V('people:users_table/filters/address', ['address' => $form['address']]),
+			'value' => $form['address'] ? H($form['address']) : NULL
+		],
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'rest' => [
+        'align' => 'right',
+        'nowrap' => TRUE,
+        'extra_class' => 'flexible'
+    ],
+]);
+
+$table->empty_message = I18N::T('people', '无符合条件的仪器');
+
+foreach ($users as $user) {
+    $links['delete'] = [
+        'text' => I18N::HT('equipments', '删除'),
+        'url' => '#',
+        'extra' => 'class="blue" q-object="user_delete" q-event="click" q-static="'.H(['pf_id' => $pf->id, 'user_id' => $user->id]).'"',
+    ];
+    $row = [
+        '@' => [
+            'view' => $user->icon('32', 'style="display:block"'),
+            'extra' => 'style="padding:4px" align="right"',
+        ],
+        'name' => V('people:users_table/data/name', ['user' => $user]),
+        'contact_info' => V('people:users_table/data/contact_info', ['user' => $user]),
+        'address' => V('people:users_table/data/address', ['user' => $user]),
+        'rest' => Widget::factory('application:links', ['links' => $links]),
+    ];
+    $table->add_row($row);
+}
+
+echo $table;
+echo $pagination;
+?>

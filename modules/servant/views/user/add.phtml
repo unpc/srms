@@ -1,0 +1,36 @@
+<div class="form padding_1">
+<?php if (isset($message)): ?>
+    <div class="message message_error clearfix nowrap">
+    <?= H($message);?>
+    </div>
+<?php endif;?>
+<form q-object="user_add" q-event="submit" q-src="<?= H($pf->url()) ?>" autocomplete="off" method="post">
+    <?= V('form_error', ['form' => $form]);?>
+    <input name="id" type="hidden" value="<?= H($pf->id)?>" />
+    <table class="form">
+        <tr>
+            <td class="label top nowrap">
+                <div class="lpadding_3">
+                    <span><?= I18N::HT('servant', '成员');?></span>
+                </div>
+            </td>
+            <td class="left top nowrap">
+                <?= Widget::factory('multi_user_selector', [
+                    'name' => 'users',
+                    'extra' => 'token_verify',
+                    'autocomplete' => URI::url('autocomplete/user'),
+                ]); 
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" class="label left top nowrap">
+                <div class="lpadding_3 padding_2">
+                    <input name="submit" type='submit' class="button button_add middle" 
+                    value="<?= I18N::HT('servant', '添加');?>">
+                </div>
+            </td>
+        </tr>
+    </table>
+</form>
+</div>

@@ -1,0 +1,5 @@
+<?php
+$this->dtstart = $form['distribution_ctime_dtstart'] ? date('Y-m-d', $form['distribution_ctime_dtstart']) : '';
+$this->dtend = $form['distribution_ctime_dtend'] ? date('Y-m-d', $form['distribution_ctime_dtend']) : '';
+?>
+<input name="distribution_ctime_dtstart" date_type="date" class="text date small_search_text" value="<?php echo H($this->dtstart); ?>" /><span class="middle description date_interval">-</span><input name="distribution_ctime_dtend" date_type="date" class="text date small_search_text" value="<?php echo H($this->dtend); ?>" />

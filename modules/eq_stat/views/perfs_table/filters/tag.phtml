@@ -1,0 +1,33 @@
+<?php
+	$tag_type = $tag_type ?: 'cat';
+?>
+<div>
+	<?php 
+		echo Form::radio('tag', 'cat',	$tag_type == 'cat' ?: FALSE, I18N::T('eq_stat', '仪器分类'), 'class="monitor middle"', 'class="middle"');
+	?>
+	&#160;
+	<div class="inline_block hidden toggle:tag show_on:cat">
+		<?php 
+			echo V('eq_stat:eq_stat_table/filters/tag', [
+				'name'=>'cat_id',
+				'tag'=>$cat,
+				'root'=>$cat_root,
+			]);
+		?>
+	</div>
+</div>
+<div>
+	<?php
+		 echo Form::radio('tag', 'group', $tag_type == 'group' ?: FALSE, I18N::T('eq_stat', '组织结构'), 'class="monitor middle"', 'class="middle"'); 
+	?>
+	&#160;
+	<div class="inline_block hidden toggle:tag show_on:group">
+		<?php
+			echo V('eq_stat:eq_stat_table/filters/tag', [
+				'name'=>'group_id',
+				'tag'=>$group,
+				'root'=>$group_root,
+			]);
+		?>
+	</div>
+</div>

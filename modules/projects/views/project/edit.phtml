@@ -1,0 +1,97 @@
+<?php
+	$task = $project->task;
+	$me = L('ME');
+?>
+<div class="hr_1">&#160;</div>
+<div class="form padding_1">
+	<form method="post" autocomplete="off">
+	<?php echo V('form_error', ['form'=>$form]);?>
+	<?php $require = (string) V('form_require'); ?>
+	<table class="form">
+		<tbody>
+			<tr>
+				<td class="right nowrap middle"><?php echo I18N::T('projects', '项目名称')?></td>
+				<td class="middle"><input name="name" class="text" size="40" value="<?php echo H($task->name) ?>" /></td>
+			</tr>
+			<tr>
+				<td class="right nowrap top"><?php echo I18N::T('projects', '项目摘要')?></td>
+				<td class="top">
+					<textarea name="description" class="text autogrow" cols="40"><?php echo H($task->description) ?></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td class="right nowrap middle"><?php echo I18N::T('projects', '起止时间')?></td>
+				<td class="middle">
+					<input name="dtstart" class="text date" size="40" value="<?php echo $task->dtstart; ?>" />
+					~
+					<input name="dtend" class="text date" size="40" value="<?php echo $task->dtend; ?>" />
+					<?php echo Form::checkbox('locked', $task->locked, '锁定', 'class="middle"', 'class="middle"'); ?>
+				</td>
+			</tr>
+			<tr>
+				<td class="right nowrap middle"><?php echo I18N::T('projects', '状态')?></td>
+				<td class="middle">
+					<?php 
+					$status = Task_Model::$approved;
+					echo Form::dropdown('approved', $status, is_null($task->approved)?0:$task->approved, 'class="middle"'); 
+					?>
+				</td>
+			</tr>
+			<tr>
+				<td class="right nowrap middle"><?php echo I18N::T('projects', '参与者')?></td>
+				<td class="top">
+					<?php
+						echo Widget::factory('projects:multi_user_selector', [
+							'name'=>'attendees',
+							'users'=>Q("$task user.attendee")
+							
+						]);
+					?>
+				</td>
+			</tr>
+			<?php if($me->access('添加/修改项目', $project) || in_array('supervisor', $task->user_roles($me))): ?>
+			<tr>
+				<td class="right nowrap middle"><?php echo I18N::T('projects', '执行人')?></td>
+				<td class="top">
+					<?php
+						echo Widget::factory('projects:multi_user_selector', [
+							'name'=>'workers',
+							'users'=>Q("$task user.worker")
+						]);
+					?>
+				</td>
+			</tr>
+			<?php endif;?>
+			<?php if($me->access('添加/修改项目', $project)): ?>
+			<tr>
+				<td class="right nowrap middle"><?php echo I18N::T('projects', '管理人员')?></td>
+				<td class="top">
+					<?php
+						echo Widget::factory('projects:multi_user_selector', [
+							'name'=>'supervisors',
+							'users'=> Q("$task user.supervisor")
+						]);
+					?>
+				</td>
+			</tr>
+			<?php endif;?>
+		</tbody>
+		<tfoot>
+			<tr><td colspan="2" class="hr_1">&#160;</td></tr>
+			<tr>
+				<td>&#160;</td>
+				<?php if($project->id): ?>
+				<td>
+					<input type="submit" name="submit" class="button button_save" value="<?php echo H(T('保存')) ?>" />
+				</td>
+				<?php else: ?>
+				<td>
+					<input type="submit" name="submit" class="button button_add" value="<?php echo H(T('添加')) ?>" />
+				</td>
+				<?php endif; ?>
+			</tr>
+		</tfoot>
+	</table>
+	</form>
+</div>
+

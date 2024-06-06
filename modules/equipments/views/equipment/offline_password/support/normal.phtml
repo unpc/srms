@@ -1,0 +1,26 @@
+<style type="text/css">
+ul{
+	margin:0px;
+	list-style:none;
+	font-size:14px;
+}
+</style>
+<?php
+	$incharges = Q("$equipment user.incharge")->to_assoc('id','name');
+	$names = join(', ', $incharges);
+	$user = $user->id ? $user : L('ME');
+?>
+<div class="hr_1">&#160;</div>
+<p style="font-size:18px"><b><?php echo I18N::T('equipments', '基理技术支持');  ?>: </b></p>
+<div>
+	<div><?= I18N::T('equipments', '您好,')?></div>
+	<br>
+	<div style="margin-left: 20px;">
+	<?php echo I18N::T('equipments', '%names 所负责 %equipment 的离线密码, 在 %time 被 %people 修改!', ['%names'=>$names, '%equipment'=>URI::anchor($equipment->url(), $equipment->name), '%time'=>Date('Y-m-d H:i:s'), '%people'=>$user->name]);?>
+	</div>
+	<br>
+	<div><?php echo I18N::T('equipments', '新的离线密码为'); ?>: <span style="color:red"><?= $equipment->offline_password?></span></div>
+</div>
+<div style="height:30px">&#160;</div>
+</div>
+<div class="hr_1">&#160;</div>

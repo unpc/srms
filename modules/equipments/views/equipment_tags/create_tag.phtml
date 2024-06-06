@@ -1,0 +1,26 @@
+<div class="interval_12"></div>
+<form style="height: 160px;" class="form" q-object="create_tag" q-event="submit" q-src="<?php echo H(URI::url('!equipments/equipment')) ?>">
+	<?php echo V('form_error', ['form'=>$form]);?>
+	<table>
+		<tbody>
+			<tr>
+				<td class="nowrap middle">
+					<span class="label"><?php echo I18N::T('equipments', '名称')?></span>
+				</td>
+                <td>
+                    <input class="hidden text" value="<?php echo H($eid) ?>" name="eid" />
+                    <input class="text" name="name" />
+                </td>
+			</tr>
+        <tr>
+            <td></td>
+            <td style="padding-top: 0px">
+                <?php echo V('form_filter', ['error'=>$form->errors["name"][0]]); ?>
+            </td>
+        </tr>
+		</tbody>
+	</table>
+    <div class="button_container">
+        <input class="font-button-save float_right" type="submit" value="<?php echo H(I18N::T('extra', '保存修改')) ?>" name="submit" />
+    </div>
+</form>

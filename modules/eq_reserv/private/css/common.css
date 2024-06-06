@@ -1,0 +1,58 @@
+.user_grid p.eq_reserv_user_email{
+	height:18px;
+	/* background: url(images/icons/mail.png) no-repeat 0 center; */
+	color: #666;
+    min-width: 200px;
+}
+
+.user_grid a.table_reserv_name {display: inline-block;min-width: 100px;}
+
+.user_grid p.eq_reserv_user_phone{
+	padding-left:18px;
+	height:18px;
+	/* background: url(images/icons/phone.png) no-repeat 0 center; */
+	padding-top: 4px;
+	font-size: 14px;
+}
+
+.triple {
+    width:390px;
+    overflow:hidden;
+    li {
+        float:left;
+        display:inline;
+        width:30%;
+    }
+}
+input.number {
+	width: 26px;
+}
+
+.status_tag_missed, .status_tag_late, .status_tag_overtime, .status_tag_leave_early {
+	display:inline-block;
+	background-repeat: no-repeat;
+	height: 14px;
+	width: 14px;
+}
+.status_tag_missed {
+	background-image: url('images/reserv_status/miss.png');
+}
+.status_tag_late {
+	background-image: url('images/reserv_status/late.png');
+}
+.status_tag_overtime {
+	background-image: url('images/reserv_status/overtime.png');
+}
+.status_tag_leave_early {
+	background-image: url('images/reserv_status/leave_early.png');
+}
+
+div.unbind_reserv_time_descripton {
+    padding-left: 16px;
+}
+div.unbind_reserv_time_descripton {
+    padding-left: 16px;
+}
+
+
+.rpadding_3 {padding-right:20px;}

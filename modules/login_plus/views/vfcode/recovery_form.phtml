@@ -1,0 +1,12 @@
+<?php
+$vfcode_id = $_SESSION['vfcode']['id'];
+$panel_buttons = VfCode::buttons('recovery');
+?>
+<tr id="<?= H ($vfcode_id)?>">
+    <td class="middle" colspan="2">
+        <input name="vfcode" type="test" class="text" size="15" tabindex="2"/>
+        &#160;
+        <span><?= Widget::factory('application:links', ['links'=>$panel_buttons, 'separator'=>'&#160;']);?></span>
+        <img class="label right nowrap middle" src="<?= URI::url('!login_plus/vfcode', ['t' => time()]);?>" <?= $extra?> />
+    </td>
+</tr>

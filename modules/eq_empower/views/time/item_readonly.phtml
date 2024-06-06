@@ -1,0 +1,52 @@
+<?php
+    $date_view = [
+        'id' => $id,
+        'flexform_index' => $flexform_index,
+        'startdate' => $startdate, 
+        'enddate' => $enddate, 
+        'starttime' => $starttime,
+        'endtime' => $endtime,
+        'rtype' => $rtype, 
+        'rnum' => $rnum,
+        'controluser' => $controluser,
+        'controllab' => $controllab,
+        'controlgroup' => $controlgroup,
+    ];
+
+    switch ($rtype) {
+        case WT_RRule::RRULE_DAILY:   //按照日计算
+            break;
+        case WT_RRule::RRULE_WEEKDAY: 
+            $date_view['week_day'] = $days;
+            break;
+        case WT_RRule::RRULE_WEEKEND_DAY:
+            $date_view['week_day'] = $days;
+            break;
+        case WT_RRule::RRULE_WEEKLY:
+            $date_view['week_day'] = $days;
+            break;
+        case WT_RRule::RRULE_MONTHLY: //按照月计算
+            $date_view['month_day'] = $days;
+            break;
+        case WT_RRule::RRULE_YEARLY:  //按照年计算
+            $date_view['year_month'] = $days;
+            break;
+        default:
+            break;
+    }
+?>
+<div class="dc_rule_form">
+    <input name="id[<?= $flexform_index ?>]" type="hidden" value="<?= H($id) ?>" />
+    <?= V('eq_empower:time/date_readonly', $date_view) ?>
+    <div name="rule_form_<?= $flexform_index; ?>" >
+    <?= Widget::factory('eq_empower:wt_rrule_readonly', $date_view) ?>
+    <?= V('eq_empower:time/user_readonly', $date_view) ?>
+    </div>
+</div>
+<script>
+    $().ready(function() {
+        $("[name^=week_day").attr('disabled', 'disabled');
+        $("[name^=month_day").attr('disabled', 'disabled');
+        $("[name^=year_month").attr('disabled', 'disabled');
+    });
+</script>

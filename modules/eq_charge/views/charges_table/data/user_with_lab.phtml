@@ -1,0 +1,10 @@
+<?php
+$user = $c->user;
+$lab = $c->lab->id ? $c->lab : $c->transaction->account->lab;
+?>
+<div><?php $user->render(); ?></div>
+<?php if ($lab->id): ?>
+<div>
+	<a class="description" href="<?php echo H($lab->url()) ?>"><?php echo H($lab->name) ?></a>
+</div>
+<?php endif;

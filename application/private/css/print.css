@@ -1,0 +1,26 @@
+.signup-print table{
+	font: 12px/1.5 Lucida Grande, Tahoma, Helvetica, Arial, 'Liberation Sans', FreeSans, sans-serif;
+	border-collapse: collapse;
+	margin-bottom:5px;
+}
+.signup-print table tr td{
+	border:1px solid #123;
+	padding:5px 10px;
+}
+.screen{
+	display:none;
+}
+.right {text-align:right;}
+.center {text-align:center;}
+.left {text-align:left;}
+.middle {vertical-align:middle}
+.baseline {vertical-align:baseline}
+.top {vertical-align:top}
+.bottom {vertical-align:bottom}
+.nowrap{white-space:nowrap;}
+@media print{
+	.signup-print table{
+		margin-left:auto;
+		margin-right:auto;
+	}
+}

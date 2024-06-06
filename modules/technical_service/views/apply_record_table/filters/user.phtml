@@ -1,0 +1,6 @@
+<?php
+echo Widget::factory('user_selector', [
+    'name' => 'user',
+    'autocomplete' => URI::url('autocomplete/user'),
+    'user' => $form['user']
+]);

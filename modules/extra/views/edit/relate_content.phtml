@@ -1,0 +1,263 @@
+<?php
+    $fields_uniqid = 'fields_'. uniqid();
+    $add_field_uniqid = 'add_field_'. uniqid();
+?>
+
+<div class="relate_view edit_container" style="margin-left:25px;">
+    <div class="message_view "></div>
+
+    <form method="post" autocomplete="off" id="relate_content_form">
+        <input class="hidden text" value="<?php echo H($category) ?>" name="category" />
+
+        <div class="padding_1 clearfix add_tags">
+            <h2 class="section_title" style="padding-left:6px;display:inline;line-height:50px;font-weight: bold;">
+                <?php echo $category; ?>
+            </h2>
+            <a id="<?php echo H($add_field_uniqid) ?>" title="添加字段" class="float_right blue" style="line-height:50px;">
+                <span class='icon-add vertical_middle pointer'></span>
+                <span class="vertical_middle pointer"><?php echo I18N::T('extra', '添加字段')?></span>
+            </a>
+        </div>
+
+        <ul class="form extra-fields-sortable" id="<?php echo H($fields_uniqid) ?>" style="min-height: 100px;">
+            <?php 
+            if (count($extra->get_fields($category))) :
+                $types = Extra_Model::$types;
+                $prefix = 0;
+                foreach($extra->get_fields($category) as $uniqid => $field) : 
+                    if ($uniqid == 'config' || $uniqid == 'reagent_amount' || $uniqid == 'reagent' ) {
+                        //15644仪器目录，在添加/修改使用记录时应该不显示无字段内容的自定义表单的类别数组有些奇怪
+                        continue;
+                    }
+
+                    if ($extra->object->name() == 'equipment' && Config::get('sample_approval.to_equipment') && !$extra->object->sample_approval_enable) {
+                        if (in_array($uniqid, ['name', 'type', 'code', 'format', 'mode'])) {
+                            continue;
+                        }
+                    }
+
+                    $config_extra = Config::get('extra.'. $extra->object->name() . '.'. $extra->type);
+                    $skip_required = !!$config_extra[$category]['#skip_required'];
+                ?>
+                <li class="extra-fields-sortable-li item:<?= $field['title']; ?>" style="padding: 50px 0; border-bottom: 1px solid #E5E5E5; position: relative; cursor: move;">
+                    <table class="field flexible"  style="border-spacing: 0px;">
+                        <tr>
+                            <td>
+                                <div>
+                                    <?php
+                                        if ($field['adopted']) {
+                                            echo Form::hidden("field[$prefix][title]", $field['title']);
+                                            echo Form::hidden("field[$prefix][adopted]", TRUE);
+                                            echo Event::trigger("extra.settings.adopted_view[{$extra->object->name()}.{$extra->type}]", $uniqid, $field, $extra->object, $prefix);
+                                        } else {
+                                            echo V('extra:edit/field_readonly', [
+                                                'prefix'=> $prefix, 
+                                                'field'=> $field, 
+                                                'uniqid'=>$uniqid,
+                                            ]);
+                                        }
+
+                                        if ($uniqid) {
+                                            echo Form::hidden("field_uniqid[{$prefix}]", $uniqid);
+                                        }
+                                    ?>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="extra-field-edit" style="display: none;">
+                        <a title="最后" class="middle button sort_field" data-filed_title="<?php echo $field['title']; ?>" data-field_sort_type="bottom">
+                            <span class='icon-bottom vertical_middle pointer'></span>
+                            <span class="vertical_middle pointer"><?php echo I18N::T('extra', '最后')?></span>
+                        </a>
+                        <a title="最前" class="middle button sort_field" data-filed_title="<?php echo $field['title']; ?>" data-field_sort_type="top">
+                            <span class='icon-top vertical_middle pointer'></span>
+                            <span class="vertical_middle pointer"><?php echo I18N::T('extra', '最前')?></span>
+                        </a>
+                        <a title="下移字段" class="middle button sort_field" data-filed_title="<?php echo $field['title']; ?>" data-field_sort_type="down">
+                            <span class='icon-down vertical_middle pointer'></span>
+                            <span class="vertical_middle pointer"><?php echo I18N::T('extra', '下移')?></span>
+                        </a>
+                        <a title="上移字段" class="middle button sort_field" data-filed_title="<?php echo $field['title']; ?>" data-field_sort_type="up">
+                            <span class='icon-up vertical_middle pointer'></span>
+                            <span class="vertical_middle pointer"><?php echo I18N::T('extra', '上移')?></span>
+                        </a>
+                        <?php if(!$field['adopted']):?>
+                        <a title="删除字段" class="middle button trash_field" data-filed_title="<?php echo $field['title']; ?>">
+                            <span class='icon-trash vertical_middle pointer'></span>
+                            <span class="vertical_middle pointer"><?php echo I18N::T('extra', '删除')?></span>
+                        </a>
+                        <a title="编辑字段" class="middle button edit_field" data-filed_title="<?php echo $field['title']; ?>" data-field_prefix="<?php echo $prefix; ?>">
+                            <span class='icon-edit vertical_middle pointer'></span>
+                            <span class="vertical_middle pointer"><?php echo I18N::T('extra', '编辑')?></span>
+                        </a>
+                        <?php endif; ?>
+                    </div>
+                </li>
+            <?php
+                ++ $prefix;
+                endforeach;
+            endif; 
+            ?>
+        </ul>
+    </form>
+</div>
+
+<script type="text/javascript">
+jQuery(function($) {
+    var prefix = <?php echo $prefix ? : 0;?>;
+
+    // 添加字段
+    $('#<?php echo $add_field_uniqid;?>').bind('click', function() {
+        Q.trigger({
+            object: 'add_field',
+            event: 'click',
+            url: '<?php echo URI::url();?>',
+            data: {
+                relate_uniqid: '<?php echo H($relate_uniqid) ?>',
+                fields_uniqid: '<?php echo H($fields_uniqid) ?>',
+                extra_id: '<?php echo $extra->id?>',
+                category: '<?php echo $category;?>',
+                prefix: prefix
+            }
+        });
+        ++ prefix;
+    });
+
+    // 编辑字段
+    $(document).on('click','#<?php echo $fields_uniqid?> a.edit_field', function() {
+        var $filed_title = $(this).attr('data-filed_title');
+        var $field_prefix = $(this).attr('data-field_prefix');
+        Q.trigger({
+            object: 'edit_field',
+            event: 'click',
+            url: '<?php echo URI::url();?>',
+            data: {
+                relate_uniqid: '<?php echo H($relate_uniqid) ?>',
+                fields_uniqid: '<?php echo H($fields_uniqid) ?>',
+                extra_id: '<?php echo $extra->id?>',
+                category: '<?php echo $category;?>',
+                filed_title: "" + $filed_title,
+                prefix: $field_prefix
+            }
+        });
+    });
+
+    // 保存字段
+    $(document).on('click','#<?php echo $fields_uniqid?>-form .save_field', function() {
+        var $this = $(this);
+        var $field_save_type = $(this).attr('data-field_save_type');
+        var $form = $('#<?php echo $fields_uniqid?>-form').serialize();
+        var $cancel_btn = $(this).siblings('input[name=cancel]');
+        $this.prop('disabled', true);
+
+        Q.trigger({
+            url: '<?php echo H(URI::url('!extra/extra')) ?>',
+            object: $field_save_type,
+            event: 'submit',
+            data: {
+                field_form : $form
+            },
+            success: function(data) {
+                $this.prop('disabled', false);
+
+                if(data.new_relate) {
+                    $('#' + data.relate_uniqid).html(data.new_relate);
+                    $cancel_btn.click();
+                }
+
+                if(data.message) {
+                    $('#' + data.relate_uniqid +' div.message_view').append(data.message);
+                }
+            }
+        });
+    });
+
+    // 删除字段
+    $(document).on('click','#<?php echo $fields_uniqid?> a.trash_field', function() {
+        var $filed_title = $(this).attr('data-filed_title');
+        var $parent = $(this).parents('.extra-fields-sortable-li');
+        Q.trigger({
+            url: "<?php echo H(URI::url('!extra/extra')) ?>",
+            object: 'delete_field',
+            event: 'click',
+            data: {
+                extra_id: '<?php echo H($extra->id) ?>',
+                category : '<?php echo $category; ?>',
+                filed_title: "" + $filed_title,
+            },
+            success: function(data) {
+                if (data && data.result) {
+                    $parent.remove();
+                }
+            }
+        });
+    });
+
+    // 字段排序
+    $(document).on('click','#<?php echo $fields_uniqid?> a.sort_field', function() {
+        var $filed_title = $(this).attr('data-filed_title');
+        var $field_sort_type = $(this).attr('data-field_sort_type');
+
+        Q.trigger({
+            url: '<?php echo H(URI::url('!extra/extra')) ?>',
+            object: 'sort_field',
+            event: 'click',
+            data: {
+                relate_uniqid: '<?php echo H($relate_uniqid) ?>',
+                extra_id: '<?php echo $extra->id?>',
+                category: '<?php echo $category;?>',
+                filed_title : $filed_title,
+                field_sort_type: $field_sort_type,
+            },
+            success: function(data) {
+                if(data.new_relate) {
+                    $('#' + data.relate_uniqid).html(data.new_relate);
+                }
+
+                if(data.message) {
+                    $('#' + data.relate_uniqid +' div.message_view').append(data.message);
+                }
+            }
+        });
+    });
+
+    // 鼠标经过字段区域显示删除、编辑等按钮
+    $(document).on('mouseover', '.extra-fields-sortable-li', function(){
+        $(this).children('.extra-field-edit').show();
+    }).on('mouseout', '.extra-fields-sortable-li', function(){
+        $(this).children('.extra-field-edit').hide();
+    });
+
+    // 字段移动排序
+    $('#<?php echo $fields_uniqid; ?>').sortable({
+        update: function(event, ui) {
+            var $fields = [];
+            $('.extra-fields-sortable-li').each(function(index){
+                $fields.push($(this).classAttr('item'));
+            });
+
+            Q.trigger({
+                object: 'sort_fields',
+                event: 'move',
+                url: '<?php echo URI::url('!extra/extra');?>',
+                data: {
+                    relate_uniqid: '<?php echo H($relate_uniqid) ?>',
+                    extra_id: '<?php echo $extra->id?>',
+                    category: '<?php echo $category;?>',
+                    fields : $fields,
+                },
+                success: function(data) {
+                    if(data.new_relate) {
+                        $('#' + data.relate_uniqid).html(data.new_relate);
+                    }
+
+                    if(data.message) {
+                        $('#' + data.relate_uniqid +' div.message_view').append(data.message);
+                    }
+                }
+            });
+        }
+    });
+});
+</script>

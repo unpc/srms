@@ -1,0 +1,20 @@
+<?php echo V('form_error', ['form' => $form]); ?>
+<div class="form padding_2">
+  <div class="item">
+    <form method="POST" q-object="update" q-event="submit"
+    q-src="<?= URI::url('!credit/index') ?>">
+      <h2 class="section_title">
+        <span class="middle"><?= I18N::T('support', '历史违规行为信用分统计') ?></span>
+      </h2>
+      <div class="interval_20"></div>
+      <div style="padding: 5px 0;">
+        <?php echo Form::checkbox('dtstart', $form['dtstart'] == 'on', '', 'class="middle monitor checkbox"'); ?>&#160;
+        <input name="time_s" style="width: 10rem;" class="text date middle toggle_status:dtstart enable_on:on" value="<?php echo H($form['time_s']?:Date::get_day_start()) ?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/>
+        &#160;<span class="middle description">-</span>&#160;
+        <?php echo Form::checkbox('dtend', $form['dtend'] == 'on', '', 'class="middle monitor checkbox"'); ?>&#160;
+        <input name="time_e" style="width: 10rem;" class="text date middle toggle_status:dtend enable_on:on" value="<?php echo H($form['time_e']?:Date::get_day_start()) ?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/>
+        <input type="submit" class="button font-button-save" name="submit" value="<?php echo I18N::HT('credit', '更新') ?>" />
+      </div>
+    </form>
+  </div>
+</div>

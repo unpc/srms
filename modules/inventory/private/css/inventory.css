@@ -1,0 +1,45 @@
+.show_child_stocks {
+	width: 8px;
+	height: 8px;	
+}
+
+span.expire_status {
+	vertical-align:middle;
+	.has_exd, .not_exd, .almost_exd, .almost_not_exd, .has_almost_exd, .has_not_exd, .has_almost_not_exd, .never_exd{
+		height: 12px;
+		width: 12px;
+		background-image: url(!inventory/images/expire_status.png); 
+		display: inline-block;
+		vertical-align:middle;
+	}
+	.has_exd {
+		background-position: 0px 0px;
+	}
+	.not_exd {
+		background-position: -12px 0px;
+	}
+	.almost_exd {
+		background-position: -24px 0px;
+	}
+	.almost_not_exd {
+		background-position: 0px -12px;
+	}
+	.has_almost_exd {
+		background-position: -12px -12px;
+	}
+	.has_not_exd {
+		background-position: -24px -12px;
+	}
+	.has_almost_not_exd {
+		background-position: 0px -24px;
+	}
+	.never_exd {
+		background-position: -12px -24px;
+	}
+}
+
+span.value {
+	.has_expired{ color: red; }
+	.almost_expired { color: #FFA500;}
+	.never_expired{ color: black;}
+}

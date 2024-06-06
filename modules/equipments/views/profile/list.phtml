@@ -1,0 +1,155 @@
+<?php $user = L('ME');?>
+<div class="hr_1">&#160;</div>
+<?php
+
+echo $pagination;
+	
+$table = Widget::factory('table');
+	
+$table->name = 'equipments';
+
+if ($GLOBALS['preload']['tag.group_limit'] >= 0) {
+	$table->add_column('group', [
+		'title'=>I18N::T('equipments', '组织机构'),
+		'align'=>'left',
+		'suppressible' => TRUE,
+		'invisible' => TRUE,
+		'filter'=> [
+			'form' => V('equipments:equipments_table/filters/group', [
+				'name'=>'group_id', 'group'=>$group,
+				'root'=>$group_root,
+			]),
+			'value' => V('application:tag/path', ['tag'=>$group, 'tag_root'=>$group_root, 'url_template'=>URI::url('', 'group_id=%tag_id')]),
+			'field' => 'group_id'
+		],
+		'nowrap'=>TRUE,
+	]);
+}
+
+$columns = [
+	'@'=>NULL,
+	'tag'=>[
+		'weight'=>10,
+		'title'=>I18N::T('equipments', '分类标签'),
+		'invisible' => TRUE,
+		'filter' => [
+			'form' => V('equipments:equipments_table/filters/tag.form', [
+				'name'=>'tag_id', 'tag'=>$tag,
+				'root'=>$tag_root,
+			]),
+			'value' => $tag->id ? H($tag->name) : NULL,
+			'field' => 'tag_id'
+		]
+	],
+	'name'=>[
+		'weight'=>20,
+		'title'=>I18N::T('equipments', '仪器名称'),
+		'sortable'=>TRUE,
+		'align'=>'left',
+		'filter'=> [
+			'form' => V('equipments:equipments_table/filters/name', ['name'=>'name', 'value'=>$form['name']]),
+			'value' => $form['name'] ? H($form['name']) : NULL
+		],
+		'nowrap'=>TRUE,
+	],
+	'ref_no'=>[
+		'weight'=>30,
+		'title'=>I18N::T('equipments', '仪器编号'),
+		'invisible'=>TRUE,
+		'filter'=>[
+			'form' => V('equipments:equipments_table/filters/ref_no', ['ref_no'=>$form['ref_no']]),
+			'value'=> $form['ref_no'] ? H($form['ref_no']) : NULL
+		]
+	],
+	'control'=>[
+		'weight'=>40,
+		'title'=>I18N::T('equipments', '控制'),
+		'align'=>'center',
+		'filter'=> [
+			'form' => V('equipments:equipments_table/filters/control', [
+				'mode_name'=>'control_mode', 'mode_value'=>$form['control_mode'],
+				'status_name'=>'control_status', 'status_value'=>$form['control_status'],
+			]),
+			'value' => V('equipments:equipments_table/filters/control.value', [
+				'mode'=>$form['control_mode'],
+				'status'=>$form['control_status'],
+			]),
+			'field' => 'control_mode,control_status'
+		],
+		'nowrap'=>TRUE,
+	],
+	'current_user'=>[
+		'weight'=>50,
+		'title'=> I18N::T('equipments', '当前使用者'),
+		'align'=>'center',
+		'nowrap'=>TRUE,
+	],
+	'location'=>[
+		'weight'=>21,
+		'title'=>I18N::T('equipments', '放置房间'),
+		'align'=>'left',
+		'filter'=> [
+			'form' => V('equipments:equipments_table/filters/location', [
+				'location_name'=>'location', 'location_value'=>$form['location']
+			]),
+			'value' => V('equipments:equipments_table/filters/location.value', [
+				'location' => H($form['location'])
+			]),
+			'field' => 'location'
+		],
+		'nowrap'=>TRUE,
+	],
+	'contact'=>[
+		'weight'=>60,
+		'title'=> I18N::T('equipments', '联系人'),
+		'align'=>'left',
+		'extra_class'=>'filter_right',
+	],
+	'rest'=>[
+		'weight'=>70,
+		'align'=>'right',
+		'nowrap'=>TRUE,
+	]
+];
+
+if ('scrapped' == $tab) {
+	unset($columns['current_user']);
+}
+$table->add_columns($columns);
+
+$table->empty_message = I18N::T('equipments', Config::get('equipment.default_empty_message'));
+
+$me = L('ME');
+foreach ($equipments as $equipment) {
+	$links = $me->follow_links($equipment) + $equipment->links('index');
+	$table->add_row([
+		'@' => [
+			'view'=> URI::anchor($equipment->url(), $equipment->icon('32', 'style="display:block"')),
+			/*因为该列表中不存在了flexbie类， 因为都是自动增长的td，因此为了保持与IE上统一， 该处需要增加样式特殊处理*/
+			'extra'=>'style="padding:4px;min-width:44px;*width:44px;" align="right"',
+		],
+		
+		/* BUG #1038::之前可以送样和预约的仪器进行报废，在废弃仪器列表中不建议显示送样和预约。(kai.wu@2011.08.22) */
+		'name' => V('equipments:equipments_table/data/name', ['equipment'=>$equipment, 'tab'=>$secondary_tabs->selected]),
+		'control' => V('equipments:equipments_table/data/control', ['equipment'=>$equipment]),
+		'current_user' => V('equipments:equipments_table/data/current_user', ['equipment'=>$equipment]),
+		'group' => V('application:tag/path', ['tag'=>$equipment->group, 'tag_root'=>$group_root, 'url_template'=>URI::url('','group_id=%tag_id')]),
+		'location' => V('equipments:equipments_table/data/location', ['equipment'=>$equipment]),
+		'contact' => V('equipments:equipments_table/data/contacts', ['equipment'=>$equipment]),
+		'rest'=> Widget::factory('application:links', ['links'=>$links]),
+					 ]);
+}
+
+echo $table;
+echo $pagination;
+?>
+<script type="text/javascript">
+	$().ready(function() {
+		$('.header_search').click(function() {
+			var fa = $('.table_key_domain')
+			,	contact = $("input[name='contact']")
+			,	div = fa.find('div');
+			div.width(contact.width() + 5);
+		})
+	});
+</script>

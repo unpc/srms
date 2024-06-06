@@ -1,0 +1,142 @@
+<?php if ($total > $per_page) :
+
+$current_page = floor($start / $per_page) + 1;
+$total_pages = ceil($total / $per_page);
+$max_pages = 5;
+
+$url = $this->url ?: '';
+$st = $this->query_key ?: 'st';
+
+if ($total_pages > 1) :
+
+$lamda_func = 'pagination_'.uniqid();
+
+?>
+<div class="pagination">
+<?php
+    $get_params = $_GET;
+	$f=$current_page - floor($max_pages/2);
+	$t=$current_page + floor($max_pages/2);
+	if ($f<1) {
+		$f=1;
+		$t=$f+$max_pages-1;
+	}
+	if ($t>$total_pages) {
+		$t=$total_pages;
+		$f=$t-$max_pages+1;
+		if($f<1)$f=1;
+	}
+
+	if ($current_page != 1) {
+        $get_params[$st] = '0';
+		echo '<a href="'.URI::url($url, $get_params).'">&#60;&#160;&#160;&#160;'.HT('首页').'</a>';
+	}
+
+	if ($current_page > 1) {
+        $get_params[$st] = ($current_page - 2)*$per_page;
+		echo '<a href="'.URI::url($url, $get_params).'">'.HT('上一页').'</a>';
+	}
+
+	//	echo '<span class="current">'.HT('第%num页', array('%num'=>$i)).'</span>';
+
+	for ($i=$f;$i<=$t;$i++) {
+		if ($i == $current_page) {
+			echo '<span class="current">'.$i.'</span>';
+		}
+		else {
+            $get_params[$st] = ($i - 1)*$per_page;
+			echo '<a href="'.URI::url($url, $get_params).'">'.$i.'</a>';
+		}
+	}
+
+	if ($current_page < $total_pages) {
+        $get_params[$st] = ($current_page)*$per_page;
+		echo '<a href="'.URI::url($url, $get_params).'">'.HT('下一页').'</a>';
+	}
+
+	if ($current_page != $total_pages ) {
+        $get_params[$st] = ($total_pages - 1) * $per_page;
+		echo '<a href="'.URI::url($url, $get_params) .'">'.HT('尾页').'&#160;&#160;&#62;</a>'; 
+	}
+
+?>
+</div>
+<?php 	endif;
+endif; ?>
+<?php if ($token) :?>
+<script data-ajax="true">
+
+    var str = '<?= $checkboxs ?>',
+        checkboxs = str.split(','),
+        count = 0,
+        cbxCount = $('input[data-item-id]').length;
+
+    $(checkboxs).each(function (index, value) {
+        var target = $('input[data-item-id=' + value + ']');
+        if (target.length == 1) {
+            $('input[data-item-id=' + value + ']').prop("checked", true)
+            count ++
+        };
+    });
+
+    if (count >= cbxCount && cbxCount != 0) {
+        $('input[data-item="all"]').prop("checked", true)
+    };
+
+	$('input[data-item="all"]').click(function() {
+        var $switch = $(this)
+            // , $table = $switch.parents('table:eq(0)')
+            , $item = $('input[data-item-id]')
+            , on = $(this).is(":checked")
+            , array = new Array();
+
+        on && $item
+        .prop("checked", true)
+
+        on || $item
+        .prop("checked", false)
+
+        $item.each(function (index, value) {
+            var id = $(value).data('item-id'),
+                on = $(value).is(":checked");
+
+            array[id] = on;
+        })
+
+		Q.trigger({
+            object: '<?= $token ?>',
+            event: 'checked',
+            data: {
+                ids: array,
+               	token: '<?= $token ?>'
+            },
+            url: '<?= $checkbox_url ?>',
+            success: function(result) { }
+        })
+    })
+
+    $('input[data-item-id]').change(function() {
+        var array = new Array(),
+            id = $(this).data('item-id'),
+            on = $(this).is(":checked");
+        if ($('input[data-item-id]:not(:checked)').length == 0) {
+            $('input[data-item="all"]').prop("checked", true)
+        } else {
+            $('input[data-item="all"]').prop("checked", false)
+        }
+        array[id] = on;
+
+		Q.trigger({
+            object: '<?= $token ?>',
+            event: 'checked',
+            data: {
+            	ids: array,
+            	token: '<?= $token ?>'
+            },
+            url: '<?= $checkbox_url ?>',
+            success: function(result) { }
+        })
+    })
+
+</script>
+<?php endif;?>

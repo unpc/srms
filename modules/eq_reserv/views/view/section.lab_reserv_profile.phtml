@@ -1,0 +1,148 @@
+<?php
+$me = L('ME');
+echo CSS::load_async('equipments:common');
+?>
+<script>
+Q.globals.cal_week_rel = 'edit_week';
+Q.globals.mode = 'list';
+</script>
+
+
+
+<?php
+echo CSS::load_async('calendars:common');
+
+$table = Widget::factory('table');
+$table->name = 'profile_cal_component';
+
+if ($form['dtstart'] || $form['dtend']) {
+    $date_value = true;
+}
+
+$columns = [
+    'serial_number'=>[
+        'title'=>I18N::T('calendars', '编号'),
+        'nowrap'=>TRUE
+    ],
+    'equipment' => [
+        'title' => I18N::T('eq_reserv', '预约仪器'),
+        'nowrap' => TRUE,
+        'align' => 'left',
+        'filter' => [
+            'form' => V('eq_reserv:reservs_table/filters/equipment', ['form' => $form]),
+            'value' => $form['equipment'] ? H($form['equipment']) : NULL
+        ],
+        'weight' => 0,
+    ],
+    'equipment_ref' => [
+        'title'    => I18N::T('eq_reserv', '仪器编号'),
+        'sortable' => in_array('equipment_ref', $sort_fields),
+        'nowrap'   => true,
+        'align'    => 'left',
+        'invisible' => true,
+        'filter'   => [
+            'form'  => V('eq_reserv:reservs_table/filters/equipment_ref', ['form' => $form]),
+            'value' => $form['equipment_ref'] ? H($form['equipment_ref']) : null,
+        ],
+        'weight'   => 5,
+    ],
+    'organizer'=> [
+        'title' => I18N::T('eq_reserv', '使用者'),
+        'nowrap' => TRUE,
+        'align' => 'left',
+        'filter' => [
+            'form' => V('eq_reserv:reservs_table/filters/organizer', ['form' => $form]),
+            'value' => $form['organizer'] ? H($form['organizer']) : NULL
+        ],
+        'weight' => 0,
+        ],
+    'status' => [
+        'title'=>I18N::T('eq_reserv', '状态'),
+        'align'=>'left',
+        'nowrap'=>TRUE,
+        'filter'=> [
+            'form' => V('eq_reserv:calendar_list/tables/filters/status', ['form'=> $form]),
+            'value'=> H(EQ_Reserv_Model::$reserv_status[$form['reserv_status']]),
+            'field'=> 'reserv_status'
+        ],
+        'weight' => 20,
+    ],
+    'count' => [
+        'title' => I18N::T('eq_reserv', '样品数'),
+        'align'    => 'left',
+        'nowrap'   => true,
+        'weight'   => 25,
+    ],
+    'date' => [
+        'title' => I18N::T('eq_reserv', '时间'),
+        'align'=> 'left',
+        'nowrap'=>TRUE,
+        'filter' => [
+            'form'  => V('eq_reserv:calendar_list/tables/filters/date', ['form' => $form]),
+            'value' => $date_value,
+            'field' => 'dtstart,dtend',
+        ],
+        'weight' => 30,
+    ],
+    'description' => [
+        'title'=>I18N::T('eq_reserv', '备注'),
+        'align'=>'left',
+        'nowrap'=>TRUE,
+        'weight' => 40,
+    ],
+    'rest' => [
+        'align' => 'right',
+        'nowrap' => TRUE,
+        'weight' => 1000,
+    ],
+];
+
+$columns = new ArrayObject($columns);
+
+$table->add_columns((array) $columns);
+
+$table->empty_message = I18N::T('equipments', '无符合条件的记录');
+foreach ($components as $component) {
+
+    $equipment = $component->calendar->parent;
+    $reserv = O('eq_reserv', ['component'=> $component]);
+    $row = [
+        'serial_number' => V('eq_reserv:calendar_list/serial_number', ['id' => $component->id]),
+        'equipment' => '<a href="'.$equipment->url().'">'.$equipment->name.'</a>',
+        'organizer' => '<a href="'.$component->organizer->url().'">'.$component->organizer->name.'</a>',
+        'status' => V('eq_reserv:calendar_list/status', ['component'=> $component]),
+        'count' => H($reserv->count),
+        'date' => H(Date::range($component->dtstart, $component->dtend)),
+        'description' => V('eq_reserv:calendar_list/description', ['component'=>$component]),
+        'rest' => Widget::factory('application:links', ['links'=>$component->links()]),
+    ];
+
+    
+    $row = new ArrayIterator($row);
+    $table->add_row((array)$row);
+}
+
+if ($me->is_allowed_to('修改预约违规次数', $user) && ($me->id != $user->id)) : 
+    $statistics .= $user->name;
+elseif (isset($lab) && isset($count_map)):
+    $statistics .= '课题组';
+    $statistics .= 
+        I18N::T('eq_reserv', '使用仪器共计 %late_count 次迟到, %leave_early_count 次早退, %overtime_count 次超时, %misstime_count 次爽约', [
+            '%late_count' => '<span class="eq_number">' . ($count_map['eq_late_count'] ? : 0) . '</span>',
+            '%leave_early_count' => '<span class="eq_number">' . ($count_map['eq_leave_early_count'] ? : 0) . '</span>',
+            '%overtime_count' => '<span class="eq_number">' . ($count_map['eq_overtime_count'] ?: 0) . '</span>',
+            '%misstime_count' => '<span class="eq_number">' . ($count_map['eq_miss_count'] ?: 0) . '</span>']);
+endif;
+
+
+$param = [
+    'top_input_arr'=> ['equipment', 'equipment_ref'],
+    'columns'=> (array)$table->columns,
+    'extra_view'    => '<div class="adj statistics middle">'. $statistics .  '</div>'
+];
+echo V('application:search_box', $param);
+?>
+
+<?php echo $table;
+?>
+<div class="pages"><?= $pagination ?></div>

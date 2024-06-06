@@ -1,0 +1,107 @@
+<?php 
+    $me = L('ME');
+    $labs = Q("$me lab");
+    $outcome_use = 0; // 使用金额或者待报销金额
+    $balance = 0; // 总余额
+
+    if (Module::is_installed('billing_standard')) {
+        // 信用总额
+        if (Module::is_installed('billing')) {
+            $bl_status = join(',', [Billing_Standard::STATUS_DRAFT, Billing_Standard::STATUS_PENDDING]);
+
+            foreach($labs as $lab) {
+                $billing_accounts = Q("$lab billing_account");
+                $balance += $billing_accounts->sum('credit_line');
+                $balance += $billing_accounts->sum('balance');
+
+                $eq_charges = Q("$lab eq_charge[bl_status={$bl_status}]");
+                $outcome_use += $eq_charges->sum('amount');
+            }
+        }
+    } else {
+        if (Module::is_installed('billing')) {
+            foreach ($labs as $lab) {
+                $billing_accounts = Q("$lab billing_account");
+                $outcome_use += $billing_accounts->sum('outcome_use');
+                $balance += $billing_accounts->sum('balance');
+            }
+        }
+    }
+
+    $billing_info = ['outcome_use' => $outcome_use, 'balance' => $balance];
+?>
+<div class="basic_info" style="height: 70px;padding: 20px 2%;background: #ffffff;">
+    <ul>
+        <li>
+            <div style="display: flex;">
+                <span class="icon"><a href="<?= H($me->url()) ?>"><?= $me->icon('64', 'style="border-radius: 32px;"') ?></a></span>
+                <span class="my_info" style="position: relative; top: 8px; left: 10px;width: 75%;">
+                    <p class="my_name" style="margin-bottom: 5px;">尊敬的 <span class="name"><?= $me->name ?></span>,&nbsp;欢迎登录系统</p>
+                    <p class="my_lab">
+                        <?php foreach($labs as $lab): ?>
+                            <a class="lab_title" style="color: var(--basiccolor);" href="<?= $lab->url() ?>"><?= $lab->name ?></a>&nbsp;&nbsp;
+                        <?php endforeach; ?>
+                    </p>
+                </span>
+            <div>
+                <?php if ($me->is_lab_pi() || $me->access('管理所有内容') || $me->access('列表本实验室的财务帐号')):?>
+            <div style="display: flex;">
+                <?php if (Module::is_installed('billing_standard')): ?>
+                    <span class="billing_item credit lpadding_4">
+                        <a href="<?= URI::url("/billing/?redirect=transaction&oauth-sso=billing." . LAB_ID)?>" target="_blank"><p class="amount" style="color: #F5222D; font-size: 30px;"><?= Number::currency($billing_info['outcome_use']) ?></p></a>
+                        <p class="amount_info" style="text-align: center; color: #666;">待报销金额</p>
+                    </span>
+                    <span class="billing_item credit lpadding_4">
+                        <a href="<?= URI::url("!labs/lab/index.{$lab->id}.billing_account.list")?>"><p class="amount" style="color: #333333; font-size: 30px;"><?= Number::currency($billing_info['balance']) ?></p></a>
+                        <p class="amount_info" style="text-align: center; color: #666;">总余额</p>
+                    </span>
+                <?php else: ?>
+                    <span class="billing_item credit lpadding_4">
+                        <a href="<?= URI::url("!labs/lab/index.{$lab->id}.billing_account.list")?>"><p class="amount" style="color: #F5222D; font-size: 30px;"><?= Number::currency($billing_info['outcome_use']) ?></p></a>
+                        <p class="amount_info" style="text-align: center; color: #666;">使用金额</p>
+                    </span>
+                    <span class="billing_item credit lpadding_4">
+                        <a href="<?= URI::url("!labs/lab/index.{$lab->id}.billing_account.list")?>"><p class="amount" style="color: #333333; font-size: 30px;"><?= Number::currency($billing_info['balance']) ?></p></a>
+                        <p class="amount_info" style="text-align: center; color: #666;">总余额</p>
+                    </span>
+                <?php endif; ?>
+            <div>
+                <?php endif; ?>
+        </li>
+    </ul>
+</div>
+<div id="profile_dashboard" class="profile_dashboard clearfix">
+    <div class="interval_16"></div>
+    <div class="user_info">
+        <!-- user_card -->
+        <?= V('dashboard/user_card') ?>
+        <!-- message -->
+        <?= V('dashboard/messages') ?>
+        <!-- violation -->
+        <?= V('dashboard/violation') ?>
+    </div>
+</div>
+
+<div style="margin: 0 16px;">
+    <div id="user_component_list">
+        <ul>
+            <?php
+            foreach ($card_list as $card) {
+                ?>
+                <li class="com_list <?=$card['key'] ?> <?= strpos($active_tab, $card['key']) !== false ? 'active' : '' ?>">
+                    <a href="<?= $card['url']?>">
+                        <div class="com_list_left">
+                            <div class="com_list_icon"><i class="icon-<?=$card['key'] ?>-da"></i></div>
+                        </div>
+                        <div class="com_list_right">
+                            <p class="title"><?=$card['name'] ?></p>
+                            <p class="num"><?=$card['total'] ?></p>
+                        </div>
+                    </a>
+                </li>
+                <?php
+            }
+            ?>
+        </ul>
+    </div>
+</div>

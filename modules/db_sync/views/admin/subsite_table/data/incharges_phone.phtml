@@ -1,0 +1,10 @@
+<?php
+    $incharges = [];
+	foreach ($users as $user) {
+		$user->phone && $incharges[] = '<span class="nowrap">'. H($user->phone) .'</span>';
+    }
+    
+	if (count($incharges)) {
+        echo join(', ', $incharges);
+    }
+?>

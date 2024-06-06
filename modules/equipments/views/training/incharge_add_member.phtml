@@ -1,0 +1,81 @@
+<div class="interval_12"></div>
+<div class="form">
+    <form class="view" action="<?php echo H(URI::url('!equipment/training') ) ?>" enctype="multipart/form-data" autocomplete="off">
+        <?php echo Form::hidden('_ajax', 1); ?>
+        <?php echo Form::hidden('_object', 'incharge_add_approved_user'); ?>
+        <?php echo Form::hidden('_event', 'submit'); ?>
+        <?php echo V('form_error', ['form' => $form]);?>
+        <table class="form">
+            <tr>
+                <td class="left middle nowrap rpadding_1"><?php echo I18N::T('equipments', '添加用户') ?></td>
+                <td class="left middle padding_1">
+                    <?php
+          echo Widget::factory('multi_user_selector', [
+              'name'=>'approved_users',
+              'autocomplete'=>URI::url('!equipments/autocomplete/user'),
+              'value'=> '',
+            ]);
+        ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="left middle nowrap rpadding_1"><?php echo I18N::T('equipments', '批量用户') ?></td>
+                <td class="left middle padding_1">
+                    <input style="padding-top: 5px;width: 60%" id="file" name="file" type="file" />
+                    <a class="button button_export prevent_default" onclick="window.open('<?= URI::url('public', ['f' => '!equipments/template/import_approve.xlsx'])?>')"><?= I18N::T('equipments', '下载模板')?></a>
+                </td>
+            </tr>
+            <tr>
+                <td class="left middle nowrap rpadding_1"><?php echo I18N::T('equipments', '过期时间') ?></td>
+                <td class="left middle nowrap padding_1">
+                    <?php
+                        echo Form::radio('atime', 0, 0, I18N::T('equipments', '不过期'), 'class="monitor middle"', 'class="middle"');
+                        echo '&#160;&#160;';
+                        echo Form::radio('atime', 1, 0, NULL, 'class="monitor middle"', 'class="middle"');
+                    ?>
+                    <span class="toggle_status:atime enable_on:1">
+                        <input name="deadline" class="text date" q-date_format="<?php echo HT('$year/$month/$day')?>" />
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="left middle nowrap rpadding_1"><?php echo I18N::T('equipments', '授权仪器') ?></td>
+                <td class="left middle padding_1">
+                    <?php
+                        if ($equipment->id) {
+                            echo Form::checkbox("equipments[{$equipment->id}]", true, H($equipment->name), 'class="middle checkbox"');
+                            echo '&#160;';
+                            echo '<br/>';
+                        }
+
+                        $me = L('ME');
+                        if ($me->access('管理所有内容')) {
+                            foreach(Q("equipment[require_training=1][id!={$equipment->id}]") as $eq) {
+                                echo Form::checkbox("equipments[{$eq->id}]", false, H($eq->name), 'class="middle checkbox"');
+                                echo '&#160;';
+                                echo '<br/>';
+                            }
+                        } else {
+                            foreach(Q("{$me}<incharge equipment[require_training=1][id!={$equipment->id}]") as $eq) {
+                                echo Form::checkbox("equipments[{$eq->id}]", false, H($eq->name), 'class="middle checkbox"');
+                                echo '&#160;';
+                            }
+                        }
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="left middle nowrap rpadding_1"><?php echo I18N::T('equipments', '授权备注') ?></td>
+                <td class="left middle padding_1">
+                    <textarea name="description" class="textarea autogrow" style="width: 100%"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="right middle">
+                    <input type="submit" class="font-button-save" value="<?php echo H(I18N::T('equipments', '提交') ) ?>" />
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>

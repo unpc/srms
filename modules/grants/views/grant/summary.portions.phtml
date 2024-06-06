@@ -1,0 +1,39 @@
+<?php
+// 将未分配的经费归类为其他
+$current = $portions->current();
+if ($current->parent->id) {
+	$root = $current->parent;
+	$root_left_amount = $root->avail_balance + $root->expense;
+}
+else {
+	$root = $current->grant;
+	$root_left_amount = $root->avail_balance;
+}
+if ($root_left_amount > 0) {
+	$tmp_portion = O('grant_portion');
+	$tmp_portion->id = -1;
+	$tmp_portion->name = I18N::T('grants', '其他未分类');
+	$tmp_portion->amount = $root_left_amount;
+	$tmp_portion->balance = $root->avail_balance;
+	$tmp_portion->parent = $current->parent;
+	$tmp_portion->grant = $current->grant;
+	$portions->append($tmp_portion);
+}
+
+$i=0;
+$all_amount = 0;
+$all_balance = 0;
+$element_id_pre = $random_id;
+foreach ($portions as $portion) {
+	$tree = $portion->get_render_tree($max_width);
+	$element_id = "{$element_id_pre}_{$i}";
+	$i++;
+	echo V('grants:grant/summary.portion', [
+		'portion' => $portion, 
+		'grant_width'=>$max_width,
+		'element_id'=>$element_id,
+		'tree'=>$tree,
+	]);
+	$all_amount += $portion->amount;
+	$all_balance += $portion->balance;
+}

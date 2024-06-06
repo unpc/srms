@@ -1,0 +1,10 @@
+<?php if ($resume->position_id): ?>
+
+<?php $positions = Q('position')->to_assoc('id', 'name'); ?>
+<?php $position_id = $resume->position_id ?: 0; ?>
+<a class="search_link" href="<?php echo URI::url('', ['position_id'=>$position_id]); ?>">
+	<?php echo O('position', $resume->position_id)->name; ?>
+</a>
+<?php else: ?>
+<?php echo '--'; ?>
+<?php endif; ?>

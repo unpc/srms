@@ -1,0 +1,5 @@
+<?php if($ap->equipment_id){?>
+<a href="<?= H($ap->equipment->url()) ?>"><?= H($ap->equipment->name) ?></a>
+<?php } else {?>
+    <?= H($ap->name) ?>
+<?php }?>

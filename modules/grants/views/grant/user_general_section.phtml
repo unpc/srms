@@ -1,0 +1,54 @@
+<div class="clearfix">
+	<?php echo CSS::load_async('grants:user_general'); ?>
+	<h2 class="general_title">
+		<span class="middle"><?php echo I18N::T('grants', '科研经费') ?></span>
+	</h2>
+	<div class="grant_template">
+		<?php
+			$table = Widget::factory('table');
+			$table->name = 'user_general_grants';
+
+			$table->add_columns([
+				'left_tab' => NULL,
+				'source' => [
+					'title' => I18N::T('grants', '经费来源'),
+					'nowrap' => TRUE,
+					'align' => 'right',
+					'extra_class'=>'tight',
+				],
+				'project' => [
+					'title' => I18N::T('grants', '课题名称'),
+					'nowrap' => TRUE,
+				],
+				'amount' => [
+					'title' => I18N::T('grants', '经费总额'),
+					'nowrap' => TRUE,
+					'align' => 'right',
+				],
+				'period' => [
+					'title' => I18N::T('grants', '时间'),
+					'nowrap' => TRUE,
+				],
+				'right_tab' => NULL,
+			]);
+
+			foreach ($grants as $grant) {
+				$table->add_row([
+					'left_tab' => [
+						'extra'=>'style="padding:5px"',
+					],
+					'project' => V('grants:general_table/project', ['grant'=>$grant]),
+					'source' => V('grants:general_table/source', ['grant'=>$grant]),
+					'amount' =>  V('grants:general_table/amount', ['grant'=>$grant]),
+					'period'=> V('grants:general_table/period', ['grant'=>$grant]),
+					'right_tab' => [
+						'extra'=>'style="padding-right:250px"',
+					],
+				]);
+			}
+
+			echo $table;
+		?>
+	</div>
+	<div class="hr_3">&#160;</div>
+</div>

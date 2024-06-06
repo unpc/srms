@@ -1,0 +1,27 @@
+<div>
+	<?php echo I18N::T('wordpress', '作者'); ?>
+	<span><?php
+$ac_authors = Q("ac_author[achievement={$publication}]:sort(position A)");
+$authors = [];
+foreach ($ac_authors as $ac_author) {
+	// TODO 链接人员的公共页面(xiaopei.li@2012-02-08)
+	/*
+	if ($ac_author->user->id) { //  && $ac_author->user->page_id !!!!
+		$authors[] = URI::anchor($ac_author->user->url(), H($ac_author->name));
+	} else {
+		$authors[] = H($ac_author->name);
+	}
+	*/
+	$authors[] = H($ac_author->name);
+}
+
+$links = empty($authors) ? '' : implode(', ',$authors);
+
+echo $links;
+
+?></span>
+</div>
+<div>
+	<?php echo I18N::T('wordpress', '内容'); ?>
+	<span><?php echo $publication->content; ?></span>
+</div>

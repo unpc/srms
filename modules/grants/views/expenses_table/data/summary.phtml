@@ -1,0 +1,7 @@
+<?php
+if ($expense->pre_summary) {
+	echo new Markup($expense->pre_summary, TRUE);
+	echo '<br />';
+}
+echo H($expense->summary); 
+?>

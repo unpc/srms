@@ -1,0 +1,84 @@
+
+	<div class="hr_1">&nbsp;</div>
+	
+	<div style="padding-top:0px">
+	<?php $require = V('form_require', ['form'=>$form]);?>				
+		<div class="form padding_2">
+			<form action="<?php echo H(URI::url()) ?>" method="post">
+				<?php echo V('form_error', ['form'=>$form])?>
+				<?php $form_table_id = 'form_table_id'. uniqid();  ?>
+				<table class="form" id="<?php echo H($form_table_id) ?>">
+					<tbody>
+
+						<tr>
+							<td class="label right nowrap middle"><?php echo I18N::T('vote', '主题')?></td>
+							<td class="label left top">
+								<input name="topic" class="text" size="50" value="<?php echo H($activity->topic) ?>"/><?php echo $require;?>
+							</td>
+						</tr>
+					
+						
+						<tr>
+							<td class="label right nowrap top"><?php echo I18N::T('vote', '备注')?></td>
+							<td class="top"><textarea class="text autogrow" rows="3" cols="60" name="remark"><?php echo $activity->remark ?></textarea></td>
+						</tr>
+							
+						<tr>
+							<td class="label right nowrap middle"><?php echo I18N::T('vote', '开始时间')?></td>
+							<td class="label left top">
+								<input name="btime" class="text date" value="<?php echo H($activity->dtstart ) ?>" />
+							</td>
+						</tr>
+						<tr>
+							<td class="label right nowrap middle"><?php echo I18N::T('vote', '截止时间')?></td>
+							<td class="label left top">
+								<input name="etime" class="text date" value="<?php echo H($activity->dtend ) ?>" />
+							</td>
+						</tr>
+						
+						<tr>
+							<td class="label right nowrap middle"><?php echo I18N::T('vote', '选项设置'); ?></td>
+							<td>
+								<?php echo Form::radio('radio', 1, $activity->radio, I18N::T('vote','单选') ); ?>
+							
+								&nbsp;&nbsp;
+								<?php echo Form::radio('radio', 0, $activity->radio, I18N::T('vote','多选') ); ?>
+							</td>
+						</tr>
+						
+						<tr>
+							<td>&nbsp;</td>
+							<td>
+								
+									<?php
+									
+										
+									echo Widget::factory('flexform', [
+										'title' => I18N::T('vote', '添加选项'),
+										//'template_data' => array('disabled'=>TRUE),
+										'existing_data' => array_values((array)$choices),
+										'item_view' => 'vote:edit/option',
+									/*	'extra_vars' => array(
+											'modify_limit_format' => $modify_limit_format,
+											'reserv_max_format' => $reserv_max_format,
+											'equipment' => $equipment,
+										), */
+									]);
+										
+																
+									?>	
+							 </td>
+						</tr>						
+						
+						
+						<tr>
+							<td class="label right nowrap middle"></td>
+							<td>
+								<input type="submit" value="<?php echo H(I18N::T('vote','更新')) ?>" class="button button_save" name="submit">
+							</td>
+						</tr>		
+					</tbody>
+				</table>
+			</form>
+		</div>
+	</div>

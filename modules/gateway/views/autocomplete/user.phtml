@@ -1,0 +1,15 @@
+<table class="form" style="margin:10px 0">
+    <tr>
+        <td class="middle" style="display: flex;text-align:center;vertical-align:middle;">
+            <img class="" width="42px" height="42px" src="<?= $user['avatar'] ?>">
+        </td>
+        <td class="middle" style="padding-left: .5rem">
+            <div class="name" style="">
+                <?= $user['name'] ?>
+                <?= !empty($user['ref_no']) ? "({$user['ref_no']})" : '' ?></div>
+            <div style="height: 16px" class="description">
+                <?= $user['email'] ?>
+            </div>
+        </td>
+    </tr>
+</table>

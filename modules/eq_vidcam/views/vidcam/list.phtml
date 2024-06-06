@@ -1,0 +1,74 @@
+<?php
+$me = L('ME');
+
+$is_flexible = 'flexible';
+$vidcam = $vidcams->current();
+if ($me->is_allowed_to('列表', $vidcam) && $me->is_allowed_to('查看', $vidcam)){
+	// 因为大华的监控目前不支持历史记录，如果有大华的视频监控，关联监控的列表中就不会有视频记录列
+	$type = Vidcam_Model::TYPE_STREAM;
+	$dh = Q("vidcam[type=$type]")->total_count();
+	if ($dh == 0) {
+		$vid_record_show = TRUE;
+	}
+	$is_flexible = '';
+}
+$table       = Widget::factory('table');
+$table->name = 'eq_vidcam_cams';
+
+$table->add_columns(
+    [
+/*    'type' => [
+'title' => I18N::T('eq_vidcam', '类型'),
+'align' => 'left',
+'nowrap' => true,
+],*/
+        'name' => [
+            'title'  => I18N::T('eq_vidcam', '名称'),
+            'filter' => [
+                'form'  => V('eq_vidcam:vidcam_table/filter/name', ['name' => $form['name']]),
+                'value' => $form['name'] ? H($form['name']) : null,
+            ],
+            'align'  => 'left',
+            'nowrap' => true,
+        ]]
+);
+
+if ($vid_record_show) {
+    $table->add_columns(
+        [
+            'vidcam_history' =>
+            [
+                'title'       => I18N::T('eq_vidcam', '视频记录'),
+                'extra_class' => 'flexible',
+            ],
+            'rest'           =>
+            [
+                'title'       => I18N::T('eq_vidcam', '操作'),
+                'align'       => 'right',
+                'nowrap'      => true,
+                'extra_class' => 'flexible',
+            ],
+        ]
+    );
+}
+
+$table->empty_message = I18N::T('eq_vidcam', '没有关联视频设备');
+
+if (count($vidcams)) {
+    foreach ($vidcams as $vidcam) {
+        $links = $vidcam->links('list');
+        $table->add_row(
+            [
+                /*   'type'=>[
+                'view'    => $vidcam->icon('32', 'style="display:block"'),
+                'extra'    => 'align="right"'
+                ],*/
+                'name'           => V('eq_vidcam:vidcam_table/data/description', ['vidcam' => $vidcam]),
+                'vidcam_history' => V('eq_vidcam:vidcam_table/data/history', ['vidcam' => $vidcam]),
+                'rest'           => (string) '<a class="blue" href="' . $vidcam->url('vid_record', null, null, 'view') . '">' . I18N::T('eq_vidcam', '修改') . '</a>',
+            ]
+        );
+    }
+}
+
+echo $table;

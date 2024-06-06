@@ -1,0 +1,74 @@
+<?php
+if($this->calendar->parent->name() == 'equipment')
+$equipment = $this->calendar->parent;
+if(!$equipment->id) return;
+
+$charge_tags = (array) $equipment->charge_tags['reserv'];
+if (count($charge_tags) > 0):
+?>
+<tr>
+	<td class="label top right nowrap"><?php echo I18N::T('eq_charge', '计费标签'); ?></td>
+	<td class="nowrap">
+		<div class="form" style="padding:4px" align="right" align="right">
+			<table class="form">
+				<?php
+					$reserv = O('eq_reserv', ['component'=>$component]);
+					$charge = O('eq_charge', ['source'=>$reserv]);
+					$tags = (array) $charge->charge_tags;
+					$eq_tags = (array) $equipment->charge_tags['reserv'];
+					$i = 0;
+					foreach ($eq_tags as $label) :
+						$input_prefix = 'reserv_charge_tags['.rawurlencode($label).']';	
+						$checked = $form['reserv_charge_tags'] ? $form['reserv_charge_tags'][$label]['checked'] == 'on' : isset($tags[$label]);
+						$value = $tags[$label];
+						if ($i == 0) echo '<tr>';
+				?>
+				<td class="nowrap">
+					<?php echo Form::checkbox($input_prefix.'[checked]', $checked, H($label), 'class="middle monitor"', 'class="middle nowrap"'); ?>
+				</td>
+				<td>
+					<input name="<?php echo $input_prefix ?>[value]" type="input" class="text number toggle_status:<?php echo $input_prefix ?>[checked] enable_on:on" value="<?php echo H($value)?>" size="10" />
+				</td>
+				<?php
+					if ($i % 2 == 1) echo '</tr>';
+					else echo '<td>&#160&#160;</td>';
+					$i++;	
+					endforeach; 
+				?>
+			</table>
+		</div>
+	</td>
+</tr>
+<?php endif;?>
+
+<?php 
+	$reserv = O('eq_reserv',['component'=>$this->component]);
+	if($equipment->charge_script['reserv'] && $reserv->id) :
+?>
+<?php 
+$reserv_charge = O('eq_charge', ['source'=>$reserv]);
+$uid = 'custom_charge_' . uniqid();
+?>
+<?php /*如果是免费使用，不显示以下内容*/?>
+<tr>
+    <td colspan="2" class="label middle left nowrap"><?php echo I18N::T('eq_charge', '预约收费金额'); ?></td>
+</tr>
+<tr>
+	<td colspan="2" class="nowrap left">
+		<input name="reserv_amount" type="text" class="text currency <?= $uid?>" style="*position:relative;*bottom:3px; width: 112px;" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo $reserv_charge->amount; ?>" <?php if(!$reserv_charge->custom) echo 'disabled';?>/>
+        &#160;
+		<a href="#" class="font-button-default reserv_button_calculate button_calculate prevent_default"><?php echo I18N::T('eq_charge', '重新计算') ?></a>
+	</td>
+</tr>
+<tr>
+	<td colspan="2" class="left nowrap">
+		<?php echo Form::checkbox('reserv_custom_charge', $reserv_charge->custom, I18N::T('eq_charge', '自定义预约收费金额'), 'class="middle monitor custom_charge" id="'.$uid.'"', 'class="middle"');?>
+	</td>
+</tr>
+<?php endif;?>
+<?php
+$reserv = O('eq_reserv', ['component'=>$this->component]);
+echo JS::load('eq_charge:reserv_edit_charge', [
+	'trigger_url' => URI::url('!eq_charge/charge/'.$reserv->id),
+]);
+

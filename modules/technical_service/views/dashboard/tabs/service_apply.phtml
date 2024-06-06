@@ -1,0 +1,139 @@
+<?php
+echo $pagination;
+
+if ($form['ctime_s'] || $form['ctime_e']) {
+    $form['ctime'] = true;
+}
+if ($form['dtrequest_s'] || $form['dtrequest_e']) {
+    $form['dtrequest'] = true;
+}
+
+$table = Widget::factory('table');
+$table->name = 'services';
+$columns = [
+    'ref_no' => [
+        'weight' => 10,
+        'title' => I18N::T('technical_service', '预约编号'),
+        'sortable' => TRUE,
+        'align' => 'left',
+        'filter' => [
+            'form' => V('technical_service:apply_table/filters/text', ['name' => 'ref_no', 'value' => $form['ref_no']]),
+            'value' => $form['ref_no'] ? H($form['ref_no']) : NULL
+        ],
+        'nowrap' => TRUE,
+    ],
+    'service_name' => [
+        'weight' => 10,
+        'title' => I18N::T('technical_service', '服务名称'),
+        'align' => 'left',
+        'filter' => [
+            'form' => V('technical_service:apply_table/filters/text', ['name' => 'service_name', 'value' => $form['service_name']]),
+            'value' => $form['service_name'] ? H($form['service_name']) : NULL
+        ],
+        'align' => 'center',
+        'nowrap' => TRUE,
+    ],
+    'status' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '服务状态'),
+        'sortable' => TRUE,
+        'align' => 'left',
+        'filter' => [
+            'form' => V('technical_service:apply_table/filters/status', ['form' => $form]),
+            'value' => $form['status'] ? H($form['status']) : NULL
+        ],
+        'input_type' => 'select',
+        'nowrap' => TRUE,
+        'input_type' => 'select'
+    ],
+    'service_time_length' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '服务时长'),
+        'align' => 'right',
+        'nowrap' => TRUE,
+    ],
+    'amount' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '金额'),
+        'align' => 'right',
+        'nowrap' => TRUE,
+    ],
+    'user' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '预约者'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'phone' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '联系方式'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'ctime' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '预约时间'),
+        'align' => 'left',
+        'filter' => [
+            'form' => V('technical_service:apply_table/filters/ctime', [
+                'form' => $form,
+            ]),
+            'field' => 'ctime_s,ctime_e',
+            'value' => $form['ctime'] ?: null,
+        ],
+        'nowrap' => TRUE,
+    ],
+    'dtrequest' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '期望完成时间'),
+        'align' => 'left',
+        'filter' => [
+            'form' => V('technical_service:apply_table/filters/dtrequest', [
+                'form' => $form,
+            ]),
+            'field' => 'dtrequest_s,dtrequest_e',
+            'value' => $form['dtrequest'] ?: null,
+        ],
+        'nowrap' => TRUE,
+    ],
+    'rest' => [
+        'title' => I18N::T('technical_service', '操作'),
+        'weight' => 70,
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ]
+];
+
+$table->add_columns($columns);
+$table->empty_message = I18N::T('technical_service', '没有相关服务数据');
+
+foreach ($applys as $apply) {
+    $links = $apply->links();
+    $table->add_row([
+        'ref_no' => V('technical_service:apply_table/data/ref_no', ['apply' => $apply]),
+        'service_name' => V('technical_service:apply_table/data/service_name', ['apply' => $apply]),
+        'status' => V('technical_service:apply_table/data/status', ['apply' => $apply]),
+        'service_time_length' => V('technical_service:apply_table/data/service_time_length', ['apply' => $apply]),
+        'amount' => V('technical_service:apply_table/data/amount', ['apply' => $apply]),
+        'user' => V('technical_service:apply_table/data/user', ['apply' => $apply]),
+        'phone' => V('technical_service:apply_table/data/phone', ['apply' => $apply]),
+        'ctime' => V('technical_service:apply_table/data/ctime', ['apply' => $apply]),
+        'dtrequest' => V('technical_service:apply_table/data/dtrequest', ['apply' => $apply]),
+        'rest' => Widget::factory('application:links', ['links' => $links])
+    ]);
+}
+
+$param = [
+    'is_offset' => true,
+    'top_input_arr' => Config::get('search.top_input_arr')['apply.list'],
+    'columns' => $table->columns,
+    'panel_buttons' => $panel_buttons,
+    'extra_view' => '<div class="adj statistics middle">' .
+        I18N::T('technical_service', '共有 %service_count 条申请', [
+            '%service_count' => '<span class=" blue">' . $applys->total_count() . '</span>',
+        ]) . $pagination . '</div>'
+];
+echo V('application:search_box', $param);
+
+echo $table;
+echo $pagination;

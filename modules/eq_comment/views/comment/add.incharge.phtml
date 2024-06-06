@@ -1,0 +1,100 @@
+<style>
+    .comment_incharge table.rateit_table {
+        width: 370px;
+        background-color: #ededed80;
+    }
+  .comment_incharge table.rateit_table tbody tr:last-child td {
+        padding-bottom: 10px;
+  }
+    .comment_incharge table.rateit_table tbody tr td:first-child {
+        width: 140px;
+    }
+    .comment_incharge table.rateit_table tbody tr td:last-child {
+        padding-left: 16px;
+    }
+</style>
+
+<?php $tip = Config::get('comment.rate')['tip']; ?>
+<?php $comment = O('eq_comment_incharge', ['source' => $object]); ?>
+<?php $require = V('form_require');?>
+
+<div class="hr_2">&#160;</div>
+
+<table class="comment_incharge">
+  <tbody>
+    <tr><td class="nowrap left label middle"><h3><?= I18N::T('eq_comment', '请对服务进行评价') ?></h3></td></tr>
+
+    <tr><td class="nowrap left label middle"><?= I18N::T('eq_comment', '仪器管理员服务评价') ?>:</td></tr>
+    <tr>
+        <td>
+            <table class="form rateit_table">
+                <tbody>
+                    <tr>
+                        <td class="nowrap right label middle"><?= $require?><?= I18N::T('eq_comment', '服务态度'); ?></td>
+                        <td class="nowrap label middle"><?= Widget::factory('rateit_input', ['name' => "service_attitude", 'rateit_value' => $form['service_attitude'] ? : $comment->service_attitude ? : 5, 'rateit_tip' => TRUE, 'tip' => $tip]); ?></td>
+                    </tr>
+                    <tr>
+                        <td class="nowrap right label middle"><?= $require?><?= I18N::T('eq_comment', '服务质量'); ?></td>
+                        <td class="nowrap label middle"><?= Widget::factory('rateit_input', ['name' => "service_quality", 'rateit_value' => $form['service_quality'] ? : $comment->service_quality ? : 5, 'rateit_tip' => TRUE, 'tip' => $tip]); ?></td>
+                    </tr>
+                    <tr>
+                        <td class="nowrap right label middle"><?= $require?><?= I18N::T('eq_comment', '技术能力'); ?></td>
+                        <td class="nowrap label middle"><?= Widget::factory('rateit_input', ['name' => "technical_ability", 'rateit_value' => $form['technical_ability'] ? : $comment->technical_ability ? : 5, 'rateit_tip' => TRUE, 'tip' => $tip]); ?></td>
+                    </tr>
+                    <tr>
+                        <td class="nowrap right label middle"><?= $require?><?= I18N::T('eq_comment', '应急处理能力'); ?></td>
+                        <td class="nowrap label middle"><?= Widget::factory('rateit_input', ['name' => "emergency_capability", 'rateit_value' => $form['emergency_capability'] ? : $comment->emergency_capability ? : 5, 'rateit_tip' => TRUE, 'tip' => $tip]); ?></td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+
+    <tr><td style="width: 120px;"><?= I18N::T('eq_comment', '仪器性能评价') ?>:</td></tr>
+    <tr>
+        <td>
+            <table class="form rateit_table">
+                <tbody>
+                    <tr>
+                        <td class="nowrap right label middle"><?= $require?><?= I18N::T('eq_comment', '检测性能'); ?></td>
+                        <td class="nowrap label middle"><?= Widget::factory('rateit_input', ['name' => "detection_performance", 'rateit_value' => $form['detection_performance'] ? : $comment->detection_performance ? : 5, 'rateit_tip' => TRUE, 'tip' => $tip]); ?></td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+
+    <tr><td style="width: 120px;"><?= I18N::T('eq_comment', '检测结果评价') ?>:</td></tr>
+    <tr>
+        <td>
+            <table class="form rateit_table">
+                <tbody>
+                    <tr>
+                        <td class="nowrap right label middle"><?= $require?><?= I18N::T('eq_comment', '准确性'); ?></td>
+                        <td class="nowrap label middle"><?= Widget::factory('rateit_input', ['name' => "accuracy", 'rateit_value' => $form['accuracy'] ? : $comment->accuracy ? : 5, 'rateit_tip' => TRUE, 'tip' => $tip]); ?></td>
+                    </tr>
+                    <tr>
+                        <td class="nowrap right label middle"><?= $require?><?= I18N::T('eq_comment', '预期目标吻合度'); ?></td>
+                        <td class="nowrap label middle"><?= Widget::factory('rateit_input', ['name' => "compliance", 'rateit_value' => $form['compliance'] ? : $comment->compliance ? : 5, 'rateit_tip' => TRUE, 'tip' => $tip]); ?></td>
+                    </tr>
+                    <tr>
+                        <td class="nowrap right label middle"><?= $require?><?= I18N::T('eq_comment', '测试及时性'); ?></td>
+                        <td class="nowrap label middle"><?= Widget::factory('rateit_input', ['name' => "timeliness", 'rateit_value' => $form['timeliness'] ? : $comment->timeliness ? : 5, 'rateit_tip' => TRUE, 'tip' => $tip]); ?></td>
+                    </tr>
+                    <tr>
+                        <td class="nowrap right label middle"><?= $require?><?= I18N::T('eq_comment', '样品的保管与处理'); ?></td>
+                        <td class="nowrap label middle"><?= Widget::factory('rateit_input', ['name' => "sample_processing", 'rateit_value' => $form['sample_processing'] ? : $comment->sample_processing ? : 5, 'rateit_tip' => TRUE, 'tip' => $tip]); ?></td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+      <td>
+          <div style="text-align: left"><?php echo V('form_filter', ['error'=>$form->errors['comment_suggestion'][0]]);?></div>
+          <textarea name="comment_suggestion" class="text autogrow" placeholder="请填写服务评价与建议" cols="53" rows="3"><?= $form['comment_suggestion'] ? : $comment->comment_suggestion; ?></textarea><br>
+      </td>
+    </tr>
+  </tbody>
+</table>

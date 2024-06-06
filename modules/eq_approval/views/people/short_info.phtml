@@ -1,0 +1,11 @@
+<div class="panel clearfix middle padding_1">
+	<?php
+		$quota = O('eq_quota', ['user' => $user]);
+		if (!$quota->id || $quota->type == EQ_Quota_Model::NO_APPROVAL):
+	?>
+		<p class="center"><span><?= I18N::T('eq_approval', '不审核')?></span></p>
+	<?php else: ?>
+		<p class="center"><span><?= I18N::T('eq_approval', '预约额度')?></span></p>
+		<p class="center"><span><?= $quota->value ?></span></p>
+	<?php endif; ?>
+</div>

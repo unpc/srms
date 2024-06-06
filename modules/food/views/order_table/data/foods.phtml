@@ -1,0 +1,13 @@
+<?php
+	$foods = json_decode($this->order->foods);
+	foreach($foods as $food => $value) {
+		if (!$this->order->mode) {
+			//订餐按照订餐显示
+			echo O('food', $food)->id ? H(O('food', $food)->name). ' ' : H($food).' ';
+		}
+		else {
+			//特殊订单显示特殊订单名称
+			echo H($food.' ');
+		}
+	}
+?>

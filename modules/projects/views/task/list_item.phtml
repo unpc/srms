@@ -1,0 +1,16 @@
+<?php 
+	$supervisors = Q("{$object} user<supervisor>")->to_assoc('id', 'name');
+?>
+<tr class="check_hover">
+	<td class="nowrap"><?php echo H($object->name); ?></td>
+	<td class="nowrap"><?php echo Task_Model::$approved[$object->approved]; ?></td>
+	<td class="nowrap"><?php echo '进度'; ?></td>
+	<td class="nowrap"><?php echo date('Y-m-d', $object->dtstart); ?></td>
+	<td class="nowrap"><?php echo date('Y-m-d', $object->dtend); ?></td>
+	<td class="nowrap"><?php echo H($object->description); ?></td>
+	<td class="nowrap"><?php echo implode(',', $supervisors); ?></td>
+	<td class="center nowrap">
+		'通过批准' | '未通过批准'
+	</td>
+</tr>
+

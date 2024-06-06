@@ -1,0 +1,128 @@
+<div class="form">
+	<form method="post" class="blue view" q-object="refill_deduction" q-event="submit" q-static="<?php echo H(['lab_id'=>$lab->id, 'type'=>'refill'])?>">
+    <?php 
+	$require = (string) V('form_require', ['extra_class' => 'top']);
+    $requires = Config::get('form.billing_deduction')['requires']; 
+	?>
+	<table class="form">
+		<tbody>
+			<tr>
+                <td class="left nowrap top"><?php echo I18N::T('billing', '充值类型');?></td>
+				<td class="left nowrap middle"><?php echo I18N::T('billing', '财务部门'); ?></td>
+			</tr>
+            <tr>
+                <td class="top">
+                    <div>
+                        <?php echo Form::radio('credit_type', Billing_Account_Model::OPERATION_CREDIT, isset($form['credit_type']) ? $form['credit_type'] : TRUE,
+                            I18N::T('billing', '本地充值'), ' class="middle monitor radio"', 'class="middle"'); ?>
+                        &#160;
+                        <?php echo Form::radio('credit_type', Billing_Account_Model::OPERATION_TRANSFER, isset($form['credit_type']) ? $form['credit_type'] : TRUE,
+                            I18N::T('billing', '调账'), ' class="middle monitor radio"', 'class="middle"'); ?>
+                    </div>
+                </td>
+                <td class="top">
+                    <?php
+                    echo Widget::factory('billing:lab_department_selector', [
+                        'autocomplete'=>URI::url('!billing/autocomplete/lab_department.'.$lab->id.'.refill'),
+                        'name'=>'department_id',
+                        'size'=>'40'
+                    ]);
+                    ?>
+                </td>
+            </tr>
+            <tr class="nowrap toggle:credit_type show_on:0 middle" style="display: none">
+                <td>
+                    *&#160;<?php echo I18N::T('billing', '费用来源');?>
+                </td>
+                <td></td>
+            </tr>
+            <tr class="nowrap toggle:credit_type show_on:0 middle" style="display: none;">
+                <td>
+                    <?php
+                        echo Widget::factory('billing:account_selector', [
+                            'name'=> 'from_account',
+                            'autocomplete'=> URI::url('!billing/autocomplete/account'),
+                            'lab'=> $lab,
+                        ]);
+                        ?>
+                </td>
+                <td></td>
+            </tr>
+			<tr>
+				<td class="left nowrap middle"><?php echo I18N::T('billing', '目前余额')?></td>
+                <td class="left nowrap middle">
+                    <?= array_key_exists('amount', $requires) ? $require : ''; ?>
+                    <?php echo I18N::T('billing', '充值金额')?>
+                    <?php echo V('form_filter',['error'=>$form->errors['amount'][0]])?>
+                </td>
+			</tr>
+			<tr>
+                <td class="top"><input name="credit_balance" class="text currency readonly" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="0" readonly="true" /></td>
+				<td class="top"><input name="amount" class="text currency" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo H($form['amount']) ?>" /></td>
+			</tr>
+			<tr>
+				<td class="left nowrap middle">
+                    <?= array_key_exists('certificate', $requires) ? $require : ''; ?>
+                    <?php echo I18N::T('billing', '凭证号')?>
+                    <?php echo V('form_filter',['error'=>$form->errors['certificate'][0]])?>
+                </td>
+<!--                <td name="change_credit_user"  class="left nowrap middle hidden">--><?php //echo I18N::T('billing', '充值人员')?><!--</td>-->
+			</tr>
+            <tr>
+                <td colspan="2" class="top"><input name="certificate" class="text right" size="20" value="<?php echo H($form['certificate']) ?>" /></td>
+<!--                <td name="change_credit_user" class="top hidden">-->
+<!--                    --><?php
+//                    /*
+//                    NO.BUG#315(guoping.zhang@2010.12.28)
+//                    充值人员默认为是：当前用户
+//                    */
+//                    echo Widget::factory('user_selector', [
+//                        'autocomplete'=>URI::url('!billing/autocomplete/users'),
+//                        'name'=>'user_id',
+//                        'user'=>L('ME'),
+//                    ]);
+//                    ?>
+<!--                </td>-->
+            </tr>
+            <?php echo V('account/extra_fields', ['form' => $form]) ?>
+			<tr name="change_credit_user" class="hidden">
+				<td class="left nowrap middle"><?php echo I18N::T('billing', '充值人员')?></td>
+            </tr>
+            <tr name="change_credit_user" class="hidden">
+				<td colspan="2" class="top">
+					<?php
+						/*
+						NO.BUG#315(guoping.zhang@2010.12.28)
+						充值人员默认为是：当前用户
+						*/
+			   			echo Widget::factory('user_selector', [
+			   					'autocomplete'=>URI::url('!billing/autocomplete/users'), 
+			   					'name'=>'user_id',
+			   					'user'=>L('ME'), 
+			   			]); 
+				   	?>
+				</td>
+			</tr>
+
+			<tr>
+				<td colspan="2" class="left nowrap top">
+                    <?= array_key_exists('description', $requires) ? $require : ''; ?>
+                    <?php echo I18N::T('billing', '备注')?>
+                    <?php echo V('form_filter',['error'=>$form->errors['description'][0]])?>
+                </td>
+			</tr>
+            <tr>
+                <td colspan="2" class="top">
+                    <textarea name="description" type="text" cols="82" rows="4" class="text autogrow"><?php echo H($form['description'])?></textarea>
+                </td>
+            </tr>
+		</tbody>
+	</table>
+        <div class="button_container">
+            <div class="float_right">
+                <input name="cancel" id="cancel" type="reset" class="font-button-default sm rmargin_2e4" value="<?php echo H(I18N::T('billing', '取消') ) ?>">
+                <input name="submit" type="submit" class="font-button-save sm" value="<?php echo H(I18N::T('billing', '充值')) ?>">
+            </div>
+        </div>
+	</form>
+</div>

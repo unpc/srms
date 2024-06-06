@@ -1,0 +1,8 @@
+<?php if (L('ME')->is_allowed_to('查看', $object)):?>
+<?php 
+    $site = Config::get('site.slave');
+?>
+<a href="<?php echo $site[$db->name()]['host'] . '!billing/department/index.' . $object->id . '?oauth-sso=db_sync.' . $db->name(); ?>"><?php echo H($object->name); ?></a>
+<?php else:?>
+<?php echo H($object->name);?>
+<?php endif;?>

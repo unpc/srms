@@ -1,0 +1,74 @@
+<div class="hr_1">&#160;</div>
+<?php $me = L('ME'); ?>
+
+<div class="panel padding_1 clearfix">
+	<div class="nowrap">
+	<a class="button button_add" href="<?php echo H(URI::url('!treenote/project/add')) ?>"><?php echo I18N::HT('treenote', '创建项目')?></a>
+		&#160;&#160;
+	</div>
+</div>
+<?php echo $pagination; ?>
+<?php 
+
+$table = Widget::factory('table');
+
+$table->name = 'treenote_projects';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+$table->add_columns([
+	'@'=>[
+		'align'=>'center top',
+		'extra_class'=>'tight',
+	],
+	'status' => [
+		'title'=>'&#160;',
+		'align'=>'center top',
+	],
+	'title'=>[
+		'title'=>I18N::T('treenote', '项目名称'),
+		'align'=>'left top',
+		'sortable' => TRUE,
+		'filter'=> [
+			'form' => V('project/table/filters/title', ['title'=>H($form['title'])]),
+			'value' => $form['title'] ? H($form['title']) : NULL
+			],
+		'extra_class' => 'flexible',
+	],
+	'user'=>[
+		'title'=>I18N::T('treenote', '负责人|:project'),
+		'nowrap'=>TRUE,
+		'align' => 'center top',
+		'filter' => [
+			'form' => V('project/table/filters/user', ['user_name'=>H($form['user_name'])]),
+			'value' => H($form['user_name'])
+			],
+	],
+	'progress'=>[
+		'title'=>I18N::T('treenote', '完成度'),
+		'align'=>'left top',
+		'nowrap'=>TRUE,
+	],
+	'rest'=>[
+		'nowrap'=>TRUE,
+		'align'=>'right top',
+	],
+]);
+
+$table->empty_message = I18N::T('treenote', '无相关项目');
+
+foreach ($projects as $project) {
+	$links = $me->follow_links($project) + $project->links();
+	
+	$table->add_row(
+		[
+			'@'=>V('project/table/data/ref', ['project'=>$project]),
+			'status' => V('project/table/data/status', ['project'=>$project]),
+			'title'=>V('project/table/data/title', ['project' => $project]),
+			'user'=> V('project/table/data/user', ['project'=>$project]),
+			'progress'=>V('project/table/data/progress', ['project' => $project]),
+			'rest'=>Widget::factory('application:links', ['links' => $links])
+			]);
+}
+
+echo $table;

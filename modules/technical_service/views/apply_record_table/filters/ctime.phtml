@@ -1,0 +1,4 @@
+<?php $form['ctime_s'] = $form['ctime_s'] ? date('Y-m-d', $form['ctime_s']) : ''; ?>
+<?php $form['ctime_e'] = $form['ctime_e'] ? date('Y-m-d', $form['ctime_e']) : ''; ?>
+
+<input id="ctime_s" name="ctime_s" date_type="date" class="text date small_search_text" value="<?php echo $form['ctime_s']; ?>" /><span class="middle description date_interval">-</span><input id="ctime_e" name="ctime_e" date_type="date" class="text date small_search_text" value="<?php echo $form['ctime_e']; ?>" />

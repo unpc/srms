@@ -1,0 +1,69 @@
+<?php //if(count($follows)>0):?>
+
+<?php
+	/*
+		NO. TASK#254 (Cheng.Liu@2010.11.19)
+		用户关注列表转换成 table widget
+	*/
+	$table = Widget::factory('table');
+	$table->name = 'people_follow_users';
+	$table->add_columns([
+		/*'img'=>[
+			'nowrap'=>TRUE,
+			'align'=>'center'
+		],*/
+		'name'=>[
+			'title'=>I18N::T('people', '姓名'),
+			'nowrap'=>TRUE,
+		],
+        'contact_info'=>[
+            'title'=>I18N::T('people', '联系方式'),
+            'nowrap'=>TRUE,
+        ],
+		'address'=>[
+			'title'=>I18N::T('people', '地址'),
+			'nowrap'=>TRUE,
+		]
+	]);
+
+	if ($GLOBALS['preload']['people.enable_member_date']) {
+		$table->add_column('date', [
+			'title'=>I18N::T('people', '关注日期'),
+			'nowrap'=>TRUE,
+		]);
+	}
+
+	$table->add_column('rest', [
+        'title'=>I18N::T('people', '操作'),
+		'nowrap'=>TRUE,
+		'align'=>'left',
+	]);
+    $table->empty_message = I18N::T('yiqikong_approval', '没有查询到相应的信息!');
+	foreach ($follows as $follow) {
+		$user =$follow->object;
+		if (!$user->id) {
+			$follow->delete();
+			continue;
+		}
+		$links = L('ME')->follow_links($user) + $user->links();
+	    $table->add_row([
+	    	'img'=>[
+	    		'view'=>$user->icon('32', 'style="display:block"'),
+	    		'extra'=>'style="padding:4px" align="right"'
+	    	],
+	    	'name'=>V('people:users_table/data/name', ['user'=>$user]),
+            'contact_info'=>V('people:users_table/data/contact_info', ['user'=>$user]),
+	    	'address'=>V('people:users_table/data/address', ['user'=>$user]),
+	    	'date'=>date('Y/m/d H:i:s', $follow->ctime),
+	    	'rest'=>Widget::factory('application:links', ['links' => $links])
+	    ]);
+	}
+
+	echo $table;
+	
+?>
+
+<?php if ($follows->total_count() > 20) : ?>
+    <div class="pages"><?= $pagination ?></div>
+<?php endif; ?>
+<?php //endif;?>

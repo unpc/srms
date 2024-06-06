@@ -1,0 +1,35 @@
+<?php $tip = V('tip');
+$me = L('ME');
+$token = Auth::token();
+if ((string) $tip):
+	$tip_id = 'tips_'.uniqid();
+?>
+<?php endif; ?>
+
+<?php if (Config::get('layout.public_url')): ?>
+    <div class="top_menu_item">
+	    <a href="<?php echo 'http://' . $_SERVER['HTTP_HOST'].Config::get('layout.public_url') ?>" class="link"><?php echo T('返回前台');?></a>
+    </div>
+<?php endif;?>
+
+<div class="top_menu_item">
+<?php
+if ($me->id || $token): ?>
+<?php if ($me->id): ?>
+<?php endif; ?>
+    <a class="fa icon-avatar"><?php echo $me->icon('24.5') ?>
+        <span style="height:24px;line-height:24px;text-align:center;padding-left:5px;font-size:14px;font-family:PingFangSC-Regular,PingFang SC;font-weight:400;color:#B8B8B8;"><?=HT(Switchrole::user_select_role())?></span>
+        <span style="color: #B8B8B8; padding-left: 5px;" class="icon icon-drop_down"><span>
+    </a>
+    <ul class="extra-list">
+        <?php
+        $admin_tokens = array_map("Auth::normalize", array_merge((array) Config::get('lab.admin', []), (array) Lab::get('lab.admin', [])));
+        if (!in_array($me->token, $admin_tokens)):
+            ?>
+            <li><a id="switch_role" q-object="switch_role" q-event="click" q-src="<?=URI::url('!people/switchrole') ?>">切换角色</a></li>
+        <?php endif?>
+    </ul>
+<?php else: ?>
+    <a class="fa link link_login" href="<?php echo H(URI::url('login')) ?>"><?php echo HT('登录')?></a>
+<?php endif; ?>
+</div>

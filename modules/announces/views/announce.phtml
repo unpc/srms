@@ -1,0 +1,58 @@
+<div class="padding_3">
+	<table class="form announce_show">
+	<tr>
+		<td class="right middle"><strong class="description"><?php echo I18N::HT('announces', '发布人')?>:</strong></td>
+		<td class="middle lpadding_3"><?php echo V('announces:announces_table/data/sender', ['announce'=>$announce]); ?></td>
+	</tr>
+	<tr><td><div class="interval_12"></div></td></tr>
+	<tr>
+		<td class="right middle"><strong class="description"><?php echo I18N::HT('announces', '发布时间')?>:</td>
+		<td class="middle lpadding_3"><?php echo Date::format($announce->ctime, 'Y/m/d H:i'); ?></td>
+	</tr>
+	<tr><td><div class="interval_12"></div></td></tr>
+	<tr>
+		<td class="right middle"><strong class="description"><?php echo I18N::HT('announces', '标题')?>:</td>
+		<td class="middle  lpadding_3"><?php echo new Markup(stripslashes($announce->title), TRUE); ?></td>
+	</tr>
+	<tr><td><div class="interval_12"></div></td></tr>
+	<tr>
+		<td class="right middle"><strong class="description"><?php echo I18N::HT('announces', '发布范围')?>:</td>
+		<td class="middle  lpadding_3">
+			<?php
+				$scope = '';
+				switch ($receivers['type']) {
+					case 'user':
+						foreach($receivers['scope'] as $id=>$user){
+							$scope .= $user.', ';
+						}
+						break;
+					case 'all':
+						$scope .= '所有人';
+						break;
+					case 'group':   /*  组织结构  */
+						foreach ($receivers['scope'] as $group) {
+							$scope .= $group.', ';
+						}
+			    		break;
+					case 'role':  /* 角色 */
+						foreach ($receivers['scope'] as $role) {
+							$scope .= $role.', ';
+						}
+						break;
+			    }
+			    echo rtrim($scope, ', ');
+			?>
+		</td>
+	</tr>
+	</table>
+	<div><hr style="border-color:#eee" /></div>
+	<div class="interval_20"></div>
+	<div class="announce_body" style="padding-left: 10px;word-wrap:break-word;word-break:break-all;width: 70rem;">
+		<?php echo H($announce->content, true) ?>
+	</div>
+	<div style="padding-left: 10px;">
+		<?php
+	        echo V('announces:attachments',['announce'=>$announce->id ? $announce:O('announce')])
+	    ?>
+	</div>
+</div>

@@ -1,0 +1,98 @@
+/*
+NO.BUG#157<=>BUG#125（guoping.zhang@2010.11.12)
+成果管理,关联作者页面字体为黑色（IE为浅灰）
+修改：添加color:#000;
+*/
+.aumap_table{
+	width:450px;
+	color:#000;
+}
+
+.aumap_table li {
+	margin: 0;
+}
+
+.aumap_table .section_title{
+	font-size:14px;
+	font-weight:bold;
+	color:grey;
+	line-height:2;
+}
+.aumap_table .aumap_user{
+	background-color:#fff;
+	border:1px solid #f7f7f7;
+	font-size:14px;
+	margin-top:5px;
+	margin-bottom:5px;
+}
+
+.aumap_pointer{
+	cursor:pointer;
+}
+
+.aumap_pointer .icon_block {
+	background-color: #fff;
+}
+
+.aumap_table .aumap_user_selected{
+	border:1px solid #f7f7f7;
+	font-size:14px;
+	margin-top:5px;
+	margin-bottom:5px;	
+	font-weight:bold;
+	color:green;
+}
+
+div.publication {
+	margin:10px;
+	
+	div.brief {
+		color:#666;
+		font-style: italic;
+		margin-bottom:10px;
+		font-family:Times New Roman;
+	}
+	
+	div.publication_info {
+		font-family:Times New Roman;
+        width: 70%;
+		.title {
+			font-size:16px;
+			color:black;
+			font-weight:bold;
+			min-width: 500px;
+		}
+	
+		.affiliation {
+			color:#999;
+			display:inline-block;
+		}
+	}
+	
+	div.abstract {
+		font-family:Times New Roman;
+		text-align: justify;
+		min-width:500px;
+		width:70%;
+		margin:8px 0px;
+		font-size:14px;
+	}
+	
+	div.tags{
+		margin-top:20px;
+		margin-bottom:3px;
+		a{
+			text-decoration: none;
+			cursor: pointer;
+			/* color:#FFFFFF; */
+		}
+	}
+	
+	div.relation {
+		font-size:14px;
+		span {
+			font-weight:bold;
+		}
+	}
+}
+

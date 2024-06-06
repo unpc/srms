@@ -1,0 +1,38 @@
+<?php
+if($equipment->status==EQ_Status_Model::IN_SERVICE):
+	if($equipment->is_using):
+		$now = time();
+		$record = Q("eq_record[equipment={$equipment}][dtstart<$now][dtend=0]:sort(dtend D):limit(1)")->current();
+		if ($record->id):
+			$user = $record->user;
+?>
+<div class="equipments_info_style">
+	<div class="clearfix current_user">
+		<h2 class="section_title">
+			<span class="middle"><?php echo I18N::T('equipments', '当前使用者') ?></span>
+		</h2>
+		<div class="interval_30"></div>
+		<table class="form">
+			<tr>
+				<td class="top nowrap"><a href="<?php echo H($user->url()) ?>"><?php echo $user->icon('64') ?></a></td>
+				<td class="value">
+					<h3><?php $user->render();?></h3>
+					<p><span class="lab"><?php echo H(join(' ' ,Q("$user lab")->to_assoc('id', 'name'))) ?></span></p>
+					<p>
+						<span class="label"><?php echo I18N::T('equipments', '开始时间')?>:</span>
+						<?php echo Date::relative($record->dtstart); ?>
+					</p>
+					<p>
+						<span class="label"><?php echo I18N::T('equipments', '使用时长')?>:</span>
+						<?php echo Date::format_duration($record->dtstart, $now, 'i'); ?>
+					</p>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<?php
+		endif;
+	endif;
+endif;
+?>

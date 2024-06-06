@@ -1,0 +1,83 @@
+
+	<div class="hr_1">&nbsp;</div>
+	
+	<div style="padding-top:0px">
+	<?php $require = V('form_require', ['form'=>$form]);?>				
+		<div class="form padding_2">
+			<form action="<?php echo H(URI::url()) ?>" method="post">
+				<?php echo V('form_error', ['form'=>$form])?>
+				<?php $form_table_id = 'form_table_id'. uniqid();  ?>
+				<script type="text/javascript">
+					$(document).ready(
+						function (){
+							<?php if( !$submit ) echo '$("#'.$form_table_id.'").hide();' ?>	
+						}
+					);
+					
+				</script>
+				<table class="form" id="<?php echo H($form_table_id) ?>">
+					<tbody>
+											
+						<tr>
+							<td class="label right nowrap middle"><?php echo I18N::T('vote', '主题')?>:</td>
+							<td class="label left top">
+								<strong><?php echo $activity->topic ?></strong>	
+							</td>
+						</tr>
+						<?php $radio = $activity->radio; ?>
+												
+						<?php foreach($choices as $choice) {
+										?>
+						<tr>
+							<td>&nbsp;</td>
+							<td><input type="<?php echo $radio?'radio':'checkbox'; ?>" name="choice[]" value="<?php echo H($choice ) ?>" />&nbsp;&nbsp;<?php echo $choice ?> </td>
+						</tr>
+		
+										<?php
+									
+							     } 
+							    ?>												
+						<tr>
+							<td class="label right nowrap top"><?php echo I18N::T('vote', '备注')?>:</td>
+							<td class="label left top "><?php echo $activity->remark ?></td>
+						</tr>
+							
+						<tr>
+							<td class="label right nowrap middle"><?php echo I18N::T('vote', '开始时间')?>:</td>
+							<td class="label left top">
+								<?php echo Date::format($activity->dtstart) ?>
+							</td>
+						</tr>
+						<tr>
+							<td class="label right nowrap middle"><?php echo I18N::T('vote', '截止时间')?>:</td>
+							<td class="label left top">
+								<?php echo Date::format($activity->dtend) ?>
+							</td>
+						</tr>	
+																		
+						<tr>
+							<td class="label right nowrap middle"></td>
+							<td>
+								<input type="submit" value="<?php echo H(I18N::T('vote','投票')) ?>" class="button button_save" name="submit">
+							</td>
+						</tr>		
+					</tbody>
+				</table>
+			</form>
+		</div>
+	</div>
+	<div class="form padding_2">
+		<div><h1>投票结果统计如下：</h1></div>
+		<div>
+			<?php
+				foreach ($vote_result as $key => $value) {
+					?>
+					<p class="right" style="width:100px;"><span><?php echo $key ?>:</span>&nbsp;&nbsp;<span><?php echo $value ?></span></p>
+					<?php
+				}
+			 ?>
+			
+		</div>
+	
+	</div>
+	

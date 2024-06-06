@@ -1,0 +1,23 @@
+<?php if (NFS::user_access(L('ME'), '列表文件', $lab, ['type'=>'share']) && $lab->nfs_size): ?>
+<a class="blue" title="<?php echo I18N::HT('nfs_share', '查看'); ?>" href="<?php echo H(URI::url('!nfs_share/finder/lab.'.$lab->id) ) ?>">
+    <?php echo I18N::HT('nfs_share', '查看'); ?>
+</a>
+<span class="separator">&nbsp;&nbsp;</span>
+<?php endif ?>
+<?php
+if(L('ME')->is_allowed_to('管理文件分区', $lab)){
+	if($lab->nfs_size){
+		echo URI::anchor(
+			'!nfs_share/labs/close.'.$lab->id, 
+			I18N::T('nfs', '关闭'),
+			'title="'.I18N::T('nfs', '关闭').'" class="blue" confirm="'.I18N::T('nfs', '您确定要关闭该实验室的文件系统？\n一旦关闭，该实验室的所有文件将被删除，且无法恢复！请您谨慎操作。\n提示：该操作不会影响该实验室成员的文件系统设置。').'"'
+		);
+	}
+	else{
+		echo URI::anchor(
+			'!nfs_share/labs/open.'.$lab->id, 
+			I18N::T('nfs', '开通'),
+			'title="'.I18N::T('nfs','开通').'" class="blue" confirm="'.I18N::T('nfs', '您确定要开通该实验室的文件系统？').'"'
+		);
+	}
+}

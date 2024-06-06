@@ -1,0 +1,50 @@
+<?php if (L('ME')->is_allowed_to('添加', 'env_node')): ?>
+<?php echo $panel_buttons?>
+
+<?php endif;?>
+<?php echo $search_box?>
+<div class="tab_pagination">
+<?= $secondary_tabs; ?>
+<?= $secondary_tabs->content; ?>
+</div>
+<div class="interval_30"></div>
+<?php
+
+
+$list = Widget::factory('list');
+
+$list->name = 'nodes';
+$list->add_columns($columns);
+
+$list->empty_message = I18N::HT('envmon', '无符合条件的监控对象!');
+
+foreach ($nodes as $key => $node) {
+    $links = $node->links();
+  
+
+    $item=Widget::factory('item');
+    $item->set_title(V('envmon:node/data/name', ['node' => $node]));
+    $item->set_content([
+        I18N::HT('envmon', '地址')=>V('envmon:node/data/location', ['node' => $node]),
+        I18N::HT('envmon', '负责人')=> V('envmon:node/data/incharge', ['node' => $node]),
+        ]);
+    $item->set_image(V('envmon:node/data/sensor', ['node' => $node]));
+    $item->add_menu_item(Widget::factory('application:links', ['links' => $links]));
+    if (L('ME')->is_allowed_to('添加传感器', $node))
+    {
+        $extra=
+        ' q-object="add_sensor" '.
+        'q-event="click" '.
+        'q-src="'.H(URI::url('!envmon/sensor')) .'"'.
+        'q-static="'. H(['node_id' => $node->id]).'"';
+        $text= I18N::HT('envmon', '添加传感器');
+        $item->add_menu_item(V('list_menu_item',[
+            'extra'=>$extra,
+            'text'=>$text
+        ]));
+    }
+     $list->add_item($item);
+}
+echo $list;
+echo $pagination;
+?>

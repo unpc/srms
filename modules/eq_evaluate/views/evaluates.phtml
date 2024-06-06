@@ -1,0 +1,165 @@
+<div class="padding_1 clearfix">
+	<div class="float_right record_count">
+		<div class="inline_block">
+		<?= I18N::T('equipments', '共有 %total_count 条评价记录。',  [
+            '%total_count' => '<span class="eq_number">'.intval($total_count).'</span>'
+            ]);?>
+        <?= I18N::T('equipments', '其中五星评价占比 %five_star_percent ;四星评价占比 %four_star_percent ;
+        三星评价占比 %three_star_percent ;二星评价占比 %two_star_percent ;一星评价占比 %one_star_percent ;',  [
+            '%five_star_percent' => '<span class="eq_number">'.$five_star_percent.'%</span>',
+            '%four_star_percent' => '<span class="eq_number">'.$four_star_percent.'%</span>',
+            '%three_star_percent' => '<span class="eq_number">'.$three_star_percent.'%</span>',
+            '%two_star_percent' => '<span class="eq_number">'.$two_star_percent.'%</span>',
+            '%one_star_percent' => '<span class="eq_number">'.$one_star_percent.'%</span>',
+        ]);
+        ?>
+		</div>
+	</div>
+</div>
+<?php 
+	$table = Widget::factory('table');
+	$table->name = 'equipment_evaluates';
+	$table->sort_asc = $sort_asc;
+	$table->sort_by = $sort_by;
+
+	if($form['dtstart'] && $form['dtend']) {
+		$form['date'] = H(date('Y/m/d',$form['dtstart'])).'-'.H(date('Y/m/d',$form['dtend']));
+	}
+	elseif($form['dtstart']) {
+		$form['date'] = H(date('Y/m/d',$form['dtstart'])).'-'.I18N::T('equipments','最末');
+	}
+	elseif($form['dtend']) {
+		$form['date'] = I18N::T('equipments','最初').'-'.H(date('Y/m/d',$form['dtend']));
+	}
+
+	$columns = [
+        'serial_number'=>[
+            'title'=>I18N::T('equipments', '编号'),
+            'invisible' => false,
+            'nowrap'=>TRUE,
+        ],
+		'group'=>[
+			'title' =>I18N::T('equipments', '组织机构'),
+			'invisible'=>TRUE,
+			'filter'=>[
+			'form'=>V('equipments:records_table/filters/group', ['group'=>$form['group']]),
+			'value'=>($form['group'] && $form['group'] != $group_root->id) ? H(O('tag_group', $form['group'])->name) : NULL
+			],
+			'nowrap'=>TRUE
+		],
+		'equipment_ref'=>[
+			'title'=>I18N::T('equipments', '仪器编号'),
+			'align'=>'left',
+			'filter'=> [
+			'form' => V('equipments:records_table/filters/equipment_ref', ['equipment_ref'=>$form['equipment_ref']]),
+			'value' => $form['equipment_ref'] ? H($form['equipment_ref']) : NULL,
+			],
+			'nowrap'=>TRUE,
+			'sortable'=>TRUE,
+		],
+		'equipment_name'=>[
+			'title'=>I18N::T('equipments', '仪器'),
+			'align'=>'left',
+			'filter'=> [
+			'form' => V('equipments:records_table/filters/equipment_name', ['equipment_name'=>$form['equipment_name']]),
+			'value' => $form['equipment_name'] ? H($form['equipment_name']) : NULL,
+			],
+			'nowrap'=>TRUE,
+			'sortable'=>TRUE,
+		],
+		'user_name'=>[
+			'title'=>I18N::T('equipments', '使用者'),
+			'filter'=> [
+				'form' => V('equipments:records_table/filters/user_name', ['user_name'=>$form['user_name']]),
+				'value' => $form['user_name'] ? H($form['user_name']) : NULL
+			],
+			'nowrap'=>TRUE,
+			'sortable'=>TRUE,
+		],
+		'lab_name'=>[
+			'title'=>I18N::T('equipments', '实验室'),
+			'invisible'=>TRUE,
+			'filter'=> [
+				'form' => V('equipments:records_table/filters/lab_name', ['lab_name'=>$form['lab_name']]),
+				'value' => $form['lab_name'] ? H($form['lab_name']) : NULL
+			],
+			'nowrap'=>TRUE,
+		],
+		'date'=>[
+			'title'=>I18N::T('equipments', '时间'),
+			'filter'=> [
+				'form' => V('equipments:records_table/filters/date', [
+					'dtstart'=>$form['dtstart'],
+					'dtend'=>$form['dtend']
+				]),
+				'value' => $form['date'] ? H($form['date']) : NULL,
+				'field'=>'dtstart,dtend',
+			],
+			'invisible'=>TRUE,
+			'nowrap'=>TRUE,
+		],
+        'duty_teacher' => [
+            'title' => '值班老师',
+            'nowrap' => TRUE,
+        ],
+		'score'=>[
+			'title'=>I18N::T('eq_evaluate', '服务态度'),
+			'filter'=> [
+				'form' => V('eq_evaluate:evaluates_table/filters/score', [
+					'score'=>$form['score'],
+				]),
+				'value' => (isset($form['score']) && $form['score'] != -1) ? Config::get('eq_evaluate')['rate.tip'][$form['score']] : '',
+				'field'=>'score',
+			],
+			'align'=>'center',
+			'nowrap'=>TRUE,
+			'sortable'=>TRUE,
+		],
+		'content'=>[
+			'title' => I18N::T('equipments', '服务评价'),
+			'align' => 'left',
+			'nowrap' => FALSE,
+		],
+	];
+
+    $columns = new ArrayObject($columns);
+
+    Event::trigger('eq_evaluate.list.columns', $form, $columns);
+
+	$table->add_columns((array)$columns);
+	$table->empty_message = I18N::T('equipments', '无符合条件的评价');
+
+	if (count($evaluates) > 0) foreach ($evaluates as $evaluate) {
+		$record = O('eq_record', ['evaluate' => $evaluate]);
+		if ($record->id) {
+			$ajax_id = uniqid();
+			$row = [
+				'serial_number'=>V('eq_evaluate:evaluates_table/data/serial_number', ['id'=>$evaluate->id]),
+				'equipment_ref'=> V('eq_evaluate:evaluates_table/data/equipment_ref', ['evaluate'=>$evaluate]),
+				'equipment_name'=>V('eq_evaluate:evaluates_table/data/equipment_name', ['evaluate'=>$evaluate]),
+				'user_name'=>V('eq_evaluate:evaluates_table/data/user_name_with_lab', ['evaluate'=>$evaluate]),
+				'score'=>V('eq_evaluate:evaluates_table/data/score', ['evaluate'=>$evaluate]),
+                'duty_teacher'=>V('eq_evaluate:evaluates_table/data/duty_teacher', ['evaluate' => $evaluate]),
+				'content'=>V('eq_evaluate:evaluates_table/data/content', ['evaluate'=>$evaluate]),
+			];
+			$row = Event::trigger('eq_evaluate.list.row', $row, $evaluate) ? : $row;
+			$table->add_row($row);
+		}
+	}
+
+    $param = [
+        'is_offset' => true,
+        'top_input_arr'=> ['equipment_name'],
+        'columns'=> $table->columns,
+        'panel_buttons' => $panel_buttons,
+        'extra_view'    => '<div class="adj statistics middle">'.$pagination.'</div>'
+    ];
+    echo V('application:search_box', $param);
+?>
+
+
+<?php echo $table; ?>
+
+<div class="interval_12"></div>
+<div class="pages"><?= $pagination ?></div>
+<div class="interval_12"></div>

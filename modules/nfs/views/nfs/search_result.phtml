@@ -1,0 +1,103 @@
+<?php
+echo CSS::load_async('nfs:common');
+$uniqid = uniqid();
+$user = L('ME');
+$select_all_id = 'su_select_all_'.$uniqid;
+$files_form = 'su_files_form_'.$uniqid;
+$download_id = 'su_download_'.$uniqid;
+
+$file_path = [];
+foreach ($files as $file) {
+	$file_paths[] = $file->path_prefix.$file->path;
+}
+
+$columns= [
+    'file_name' => [
+        'title'  => T('名称'),
+        'filter' => [
+            'form'  => V('nfs:nfs_table/filters/name', ['value' => $form['file_name']]),
+            'value' => $form['file_name'] ? H($form['file_name']) : null,
+        ],
+        'nowrap' => true,
+    ],
+    'dtstart' => [
+        'title'  => T('更新开始时间'),
+        'filter' => [
+            'form'  => V('nfs:nfs_table/filters/dtstart', ['value' => $form['dtstart']]),
+        ],
+        'nowrap' => true,
+        'input_type' => 'select',
+    ],
+    'dtend' => [
+        'title'  => T('更新结束时间'),
+        'filter' => [
+            'form'  => V('nfs:nfs_table/filters/dtend', ['value' => $form['dtend']])
+        ],
+        'nowrap' => true,
+        'input_type' => 'select',
+    ],
+];
+
+$search_box = V('application:search_box', [
+	'top_input_arr' => ['file_name','dtstart','dtend'],
+	'columns' => $columns,
+	'is_ajax' => true,
+	'q_object' => 'search_nfs',
+	'q_static' => H(['path_type' => $path_type, 'path' => $path, 'form_token' => $form_token]),
+	'q_src' => '',
+	'q_event' => 'submit',
+]);
+?>
+
+<?= $search_box;?>
+
+<form method="post" action="<?php echo URI::url('', ['file_paths'=>$file_paths, 'path'=>$path, 'search'=>TRUE]); ?>" class="prevent_default" id="<?php echo H($files_form) ?>">
+	<div class="panel padding_1 clearfix nfs_bar prevent_default">
+		<div class="float_left">
+		<a class="font-button-save" href="<?php echo H(URI::url('', ['path'=>$path, 'form_token'=>$form_token])) ?>" title="<?php echo I18N::T('nfs', '返回')?>"><?php echo I18N::T('nfs', '返回')?></a>
+		</div>
+		<div class="float_right">
+	        <a id="<?php echo H($download_id) ?>"  href="#" class="button icon-bottom prevent_default middle" title="<?php echo I18N::T('nfs', '批量下载'); ?>"><?php echo I18N::T('nfs', '批量下载');?></a>
+	    	<div class="nfs_dropdown hidden">
+	        <a href="#" name="win"><?php echo I18N::T('nfs', 'ZIP (Windows)')?></a>
+	        <a href="#" name="mac"><?php echo I18N::T('nfs', 'ZIP (Mac/Linux)');?></a>
+	    	</div>
+	    </div>
+	</div>
+	<table class="sticky flexible">
+		<thead>
+			<tr>	
+				<th class="left nowrap">
+					<span class="header"><?php echo Form::checkbox('', FALSE, NULL, 'id="'.$select_all_id.'"'); ?></span>
+				</th>
+				<th class="left nowrap"><span class="header"><?php echo I18N::T('nfs', '文件名称'); ?></span></th>
+				<th class="left nowrap"><span class="header"><?php echo I18N::T('nfs', '更新时间'); ?></span></th>
+				<th class="left nowrap"><span class="header"><?php echo I18N::T('nfs', '占用空间'); ?></span></th>
+				<th class="left nowrap"><span class="header"><?php echo I18N::T('nfs', '文件目录'); ?></span></th>
+				<th class="last">&#160;</th>
+			</tr>
+		</thead>
+		<tbody>
+		<?php 
+		$row_odd = TRUE;
+		if (count($files)) {
+			foreach ((array) $files as $file) {
+				echo V('nfs/search_file', ['file'=>$file, 
+										'object'=>$object,
+										'path_type'=>$path_type,
+										'path'=>$path,
+										'form_token'=>$form_token,
+										'row_odd'=>$row_odd
+										]);
+			}
+		}else {?>
+			<tr>
+			<td colspan="6" class="description center"><span> <?php echo I18N::T('nfs', '无符合条件的文件') ?> </span></td>
+			</tr>
+		<?php }?>
+		</tbody>
+	</table>
+</form>
+<?php 
+echo JS::load('nfs:search_edit', [ 'select_all_id' => $select_all_id, 'form_id' => $files_form, 'download_id' => $download_id]); 
+?>

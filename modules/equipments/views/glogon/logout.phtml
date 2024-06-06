@@ -1,0 +1,325 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" style="overflow: hidden; margin: 0px;">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+
+	<title>Glogon退出登录</title>
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <meta http-equiv="Content-Script-Type" content="text/javascript" />
+
+    <base href="<?php echo H(Config::get('system.base_url') ) ?>" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <?php echo $this->controller->load_css(); ?>
+    <link href="<?php echo Config::get('system.base_url') ?>gini-ui/iconfont.css" rel="stylesheet" />
+    <?php echo $this->controller->load_js(TRUE); ?>
+
+    <style>
+        body {
+            background: #f5f7fa;
+            position: relative;
+            font-size: 14px;
+        }
+
+        table.form td {
+            padding: 3px;
+            font-weight: normal;
+        }
+
+        table.form td.right {
+            text-align: right;
+        }
+
+        input[name="samples"], select, textarea {
+            border: 1px solid #E5E5E5;
+            height: 30px;
+            padding: 0 10px;
+            outline: none;
+            border-radius: 3px;
+            width: 246px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        select {
+            border: 1px solid #E5E5E5;
+            height: 30px;
+            padding: 0 0 0 10px;
+            outline: none;
+            border-radius: 3px;
+            width: 246px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+
+        textarea {
+            resize: none;
+            height: 45px;
+        }
+
+        .dropdown_container {
+            width: 278px;
+        }
+
+        .dropdown_menu {
+            max-height: 150px;
+            overflow-y: scroll;
+        }
+        div.form {
+            padding: 10px 20px;
+            background: none;
+            width: 480px;
+            box-sizing: border-box;
+        }
+
+        .radio {
+            vertical-align: unset;
+        }
+    </style>
+</head>
+<style>
+   .eq_comment{
+       width: 470px;
+       height: 280px;
+       overflow-y: scroll;
+       position: relative;
+   }
+</style>
+<body>
+<?php
+$glogonWidth = Module::is_installed('eq_comment') ? 470 :Config::get('glogon.logout.window_width', 420);
+$glogonHeight = (Config::get('eq_record.duty_teacher') || Module::is_installed('eq_comment')) ? H(max(Config::get('glogon.logout.window_height', 420), 530)) : Config::get('glogon.logout.window_height', 420);
+?>
+    <img src="<?php echo H(URI::url('!equipments/images/glogon_banner.bmp')) ?>" />
+    <div class="form <?= Module::is_installed('eq_comment') ? 'eq_comment' : '' ?>">
+        <form window_width="<?php echo $glogonWidth ?>" window_height="<?php echo $glogonHeight; ?>" action="glogon_action_submit" method="get" id="form">
+            <table class="form">
+                <tr>
+                    <td class="middle right label nowrap">
+                        <?php echo I18N::T('equipments', '仪器状态')?>
+                    </td>
+                    <td class="top">
+                        <input id="status_normal" name="status" type="radio" class="radio" value_type="int" value="1" checked="true"> <label for="status_normal"><?= I18N::T('equipments', '正常') ?></label>
+                        <input id="status_broken" name="status" type="radio" class="radio" value_type="int" value="-1"> <label for="status_broken"><?= I18N::T('equipments', '故障') ?></label>
+                    </td>
+                </tr>
+                <?php if (Config::get('equipment.feedback_show_samples', 0)): ?>
+                <?php
+                    $samples = Config::get('eq_record.must_samples') ? 0 : Config::get('eq_record.record_default_samples');
+                    if (Module::is_installed('eq_reserv')) {
+                        $dtstart = Q("eq_record[equipment={$equipment}][user=$user][dtend=0]")->current()->dtstart;
+                        $eq_reserv = Q("eq_reserv[equipment={$equipment}][user={$user}][dtstart~dtend={$dtstart}]:limit(1)")->current();
+                        if ($eq_reserv->id) {
+                            $samples = (int) $eq_reserv->count;
+                        }
+                    }
+                ?>
+                <tr>
+                    <td class="middle right label nowrap">
+                        <?php echo I18N::T('equipments', '样品数')?>
+                    </td>
+                    <td class="top">
+                        <input id="samples" type="text" name="samples" class="text number" value_type="int" number="true" _name="样品数" value="<?= $samples ?>" id="samples" />
+                    </td>
+                </tr>
+                <?php endif; ?>
+                <?php echo V('equipments:glogon/logout_projects', [
+                    'user' => $user,
+                    'projects' => $projects,
+                    'lab_id' => $lab_id,
+                    'check_project' => $check_project
+                ]);?>
+                <tr>
+                    <td class="top right label nowrap">
+                        <?php echo I18N::T('equipments', '反馈');?>
+                    </td>
+                    <td class="top">
+                        <textarea name="feedback" id="logout_feedback"></textarea>
+                    </td>
+                </tr>
+                <?php if (Config::get('eq_record.duty_teacher') && (!$equipment->id || $equipment->require_dteacher)): ?>
+                <tr>
+                    <td class="middle right nowrap label">
+                        <?php echo I18N::T('equipments', '* 值班老师');?>
+                    </td>
+                    <td class="top">
+                        <select name="duty_teacher" style="width: 102px;">
+                            <option value="<?= 0 ?>"><?= '--' ?></option>
+                            <?php foreach (Q("$equipment user.incharge")->to_assoc('id', 'name') as $k => $v) : ?>
+                            <option value="<?= $k ?>"><?= $v ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </td>
+                </tr>
+                <?php endif; ?>
+
+                <?php if (Module::is_installed('eq_comment')): ?>
+                    <tr><td colspan="2"><h4 style="width: 142px; text-align: right;"><?= I18N::T('eq_comment', '机主服务评价') ?></h4></td></tr>
+                    <tr>
+                        <td class="middle right nowrap label" style="width: 141px;">
+                            <?= I18N::T('eq_comment', '* 服务态度'); ?>
+                        </td>
+                        <td class="top">
+                            <?= Widget::factory('rateit_input', ['name' => "service_attitude", 'rateit_value' => $form['service_attitude'] ? : $comment->service_attitude ? : 5, 'rateit_tip' => TRUE, 'tip' => $tip]); ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="middle right nowrap label" style="width: 141px;">
+                            <?= I18N::T('eq_comment', '* 服务质量'); ?>
+                        </td>
+                        <td class="top">
+                            <?= Widget::factory('rateit_input', ['name' => "service_quality", 'rateit_value' => 5, 'rateit_tip' => TRUE, 'tip' => $tip]); ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="middle right nowrap label" style="width: 141px;">
+                            <?= I18N::T('eq_comment', '* 技术能力'); ?>
+                        </td>
+                        <td class="top">
+                            <?= Widget::factory('rateit_input', ['name' => "technical_ability", 'rateit_value' => 5, 'rateit_tip' => TRUE, 'tip' => $tip]); ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="middle right nowrap label" style="width: 141px;">
+                            <?= I18N::T('eq_comment', '* 应急处理能力'); ?>
+                        </td>
+                        <td class="top">
+                            <?= Widget::factory('rateit_input', ['name' => "emergency_capability", 'rateit_value' => 5, 'rateit_tip' => TRUE, 'tip' => $tip]); ?>
+                        </td>
+                    </tr>
+                    <tr><td colspan="2"><h4 style="width: 142px; text-align: right;"><?= I18N::T('eq_comment', '仪器性能评价') ?></h4></td></tr>
+                    <tr>
+                        <td class="middle right nowrap label" style="width: 141px;">
+                            <?= I18N::T('eq_comment', '* 检测性能'); ?>
+                        </td>
+                        <td class="top">
+                            <?= Widget::factory('rateit_input', ['name' => "detection_performance", 'rateit_value' => 5, 'rateit_tip' => TRUE, 'tip' => $tip]); ?>
+                        </td>
+                    </tr>
+                    <tr><td colspan="2"><h4 style="width: 142px; text-align: right;"><?= I18N::T('eq_comment', '检测结果评价') ?></h4></td></tr>
+                    <tr>
+                        <td class="middle right nowrap label" style="width: 141px;">
+                            <?= I18N::T('eq_comment', '* 准确性'); ?>
+                        </td>
+                        <td class="top">
+                            <?= Widget::factory('rateit_input', ['name' => "accuracy", 'rateit_value' => 5, 'rateit_tip' => TRUE, 'tip' => $tip]); ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="middle right nowrap label" style="width: 141px;">
+                            <?= I18N::T('eq_comment', '* 预期目标吻合度'); ?>
+                        </td>
+                        <td class="top">
+                            <?= Widget::factory('rateit_input', ['name' => "compliance", 'rateit_value' => 5, 'rateit_tip' => TRUE, 'tip' => $tip]); ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="middle right nowrap label" style="width: 141px;">
+                            <?= I18N::T('eq_comment', '* 测试及时性'); ?>
+                        </td>
+                        <td class="top">
+                            <?= Widget::factory('rateit_input', ['name' => "timeliness", 'rateit_value' => 5, 'rateit_tip' => TRUE, 'tip' => $tip]); ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="middle right nowrap label" style="width: 141px;">
+                            <?= I18N::T('eq_comment', '* 样品的保管与处理'); ?>
+                        </td>
+                        <td class="top">
+                            <?= Widget::factory('rateit_input', ['name' => "sample_processing", 'rateit_value' => 5, 'rateit_tip' => TRUE, 'tip' => $tip]); ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="top right label nowrap" style="width: 141px;">
+                            <?= I18N::T('eq_comment', '* 服务评价与建议');?>
+                        </td>
+                        <td><textarea name="comment_suggestion" class="text autogrow" cols="40" rows="6"></textarea></td>
+                    </tr>
+                <?php endif; ?>
+
+                <?php echo V('equipments:glogon/logout_extra', ['equipment' => $equipment, 'user' => $user]);?>
+                <tr>
+                    <td>&#160;</td>
+                    <td class="content">
+                        <input id="submit" class="font-button-save" type="submit" value="<?php echo H(I18N::T('equipments', '提交')) ?>" />
+                        &#160;
+                        <input class="font-button-default" type="button" value="<?php echo H(I18N::T('equipments', '取消')) ?>" onclick="javascript:window.location.href='glogon_action_cancel'"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <table style="margin-top: 10px; width: 480px;">
+        <tr class="qr_code_control" style="background: #F1F1F1;">
+            <td style="width: 70px;"></td>
+            <td style="border-right: 1px solid #B3B3B3; width: 130px;">
+                <?php echo Event::trigger('equipment.profile.extra_view', $equipment);?>
+            </td>
+            <td style="padding-left: 45px; margin-top: 55px; font-weight: normal; text-align: left; font-size: 14px; width: 160px;">
+                <?= I18N::T('equipments', '微信扫描左方二维码%br实现快速开关仪器', ['%br' => '<br/>']);?>
+            </td>
+         </tr>
+    </table>
+</body>
+<script type="text/javascript">
+    window.onload = function(){
+        var $form = document.getElementById('form');
+        var msg = [];
+
+        function get_radio_value(obj_name) {
+            var obj = document.getElementsByName(obj_name);
+            for(i = 0; i < obj_name.length; i++){
+                if(obj[i].checked){
+                    return obj[i].value;
+                }
+            }
+        }
+
+        document.getElementById('submit').onclick = function() {
+            <?php if (Config::get('equipment.feedback_show_samples', 0)): ?>
+            var $samples_input = document.getElementById('samples');
+            var sample_input_val = $samples_input.value;
+
+            <?php if (Config::get('equipment.feedback_samples_allow_zero', FALSE)): ?>
+            if (sample_input_val < 0) {
+                msg.push('<?php echo I18N::T('equipments', '样品数填写有误, 请填写大于等于0的整数!')?>');
+            }
+            <?php else: ?>
+            if (sample_input_val <= 0) {
+                msg.push('<?php echo I18N::T('equipments', '样品数填写有误, 请填写大于0的整数!')?>');
+            }
+            <?php endif; ?>
+            <?php endif; ?>
+
+             if ('<?php echo $check_project ?>') {
+                var project_select = document.getElementById('glogon_logout_project');
+                if (project_select) {
+                    var project_index = project_select.selectedIndex;
+                    var project_val = project_select.options[index].value;
+
+                    if (project_val == 0) {
+                        msg.push('<?php echo I18N::T('equipments', '请选择项目后再进行提交!')?>');
+                    }
+                }
+            }
+
+            if (get_radio_value('status') == <?= EQ_Record_Model::FEEDBACK_PROBLEM ?>) {
+                if (!document.getElementById('logout_feedback').value) {
+                    msg.push("<?= I18N::T('equipments', '请填写故障的反馈备注!')?>");
+                }
+            }
+
+            if(msg.length){
+                if (msg.length) {
+                    alert(msg.join('\n'));
+                    msg = []
+                    return false;
+                }
+            }
+
+            // $form.getElementBy
+            // $form.find(':input[name=project]:disabled').remove();
+        }
+    }
+</script>
+</html>

@@ -1,0 +1,62 @@
+<div class="form padding_2">
+  <form q-object="edit" q-event="submit" q-src="<?php echo H(URI::url('!eq_struct/index')) ?>" autocomplete="off" method="post">
+      <input name="id" type="hidden" value="<?php echo H($struct->id)?>" />
+      <table class="form">
+          <?php echo V('form_error', ['form'=>$form]);?>
+          <?php
+          $keys = [];
+          $values = [];
+          foreach (Config::get('eq_struct.edit_columns') as $key => $value) {
+              $view = V('eq_struct:edit/'.$key, [
+                  'key' => $key,
+                  'value' => $value,
+                  'form' => $form,
+                  'struct' => $struct,
+              ]);
+              if ((string)$view) {
+                  if (count($keys)) {
+                      echo V('eq_struct:edit/item', [
+                          'keys' => $keys,
+                          'values' => $values,
+                          'form' => $form,
+                          'struct' => $struct,
+                      ]);
+                      $keys = [];
+                      $values = [];
+                  }
+                  echo $view;
+              } else {
+                  $keys[] = $key;
+                  $values[] = $value;
+                  if (count($keys) == 2) {
+                      echo V('eq_struct:edit/item', [
+                          'keys' => $keys,
+                          'values' => $values,
+                          'form' => $form,
+                          'struct' => $struct,
+                      ]);
+                      $keys = [];
+                      $values = [];
+                  }
+              }
+          }
+          if (count($keys)) {
+              echo V('eq_struct:edit/item', [
+                  'keys' => $keys,
+                  'values' => $values,
+                  'form' => $form,
+                  'struct' => $struct,
+              ]);
+              $keys = [];
+              $values = [];
+          }
+          ?>
+      </table>
+      <div class="button_container">
+          <div class="float_right">
+              <input type="button" name="cancel" id="cancel" class="font-button-default sm rmargin_2e4" value="取消">
+              <input type="submit" name="submit" class="font-button-save sm" value="<?php echo H(I18N::T('eq_struct', '修改')) ?>">
+          </div>
+      </div>
+  </form>
+</div>

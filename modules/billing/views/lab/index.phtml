@@ -1,0 +1,11 @@
+<?php echo $tertiary_tabs ?>
+<?php if($tertiary_tabs->panel_buttons || $tertiary_tabs->search_box): ?>
+    <div class='search_panel' style="margin: 0px;padding: 0px">
+        <?php
+        echo $tertiary_tabs->panel_buttons;
+        echo $tertiary_tabs->search_box;
+        ?>
+    </div>
+<?php endif ?>
+<?php echo $tertiary_tabs->content ?>
+

@@ -1,0 +1,25 @@
+<div class="hr_1">&#160;</div>
+<div class="hr_1">&#160;</div>
+<?php 
+	$str = implode(', ',$categories); 
+	$base_url = Config::get('system.base_url');
+	$url = $base_url."/admin/preferences.mail";
+	$admin = URI::anchor($url, "邮件小秘书");
+	$lims_url = URI::anchor($base_url, '实验室管理系统');
+	if (count($categories)):
+?>
+<div style="font-size:14px;padding:2px">
+※ <?php echo strtr('您还可以查看 %categories 的更新, 请进入%admin设置', ['%categories'=>$str, '%admin'=>$admin]);?>
+</div>
+<?php else: ?>
+<div style="font-size:14px;padding:2px">
+※ <?php echo strtr('如果您希望变更接收邮件的内容, 请进入%admin设置', ['%admin'=>$admin]);?>
+</div>
+<?php endif; ?>
+<div style="font-size:14px;padding:2px">
+	※ 如果您希望了解更多信息, 请登录实验室管理系统: <?php echo $lims_url; ?>
+</div>
+<p></p>
+<div style="font-size:14px;padding:2px">
+	祝您工作顺利, 心情愉快!
+</div>

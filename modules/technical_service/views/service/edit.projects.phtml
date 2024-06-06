@@ -1,0 +1,164 @@
+<?php $me = L('ME');
+if (isset($form) && !empty($form['project_id'])) {
+    foreach ($form['project_id'] as $index => $project_id) {
+        if (!$project_id) continue;
+        $eqs = $form['eqs'][$index];
+        $formateqs = [];
+        foreach($eqs as $eid){
+            $eq = O('equipment',$eid);
+            $formateqs[$eq->id] = $eq->name;
+        }
+        $flexformatdata[$project_id]['project_id'] = $project_id;
+        $flexformatdata[$project_id]['eqs'] = $formateqs;
+    }
+} else {
+    $service_equipments = Q("service_equipment[service={$service}]");
+    $service_equipments_array = [];
+    $flexdata = $flexformatdata = [];
+    $index = 1;
+    foreach ($service_equipments as $service_equipment) {
+        $flexdata['project_id'][$service_equipment->project->id] = $service_equipment->project->id;
+        $flexdata['eqs'][$service_equipment->project->id][$service_equipment->equipment->id] = $service_equipment->equipment->name;
+    }
+    foreach ($flexdata['eqs'] as $pid => $eqar) {
+        $flexformatdata[$pid]['project_id'] = $pid;
+        $flexformatdata[$pid]['eqs'] = $flexdata['eqs'][$pid];
+    }
+}
+
+?>
+
+<?php
+$cache_css = Cache::cache_file(MODULE_PATH . 'technical_service/private/css/select2.min.css');
+$cache_js = Cache::cache_file(MODULE_PATH . 'technical_service/private/js/select2.min.js');
+?>
+<link href="<?= $cache_css ?>" rel="stylesheet" />
+<script src="<?= $cache_js ?>"></script>
+<?= V('form_error', ['form' => $form]); ?>
+<div class="form">
+    <form method="post" action="<?php echo H(URI::url()) ?>">
+        <table class="form" style="width: 100%;">
+            <tbody>
+                <tr>
+                    <td class="top equipments_icon" width="130" rowspan="2">
+                        <div class="short_container">
+                            <div class="img_icon" style="position: relative;">
+                                <?php echo $service->icon('104'); ?>
+                            </div>
+                        </div>
+
+                        <div class="interval_24"></div>
+
+                    </td>
+
+                    <td class="top">
+                        <?php
+                        $no_error = ($form->no_error !== FALSE);
+                        $require = trim((string)V('form_require', ['extra_class' => 'top']));
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td class="top" id="flexform_content_projects">
+                        <?php
+                        echo Widget::factory('flexform' . $readonly, [
+                            'title' => I18N::T('technical_service', '项目设置'),
+                            'template_data' => ['disabled' => TRUE],
+                            'existing_data' => $flexformatdata,
+                            'item_view' => 'technical_service:service/project_special_item' . $readonly,
+                            'extra_vars' => [],
+                        ]);
+
+                        ?>
+                        <table style="width: 93%" id="flexform_content_btn" class="hidden">
+                            <td style="width: 8rem;text-align: right;padding-right: 1rem"></td>
+                            <td>
+                                <div class="button_container bmargin_2">
+                                    <div class="float_left">
+                                        <input type="submit" name="submit" class="font-button-save"
+                                            value="<?php echo H(I18N::T('technical_service', '保存')) ?>" />
+                                    </div>
+                                </div>
+                            </td>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+
+<script type="text/javascript">
+var select_params = {
+    closeOnSelect: false,
+    multiple: true, //多选
+    ajax: {
+        url: "<?= URI::url('!technical_service/autocomplete/equipment/')?>",
+        dataType: 'json',
+        data: function(params) {
+            return {
+                s: params.term, // 搜索框内输入的内容，传递到Java后端的parameter为username
+                st: params.page, // 第几页，分页哦
+            };
+        },
+        // 分页
+        processResults: function(data, params) {
+            params.page = params.page || 1;
+            return {
+                results: data, // 后台返回的数据集
+                pagination: {
+                    more: (params.page * 5) < data[0].total_count //auto接口需要返回total_count
+                }
+            };
+        },
+        cache: false
+    },
+    escapeMarkup: function(markup) {
+        return markup;
+    },
+    templateResult: function(repo) { // 显示的结果集格式，这里需要自己写css样式，可参照demo
+        // 正在检索
+        if (repo.loading) {
+            return repo.text;
+        }
+        var markup = repo.text || repo.html;
+        return markup;
+    },
+    templateSelection: function(repo) {
+        return repo.text;
+    } // 列表中选择某一项后显示到文本框的内容
+};
+jQuery(function($) {
+    $('.flexform_item').livequery('DOMNodeInserted',function(e){
+        if($('.flexform_item').length) $('#flexform_content_btn').show();
+        else $('#flexform_content_btn').hide();
+    });
+    $('.flexform_container').livequery('DOMNodeRemoved',function(){
+        if($('.flexform_item').length > 1) $('#flexform_content_btn').show();
+        else $('#flexform_content_btn').hide();
+    });
+    $('.flexform').find('[name^=project_id]').livequery('change', function() {
+        var index = $(this).attr('name').replace('project_id[', '').replace(']', '');
+        var flexform_index = $(this).next('input').data('findex');
+        var value = $(this).val();
+        Q.trigger({
+            object: 'edit_projects_item',
+            event: 'click',
+            data: {
+                value: value,
+                service_id: '<?= $service->id ?: 0 ?>',
+                flexform_index: flexform_index,
+            },
+            url: '<?php echo URI::url("!technical_service/service"); ?>',
+            success: function(data) {
+                $('#tr_' + index + '_' + index).html('').html(data.complete.html);
+                $('#tr_' + index).html('').html(data.complete.html);
+            }
+        });
+    });
+    $('.js-example-basic-multiple').livequery(function(){
+        $(this).select2(select_params);
+    });
+});
+</script>

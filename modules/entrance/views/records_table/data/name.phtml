@@ -1,0 +1,6 @@
+<?php if (L('ME')->is_allowed_to('查看', $record->door)) : ?>
+    <a href="<?php echo H($record->door->url() ) ?>"><strong><?php echo H($record->door->name); ?></strong></a>
+<?php else :?>
+    <strong><?php echo H($record->door->name); ?></strong>
+<?php endif;?>
+<?php echo $record->door->tag_label(); ?>

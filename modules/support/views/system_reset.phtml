@@ -1,0 +1,25 @@
+<?php echo V('form_error', ['form' => $form]); ?>
+<div class="form padding_2">
+    <form method="post" action="<?php echo H(URI::url('!support/reset')) ?>">
+        <div>
+            <div class="item">
+                <div style="padding-bottom: 5px;">
+                    <h2 class="section_title"><?php echo I18N::T('support', '系统还原'); ?></h2>
+                </div>
+                <hr/>
+                <div style="padding: 5px 0;" class="margin-left-1">
+                    <?= Form::checkbox('erase_all', FALSE, I18N::T('support', '抹掉所有内容和设置'), 'class="monitor checkbox"') ?>
+                </div>
+                <div style="padding: 5px 0;" class="hidden toggle:erase_all show_on:on">
+                    <span><?php echo I18N::T('support', '站点ID') ?></span>
+                    <input name="lab_id" class="text" />
+                </div>
+            </div>
+            <hr/>
+            <div style="padding-top: 15px;">
+                <input type="submit" name="submit" class="font-button-save" value="<?php echo I18N::T('support', '更新')?>" confirm="<?php echo I18N::T('support', '这将删除所有数据, 并还原所有设置') ?>"/>
+                <input type="submit" name="backup" class="font-button-save " value="<?php echo I18N::T('support', '备份')?>" confirm="<?php echo I18N::T('support', '这将对当前系统进行数据备份') ?>"/>
+            </div>
+        </div>
+    </form>
+</div>

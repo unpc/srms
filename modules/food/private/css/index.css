@@ -1,0 +1,51 @@
+.food_header {
+	background-color: #666;
+}
+
+.food_header h1 {
+	color: #FFF;
+}
+
+.food_header div.left {
+	position: relative;
+	left: 0px;
+	float: left;
+}
+
+.food_header div.right {
+	position: relative;
+	right: 0px;
+	float: right;
+}
+
+.food {
+	display: inline-block;
+	
+}
+
+.food .food_unit {
+	text-align: center;	
+	margin: 6px;
+	padding: 0px;
+	float: left;
+}
+
+.food_img {
+	padding: 2px;
+}
+
+.food_name {
+	color: #222;
+	font-size: 14px;
+}
+
+.addition textarea {
+	margin-top: 10px;
+	width: 300px;
+	height: 185px;
+
+}
+
+.addition input {
+	margin: 0px 10px;	
+}

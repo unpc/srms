@@ -1,0 +1,9 @@
+/var/log/smsd.log {
+        daily
+        missingok
+        rotate 5
+        noolddir
+        compress
+        notifempty
+        copytruncate
+}

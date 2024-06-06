@@ -1,0 +1,12 @@
+<div class="right">
+	<?php echo I18N::T('orders', '如果您要搜索更多商品，您可以到以下商城进行查询购买'); ?>
+</div>
+<div class="right padding_1 order_note">
+	<?php $sites = (array)Lab::get('mall.binded_sites', []); ?>
+	<?php
+        foreach ($sites as $s) {
+        $config = Mall::info($s)
+    ?>
+        <a class="button mall_jump" target="_blank" href="<?php echo H(URI::url('mall/go', ['source'=>$s, 'keyword'=>$keyword]) ) ?>"><?php echo $config['title']; ?></a>
+	<?php }?>
+</div>

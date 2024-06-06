@@ -1,0 +1,81 @@
+<div class="form padding_2">
+    <table class="form">
+        <tbody>
+            <tr>
+                <h4 style="margin-bottom: 5px;"><?= I18N::T('billing', '手动发送') ?></h4>
+            </tr>
+
+            <tr>
+                <td class="label left nowrap top"><?= I18N::T('billing', '收件人') ?></td>
+                <td class="label left nowrap top" colspan="2">
+                    <?= Form::radio('receiver_type', 'all_pi', FALSE, I18N::T('billing', '所有课题组负责人')); ?>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="label left nowrap top">
+                    <?= Form::radio('receiver_type', 'user', TRUE, I18N::T('billing', '个别用户')); ?>
+                </td>
+                <td class="middle">
+                    <?= Widget::factory('multi_user_selector', [
+                        'name' => 'receiver',
+                        'autocomplete' => URI::url('!billing/autocomplete/pi'),
+                        'value' => $form['receiver'],
+                        'extra' => 'token_verify'
+                    ]);?>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="label left nowrap top">
+                    <?php echo Form::radio('receiver_type', 'role', ($form['receiver_type'] == 'role') ? TRUE : FALSE, I18N::T('billing', '角色')); ?>
+                </td>
+                <td class="middle">
+                    <?php echo Widget::factory('multi_user_selector', [
+                        'autocomplete' => URI::url('!billing/autocomplete/role'),
+                        'name' => 'receiver_role',
+                        'value' => $form['receiver_role'],
+                        'ajax'=>TRUE
+                    ]);?>
+                </td>
+            </tr>
+            <tr>
+                <td class="label left nowrap top rpadding_1"><?= I18N::T('billing', '结算周期') ?></td>
+                <td class="middle" colspan="2">
+                <input class="text date"
+                    value="<?= $form['start_date'] ? : strtotime($start_date); ?>" 
+                    name="start_date" q-date_format="<?= HT('$year/$month/$day')?>"/>
+                <span class="middle description"> - </span>
+                <input class="text date"
+                    value="<?= $form['end_date'] ? : strtotime($end_date); ?>" 
+                    name="end_date" q-date_format="<?= HT('$year/$month/$day')?>"/>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td colspan="2">
+                    <input type="button" name="auto_send" class="font-button-save auto_send" style="margin-top: 10px;" value="<?= I18N::T('billing', '发送') ?>" />
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+$(function () {
+    $('.auto_send').click(function () {
+        Q.trigger({
+            object: 'auto_send',
+            event: 'click',
+            url: "<?= H(URI::url('!billing/department')) ?>",
+            data: {
+                department_id: '<?= $department->id ?>',
+                receiver_type: $('[name=receiver_type]:checked').val(),
+                receiver: $('[name=receiver_type]:checked').val() == 'user' ? $('[name=receiver]').val() : $('[name=receiver_role]').val(),
+                start_date: $('[name=start_date]').val(),
+                end_date: $('[name=end_date]').val(),
+            }
+        });
+    })
+})
+</script>

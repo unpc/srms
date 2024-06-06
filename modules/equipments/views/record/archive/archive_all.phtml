@@ -1,0 +1,45 @@
+<?php echo CSS::load_async('equipments:archive')?>
+<div class="form" >
+	<form method="post" q-object="archive_all" q-static="<?php echo H(['form_token'=>$form['form_token']])?>" q-event="submit" autocomplete="off">
+    <input type="hidden" value="<?php echo H($equipment->id) ?>" name="eid" />
+    <input type="hidden" value="<?php echo H($form['form_token']) ?>" name="form_token" />
+	<?php 
+		echo V('form_error', ['form'=>$form]);
+		$to_new = $form['type'];
+		if ($to_new != 'old') $to_new = 'new';
+	?>
+        <div class="interval_24"></div>
+		<div>
+			<?php echo Form::radio('type', 'new', $to_new, I18N::T('equipments', '新建档案'), 'class="radio middle monitor nowrap"', 'class="middle"'); ?>
+            <?php echo V('form_filter', ['error' => $form->errors['new_archive'][0]]); ?>
+            <div class="interval_6"></div>
+            <div class="toggle_status:type enable_on:new">
+                <input name="new_archive" class="text new_archive" value="<?php echo H($form['new_archive']) ?>" />
+            </div>
+		</div>
+        <div class="interval_24"></div>
+		<div>
+			<?php echo Form::radio('type', 'old', $to_new, I18N::T('equipments', '加入已有档案'), 'class="radio middle monitor"', 'class="middle"'); ?>
+            <?php echo V('form_filter', ['error' => $form->errors['old_archive'][0]]); ?>
+            <div class="interval_6"></div>
+			<div class="toggle_status:type enable_on:old">
+				<?php 
+					echo Widget::factory('equipments:archive_selector', [
+						'name' => 'old_archive',
+						'autocomplete' => URI::url('!equipments/autocomplete/archive.'. $equipment->id),
+                        'size'=>50,
+                        'value'=>$form['old_archive']
+					]);
+				?>
+			</div>
+		</div>
+		<div class="interval_24"></div>
+        <div class="button_container">
+            <div class="float_right">
+                <input class="font-button-save" name="submit" type="submit" value="<?php echo H(I18N::T('equipments', '归档')) ?>" />
+                <!-- <input type="button" name="cancel" id="cancel" class="font-button-default  sm rmargin_2e4" value="取消"> -->
+                <!-- <input type="submit" name="submit" class="font-button-save sm" value="<?php echo H(I18N::T('achievements','更新')) ?>"> -->
+            </div>
+        </div>
+	</form>
+</div>

@@ -1,0 +1,50 @@
+<?php
+
+$columns = [
+    'equipment_name' => ['title' => I18N::T('equipments', '仪器名称'), 'nowrap' => true],
+    'approved_name'  => ['title' => I18N::T('equipments', '申请人'), 'nowrap' => true],
+    'ctime'          => ['title' => I18N::T('equipments', '申请时间'), 'nowrap' => true],
+    'contact'        => ['title' => I18N::T('equipments', '联系人'), 'nowrap' => true],
+    'rest' => ['nowrap' => true, 'title' => I18N::T('people', '操作'), 'align' => 'left'],
+];
+
+$table       = Widget::factory('table');
+$table->name = 'applied_authorization';
+$table->add_columns($columns);
+$table->empty_message = I18N::T('equipments', '当前暂无待授权记录');
+
+$status=substr(trim($_SERVER['PHP_SELF']),-1);
+switch((int)$status) {
+    case 3:$key = 'overdue';break;
+    case 2:$key = 'approved';break;
+    case 1:
+    default:$key = 'applied';break;
+}
+
+foreach ($trainings as $training) {
+    $row = [
+        'equipment_name' => V('equipments:equipments_table/data/equipment_name', ['equipment'=>$training->equipment]),
+        'approved_name'  => V('equipments:users_table/data/name', ['user'=>$training->user]),
+        'ctime'          => Date::format($training->ctime),
+        'status'         => '待授权',
+        'contact'        => V('equipments:equipments_table/data/contacts', ['equipment' => $training->equipment]),
+        'rest' => Widget::factory('application:links', ['links' => $training->links($key)]),
+    ];
+
+    $row = new ArrayIterator($row);
+    $table->add_row((array) $row);
+}
+
+$panel_buttons[] = [
+    'text' => I18N::T('equipments', '添加授权'),
+    'extra' => 'q-object="incharge_add_approved_user" q-event="click" q-src="' . URI::url('!equipments/training') .
+        '" class="button button_add"'
+];
+echo V('application:search_box', ['panel_buttons' => $panel_buttons]);
+
+echo $table;
+
+?>
+
+<div style="text-align: right"><?php echo $pagination; ?></div>
+<div class="interval_10"></div>

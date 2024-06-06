@@ -1,0 +1,20 @@
+<?php
+$uniqid = $form_uniqid ?: 'offline_password_'.uniqid();
+?>
+<div id="<?php echo H($uniqid) ?>" class="tmargin_2">
+<input disabled="disabled" type="text" size="35" name="offline_password" class="float_left text wide"
+       value="<?= $equipment->offline_password;?>" />
+
+<?php if ($equipment->connect): ?>
+    <div class="lmargin_30 float_left">
+    <input type="button" class="button font-button-default"
+           q-static="<?= H(['uniqid'=>$uniqid, 'equipment_id'=>$equipment->id])?>"
+           q-object="custom_offline_password"
+           q-event="click" value="<?= I18N::T('equipments', '自定义密码|:button')?>" />
+    </div>
+<?php else:?>
+    <div class="lmargin_30 float_left" q-tooltip="<?=I18N::T('equipments', '客户端连接异常, 请恢复后再试!')?>">
+        <input type="button" class="button readonly font-button-default" value="<?= I18N::T('equipments', '自定义密码|:button')?>" />
+    </div>
+<?php endif;?>
+</div>

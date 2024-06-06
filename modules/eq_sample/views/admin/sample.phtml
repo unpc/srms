@@ -1,0 +1,82 @@
+<?php
+//添加送样最早提前时间
+list($add_sample_earliest_time, $add_sample_earliest_format) = Date::format_interval(Lab::get('equipment.add_sample_earliest_limit', NULL, '@'), 'ihd');
+
+//添加送样最晚提前时间
+list($add_sample_latest_time, $add_sample_latest_format) = Date::format_interval(Lab::get('equipment.add_sample_latest_limit', NULL, '@'), 'ihd');
+
+//修改 / 删除送样最晚提前时间
+list($modify_sample_latest_time, $modify_sample_latest_format) = Date::format_interval(Lab::get('equipment.modify_sample_latest_limit', NULL, '@'), 'ihd');
+?>
+<form method="post" class="margin-left-1" autocomplete="off">
+	<div class="form">
+	<?php echo V('form_error', ['form'=>$form])?>
+	<table class="form td_padding_2" style="margin-left: 10px;">
+		<tr>
+			<td class="left nowrap middle"><?php echo I18N::T('eq_sample', '添加送样最早可提前') ?></td>
+			<td class="middle">
+            <input type="text" name="add_sample_earliest_time" size="6" class="text number" value="<?php echo H(isset($form['add_sample_earliest_time']) ?  $form['add_sample_earliest_time'] : (int) $add_sample_earliest_time) ?>" />&#160;
+            <?php echo Form::dropdown('add_sample_earliest_format', Date::units('ihd'), isset($form['add_sample_earliest_format']) ?  $form['add_sample_earliest_format'] :  $add_sample_earliest_format ? : Config::get('eq_sample.default_add_sample_limit_format', 'h'),'class="middle tmp_wd"');?></td>
+		</tr>
+
+		<tr>
+			<td class="left nowrap middle"><?php echo I18N::T('eq_sample', '添加送样最晚可提前') ?></td>
+			<td class="middle"><input type="text" name="add_sample_latest_time" size="6" class="text number" value="<?php echo H(isset($form['add_sample_latest_time']) ?  $form['add_sample_latest_time'] : (int) $add_sample_latest_time) ?>" />&#160;
+            <?php echo Form::dropdown('add_sample_latest_format', Date::units('ihd'),
+            isset($form['add_sample_latest_format']) ? $form['add_sample_latest_format'] : $add_sample_latest_format ? : Config::get('eq_sample.default_add_sample_limit_format', 'h'),'class="middle tmp_wd" style=""');?></td>
+		</tr>
+        <tr>
+            <td class="left nowrap middle"><?php echo I18N::T('eq_sample', '修改 / 删除送样最晚可提前') ?></td>
+            <td class="middle">
+                <input type="text" name="modify_sample_latest_time" size="6" class="text number" value="<?php echo H(isset($form['modify_sample_latest_time']) ? $form['modify_sample_latest_time'] : (int) $modify_sample_latest_time) ?>" />&#160;
+                <?php echo Form::dropdown('modify_sample_latest_format', Date::units('ihd'), isset($form['modify_sample_latest_format']) ? $form['modify_sample_latest_format'] : $modify_sample_latest_format ? : Config::get('eq_sample.default_modify_sample_limit_format', 'd'),'class="middle tmp_wd"');?></td>
+        </tr>
+	</table>
+        <div class="description" style="color: #F5222D;margin-left: 13rem;margin-bottom: .5rem"><?php echo I18N::HT('eq_sample', '* 设置为0, 表示不限制添加 / 修改 / 删除的提前时间')?></div>
+        <div class="description" style="color: #F5222D;margin-left: 13rem"><?php echo I18N::HT('eq_sample', '* 建议 “修改 / 删除送样最晚可提前” 时间小于 “添加送样最晚可提前” 时间, 否则会出现添加送样后用户不可编辑的情况');?></div>
+	<div class="interval_30"></div>
+	</div>
+	<div class="form">
+	<?php
+
+		$need_to_check = [
+			'equipment.add_sample_earliest_limit' => 'add_sample_earliest_limit', 
+			'equipment.add_sample_latest_limit' => 'add_sample_latest_limit', 
+			'equipment.modify_sample_latest_limit' => 'modify_sample_latest_limit',
+		];
+		$specific = [];
+		$tagged = (array) Lab::get('@TAG');
+		foreach ($tagged as $tag => $data) {
+			$new_data = [];
+			foreach($need_to_check as $k=>$v) {
+				if (isset($data[$k])) {
+					$new_data[$v] = $data[$k];
+				}
+			}
+			if ($new_data) {
+				asort($new_data);
+				$key = json_encode($new_data);
+				if (!isset($specific[$key])) {
+					$specific[$key] = $new_data;
+				}
+				$specific[$key]['tags'][] = $tag;
+			}
+		}
+
+		$flexform = Widget::factory('flexform');
+		$flexform->title = I18N::T('eq_sample', '个别送样设置');
+		$flexform->template_data = ['disabled'=>TRUE];
+		$flexform->existing_data = array_values($specific);
+		$flexform->item_view = 'eq_sample:admin/specific_setting';
+
+		echo $flexform;
+		
+	?>
+	</div>
+    <div class="interval_60">&nbsp</div>
+	<div class="form float_right">
+	<input type="reset" name="reset" value="<?php echo T('取消'); ?>" class="font-button-default rmargin_16">
+	<input type="submit" name="submit" value="<?php echo T('提交'); ?>" class="font-button-save">
+	</div>
+    <div class="interval_60">&nbsp</div>
+</form>

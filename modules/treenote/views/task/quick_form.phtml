@@ -1,0 +1,159 @@
+<?php
+$me = L('ME');
+$move_task_form_id = 'treenote_move_task_form_'. uniqid();
+$current_task_form_id = 'treenote_current_task_form_'. uniqid();
+$require = (string) V('form_require');
+?>
+<?php if (!$task->id && ($form['project'] || $form['parent_task'])): ?>
+<div class="padding_2">
+<h4><?php echo I18N::HT('treenote', '移动已有任务')?> <span class="description small"><?php echo I18N::HT('treenote', '将已有未锁定或未完成任务移动到当前项目/任务'); ?></span></h4>
+<form q-object="exist_task_form" q-event="submit" q-src="<?php echo H(URI::url('!treenote/task')) ?>" id="<?php echo H($move_task_form_id) ?>">
+<?php if($form['project']) echo Form::hidden('project', $form['project']); ?>
+<?php if($form['parent_task']) echo Form::hidden('parent_task', $form['parent_task']); ?>
+<div class="padding_1 lpadding_3">
+<?php echo Widget::factory('treenote:task_selector', ['size'=>60, 'name'=>'task']); ?>
+<div class="hr_1">&#160;</div>
+<input class="button button_save middle" type="submit" name="submit" value="<?php echo I18N::HT('treenote', '提交')?>" />
+</div>
+</form>
+</div>
+<hr/>
+<div class="padding_2">
+<h4><?php echo I18N::HT('treenote', '或添加新任务')?></h4>
+<?php else: ?>
+<div class="padding_2">
+<?php endif; ?>
+<?php
+$allowed_to_review = !$task->id || $me->is_allowed_to('评审', $task);
+?>
+<form q-object="task_form" q-event="submit" q-src="<?php echo H(URI::url('!treenote/task') ) ?>" id="<?php echo H($current_task_form_id) ?>">
+<?php if (is_object($form)) echo V('application:form_error', ['form'=>$form]); ?>
+<?php if ($form['id']) echo Form::hidden('id', $form['id']); ?>
+<?php if ($form['project']) echo Form::hidden('project', $form['project']); ?>
+<table class="form flexible">
+	<tr>
+		<td class="label right nowrap"><?php echo I18N::T('treenote', '标题')?></td>
+		<td colspan="5">
+		<input class="text" name="title" size="50" value="<?php echo H($form['title'])?>"/>
+		<?php echo $require; ?>
+		</td>
+	</tr>
+	<tr>
+		<td class="label right nowrap top"><?php echo I18N::T('treenote', '内容')?></td>
+		<td class="top" colspan="5">
+		<textarea class="text autogrow" name="description" cols="60" rows="5"><?php echo H($form['description'])?></textarea>
+		</td>
+	</tr>
+<?php
+if ($allowed_to_review): ?>
+	<tr>
+		<td class="label right nowrap"><?php echo I18N::T('treenote', '负责人|:task')?></td>
+		<td colspan="5"><?php
+			echo Widget::factory('application:user_selector', [
+				 'name'=>'user',
+				 'user'=> isset($form['user']) ? $form['user'] : $me,
+				 'size'=> 40,
+				 ]);
+		?>
+		<?php echo $require; ?>
+		</td>
+	</tr>
+	<tr>
+		<td class="label right nowrap"><?php echo I18N::T('treenote', '评审人|:task')?></td>
+		<td colspan="5"><?php
+			echo Widget::factory('application:user_selector', [
+				 'name'=>'reviewer',
+				 'user'=> $form['reviewer'] ?: ($task->id ? NULL : $me),
+				 'size'=> 40,
+				 ]);
+		?></td>
+	</tr>
+	<tr>
+		<td class="label right nowrap top"><?php echo I18N::T('treenote', '上级任务|:task')?></td>
+		<td colspan="5" class="top"><?php echo Widget::factory('treenote:task_selector', ['size'=>60, 'name'=>'parent_task', 'task'=>$form['parent_task'] ? : $task->parent_task, 'current_task'=> $task]); ?></td>
+	</tr>
+	<tr>
+		<td class="label right nowrap"><?php echo I18N::T('treenote', '优先级')?></td>
+		<td><?php echo Widget::factory('treenote:priority_selector', ['priority' => $form['priority']]) ?></td>
+		<td class="label right nowrap">&#160;&#160;<?php echo I18N::T('treenote', '截止日期')?></td>
+		<td><input class="date text" name="deadline" value="<?php echo H($form['deadline']) ?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/></td>
+	</tr>
+<?php endif; ?>
+	<tr>
+<?php if ($allowed_to_review): ?>
+		<td class="label right nowrap">
+			<?php echo I18N::HT('treenote', '预计消耗(hr)'); ?>
+		</td>
+		<td>
+			<input class="text number" name="expected_hours" size="5" value="<?php echo H($form['expected_hours']) ?>" />
+		</td>
+<?php endif; ?>
+		<td class="right nowrap label">
+			&#160;&#160;
+			<?php echo I18N::T('treenote', '完成状态'); ?>
+		</td>
+		<td class="left nowrap flexible">
+			<?php echo Form::dropdown('status', I18N::T('treenote', TN_Task_Model::$status_options), $form['status'], ' class="drop"'); ?>
+		</td>
+	</tr>
+	<tr>
+		<td>&#160;</td>
+		<td class="nowrap" colspan="5">
+			<div class="hr_1">&#160;</div>
+			<div class="clearfix">
+			<div class="float_left nowrap">
+			<input class="button button_save" type="submit" name="submit" value="<?php echo I18N::HT('treenote', '提交')?>" />
+			</div>
+			<?php if ($task->id && $me->is_allowed_to('删除', $task)): ?>
+			<div class="float_right nowrap">
+			&#160;&#160;
+			<a class="font-button-delete" href="#" q-object="delete_task" q-event="click" q-static="<?php echo H(['id'=>$task->id, 'mode'=>$form['mode']]) ?>" q-src="<?php echo H(URI::url('!treenote/task')) ?>"><?php echo I18N::HT('treenote', '删除该任务')?></a>
+			</div>
+			<?php endif; ?>
+			</div>
+		</td>
+	</tr>
+</table>
+</form>
+</div>
+<hr />
+<?php if (Module::is_installed('nfs')) : ?>
+<div class="padding_2">
+<h4><?php echo I18N::HT('treenote', '附件'); ?></h4>
+<div class="hr_1">&#160;</div>
+<div class="text_like relative" style="display:block">
+	<?php
+		echo V('nfs:nfs_lite/view', [
+				'object' => $task ?: O('tn_task'),
+				'path_type'=>'attachments'
+				]);
+	?>
+</div>
+</div>
+<?php endif;?>
+<script type="text/javascript">
+(function($) {
+
+    setTimeout(function() {
+        var $move_task_form = $('#<?php echo $move_task_form_id;?>');
+        var $current_task_form = $('#<?php echo $current_task_form_id;?>');
+        var changed = false;
+
+        $move_task_form.find(':input').change(function() {
+            changed = true;
+        });
+
+        $current_task_form.find(':input').change(function() {
+            changed = true;
+        });
+
+        $(Dialog).unbind('before_close').bind('before_close', function(e, ret) {
+            if (changed) {
+                ret.cfm = '<?php echo I18N::T('treenote', '任务表单信息发生变动, 确定要关闭吗?');?>';
+            }
+            return false;
+        });
+    }, 100);
+
+})(jQuery);
+</script>

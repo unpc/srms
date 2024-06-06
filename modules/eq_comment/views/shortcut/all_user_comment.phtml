@@ -1,0 +1,168 @@
+<?php
+$tip = Config::get('comment.rate')['tip'];
+
+$panel_buttons   = [];
+$panel_buttons[] = [
+    'text' => I18N::T('eq_comment', '导出'),
+    'tip'   => I18N::T('eq_comment', '导出Excel'),
+    'extra' => 'q-object="export" q-event="click" q-src="' . H(URI::url('!eq_comment/user/export')) .
+        '" q-static="' . H(['type' => 'csv', 'form_token' => $form_token, 'tab' => 'user']) .
+        '" class="button button_save "',
+];
+$panel_buttons[] = [
+    'text' => I18N::T('eq_comment', '打印'),
+    'tip'   => I18N::T('eq_comment', '打印'),
+    'extra' => 'q-object="export" q-event="click" q-src="' . H(URI::url('!eq_comment/user/export')) .
+        '" q-static="' . H(['type' => 'print', 'form_token' => $form_token, 'tab' => 'user']) .
+        '" class = "button button_print "',
+];
+?>
+
+<?php
+if ($form['dtend_dtstart'] && $form['dtend_dtend']) {
+  $form['dtend_date'] = H(date('Y/m/d',$form['dtend_dtstart'])).'-'.H(date('Y/m/d',$form['dtend_dtend']));
+}
+elseif ($form['dtend_dtstart']) {
+  $form['dtend_date'] = H(date('Y/m/d',$form['dtend_dtstart'])).'-'.I18N::T('eq_sample','最末');
+}
+elseif ($form['dtend_dtend']) {
+  $form['dtend_date'] = I18N::T('eq_sample','最初').'-'.H(date('Y/m/d',$form['dtend_dtend']));
+}
+
+$table = Widget::factory('table');
+$table->name = 'eq_comment_user';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+$table->add_columns([
+    'serial_number' => [
+      'title' => I18N::T('eq_comment', '编号'),
+      'align' => 'left',
+      'filter' => [
+        'form' => V('eq_comment:comments_table/filters/serial_number', ['id' => $form['id']]),
+        'value' => $form['id'] ? Number::fill(H($form['id']), 6) : NULL,
+        'field' => 'id'
+      ],
+      'weight' => 10,
+      'nowrap' => TRUE
+    ],
+    'group'=> [
+      'title' => I18N::T('quota', '组织机构'),
+      'invisible' => TRUE,
+      'filter' => [
+      'form' => V('eq_comment:comments_table/filters/group', ['tag' => $group, 'root' => $root]),
+        'value' => $group->id != $root->id ? H($group->name) : NULL,
+        'field'=>'group_id',
+      ],
+      'nowrap' => TRUE
+    ],
+    'equipment_name'=>[
+      'title' => I18N::T('eq_comment', '仪器'),
+      'align' => 'left',
+      'filter' => [
+        'form' => V('eq_comment:comments_table/filters/equipment_name', ['equipment_name'=>$form['equipment_name']]),
+        'value' => $form['equipment_name'] ? H($form['equipment_name']) : NULL
+      ],
+      'weight' => 20,
+      'nowrap' => TRUE,
+    ],
+    'incharge_name'=>[
+      'title' => I18N::T('eq_comment', '仪器负责人'),
+      'align' => 'left',
+      'filter' => [
+        'form' => V('eq_comment:comments_table/filters/incharge', ['incharge_name'=>$form['incharge_name']]),
+        'value' => $form['incharge_name'] ? H($form['incharge_name']) : NULL
+      ],
+      'weight' => 30,
+      'nowrap' => TRUE,
+    ],
+    'user_attitude' => [
+      'title' => I18N::T('eq_comment', '样品吻合度'),
+      'align' => 'left',
+      'filter' => [
+        'form' => V('eq_comment:comments_table/filters/rate', ['name' => 'user_attitude', 'val' => $form['user_attitude']]),
+        'value' => (isset($form['user_attitude']) && $form['user_attitude'] != -1) ? $tip[$form['user_attitude']] : '',
+      ],
+      'weight' => 40,
+      'nowrap' => TRUE
+    ],
+		'dtend' => [
+			'title' => I18N::T('eq_comment', '时间范围'),
+			'align' => 'left',
+            'invisible' => TRUE,
+			'filter'=> [
+				'form' => V('eq_comment:comments_table/filters/date', [
+					'name_prefix' => 'dtend_',
+					'dtstart_check' => $form['dtend_dtstart_check'],
+					'dtstart' => $form['dtend_dtstart'],
+					'dtend_check' => $form['dtend_dtend_check'],
+					'dtend' => $form['dtend_dtend']
+				]),
+        'value' => $form['dtend_date'] ? H($form['dtend_date']) : NULL,
+        'field' => 'dtend_dtstart_check,dtend_dtstart,dtend_dtend_check,dtend_dtend'
+			],
+			'weight' => 50,
+			'nowrap'=>TRUE,
+		],
+		'lab_id' => [
+			'title' => I18N::T('eq_comment', '课题组'),
+			'invisible' => TRUE,
+			'suppressible' => TRUE,
+			'filter' => [
+				'form' => Widget::factory('labs:lab_selector', [
+					'name' => 'lab_id',
+					'selected_lab' => $form['lab_id'],
+					'size' => 25,
+					'all_labs' => TRUE
+				]),
+				'value' => $form['lab_id'] ? H(O('lab', $form['lab_id'])->name) : NULL,
+			],
+			'weight' => 60,
+    ],
+    'user_proficiency' => ['title' => I18N::T('eq_comment', '熟练度'), 'align' => 'left', 'weight' => 90, 'nowrap' => TRUE],
+    'user_cleanliness' => ['title' => I18N::T('eq_comment', '清洁度 / 标准操作'), 'align' => 'left', 'weight' => 100, 'nowrap' => TRUE],
+    'test_importance' => ['title' => I18N::T('eq_comment', '重要性'), 'align' => 'left', 'weight' => 100, 'nowrap' => TRUE],
+    'test_understanding' => ['title' => I18N::T('eq_comment', '设备了解度'), 'align' => 'left', 'weight' => 100, 'nowrap' => TRUE],
+    'test_purpose' => ['title' => I18N::T('eq_comment', '测试目的'), 'align' => 'left', 'weight' => 100, 'nowrap' => TRUE],
+    'test_method' => ['title' => I18N::T('eq_comment', '测试方法'), 'align' => 'left', 'weight' => 100, 'nowrap' => TRUE],
+    'test_result' => ['title' => I18N::T('eq_comment', '测试结果'), 'align' => 'left', 'weight' => 100, 'nowrap' => TRUE],
+    'test_fit' => ['title' => I18N::T('eq_comment', '预期吻合度'), 'align' => 'left', 'weight' => 100, 'nowrap' => TRUE],
+    'test_remark' => ['title' => I18N::T('eq_comment', '备注'), 'align' => 'left', 'weight' => 100, 'nowrap' => TRUE]
+]);
+$table->empty_message = I18N::T('eq_comment', '没有评价信息');
+
+$param = [
+    'panel_buttons' => $panel_buttons,
+    'top_input_arr'=> ['serial_number', 'equipment_name'],
+    'columns'=> $table->columns,
+];
+echo V('application:search_box', $param);
+
+$table->comments = $comments;
+
+if ($comments->total_count()) foreach ($comments as $comment) {
+    $key = 'comment_' . $comment->id;
+    
+    $row = [
+        'serial_number' => V('eq_comment:comments_table/data/serial_number', ['id' => $comment->id]),
+        'equipment_name' => V('eq_comment:comments_table/data/equipment_name', ['comment' => $comment]),
+        'incharge_name' => V('eq_comment:comments_table/data/incharge', ['comment' => $comment]),
+        'user_attitude' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->user_attitude]),
+        'test_understanding' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->test_understanding]),
+        'user_proficiency' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->user_proficiency]),
+        'user_cleanliness' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->user_cleanliness]),
+        'test_importance' => V('eq_comment:comments_table/data/rate', ['rate' => $comment->test_importance]),
+        'test_purpose' => V('eq_comment:comments_table/data/text', ['text' => $comment->test_purpose]),
+        'test_method' => V('eq_comment:comments_table/data/text', ['text' => $comment->test_method]),
+        'test_result' => V('eq_comment:comments_table/data/text', ['text' => $comment->test_result]),
+        'test_fit' => V('eq_comment:comments_table/data/text', ['text' => $comment->test_fit]),
+        'test_remark' => V('eq_comment:comments_table/data/text', ['text' => $comment->test_remark]),
+    ];
+    $table->add_row_withkey($row, $key);
+}
+?>
+<div class="pages" ><?php echo $pagination; ?></div>
+<?php
+echo $table;
+?>
+<div class="pages" ><?php echo $pagination; ?></div>

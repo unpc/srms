@@ -1,0 +1,65 @@
+<div class="form">
+	<?php
+		echo Widget::factory('flexform_readonly', [
+			'title'         => I18N::T('eq_reserv', '预约次数&时长限制'),
+			'template_data' => ['disabled'=>TRUE],
+			'existing_data' => $times,
+			'item_view' => 'eq_time_counts:time/item_readonly',
+		]);
+	
+	?>
+</div>
+
+<?php 
+$empower = (object)current($times);
+$disabled = 'disabled="disabled"';
+?>
+<div class="form padding_2">
+	<table class="form" style="width:50%">
+	<tr>
+		<td>
+			<h4><?php echo I18N::T('eq_time_counts', '设置不受限用户'); ?></h4>
+		</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td class="left nowrap top">
+		<?php echo Form::checkbox('select_user_mode_user', $empower->uncontroluser, I18N::T('eq_time_counts','个别用户'),'class="middle monitor"' . $disabled, 'class="middle monitor"') ?></td>
+		<td>
+		<div>
+		<?php
+			$uncontroluser = json_decode($empower->uncontroluser,true) ? : [];
+			echo join($uncontroluser,',');
+		?>
+		</div>
+		</td>
+	</tr>
+	<?php if (!$GLOBALS['preload']['people.multi_lab'] && Module::is_installed('labs')): ?>
+	<tr>
+		<td class="left nowrap top">
+		<?php echo Form::checkbox('select_user_mode_lab', $empower->uncontrollab, I18N::T('eq_time_counts','课题组'),'class="middle monitor"' . $disabled, 'class="middle monitor"') ?></td>
+		<td>
+		<div>
+		<?php
+			$uncontrollab = json_decode($empower->uncontrollab,true) ? : [];
+			echo join($uncontrollab,',');
+		?>
+		</div>
+		</td>
+	</tr>
+	<?php endif ?>
+	<tr>
+		<td class="left nowrap top">
+		<?php echo Form::checkbox('select_user_mode_group', $empower->uncontrolgroup, I18N::T('eq_time_counts','组织机构'),'class="middle monitor"' . $disabled, 'class="middle monitor"') ?></td>
+		<td>
+		<div>
+		<?php
+			$uncontrolgroup = json_decode($empower->uncontrolgroup,true) ? : [];
+			echo join($uncontrolgroup,',');
+		?>
+		</div>
+		</td>
+	</tr>
+	</table>
+
+</div>

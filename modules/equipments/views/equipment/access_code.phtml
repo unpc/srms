@@ -1,0 +1,28 @@
+<?php $code_id = 'access_code_'.uniqid(); ?>
+<span id="<?php echo H($code_id) ?>">
+	<?php if ($equipment->access_code):
+		$show_download_button = TRUE;
+		$access_code = implode('-', str_split($equipment->access_code, 4));
+		$lifetime = Config::get('equipment.access_code_lifetime');
+		if (($lifetime > 0 && $equipment->access_code_ctime + $lifetime < Date::time()) || $equipment->control_mode != 'computer')  {
+			$extra = 'access_code_expired';
+			$show_download_button = FALSE;
+		}
+	?>
+	<span style="color: #666;" class="float_left label middle <?php echo $extra; ?>"><?php echo H($access_code);?></span>
+
+    <?php endif; ?>
+
+    <?php if ($show_download_button): ?>
+        <a class="font-button-icon float_right button_export middle" style="text-decoration: none;margin-left:8px" href="<?php echo H($equipment->url(NULL, NULL, NULL, 'access_code') ) ?>">
+            <span class="fa fa-download"></span>
+            <?php echo I18N::HT('equipments', '下载授权文件') ?>
+        </a>
+    <?php endif;?>
+
+    <a style="margin-left:4px" class="font-button-icon button_refresh float_right middle view object:access_code event:click static:<?php echo H(['equipment_id'=>$equipment->id, 'code_id'=>$code_id]);?>" style="text-decoration: none;margin-left: 10px;">
+        <span class="fa fa-refresh"></span>
+		<?php echo $equipment->access_code ? I18N::HT('equipments', '重新生成验证码') : I18N::HT('equipments', '生成验证码');?>
+        <input type="hidden" name="access_code" value="<?= $equipment->access_code ?>" />
+	</a>
+</span>

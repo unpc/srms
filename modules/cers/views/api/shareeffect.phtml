@@ -1,0 +1,33 @@
+<?php echo '<?xml version="1.0" encoding="UTF-8"?>'; ?>
+<ShareEffect xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ShareEffect.xsd">
+	<?php if (count($instrusConfigs)): ?>
+	<Instrus>
+		<?php foreach($instrusConfigs as $config): ?>
+		<Instru>
+			<SchoolCode><?php echo $config['SchoolCode']?></SchoolCode>
+			<InnerID><?php echo $config['InnerID']?></InnerID>
+			<YEAR><?php echo $config['YEAR']?></YEAR>
+			<LSNUSEDHRS><?php echo $config['LSNUSEDHRS']?></LSNUSEDHRS>
+			<RSCHUSEDHRS><?php echo $config['RSCHUSEDHRS']?></RSCHUSEDHRS>
+			<SERUSEDHRS><?php echo $config['SERUSEDHRS']?></SERUSEDHRS>
+			<OPENHRS><?php echo $config['OPENHRS']?></OPENHRS>
+			<SAMPLENUM><?php echo $config['SAMPLENUM']?></SAMPLENUM>
+			<TRNSTUD><?php echo $config['TRNSTUD']?></TRNSTUD>
+			<TRNTEACH><?php echo $config['TRNTEACH']?></TRNTEACH>
+			<TRNOTHERS><?php echo $config['TRNOTHERS']?></TRNOTHERS>
+			<EDUPROJ><?php echo $config['EDUPROJ']?></EDUPROJ>
+			<RSCHPROJ><?php echo $config['RSCHPROJ']?></RSCHPROJ>
+			<SOCIALPROJ><?php echo $config['SOCIALPROJ']?></SOCIALPROJ>
+			<RWDNATION><?php echo $config['RWDNATION']?></RWDNATION>
+			<RWDPROV><?php echo $config['RWDPROV']?></RWDPROV>
+			<RWDTEACH><?php echo $config['RWDTEACH']?></RWDTEACH>
+			<RWDSTUD><?php echo $config['RWDSTUD']?></RWDSTUD>
+			<PAPERINDEX><?php echo $config['PAPERINDEX']?></PAPERINDEX>
+			<PAPERKERNEL><?php echo $config['PAPERKERNEL']?></PAPERKERNEL>
+			<CHARGEMAN><?php echo $config['CHARGEMAN']?></CHARGEMAN>
+			<OtherInfo><?php echo $config['OtherInfo']?></OtherInfo>
+		</Instru>
+		<?php endforeach; ?>
+	</Instrus>
+	<?php endif; ?>
+</ShareEffect>

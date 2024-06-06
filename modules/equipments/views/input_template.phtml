@@ -1,0 +1,6 @@
+<?php
+$me = L('ME');
+$isGenee = in_array($me->token, (array) Config::get('lab.admin')) ? true : false;
+$isIncharge = Equipments::user_is_eq_incharge($me, $equipment) || $isGenee;
+?>
+<input type="text" class="text middle" size="9" name="<?=$name?>" value="<?=$visualVars[$name]?>" <?php if (!$isIncharge):?> disabled <?php endif;?> />

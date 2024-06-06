@@ -1,0 +1,132 @@
+<?php
+$uniqid = uniqid();
+$search_button_id = 'search_button_id'.$uniqid;
+$flash_plugin_message = 'ch_download_flash_'.$uniqid;
+?>
+<div class="hr_1">&#160;</div>
+<div class="panel padding_1 clearfix relative">
+	<a class="button button_search" href="#" id="<?php echo H($search_button_id) ?>" ><?php echo I18N::T('eq_stat', '搜索'); ?></a>
+	<div class="chart_form hidden form padding_2">
+		<form method="post" action="<?php echo H(URI::url() ) ?>" autocomplete="off">
+		<h3 class="description"><?php echo I18N::HT('eq_stat', '希望比较的仪器')?></h3>
+	<?php
+		$cat_selector = V('eq_stat:eq_stat_table/filters/tag', [
+			'name'=>'cat_id',
+			'tag'=>$cat,
+			'root'=>$cat_root,
+		]);
+
+		$group_selector = V('eq_stat:eq_stat_table/filters/tag', [
+			'name'=>'group_id',
+			'tag'=>$group,
+			'root'=>$group_root,
+			]);
+        $equipment_selector = V('eq_stat:eq_stat_table/filters/equipment', [
+            'name'=>'equipment_id',
+            'size'=>20,
+            'equipment'=>$equipment,
+        ]);
+	?>
+		<div>
+		<?php
+	echo Form::radio('tag', 'cat',	$tag ?: 'cat', I18N::T('eq_stat', '按仪器分类'), 'class="monitor middle"', 'class="middle"');
+	?>
+		&#160;
+		<div class="inline_block hidden toggle:tag show_on:cat">
+			<?php echo $cat_selector ?>
+		</div>
+	</div>
+	<div>
+		<?php
+			 echo Form::radio('tag', 'group', $tag, I18N::T('eq_stat', '按组织机构'), 'class="monitor middle"', 'class="middle"');
+	?>
+		&#160;
+		<div class="inline_block hidden toggle:tag show_on:group">
+			<?php echo $group_selector ?>
+		</div>
+	</div>
+    <div>
+        <?php 
+            echo Form::radio('tag', 'equipment', $tag, I18N::T('eq_stat', '按单一仪器'), 'class="monitor middle"', 'class="middle"'); 
+        ?>
+        <div class="inline_block hidden toggle:tag show_on:equipment">
+            <?php echo $equipment_selector;?>
+        </div>
+    </div>
+
+		<div class="hr_3">&#160;</div>
+		<h3 class="description"><?php echo I18N::HT('eq_stat', '希望比较的数据')?></h3>
+		<?php echo Form::dropdown('opt', I18N::T('eq_stat', $opts), $opt); ?>
+
+		<div class="hr_3">&#160;</div>
+		<h3 class="description"><?php echo I18N::HT('eq_stat', '希望比较的时间')?></h3>
+		<div>
+		<?php
+			 $selected = 'point';
+			 echo Form::radio('time', 'point',	$time ?: 'point', I18N::T('eq_stat', '按时点'), 'class="monitor middle"', 'class="middle"');
+			 echo '&#160;&#160;';
+			 echo Form::radio('time', 'period', $time, I18N::T('eq_stat', '按时段'), 'class="monitor middle"', 'class="middle"'); 
+		?>
+		</div>
+		<div>
+
+			<input name="y1" class="text date" value="<?php echo H($form['y1']) ?: '' ?>" q-date_format="<?php echo HT('$year')?>"/>
+			<?php
+				echo Form::dropdown('m1', $months, $m1 ?: 0);
+			?>
+			
+			<span class="hidden toggle:time show_on:period">
+				&#160;<strong class="description">-</strong>&#160;
+
+				<input name="y2" class="text date" value="<?php echo H($form['y2']) ?: '' ?>" q-date_format="<?php echo HT('$year')?>"/>
+				<?php
+					echo Form::dropdown('m2', $months, $m2 ?: 0);
+				?>
+				
+			</span>
+		</div>
+		<div class="hr_3">&#160;</div>
+		<h3 class="description"><?php echo I18N::HT('eq_stat', '图表类型')?></h3>
+		<p>
+		<span class="toggle_status:time enable_on:point">
+			<?php 
+			 echo Form::radio('type', 'pie',	$type, I18N::T('eq_stat', '饼图'), 'class="monitor middle"', 'class="middle"'); ?>
+		</span>
+			<?php echo Form::radio('type', 'bar',	$type ?: 'bar', I18N::T('eq_stat', '柱状图'), 'class="monitor middle"', 'class="middle"'); ?>
+		<span class="toggle_status:time enable_on:period">
+			<?php
+			 echo Form::radio('type', 'line',	$type, I18N::T('eq_stat', '线图'), 'class="monitor middle"', 'class="middle"'); ?>
+		</span>
+		</p>
+
+		<div class="hr_3">&#160;</div>
+		<input type="submit" name="submit" class="button button_view" value="<?php echo I18N::HT('eq_stat', '查看')?>" />
+		</form>
+	</div>
+</div>
+
+<div id="<?php echo H($flash_plugin_message ) ?>" class="eq_stat_message message message_normal padding_1 hidden">
+	<?php echo I18N::T('eq_stat', '您的浏览器似乎不支持本系统的仪器统计功能，如需使用该功能请%download_flash.', ['%download_flash' => URI::anchor('http://get.adobe.com/flashplayer/', I18N::T('eq_stat', '下载flash插件'), 'class="blue prevent_default" target="_blank"')]); ?>
+</div>
+<div class="eq_stat_chart clearfix">
+	<?php $chart_id = 'chart_'.uniqid(); ?>
+	<div id="<?php echo H($chart_id) ?>" class="chart_graph">&#160;</div>
+</div>
+
+<?php
+echo JS::load('eq_stat:chart', [
+	'search_button_id' => $search_button_id,
+	'search_button_text' => I18N::T('eq_stat', '搜索'),
+	'search_button_toggle_text' => I18N::T('eq_stat', '关闭'),
+	'chart_id' => $chart_id,
+	'chart_options' => [
+		'swfUrl' => $chart['swf'],
+		'id' => 'EQChart', 
+		'dataSource' => $chart['xml'],
+		'dataFormat' => 'xml',
+		'autoInstallRedirect'=> 1,
+		'detectFlashVersion' => 1,
+	],
+	'flash_plugin_message_id' => $flash_plugin_message,
+]);
+

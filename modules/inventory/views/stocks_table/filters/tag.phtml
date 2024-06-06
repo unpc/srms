@@ -1,0 +1,10 @@
+<?php							/* TASK#331(xiaopei.li@2011.03.14) */
+$root = Tag_Model::root('inventory');
+echo Widget::factory('application:multi_tag_selector',
+					 [
+						 'autocomplete'=> URI::url("autocomplete/tags.$root->id"),
+						 'name'=>'tags',
+						 'value'=> $tag_values,
+						 'size'=>'30',
+						 'token_tip' => I18N::T('inventory', '您可选择标签')
+						 ]);

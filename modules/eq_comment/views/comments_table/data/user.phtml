@@ -1,0 +1,16 @@
+<?php $user = $comment->user;?>
+<div><?php $user->render(); ?></div>
+<?php
+if (Module::is_installed('labs')):
+	if (!$GLOBALS['preload']['people.multi_lab']) :
+		$lab = Q("$user lab")->current();
+		if ($lab->id) :
+?>
+		<span class="description">
+			<a class="description" href="<?php echo H($lab->url()) ?>">(<?php echo H($lab->name) ?>)</a>
+		</span>
+<?php
+		endif;
+	endif;
+endif;
+?>

@@ -1,0 +1,20 @@
+<?php echo $primary_tabs ?>
+<?php if($primary_tabs->panel_buttons || $primary_tabs->search_box): ?>
+    <div class='search_panel'>
+        <?php
+        echo $primary_tabs->panel_buttons;
+        echo $primary_tabs->search_box;
+        ?>
+    </div>
+<?php endif ?>
+<?php echo $primary_tabs->content ?>
+<script>
+    jQuery(function($){
+        $(".search_panel").next(".tab_content")
+            .css('margin', '0px 16px 66px 16px')
+            .css('padding', '0px 16px 16px 16px');
+
+    })
+</script>
+
+

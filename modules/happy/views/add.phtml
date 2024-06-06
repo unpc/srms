@@ -1,0 +1,43 @@
+	<div class="hr_1">&nbsp;</div>
+	<div style="padding-top:0px">
+	<?php $require = V('form_require', ['form'=>$form]);?>				
+		<div class="form padding_2">
+			<form action="" method="post">
+				<?php echo V('form_error', ['form'=>$form])?>
+				<table class="form">
+					<tbody>
+						<tr>
+							<td class="label right nowrap middle"><?php echo I18N::T('equipments', '主题')?></td>
+							<td class="label left top">
+								<input name="title" class="text" size="30" value="<?php echo H($form['title'])?>"/><?php echo $require;?>
+							</td>
+						</tr>
+						<tr>
+							<td class="label right nowrap middle"><?php echo I18N::T('equipments', '内容')?></td>
+							<td class="label left top">
+								<input name="body" class="text" size="30" value="<?php echo H($form['body'])?>"/>
+							</td>
+						</tr>	
+						<tr>
+							<td class="label right nowrap middle"><?php echo I18N::T('equipments', '发起时间')?></td>
+							<td class="label left top">
+								<input name="ctime" class="text date" value="<?php echo H($form['manu_date']) ?>" />
+							</td>
+						</tr>
+						<tr>
+							<td class="label right nowrap middle"><?php echo I18N::T('equipments', '截止时间')?></td>
+							<td class="label left top">
+								<input name="dtime" class="text date" value="<?php echo H($form['manu_date']) ?>" />
+							</td>
+						</tr>
+						<tr>
+							<td class="label right nowrap middle"></td>
+							<td>
+								<input type="submit" value="提交" class="button button_add" name="submit">
+							</td>
+						</tr>		
+					</tbody>
+				</table>
+			</form>
+		</div>
+	</div>

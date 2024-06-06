@@ -1,0 +1,16 @@
+
+<?php 
+    $types = [
+        'eq_sample' => '送样收费',
+        'eq_record' => '使用收费',
+        'eq_reserv' => '预约收费',
+    ];
+?>
+
+<style>
+.dropdown_container {
+    width: 140px;
+}
+</style>
+
+<?php echo Form::dropdown('type', ['' => '--'] + $types, $form['type'], 'class="small"'); ?>

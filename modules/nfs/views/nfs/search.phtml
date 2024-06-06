@@ -1,0 +1,28 @@
+<?php
+$me = L('ME');
+?>
+<div class="form clearfix">
+<form class="view" q-object="search_nfs" q-static="<?php echo H(['path_type'=>$path_type, 'path'=>$path, 'token'=>$token]); ?>" q-src="" q-event="submit" autocomplete="off">
+	<table class="form clearfix">
+		<tbody>
+			<tr>
+				<td class="nowrap"><?php echo T('名称'); ?></td>
+				<td><input class="text" name="file_name" value=""/></td>
+			</tr>
+			<tr>
+				<td class="nowrap"><?php echo T('更新时间'); ?></td>
+				<td  class="nowrap">
+                    <input name="dtstart" class="text date" date_type="date" value="<?php echo $this->dtstart ? H($this->dtstart ) : Date::format(null, 'Y-m-d') ?>" />
+				    <span class="middle description date_interval"> - </span>
+                    <input name="dtend" class="text date" date_type="date" value="<?php echo $this->dtend ? H($this->dtend ) : Date::format(null, 'Y-m-d') ?>" />
+				</td>
+			</tr>
+		</tbody>
+	</table>
+    <div class="button_container">
+        <div class="float_right">
+            <input type="submit" name="submit" class="font-button-save" value="<?php echo H(T('查询')); ?>" >
+        </div>
+    </div>
+</form>
+</div>

@@ -1,0 +1,16 @@
+<div style='min-width:200px'>
+    <a href="<?php echo H($user->url() ) ?>">
+        <strong class="name"><?php echo H($user->name) ?></strong>
+    </a>
+</div>
+<?php
+$labs = Q("$user lab");
+if (Module::is_installed('labs') && $labs->total_count()):?>
+    <?php foreach ($labs as $lab) :?>
+    <div>
+        <a class="description" href="<?php echo H($lab->url() ) ?>">
+            <?php echo H($lab->name) ?>
+        </a>
+    </div>
+    <?php endforeach;?>
+<?php endif;?>

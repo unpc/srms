@@ -1,0 +1,32 @@
+<?php
+    echo CSS::load_async('equipments:relate_list');
+    $uniqid = 'relate_archive_'.uniqid();
+    $archives = Q("$equipment tag.archive");
+    $aid = $form['aid'];
+?>
+<?php if (L('ME')->is_allowed_to('添加仪器使用记录', $equipment)) :?>
+<div class="interval_24"></div>
+<div class="add_archive">
+    <a class="font-button-default" q-object="add_archive"
+        q-event="click"
+        q-static="<?php echo H(['eid'=>$equipment->id])?>"
+        q-src="<?php echo H(URI::url('!equipments/equipment')) ?>"><?php echo I18N::T('equipments', '新建档案')?></a>
+</div>
+<?php endif;?>
+
+<div class="clearfix default_archives">
+    <a href="<?php echo H(URI::url(NULL, ['reset_archive'=>TRUE])) ?>" <?php if ($form['reset_archive']) :?>class="active"<?php endif?>><?php echo I18N::T('equipments', '所有记录')?></a>
+    <a href="<?php echo H(URI::url(NULL, ['unarchive'=>TRUE])) ?>" <?php if ($form['unarchive']):?>class="active"<?php endif;?>><?php echo I18N::T('equipments', '未归档记录')?></a>
+</div>
+<div class="archive_lists" id="<?php echo H($uniqid) ?>">
+    <div class="equipment_archives">
+        <?php
+            foreach($archives as $key => $archive) {
+                echo V('equipments:record/archive/archive', ['id'=>$key, 'aid'=>$aid, 'equipment'=>$equipment, 'relate_uniqid'=>$uniqid, 'form_token'=>$form['form_token']]);
+            }
+        ?>
+        <div class="equipment_archive last_archive">&#160;&#160;&#160;
+            <div class="border">&#160;</div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,31 @@
+<div class="form padding_1">
+<?php if (isset($message)): ?>
+    <div class="message message_error clearfix nowrap"><?php echo H($message);?></div>
+<?php endif;?>
+<form q-object="<?= $action?>" q-event="submit" q-src="<?php echo H(URI::url('!yiqikong_approval/index')) ?>" autocomplete="off" method="post">
+    <?php echo V('form_error', ['form'=>$form]);?>
+    <input name="approval_id" type="hidden" value="<?php echo H($approval->id)?>" />
+    <table class="form">
+        <tr>
+            <td class="label left top nowrap">
+                <div class="lpadding_3">
+                    <span><?php echo I18N::HT('yiqikong_approval', '原因描述');?></span>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="left top nowrap">
+                <div class="lpadding_3 rpadding_3">
+                <textarea class="top" name="description" rows="3" cols="50" class="autogrow"><?php echo $form['description'] ?></textarea>
+                </div>
+                <div class="lpadding_3 rpadding_3"><?php echo V('form_filter',['error'=>$form->errors['description'][0]])?></div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" class="label left top nowrap">
+                <div class="lpadding_3 padding_2"><input name="submit" type='submit' class="font-button-save" value="<?php echo I18N::HT('yiqikong_approval', '保存');?>"></div>
+            </td>
+        </tr>
+    </table>
+</form>
+</div>

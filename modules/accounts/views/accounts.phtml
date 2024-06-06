@@ -1,0 +1,94 @@
+<div class="hr_1">&#160;</div>
+<?php echo $secondary_tabs; ?>
+<div class="hr_1">&#160;</div>
+<?php
+$me = L('ME');
+if ($me->is_allowed_to('添加', 'lims_account')):
+?>
+<div class="panel padding_1">
+	<a class="button button_add" href="<?php echo H(URI::url('!accounts/account/add')) ?>"/><?php echo I18N::HT('accounts', '添加客户')?></a>
+</div>
+<?php
+endif;
+?>
+<?php
+
+echo $pagination;
+
+$table = Widget::factory('table');
+$table->name = 'accounts';
+$table->form = $form;
+$table->add_columns([
+	'@' => NULL,
+	'name' => [
+		'title' => I18N::T('accounts', '名称 / 项目编号'),
+		'filter' => [
+			'form' => V('accounts:accounts_table/filters/input', [
+							'name' => 'name_or_id',
+							'value' => $form['name_or_id'],
+							]),
+			'value' => $form['name_or_id'] ? H($form['name_or_id']) :NULL,
+			'field' => 'name_or_id',
+		],
+		'nowrap'=>TRUE,
+	],
+	'type' => [
+		'title' => I18N::T('accounts', '客户类型'),
+		'filter' => [
+			'form' => V('accounts:accounts_table/filters/type', [
+							'available_types' => $available_types,
+							'type' => $form['type'],
+							]),
+			'value' => $form['type'] ? H($available_types[$form['type']]) :NULL
+		],
+		'nowrap'=>TRUE,
+	],
+	'code_id' => [
+		'title' => I18N::T('accounts', '程序代号'),
+		'nowrap'=>TRUE,
+	],
+	'version' => [
+		'title' => I18N::T('accounts', '版本'),
+		/*
+		// TODO 版本搜索(xiaopei.li@2012-05-06)
+		'filter' => array(
+			'form' => V('accounts:accounts_table/filters/version', array('lab_version'=>$form['lab_version'])),
+			'value' => $form['lab_version'] ? H($form['lab_version']) :NULL
+		),
+		*/
+		'nowrap'=>TRUE,
+	],
+	'mtime' => [
+		'title' => I18N::T('accounts', '更新时间'),
+		'nowrap'=> TRUE,
+		// 'extra_class' => 'tight',
+	],
+	'etime' => [
+		'title' => I18N::T('accounts', '到期时间'),
+		'nowrap' => TRUE,
+		// 'extra_class' => 'tight',
+	],
+	'links' => [
+		'nowrap' => TRUE,
+		'extra_class' => 'tight',
+	],
+]);
+
+$table->empty_message = I18N::T('accounts', '无符合条件的结果');
+
+foreach($accounts as $account) {
+
+	$table->add_row([
+		'name' => V('accounts:accounts_table/data/name', ['account'=>$account]),
+		'type' => H($available_types[$account->type]),
+		'code_id' => H($account->code_id),
+		'version' => H($account->version),
+		'mtime' => Date::format($account->mtime),
+		'etime' => $account->etime ? Date::format($account->etime) : '--',
+		'links' => V('application:widgets/links', ['links'=>$account->links('index')]),
+	]);
+
+}
+
+
+echo $table;

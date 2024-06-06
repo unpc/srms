@@ -1,0 +1,87 @@
+<?php 
+	$default_user = O('user');
+	$uniqid = uniqid();
+	$author_uniqid = $uniqid . '_authors';
+?>
+<form q-object="author_form"
+	  q-event="submit"
+	  q-static="<?php echo H(['object'=>$object->id, 'type'=>$type])?>"
+	  q-src="<?php echo H(URI::url('!achievements/index')) ?>"
+	  method="post" autocomplete="off">
+	<div class="form" id="<?php echo H($uniqid) ?>">
+		<table class="aumap_table" cellspacing="0" cellpadding="0">
+			<tr>
+				<td class="top padding_1" style="width:50%">
+					<h4><?php echo I18N::T('achievements','作者列表');?></h4>
+					<ul id="<?php echo H($author_uniqid) ?>">
+					<?php 
+						foreach($ac_authors as $author_id => $ac_author) {
+							echo "<li>";
+							if($ac_author->user->id){
+								echo V('achievements:author_linked',[
+										'author_id'=>$author_id, 
+										'author_name'=>$ac_author->name, 
+										'user'=>$ac_author->user
+									]);
+							}
+							else {
+								echo V('achievements:author_unlinked',[
+									'author_id'=>$author_id, 
+									'author_name'=>$ac_author->name
+									]);
+							}
+							echo "</li>";
+						}
+					?>
+					</ul>
+				</td>
+				<td class="top" style="width:50%">
+					<h4><?php echo I18N::T('achievements','实验室成员列表');?></h4>
+					<?php 
+						$users_uniqid = $uniqid . '_users';
+						echo V('achievements:users', [
+							'users' => $users, 
+							'uniqid' => $users_uniqid,
+							'extra' => 'class="middle"',
+						]); 
+					?>
+					<?php
+						echo Widget::factory('user_selector', [
+							'name'=>'user_id',
+							'size'=>'20',
+						]);
+						$dynamic = H(['user_id'=>'#'.$uniqid.' input[name=user_id]']);
+					?>
+					<input value="添加" type="button" class="button tmargin_1 font-button-save sm button_empty view object:add_author event:click dynamic:<?php echo $dynamic ?> static:uniqid=<?php echo $users_uniqid ?>" name="add_button">
+				</td>
+			</tr>
+		</table>
+        <div class="button_container">
+            <div class="float_right">
+                <input type="button" name="cancel" id="cancel" class="font-button-default  sm rmargin_2e4" value="取消">
+                <input type="submit" name="submit" class="font-button-save sm" value="<?php echo H(I18N::T('achievements','更新')) ?>">
+            </div>
+        </div>
+	</div>
+</form>
+<?php $template_uniqid = 'template_'.uniqid(); ?>
+<div id="<?php echo H($template_uniqid ) ?>" class="hidden">
+	<div class="template:author_unlinked">
+		<?php echo V('achievements:author_unlinked') ?>
+	</div>
+	<div class="template:author_linked">
+		<?php echo V('achievements:author_linked')?>
+	</div>
+</div>
+<?php
+echo JS::load('achievements:authors', [
+	'uniqid'=>$uniqid,
+	'users_uniqid'=>$users_uniqid,
+	'author_uniqid'=>$author_uniqid,
+	'template_uniqid'=>$template_uniqid,
+	'src'=>$default_user->icon_url('32')
+]);
+?>
+
+
+

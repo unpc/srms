@@ -1,0 +1,7 @@
+<?php
+if ($sample->duty_teacher->id):
+    ?>
+    <a href="<?php echo H($sample->duty_teacher->url()) ?>"
+       class="prevent_default"><?php echo O('user', $sample->duty_teacher_id)->name; ?>
+    </a>
+<?php endif; ?>

@@ -1,0 +1,290 @@
+<form autocomplete="off" method="post" class="edit eq_sample_edit_eqsample  rmargin_100" action="<?php echo H(URI::url() ) ?>">
+<?php
+    $me = L('ME');
+	$disabled = $me->is_allowed_to('修改送样设置', $equipment) ? '' : 'disabled="disabled"';
+	$hidden = $disabled && $equipment->accept_sample ? '' : ' hidden toggle:accept_sample show_on:on';
+	$accept_uniqid = 'accept_'.uniqid();
+    $sample_apply_checkbox_uniqid = 'sample_apply_checkbox_'.uniqid();
+    $sample_apply_checkbox_uniqid_c = 'sample_apply_checkbox_c_'.uniqid();
+    $sample_require_pc = 'sample_require_pc_checkbox_'.uniqid();
+	/*
+		TODO cheng.liu@2011-07-26
+		个人觉得此处编辑lua脚本的地方应该是通过toggle来实现更显得性能话，视觉化。
+		没必要在本身已经涉及到了js情况下，再多出一部ajax调用后台然后再传回前台处理。
+	*/
+?>
+
+<div class="form" id="<?php echo H($accept_uniqid) ?>">
+	<table class="form">
+		<tbody>
+			<tr>
+				<td class="top icon" width="130">
+					<?php echo $equipment->icon('104'); ?>
+				</td>
+				<td class="top">
+					<?php if(L('ME')->is_allowed_to('锁定送样', $equipment)) :?>
+						<h2 class="section_title">
+                            <span class="border"></span>
+                            <span class="black_title"><?php echo I18N::T('eq_sample', '锁定送样')?></span>
+                        </h2>
+                        <div class="interval_12"></div>
+						<div class="lmaigin_1e5">
+							<?php echo Form::checkbox('sample_lock',  $equipment->sample_lock, I18N::T('eq_sample', '锁定仪器负责人对该仪器的送样设置'), 'class="middle checkbox"', 'class="middle"');?>
+						</div>
+                        <div class="interval_24"></div>
+					<?php endif;?>
+					<h2 class="section_title">
+                        <span class="border"></span>
+                        <span class="black_title"><?php echo I18N::T('eq_sample', '使用要求'); ?></span>
+                    </h2>
+                    <div class="interval_12"></div>
+					<div class="lmaigin_1e5">
+						<?php echo Form::checkbox('accept_sample',
+												  $equipment->accept_sample,
+												  I18N::T('eq_sample', '接受送样预约'),
+												  'class="middle checkbox monitor"'.
+												  'class="middle"'.
+												  $disabled
+												  ); ?>
+					</div>
+                    <?php echo Event::trigger('eq_sample.requirement.extra.view', $equipment, $disabled) ?>
+				</td>
+            </tr>
+		</tbody>
+	</table>
+</div>
+
+<?php
+    if (Module::is_installed('eq_sample_time')) {
+        echo V('eq_sample_time:edit/edit_sample_time', ['equipment' => $equipment, 'times' => $times, 'form' => $form]);
+    }
+?>
+
+<?php if (Module::is_installed('extra')) :?>
+<div class="interval_24"></div>
+<div class="<?= $hidden?> content_padding" >
+	<div class="form">
+		<h2 class="section_title">
+            <span class="border"></span>
+            <span class="black_title"><?php echo I18N::T('eq_sample', '送样表单')?></span>
+		</h2>
+        <div class="interval_12"></div>
+		<?php $extra = Extra_Model::fetch($equipment, 'eq_sample');?>
+        <div class="lmaigin_1e5" src="<?php echo H($extra->url()) ?>"></div>
+		<div class="interval_24"></div>
+
+    </div>
+</div>
+<?php endif;?>
+
+<div class="<?= $hidden?> content_padding">
+	<div class="form">
+		<h2 class="section_title">
+            <span class="border"></span>
+            <span class="black_title"><?php echo I18N::T('eq_sample', '其他设置')?></span>
+        </h2>
+        <div class="interval_12"></div>
+		<div class="lmaigin_1e5">
+			<table class="form">
+				<tbody>
+					<tr>
+						<td class="middle">
+                            <input class="checkbox middle" type="checkbox" id="<?php echo H($sample_apply_checkbox_uniqid) ?>" name="sample_autoapply"
+							<?php if ($equipment->sample_autoapply) echo 'checked="checked"'?>
+							<?php echo $disabled?> /><label for="<?php echo $sample_apply_checkbox_uniqid; ?>"><?php echo I18N::T('eq_sample', '默认批准送样申请'); ?></label>
+						</td>
+					</tr>
+                    <tr class="interval_6"></tr>
+                    <tr>
+                        <td class="left nowrap middle"><label for="<?php echo $sample_apply_checkbox_uniqid_c; ?>"><?php echo I18N::T('eq_sample', '每日最大可接样量'); ?></label></td>
+                    </tr>
+                    <tr class="interval_6"></tr>
+                    <tr>
+                        <td class="middle">
+                            <input type="text" class="text number middle" id="<?php echo H($sample_apply_checkbox_uniqid_c) ?>" name="sample_counts_limit" value="<?= $equipment->sample_counts_limit ?? 0?>" <?php echo $disabled?>/>&nbsp;&nbsp;
+                        </td>
+                    </tr>
+                    <tr class="interval_6"></tr>
+                    <tr>
+                        <td class="middle description nowrap" colspan="2" style="color: #E02020"><?= I18N::T('eq_sample','输入>=0整数, 如果设置为0, 则默认无最大可接样量限制')?></td>
+                    </tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<?php
+$default_add_sample_earliest_limit = Lab::get('equipment.add_sample_earliest_limit', NULL, '@');
+$default_add_sample_latest_limit = Lab::get('equipment.add_sample_latest_limit', NULL, '@');
+$default_modify_sample_latest_limit = Lab::get('equipment.modify_sample_latest_limit', NULL, '@');
+
+list($default_add_sample_earliest_time, $default_add_sample_earliest_format) = Date::format_interval($default_add_sample_earliest_limit, 'ihd');
+
+list($default_add_sample_latest_time, $default_add_sample_latest_format) =  Date::format_interval($default_add_sample_latest_limit, 'ihd');
+
+list($default_modify_sample_latest_time, $default_modify_sample_latest_format) =  Date::format_interval($default_modify_sample_latest_limit, 'ihd');
+?>
+<div class="interval_24"></div>
+<div class="form <?php echo $hidden?> content_padding">
+    <h2 class="section_title">
+        <span class="border"></span>
+        <span class="black_title"><?php echo I18N::HT('eq_sample', '送样规则'); ?></span>
+    </h2>
+    <div class="lmaigin_1e5">
+        <div class="<?php echo $hidden?>">
+            <div class="interval_12"></div>
+            <table>
+                <tbody>
+                <tr>
+                    <td class="middle">
+                        <input class="checkbox middle" type="checkbox" id="<?php echo H($sample_require_pc) ?>" name="sample_require_pc"
+                            <?php if ($equipment->sample_require_pc) echo 'checked="checked"'?>
+                            <?php echo $disabled?> /><label for="<?php echo $sample_require_pc; ?>"><?php echo I18N::T('eq_sample', 'PC端送样提醒'); ?></label>
+                    </td>
+                </tr>
+                <tr><td class="interval_6"></td></tr>
+                <tr>
+                    <td class="middle">
+                        <div class="description" style="color: #E02020">
+                            <span class="required">*</span><?php echo I18N::T('eq_reserv', '开启后，用户在移动端送样时，将提示“当前仪器表单较复杂，建议前往pc端送样”');?>
+                        </div>
+                    </td>
+                </tr>
+                <tr><td class="interval_6"></td></tr>
+                <tr>
+                    <td class="left nowrap middle"><?php echo I18N::T('eq_sample', '添加送样最早可提前')?>&#160;&#160;</td>
+                </tr>
+                <tr class="interval_6"></tr>
+                <tr>
+                    <td class="nowrap middle">
+                        <?php
+                        echo Form::radio('default_add_earliest', 'customize',
+                            is_null($add_sample_earliest_time) && !isset($form['add_sample_earliest_time']) ?
+                                'default' : 'customize','','class="middle monitor"' . $disabled); ?>
+                        <span style="padding-left: 8px" class="middle toggle_status:default_add_earliest enable_on:customize">
+                        <input class="text number middle" name="add_sample_earliest_time" style="width: 104px" value="<?php echo H(isset($add_sample_earliest_time) ?  $add_sample_earliest_time : $default_add_sample_earliest_time) ?>" <?php echo $disabled?>/>&#160;
+                            <?php echo Form::dropdown('add_sample_earliest_format', Date::units('ihd'), $add_sample_earliest_format ? :
+                                $default_add_sample_earliest_format ? : Config::get('eq_sample.default_add_sample_limit_format', 'd'),'class="middle"' . $disabled);?>
+                        </span>
+                        <div class="interval_6"></div>
+                        <?php
+                        echo Form::radio('default_add_earliest', 'default',
+                            is_null($add_sample_earliest_time) && !isset($form['add_sample_earliest_time']) ?
+                                'default' : 'customize',
+                            I18N::T('eq_sample', '系统默认值'),'class="monitor"' . $disabled,'class="middle" style="padding-left: 8px"');
+                        ?>
+                    </td>
+                </tr>
+                <tr><td class="interval_20"></td></tr>
+                <tr>
+                    <td class="left nowrap middle"><?php echo I18N::T('eq_sample', '添加送样最晚可提前')?>&#160;&#160;</td>
+                </tr>
+                <tr class="interval_6"></tr>
+                <tr>
+                    <td class="nowrap middle">
+                        <?php echo Form::radio('default_add_latest','customize', is_null($add_sample_latest_time) && !isset($form['add_sample_latest_time']) ? 'default' : 'customize','','class="middle monitor"' . $disabled); ?>
+                        <span style="padding-left: 8px" class="middle toggle_status:default_add_latest enable_on:customize">
+                        <input class="text number middle" name="add_sample_latest_time" style="width: 104px" value="<?php echo H(isset($add_sample_latest_time) ?  $add_sample_latest_time : $default_add_sample_latest_time) ?>" <?php echo $disabled?>/>&#160;
+                            <?php echo Form::dropdown('add_sample_latest_format', Date::units('ihd'), $add_sample_latest_format ? : $default_add_sample_latest_format ? : Config::get('eq_sample.default_add_sample_limit_format', 'd'),'class="middle"' . $disabled);?>
+                        </span>
+                        <div class="interval_6"></div>
+                        <?php echo Form::radio('default_add_latest','default', is_null($add_sample_latest_time) && !isset($form['add_sample_latest_time']) ? 'default' : 'customize',I18N::T('eq_sample', '系统默认值'),'class="monitor"' . $disabled,'class="middle" style="padding-left: 8px"'); ?>
+                    </td>
+                </tr>
+                <tr><td class="interval_20"></td></tr>
+                <tr>
+                    <td class="left nowrap middle"><?php echo I18N::T('eq_sample', '修改 / 删除送样最晚可提前')?>&#160;&#160;</td>
+                </tr>
+                <tr class="interval_6"></tr>
+                <tr>
+                    <td class="nowrap middle">
+                        <?php echo Form::radio('default_modify_latest', 'customize', is_null($modify_sample_latest_time) && !isset($form['modify_sample_latest_time']) ? 'default' : 'customize','','class="middle monitor"' . $disabled); ?>
+                        <span style="padding-left: 8px" class="middle toggle_status:default_modify_latest enable_on:customize">
+                        <input style="width: 104px" class="text number middle" name="modify_sample_latest_time" value="<?php echo H(isset($modify_sample_latest_time) ?  $modify_sample_latest_time : $default_modify_sample_latest_time) ?>" <?php echo $disabled?>/>&#160;
+                            <?php echo Form::dropdown('modify_sample_latest_format', Date::units('ihd'), $modify_sample_latest_format ? : $default_modify_sample_latest_format ? : Config::get('eq_sample.default_samplelimit_format','d'),'class="middle"' . $disabled);?>
+                        </span>
+                        <div class="interval_6"></div>
+                        <?php echo Form::radio('default_modify_latest', 'default', is_null($modify_sample_latest_time) && !isset($form['modify_sample_latest_time']) ? 'default' : 'customize',I18N::T('eq_sample', '系统默认值'),'class="monitor"' . $disabled,'class="middle" style="padding-left: 8px"'); ?>
+                    </td>
+                </tr>
+                <tr><td class="interval_6"></td></tr>
+                <tr>
+                    <td class="middle description nowrap" style="color: #E02020"><?php echo I18N::HT('eq_sample', '* 设置为0, 表示不限制添加 / 修改 / 删除的提前时间')?></td>
+                </tr>
+                <tr><td class="interval_6"></td></tr>
+                <tr>
+                    <td class="middle description nowrap" style="color: #E02020">
+                        <?php echo I18N::HT('eq_sample', '* 建议 “修改 / 删除送样最晚可提前” 时间小于 “添加送样最晚可提前” 时间, 否则会出现添加送样后用户不可编辑的情况');?>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<?php
+
+$tagged = P($equipment)->get('@TAG_SAMPLE');
+if ($tagged) foreach ($tagged as $tag => $data) {
+    $new_data = [];
+    if(isset($data['specific_add_earliest_limit'])){
+        $new_data['specific_add_earliest_limit'] = $data['specific_add_earliest_limit'];
+    }
+    if(isset($data['specific_add_latest_limit'])){
+        $new_data['specific_add_latest_limit'] = $data['specific_add_latest_limit'];
+    }
+    if(isset($data['specific_modify_latest_limit'])){
+        $new_data['specific_modify_latest_limit'] = $data['specific_modify_latest_limit'];
+    }
+    if(isset($data['foo'])){
+        $new_data['foo'] = $data['foo'];
+    }
+
+    if ($new_data) {
+        ksort($new_data);
+        $key = serialize($new_data);
+        if (!isset($specific[$key])) {
+            $specific[$key] = $new_data;
+        }
+        $specific[$key]['tags'][] = $tag;
+    }
+}
+
+$readonly = $disabled ? '_readonly' : '';
+$specific = (array)$specific;
+if ($specific || !$disabled): ?>
+    <div class="interval_24"></div>
+
+    <div class="form <?php echo $hidden?> content_padding">
+        <?php
+        echo Widget::factory('flexform' . $readonly, [
+            'title' => I18N::T('eq_sample', '个别送样设置'),
+            'template_data' => ['disabled'=>TRUE],
+            'existing_data' => array_values($specific),
+            'item_view' => 'eq_sample:edit/sample_special_item' . $readonly,
+            'extra_vars' => [
+                'equipment' => $equipment,
+                'add_sample_earliest_time'=>$add_sample_earliest_time,
+                'add_sample_latest_time'=>$add_sample_latest_time,
+                'add_sample_earliest_format'=>$add_sample_earliest_format,
+                'add_sample_latest_format'=>$add_sample_latest_format,
+                'modify_sample_latest_time'=>$modify_sample_latest_time,
+                'modify_sample_latest_format'=>$modify_sample_latest_format,
+            ],
+        ]);
+
+        ?>
+    </div>
+<?php endif; ?>
+
+
+<?php if(!$disabled):?>
+<div class="interval_30"></div>
+<div class="form content_padding">
+	<input type="submit" name="submit" class="float_right font-button-save" value="<?php echo H(T('保存修改')) ?>" />
+</div>
+<div class="interval_30"></div>
+<?php endif;?>
+</form>

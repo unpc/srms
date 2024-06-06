@@ -1,0 +1,10 @@
+<?php
+	$require = (string) V('form_require');
+?>
+<tr>
+	<td class="left nowrap middle rpadding_2"><?php echo $require; ?><?php echo I18N::T('sms', '短信通知号码')?></td>
+	<td class="middle"><input placeholder="请输入短信通知号码" name="binding_phone" class="text" size="25" value="<?php echo $form['binding_phone'] ?: $user->binding_phone; ?>" />
+	<?php echo V('form_filter',['error'=>$error])?>
+	</td>
+
+</tr>

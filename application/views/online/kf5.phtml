@@ -1,0 +1,18 @@
+<script type="text/javascript">
+document.write('<script src="\/\/assets-cdn.kf5.com\/supportbox\/main.js?' + (new Date).getDay() + '" id="kf5-provide-supportBox" kf5-domain="support17kong.kf5.com" charset="utf-8"><\/script>');
+
+<?php if($me->id): ?>
+$(function() {
+	window.KF5SupportBoxAPI.ready(function() {
+		window.KF5SupportBoxAPI.identify({
+			'name': '<?= $me->name; ?>',
+			'email': '<?= $me->email; ?>',
+			'phone': '<?= $me->phone; ?>',
+			"metadata": [
+			    {name: '用户ID', value: '<?= $me->id; ?>'}
+			]
+		});
+	});
+})
+<?php endif; ?>
+</script>

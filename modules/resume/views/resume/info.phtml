@@ -1,0 +1,99 @@
+<div class="form padding_1">
+	<form method="post" autocomplete="off">
+		<?php echo V('form_error', ['form' => $form]); ?>
+		<?php $require = (string) V('form_require'); ?>
+		<table class="form">
+			<tbody>
+				<tr>
+					<td class="nowrap label"><?php echo I18N::T('resume', '姓名'); ?></td>
+					<td><input class="text" name="uname" value="<?php echo H($form['uname']) ?: H($resume->uname); ?>" /><?php echo $require; ?></td>
+					<td class="nowrap label"><?php echo I18N::T('resume', '性别'); ?></td>
+					<?php $sex_set[0] = '--'; $sex_set += Resume::$sex; ?>
+					<td><?php echo Form::dropdown('sex', $sex_set, $form['sex'] ?: H($resume->sex), 'class="middle"', 'class="middle dropdown"'); ?></td>
+				</tr>
+
+				<tr>
+					<td class="nowrap label"><?php echo I18N::T('resume', '应聘职位'); ?></td>
+					<?php $positions = Q('position')->to_assoc('id', 'name'); ?>
+					<?php $position_id = $this->position_id ?: 0; ?>
+					<td><?php echo Form::dropdown('position_id', ['--']+$positions, H($form['position_id']) ?: $resume->position_id, ' class="drop middle"'); ?><?php echo $require; ?></td>
+					<td class="nowrap label"><?php echo I18N::T('resume', '出生日期'); ?></td>
+					<td><input class="text date" name="birthday" value="<?php echo H($form['birthday']) ?: H($resume->birthday); ?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/></td>
+				</tr>
+
+				<tr>
+					<td class="nowrap label"><?php echo I18N::T('resume', '面试地点'); ?></td>
+					<?php $interview_place_set[0] = '--'; $interview_place_set += Resume::$interview_place; ?>
+					<td><?php echo Form::dropdown('interview_place', $interview_place_set, H($form['interview_place']) ?: H($resume->interview_place), 'class="middle"', 'class="middle dropdown"'); ?></td>
+					<td class="nowrap label"><?php echo I18N::T('resume', '目前所在地'); ?></td>
+					<td><input class="text" name="current_location" value="<?php echo H($form['current_location']) ?: H($resume->current_location); ?>" /></td>
+				</tr>
+
+				<tr>
+					<td class="nowrap label"><?php echo I18N::T('resume', '联系方式'); ?></td>
+					<td><input class="text" name="phone" value="<?php echo H($form['phone']) ?: H($resume->phone); ?>" /></td>
+					<td class="nowrap label"><?php echo I18N::T('resume', '学历'); ?></td>
+					<?php $education_set[0] = '--'; $education_set += Resume::$education; ?>
+					<td><?php echo Form::dropdown('education', $education_set, $form['education'] ?: H($resume->education), 'class="middle"', 'class="middle dropdown"'); ?></td>
+				</tr>
+
+				<tr>
+					<td class="nowrap label"><?php echo I18N::T('resume', '当前状态'); ?></td>
+					<td>
+						<?php echo Form::dropdown('status', Resume::$status, $form['status'] ?: H($resume->status), ' class="middle monitor"', ' class="middle dropdown"')?>
+					</td>
+					<td class="nowrap label"><?php echo I18N::T('resume', '学校'); ?></td>
+					<td><input class="text" name="school" value="<?php echo H($form['school']) ?: H($resume->school); ?>" /></td>
+				</tr>
+
+				<tr class="hidden toggle:status show_on:<?php echo Resume::WAIT_FOR_INTERVIEW; ?>">
+					<td class="nowrap label"><?php echo I18N::T('resume', '面试时间'); ?></td>
+					<td><input class="text date" name="interview_time" value="<?php echo H($form['interview_time']) ?: H($resume->interview_time); ?>" q-date_format="<?php echo HT('$year/$month/$day $hour:$min:$sec')?>"/></td>
+				</tr>
+
+				<tr>
+					<td class="nowrap label top"><?php echo I18N::T('resume', '教育背景');?></td>
+					<td colspan="3">
+						<textarea class="text autogrow" cols="70" rows="7" name="education_background"><?php echo H($form['education_background']) ?: H($resume->education_background); ?></textarea>
+					</td>
+				</tr>
+
+				<tr>
+					<td class="nowrap label top"><?php echo I18N::T('resume', '工作经验');?></td>
+					<td colspan="3">
+						<textarea class="text autogrow" cols="70" rows="7" name="experience"><?php echo H($form['experience']) ?: H($resume->experience); ?></textarea>
+					</td>
+				</tr>
+
+				<tr>
+					<td class="nowrap label top"><?php echo I18N::T('resume', '反馈信息');?></td>
+					<td colspan="3">
+						<textarea class="text autogrow" cols="70" rows="7" name="feedback"><?php echo H($form['feedback']) ?: H($resume->feedback); ?></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td class="nowrap label top"><?php echo I18N::T('resume', '备注'); ?></td>
+					<td colspan="3">
+						<textarea class="text autogrow" cols="70" rows="7" name="description"><?php echo H($form['description']) ?: H($resume->description); ?></textarea>
+					</td>
+				</tr>
+				<?php if( L('ME')->is_allowed_to('领导批示', 'resume') ) { ?>
+					<tr>
+						<td class="nowrap label top"><?php echo I18N::T('resume', '领导意见'); ?></td>
+						<td colspan="3">
+							<textarea class="text autogrow" cols="70" rows="7" name="opinion"><?php echo H($form['opinion']) ?: H($resume->opinion); ?></textarea>
+						</td>
+					</tr>
+				<?php } ?>
+				<tr>
+					<td />
+					<td>
+						<input class="button button_save" name="submit" type="submit" value="<?php echo I18N::T('resume', '更新'); ?>" />
+						&#160;&#160;
+						<a class="font-button-delete middle" confirm="<?php echo I18N::T('resume', '您确定删除该简历吗?'); ?>" href="<?php echo $resume->url(NULL, NULL, NULL, 'delete'); ?>"><?php echo I18N::T('resume', '删除简历'); ?></a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</div>

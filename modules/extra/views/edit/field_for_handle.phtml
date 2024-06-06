@@ -1,0 +1,119 @@
+<?php
+    $confirm = $field_confirm ?: I18N::T('extra', '删除该字段, 将导致关联该字段的数据丢失, 您确定要删除吗?');
+    $types = $field ? Extra_Model::field_change_types($field['type']) : ($extra->_params[$form['category']]['config']['field_type'] ?: Extra_Model::$type_names);
+    $type_selected = $field['type'] ?: current(array_keys($types));
+?>
+
+<div class="field">
+    <div class="nowrap clearfix" style="min-width: 680px;">
+        <div class="float_left">
+
+            <input type="hidden" name="field[<?php echo $prefix?>][original_title]" value="<?php echo H($field['title']) ?>">
+
+            <span class="lmargin_2 rpadding_2">
+                <input name="field[<?php echo $prefix?>][title]" type="text" placeholder="标题" class="text" value="<?php echo H($field['title']) ?>" style="width: 260px;" />
+            </span>
+
+            <?php if (!$skip_required) : ?>
+            <span class="lpadding_2 rpadding_2">
+                <?php $require_id = 'require_id'. uniqid();?>
+                <input name="field[<?php echo $prefix?>][required]" type="checkbox" id="<?php echo H($require_id) ?>" <?php if ($field['required']) echo 'checked="checked"'?> class="checkbox" style="vertical-align: middle;" />
+                <label for="<?php echo H($require_id) ?>"><?php echo I18N::T('extra', '必填');?></label>
+            </span>
+            <?php endif; ?>
+        
+            <span class="padding_2" style="vertical-align: middle;">
+                <?php echo Form::dropdown("field[$prefix][type]", I18N::T('extra', $types), $type_selected, 'class="monitor dropdown" style="width: 100px;"');?>
+            </span>
+        
+            <span class="padding_2">
+                <input name="field[<?php echo $prefix?>][remarks]" type="text" class="text" placeholder="字段备注信息" value="<?php echo H($field['remarks']) ?>" style="width:134px" />
+            </span>
+        
+            <?php if ($field['type'] != Extra_Model::TYPE_SELECT): ?>
+            <span>
+                <?php $default_id = 'default_id'. uniqid();?>
+                <input class="checkbox" name="field[<?php echo $prefix?>][default]" type="checkbox" id="<?php echo H($default_id) ?>" <?php if ($field['default']) echo 'checked="checked"'?> style="vertical-align: middle;" />
+                <label for="<?php echo H($default_id) ?>"><?php echo I18N::T('extra', '默认值');?></label>
+            </span>
+            <?php endif; ?>
+
+        </div>
+        <?php echo Event::trigger('extra_setting.requirement.extra.field.view', $field, $prefix) ?>
+    </div>
+
+    <div class="lmargin_2">
+        <?php 
+            foreach(Extra_Model::$types as  $value => $type) {
+                if ($type == 'text' || $type == 'textarea' || $type == 'datetime') continue;
+
+                echo V('extra:edit/item/'. $type, [
+                    'class'=> "toggle:field[$prefix][type] show_on:$value",
+                    'prefix'=> $prefix,
+                    'field'=> $field,
+                ]);
+            }
+        ?>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    var checkbox = $('#<?php echo $default_id ?>'),
+        select = $("select[name='field[<?php echo $prefix?>][type]']"),
+        container = $(checkbox).parent(),
+        value = '<?php echo json_encode($field['default_value'])?>';
+
+    if (checkbox.attr('checked') == 'checked') {
+        Q.trigger({
+            object: 'add_default',
+            parallel: true,
+            event: 'click',
+            global: false,
+            data: {
+                prefix: <?php echo $prefix?>,
+                type: $("[name='field[<?php echo $prefix?>][type]']").val(),
+                value: value
+            },
+            url: '<?php echo URI::url();?>',
+            success: function(data) {
+                container.nextAll().remove()
+                container.after(data);
+            }
+        })
+    }
+
+    checkbox.bind('click', function() {
+        if (this.checked) {
+            Q.trigger({
+                object: 'add_default',
+                event: 'click',
+                global: false,
+                data: {
+                    prefix: <?php echo $prefix?>,
+                    type: $("[name='field[<?php echo $prefix?>][type]']").val()
+                },
+                url: '<?php echo URI::url();?>',
+                success: function(data) {
+                    container.nextAll().remove()
+                    container.after(data);
+                }
+            })
+        } else {
+            container.nextAll().remove()
+        }
+    })
+
+    select.bind('change', function() {
+        container.nextAll().remove()
+        if ($(this).val() == <?php echo Extra_Model::TYPE_SELECT;?>) {
+            checkbox.parent().hide();
+        } else {
+            checkbox.parent().show()
+            if (checkbox.attr('checked') == 'checked') {
+                checkbox.click()
+            };
+        }
+    })
+});
+</script>

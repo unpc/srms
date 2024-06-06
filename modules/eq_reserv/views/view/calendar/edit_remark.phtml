@@ -1,0 +1,10 @@
+<tr>
+  <td colspan="2">
+  <div class="title">
+    * <?= $properties['label'];?>
+  </div>
+	<textarea name="<?= H($name) ?>" type="text" rows="3" class="text autogrow"><?= $form->no_error
+    ? ($component->id ? $component->{$name} : $properties['default_value']) 
+    : $form[$name] ?></textarea>
+  </td>
+</tr>

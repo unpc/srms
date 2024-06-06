@@ -1,0 +1,66 @@
+<table class="form" width="500px;">
+<tr>
+    <td class="left top" colspan="2"><h1 class="bpadding_1"><?php echo I18N::HT('reserv_approve', '预约详情');?></h1></td>
+</tr>
+<tr>
+    <td class="right top"><strong class="description"><?php echo I18N::HT('eq_reserv', '预约仪器');?></strong></td>
+    <td class="middle">
+        <a class="prevent_default" href="<?= $reserv->equipment->url()?>"><?= H(T($reserv->equipment->name))?></a>
+    </td>
+</tr>
+<tr>
+    <td class="right top"><strong class="description"><?php echo I18N::HT('eq_reserv', '审核状态');?></strong></td>
+    <td class="middle">
+        <?= Reserv_Approve_Help::get_status_str($reserv)?>
+    </td>
+</tr>
+<tr>
+    <td class="right top"><strong class="description"><?php echo I18N::HT('eq_reserv', '时间');?></div></td>
+    <td class="middle">
+        <?= H(T(date('Y-m-d H:i:s', $reserv->dtstart).' - '.date('Y-m-d H:i:s', $reserv->dtend)))?>
+    </td>
+</tr>
+<tr>
+    <td class="right top"><strong class="description"><?php echo I18N::HT('eq_reserv', '预约者');?></div></td>
+    <td class="middle">
+        <?= V('eq_reserv:reservs_table/data/organizer', ['eq_reserv' => $reserv])?>
+    </td>
+</tr>
+<tr>
+    <td class="right top"><strong class="description"><?php echo I18N::HT('eq_reserv', '备注');?></div></td>
+    <td class="middle">
+        <?= H(T($reserv->component->description))?>
+    </td>
+</tr>
+</table>
+<table class="form">
+<?php
+$component = $reserv->component;
+$parent = $component->calendar->parent;
+$object = O('eq_reserv', ['component' => $component]);
+$properties = [
+        'path' => ['form' => 'eq_reserv:extra/display'],
+        'component' => $component,
+        'extra' => Extra_Model::fetch($parent, 'eq_reserv'),
+        'values' => O('extra_value', ['object' => $object])->values
+    ];
+
+$path_view = (string) V('eq_reserv:extra/display', [
+    'component'=>$component,
+    'name'=> 'extra',
+    'properties'=> $properties,
+    'calendar'=> $component->calendar,
+    'files'=> $files,
+    'form'=> $form
+]);
+
+echo $path_view;
+?>
+</table>
+<script>
+jQuery(function($){
+    $('input[name^=extra_fields]').attr('disabled', true);
+    $('textarea[name^=extra_fields]').attr('disabled', true);
+})
+</script>
+

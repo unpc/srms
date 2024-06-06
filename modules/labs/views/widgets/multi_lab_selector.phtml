@@ -1,0 +1,17 @@
+<?php 
+    if (!count($labs) && $user->id) {
+        $labs = [];
+        foreach (Q("$user lab") as $lab) {
+            $labs[$lab->id] = $lab->name;
+        }
+    }
+    $size = $this->size ?: 40;
+    $autocomplete = $autocomplete ? : URI::url('!labs/autocomplete/lab');
+?>
+<input
+    name="<?= $name ? : 'labs'?>"
+    class="text middle token token_autocomplete:<?php echo H($autocomplete) ?> "
+    q-tooltip="<?php echo H(I18N::T('labs', '请输入关键字并选择')) ?>"
+    size="<?php echo $size?>"
+    value='<?= json_encode($labs)?>'
+/>

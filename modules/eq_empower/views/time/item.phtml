@@ -1,0 +1,44 @@
+<?php
+    $date_view = [
+        'id' => $id,
+        'flexform_index' => $flexform_index,
+        'startdate' => $startdate, 
+        'enddate' => $enddate, 
+        'starttime' => $starttime,
+        'endtime' => $endtime,
+        'rtype' => $rtype, 
+        'rnum' => $rnum,
+        'controlall' => $id > 0 ? $controlall : 1,
+        'controluser' => $controluser,
+        'controllab' => $controllab,
+        'controlgroup' => $controlgroup,
+    ];
+
+    switch ($rtype) {
+        case WT_RRule::RRULE_DAILY:   //按照日计算
+            break;
+        case WT_RRule::RRULE_WEEKDAY: 
+        case WT_RRule::RRULE_WEEKEND_DAY:
+        case WT_RRule::RRULE_WEEKLY:
+            $date_view['week_day'] = $days;
+            break;
+        case WT_RRule::RRULE_MONTHLY: //按照月计算
+            $date_view['month_day'] = $days;
+            break;
+        case WT_RRule::RRULE_YEARLY:  //按照年计算
+            $date_view['year_month'] = $days;
+            break;
+        default:
+            break;
+    }
+?>
+<div class="dc_rule_form">
+    <input name="id[<?php echo $flexform_index ?>]" type="hidden" value="<?php echo H($id) ?>" />
+    <div><?php echo V('eq_empower:time/date', $date_view) ?></div>
+    <div name="rule_form_<?php echo $flexform_index; ?>">
+        <?php echo Widget::factory('wt_rrule', $date_view) ?>
+        <?php echo V('eq_empower:time/user', $date_view) ?>
+    </div>
+</div>
+<hr>
+<div class="interval_12"></div>

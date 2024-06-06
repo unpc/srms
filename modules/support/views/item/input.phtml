@@ -1,0 +1,13 @@
+<div>
+    <div style="width: 126px;line-height: 30px; white-space: normal;" class="nowrap float_left">
+        <?= H(T($item['name']))?>
+    </div>
+    <?php
+     $name=$prekey.'_'.$key;
+     $form=Input::form();
+     $value=$form?$form[$name]:H(Event::trigger('admin.support.convert', $prekey, $key))?>
+   <!-- <input name="<?= $name?>" type="input"
+     value="<?= H(Event::trigger('admin.support.convert', $prekey, $key)) ?>" class="text" /> -->
+     <input name="<?= $prekey.'_'.$key?>" type="input"
+     value="<?= $value ?>" class="text" /> 
+</div>

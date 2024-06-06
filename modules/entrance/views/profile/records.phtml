@@ -1,0 +1,33 @@
+<?php
+
+$table           = Widget::factory('table');
+$table->name     = 'entrance_records';
+$table->sort_asc = $sort_asc;
+$table->sort_by  = $sort_by;
+
+$table->add_columns((array) $columns);
+
+$table->empty_message = I18N::T('entrance', '无符合条件的记录');
+
+if (count($records) > 0) {
+    foreach ($records as $record) {
+        $row = new ArrayIterator([
+            'name'=>V('entrance:records_table/data/name', ['obj'=>$door, 'record'=>$record]),
+			'location'=>V('entrance:records_table/data/location', ['obj'=>$door, 'record'=>$record]),
+			'user'=>V('entrance:records_table/data/user', ['record'=>$record]),
+			'time'=>V('entrance:records_table/data/date', ['record'=>$record]),
+			'direction'=>V('entrance:records_table/data/direction', ['record'=>$record]),
+			'status'=>V('entrance:records_table/data/status', ['record'=>$record]),
+			'remark'=>V('entrance:records_table/data/remark', ['record'=>$record]),
+			'rest'=>Widget::factory('application:links', ['links' => $record->links()])
+        ]);
+
+        Event::trigger('extra.dc_record.row', $row, $record);
+        $table->add_row((array) $row);
+    }
+}
+
+echo $table;
+?>
+
+<div class="pages"><?= $pagination ?></div>

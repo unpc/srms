@@ -1,0 +1,44 @@
+<?php
+$me = L('ME');
+$grantSelect = $form['remote_fund_id'] ?: 0;
+$user = $user->id ? $user : ($form['sender'] ? O('user', $form['sender']) :$me);
+$grants = (array)Billing_Manage::get_grants($user, $equipment);
+$tr_authorized_id = 'user_authorized';
+?>
+
+<td id="<?php echo $tr_authorized_id; ?>" class="label left nowrap">
+    <div class="title">
+        <?php if(!Billing_Manage::isFree($equipment, 'eq_sample')): ?> <span class="red">*</span> <?php endif; ?>
+        <?php echo I18N::T('billing_manage', '选择经费'); ?>
+    </div>
+    <div class="middle nowrap">
+      <?php echo Form::dropdown('remote_fund_id', ['--'] + $grants, $grantSelect,
+            'style="width: 280px;"'
+        ); ?>
+    </div>
+</td>
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    var $user_selector = $("input:hidden[name=<?php echo $user_selector ?: 'sender'; ?>]");
+    var $tr_authorized_id = "<?php echo $tr_authorized_id; ?>";
+    var $url = "<?php echo $url ?: URI::url('!billing_manage/index'); ?>";
+
+    $user_selector.change(function () {
+      var $user_id = $(this).val();
+      replace_grant_items($url, $user_id, $tr_authorized_id);
+    });
+
+    function replace_grant_items(rq_url, u_id, tr_id) {
+      Q.trigger({
+        object: 'add_eq_sample_grants',
+        event: 'change',
+        data: {
+          'user_id': u_id,
+          'tr_authorized_id': tr_id
+        },
+        url: rq_url
+      });
+    }
+  });
+</script>

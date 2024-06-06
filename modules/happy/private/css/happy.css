@@ -1,0 +1,52 @@
+.happy_list {
+
+	.update {
+		padding:8px 2px;
+		border-bottom: 1px dotted #ccc;
+	}
+
+}
+
+div.happy_date {
+	padding:3px 0px;
+	background-color: #f4f4f4;
+	border-bottom: 1px solid #eee;
+	padding: 4px 6px;
+	font-weight:bold;
+	font-size:14px;
+	color:#666;
+}
+
+.more_link {
+	padding: 5px;
+	background-color: #eee;
+	font-size: 14px;
+	font-weight: bold;
+	text-align: center;
+	color:#666;
+	display:block;
+}
+
+.more_link:hover {
+	background-color: #999;
+	color: #fff;
+	text-decoration: none;
+}
+
+.multiline {
+	max-height: 3em;
+	overflow: auto;
+}
+
+.happy_info_form .status_tag_label {
+	display: block;
+}
+
+
+.happy_body {
+	padding:5px;
+	background-color:#eee;
+	color:#000;
+	border-top: 1px dotted #ccc;
+	border-bottom: 1px dotted #ccc;
+}

@@ -1,0 +1,28 @@
+<form class="form" q-object="admin_create_tag" q-event="submit" q-src="<?php echo H(URI::url('!equipments/equipment')) ?>">
+	<?php echo V('form_error', ['form'=>$form]);?>
+    <div class="interval_24"></div>
+	<table>
+		<tbody>
+			<tr>
+				<td class="right nowrap middle">
+					<span class="label"><?php echo I18N::T('equipments', '标签名称')?></span>
+				</td>
+                <td class="left nowrap middle">
+                    <input class="text" name="name" />
+                </td>
+			</tr>
+            <tr>
+                <td></td>
+                <td style="padding-top: 0;">
+                    <?php echo V('form_filter', ['error'=>$form->errors["name"][0]]); ?>
+                </td>
+            </tr>
+		</tbody>
+	</table>
+    <div class="button_container">
+        <div class="float_right">
+            <input type="button" name="cancel" id="cancel" class="font-button-default  sm rmargin_2e4" value="<?php echo H(I18N::T('admin', '取消')) ?>" />
+            <input type="submit" name="submit" class="font-button-save sm" value="<?php echo H(I18N::T('admin', '确定')) ?>" />
+        </div>
+    </div>
+</form>

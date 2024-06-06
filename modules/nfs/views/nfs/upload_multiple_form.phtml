@@ -1,0 +1,124 @@
+<?php
+echo CSS::load_async('nfs:upload_multiple');
+$upload_multiple_form_uniqid = 'upload_multiple_form_' . uniqid();
+?>
+
+<div class="upload_multiple_wrapper">
+
+	<div class="upload_multiple_header">
+		<span style="width: 300px;">
+			<a href="javascript:;" id="<?php echo $upload_multiple_form_uniqid; ?>" class="button" style="float: left; margin: 0; padding: 0 80px; border: dashed;" title="<?php echo I18N::T('nfs', '点击选择或将文件/文件夹拖拽到此区域内'); ?>"><?php echo I18N::T('nfs', '点击选择或将文件/文件夹拖拽到此区域内'); ?></a>
+		</span>
+		<span style="width: 300px;">
+			<a href="javascript:;" class="button" style="font-size: 14px; background-color: #FFF;color: #F5222D;border: 1px solid #F5222D;  margin-right: 0;" title="<?php echo I18N::T('nfs', '清空'); ?>" id="dz-remove-btn"><?php echo I18N::T('nfs', '清空'); ?></a>
+			<a href="javascript:;" class="button" title="<?php echo I18N::T('nfs', '上传'); ?>" id="dz-upload-btn"><?php echo I18N::T('nfs', '上传'); ?></a>
+		</span>
+	</div>
+
+	<div class="upload_multiple_body">
+		<div id="dz-previews">
+			<div id="dz-template" class="upload_multiple_list">
+				<span class="upload_multiple_list_box">
+					<p class="upload_multiple_filename" data-dz-name></p>
+					<p class="upload_multiple_size" data-dz-size></p>
+					<span class="upload_multiple_progress" data-dz-uploadprogress></span>
+					<span class="upload_multiple_error_message" data-dz-errormessage></span>
+				</span>
+
+				<span class="upload_multiple_remove_button">
+					<a data-dz-remove class="button icon-trash dz-cancel" style="background-color: #FFF;color: #F5222D; border: 1px solid #F5222D; margin: 0;"><a>
+				</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script>
+	jQuery(function($) {
+		// 清空&上传
+		var uplodaBtn = $('#dz-upload-btn');
+		var removeBtn = $('#dz-remove-btn');
+
+		// 自定义文件列表模板
+		var previewNode = document.querySelector("#dz-template");
+		previewNode.id = "";
+		var previewTemplate = previewNode.parentNode.innerHTML;
+		previewNode.parentNode.removeChild(previewNode);
+
+		// 初始化上传组件
+		var myDropzone = new Dropzone("#<?php echo $upload_multiple_form_uniqid; ?>", {
+			paramName: 'Filedata',
+			url: "<?php echo URI::url('!nfs/nfs/upload.' . $object->name() . '.' . $object->id . '.' . $path_type, ['path' => $path, 'form_token' => $form_token]) ?>",
+			maxFilesize: <?php echo intval(ini_get('upload_max_filesize')); ?>,
+			dictFileTooBig: "<?php echo I18N::T('nfs', '文件过大 ({{filesize}}MB). 最大支持: {{maxFilesize}}MB.'); ?>",
+			autoProcessQueue: false,
+			parallelUploads: 1000,
+			previewTemplate: previewTemplate,
+			previewsContainer: "#dz-previews"
+		});
+
+		// 点击上传
+		uplodaBtn.on('click', function() {
+			myDropzone.processQueue();
+		});
+
+		// 点击清空
+		removeBtn.on('click', function() {
+			myDropzone.removeAllFiles(true);
+		});
+
+		// 选择文件后监听事件
+		myDropzone.on("addedfile", function(file) {});
+
+		// 单个文件上传中监听事件
+		// 获取单个文件上传进度
+		myDropzone.on("uploadprogress", function(file, progress) {
+			if (file.previewElement) {
+				var progressElement = file.previewElement.querySelector("[data-dz-uploadprogress]");
+				progressElement.textContent = Math.ceil(progress) + "%";
+			}
+		});
+
+		// 单个文件上传失败后监听事件
+		myDropzone.on("error", function(file, message) {
+			if (file.previewElement) {
+				var errorElement = file.previewElement.querySelector("[data-dz-errormessage]");
+				errorElement.textContent = message;
+			}
+		});
+
+		// 单个文件上传成功后监听事件
+		myDropzone.on("success", function(file, response) {
+			if (file.previewElement) {
+				var progressElement = file.previewElement.querySelector("[data-dz-uploadprogress]");
+				progressElement.style.color = "#2BA07F"
+			}
+		});
+
+		// 文件夹上传保持路径
+		myDropzone.on("processing", function(file) {
+            path = "<?php echo $path; ?>";
+
+            if (file.fullPath) {
+                fullPath = file.fullPath.split('/');
+                fullPath.length = fullPath.length - 1;
+                path = path + '/' + fullPath.join('/');
+            }
+
+            myDropzone.options.url = "<?php echo URI::url('!nfs/nfs/upload.' . $object->name() . '.' . $object->id . '.' . $path_type, ['form_token' => $form_token]) ?>" + '&path=' + path;
+        });
+
+		// 所有文件上传完毕后监听事件
+		myDropzone.on("queuecomplete", function() {
+			Q.trigger({
+				object: 'check_result',
+				event: 'refresh',
+				global: false,
+				url: "<?php echo URI::url('!nfs/nfs', ['batch' => 1]); ?>",
+			});
+
+			Dialog.close();
+		});
+	});
+</script>

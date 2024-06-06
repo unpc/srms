@@ -1,0 +1,16 @@
+<div class="hr_1">&#160;</div>
+<div class="wiki_content padding_2">
+	<h1><?php echo I18N::T('help', '该主题尚不存在'); ?></h1>
+	<?php if (L('ME')->access('修改帮助中心内容')): ?>
+	<p>
+		<?php echo I18N::T('help', '您访问的页面并不存在。如果允许，您可以使用“创建该页面”按钮来创建它。'); ?>
+	</p>
+	<p>
+	<a class="button button_add" href="<?php echo H($wiki->url(NULL, 'edit')) ?>"><?php echo I18N::T('help', '创建该页面'); ?></a>
+	</p>
+	<?php else:?>
+	<p>
+		<?php echo I18N::T('help', '您访问的页面并不存在。')?>
+	</p>
+	<?php endif;?>
+</div>

@@ -1,0 +1,44 @@
+<div class="hr_1">&#160;</div>
+<table class="form flexible">
+<tbody>
+<tr>
+    <td class="top flexible">
+        <h2>
+            <a href="<?= H($pf->url()) ?>"><?= H($pf->name); ?></a>
+            <?php if (!$pf->atime) : ?>
+            <span class="status_tag status_tag_error"><?= I18N::HT('people', '未激活') ?></span>
+            <?php endif; ?>
+        </h2>
+        <p>
+            <?= I18N::T('servant', '机构代码')?>: <?= H($pf->code);?>
+        </p>
+        <p>
+            <?= I18N::T('servant', '访问地址')?>: <a href="<?= H($pf->href());?>"><?= H($pf->href());?></a>
+        </p>
+        <div class="hr_2">&#160;</div>
+        <p>
+            <?= I18N::T('servant', '负责人')?>: 
+            <?= V('servant:pf_table/data/owner', ['pf' => $pf]);?>
+        </p>
+        <p>
+            <?= I18N::T('servant', '地址')?>: 
+            <?= H($pf->address); ?>
+        </p>
+        <p>
+            <?= I18N::T('servant', '联系方式')?>: 
+            <?= H($pf->contact); ?>
+        </p>
+        <p>
+            <?= I18N::T('servant', '描述')?>: 
+            <?= H($pf->description); ?>
+        </p>
+        <div class="hr_2">&#160;</div>
+        <?= Widget::factory('application:links', ['links' => $pf->links('view'), 'separator'=>' ']) ?>
+        <div class="hr_2">&#160;</div>
+    </td>
+</tr>
+</tbody>
+</table>
+</div>
+<?= $secondary ?>
+<?= $secondary->content ?>

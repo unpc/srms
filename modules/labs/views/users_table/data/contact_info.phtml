@@ -1,0 +1,14 @@
+<?php
+$me = L('ME');
+$show_privacy = $me->is_allowed_to('查看联系方式', $user);
+if ($show_privacy) :
+?>
+    <?php if ($user->phone) :?>
+        <div class="phone"><?php echo H($user->phone)?></div>
+    <?php endif;?>
+    <?php if ($user->email) :?>
+        <div class="email"><a href="mailto:<?php echo H($user->email)?>"><?php echo H($user->email) ?></a></div>
+    <?php endif;?>
+<?php else:?>
+    <p class="privacy"><?php echo I18N::T('people', '您没有权限查看')?></p>
+<?php endif;?>

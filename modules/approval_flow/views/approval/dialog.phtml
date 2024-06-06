@@ -1,0 +1,42 @@
+<div class="padding_2">
+    <?= $info?>
+    <table style="width: 500px;">
+        <tr>
+            <td class="label left top nowrap" colspan="2">
+                <h1 class="bpadding_1"><?php echo I18N::HT('approval', '审核详情');?></h1>
+            </td>
+        </tr>
+        <?php if ($approved) foreach($approved as $ap) :?>
+        <tr>
+            <td class="label left nowrap">
+                <div class="lpadding_4" ?>
+                    <?= H(T(date('Y-m-d H:i:s', $ap->ctime)))?>
+                    &nbsp;
+                    <?= Approval_Help::get_info_str($ap)?>
+                    &nbsp;
+                </div>
+            </td>
+        </tr>
+        <?php endforeach;?>
+        <tr>
+            <td colspan="2" class="label right top nowrap">
+                <div class="">
+                    <?php 
+                $flow = Config::get("flow.{$approval->source->name()}");
+                $me = L('ME');
+                if ($type != 'mine' && $me->can_approval($approval->flag, $approval) ): ?>
+                    <a q-object="pass" q-event="click" q-src="<?= H(URI::url('!approval_flow/index'))?>"
+                        q-static="<?= H(['approval_id'=>$approval->id])?>" class="font-button-save">
+                        <?php echo I18N::HT('approval', '通过');?>
+                    </a>
+                    <a q-object="reject" q-event="click" q-src="<?= H(URI::url('!approval_flow/index'))?>"
+                        q-static="<?= H(['approval_id'=>$approval->id])?>" class="font-button-delete">
+                        <?php echo I18N::HT('approval', '驳回');?>
+                    </a>
+                    <?php endif;?>
+                </div>
+                <div class="interval_24"></div>
+            </td>
+        </tr>
+    </table>
+</div>

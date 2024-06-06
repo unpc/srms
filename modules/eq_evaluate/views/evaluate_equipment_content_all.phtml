@@ -1,0 +1,7 @@
+<?php
+$me = L('ME');
+if ($me->is_active() && $me->access('管理所有仪器的使用评价')) :
+?>
+    <a href="<?php echo H(URI::url('!equipments/extra/evaluate')) ?>" class="blue">
+        <?php echo I18N::T('eq_evaluate', '所有仪器的使用评价');?></a>
+<?php endif;?>

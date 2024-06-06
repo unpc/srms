@@ -1,0 +1,30 @@
+<div class="form padding_1">
+  <form class="prevent_default" method="post" autocomplete="off" q-object="edit_position" q-event="submit" q-static="id=<?php echo $position->id?>">
+	<?php echo V('form_error', ['form' => $form]); ?>
+	<?php $require = (string)V('form_require'); ?>
+	<table class="form">
+	  <tbody>
+		<tr>
+		  <td class="nowrap label"><?php echo I18N::T('resume', '职位名称'); ?></td>
+		  <td colspan="3"><input name="name" class="text" value="<?php echo H($form['name'] ?: $position->name); ?>" /></td>
+		</tr>
+		<tr>
+		  <td class="nowrap label"><?php echo I18N::T('resume', '所属部门'); ?></td>
+		  <td colspan="3"><input name="department" class="text" value="<?php echo H($form['department'] ?: $position->department); ?>" /></td>
+		</tr>
+		<tr>
+		  <td class="nowrap label"><?php echo I18N::T('resume', '薪酬范围'); ?></td>
+		  <td><input name="minsalary" class="text" value="<?php echo H($form['minsalary'] ?: $position->minsalary); ?>" /></td>
+		  <td><?php echo '~';?></td>
+		  <td><input name="maxsalary" class="text" value="<?php echo H($form['maxsalary'] ?: $position->maxsalary); ?>" /></td>
+		</tr>
+		<tr>
+		  <td />
+		  <td>
+			<input class="button button_edit" name="submit" type="submit" value="<?php echo I18N::T('resume', '修改'); ?>" />
+		  </td>
+		</tr>
+	  </tbody>
+	</table>
+  </form>
+</div>

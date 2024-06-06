@@ -1,0 +1,35 @@
+<div class="form">
+	<form method="post" class="view object:add_account src:<?php echo URI::url('!billing/account')?>">
+	<?php echo V('form_error', ['form'=>$form]); ?>
+	<input class="hidden" value="<?php echo H($department->id) ?>" name="department_id" />
+    <div class="interval_24"></div>
+	<table class="form">
+		<tbody>
+			<tr>
+				<td class="left nowrap middle">
+                    <span class="rmargin_16"><?php echo I18N::T('billing', '选择实验室')?></span>
+                </td>
+                <td>
+                    <?php
+                    /* BUG #1064::添加财务帐号时，课题组下拉菜单过长(kai.wu@2011.8.31) */
+                    echo Widget::factory('billing:lab_selector', [
+                        'autocomplete' => URI::url('!billing/autocomplete/lab.' . $department->id),
+                        'name' => 'query_lab',
+                    ]);
+                    ?>
+                </td>
+			</tr>
+        <tr>
+            <td></td>
+            <td style="padding-top: 0px"><?php echo V('form_filter', ['error'=>$form->errors["query_lab"][0]]); ?></td>
+        </tr>
+		</tbody>
+	</table>
+    <div class="button_container">
+        <div class="float_right">
+            <input name="cancel" id="cancel" type="reset" class="font-button-default sm rmargin_2e4" value="<?php echo H(T('取消') ) ?>">
+            <input name="submit" type="submit" class="font-button-save sm" value="<?php echo H(T('保存') ) ?>">
+        </div>
+    </div>
+	</form>
+</div>

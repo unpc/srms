@@ -1,0 +1,281 @@
+<div class="hr_1">&#160;</div>
+<div class="padding_1 form">
+    <form method="post" autocomplete="off" action="<?php echo H(URI::url() ) ?>" enctype="multipart/form-data">
+    <div class="hr_2">&#160;</div>
+    <?php 
+        $no_error = $form->no_error;
+        $require = V('form_require');
+        echo V('form_error', ['form'=>$form]);
+        $city = $form['province'] != -1 && !empty($form['province']) ? Nrii_Address::get_citys($form['province']) : [];
+        $area = $form['city'] != -1 && !empty($form['city']) ? Nrii_Address::get_areas($form['city']) : [];
+        $class_md = $form['class_lg'] != -1 && !empty($form['class_lg']) ? Config::get('class.'.$form['class_lg']) : [];
+        $class_sm = $form['class_md'] != -1 && !empty($form['class_md']) ? Config::get('class.'.$form['class_md']) : [];
+    ?>
+    <fieldset class="bottom" style="width: 690px">
+        <legend><?= I18N::T('nrii', '关联仪器') ?></legend>
+        <table class="form">
+            <tbody>
+                <tr>
+                    <td class="nowrap right" style="width: 108px"><?= I18N::T('nrii', '仪器名称')?></td>
+                    <td class="top" id="equipment">
+                        <?php
+                            echo Widget::factory('equipments:equipment_selector', [
+                                'name' => 'eq_id',
+                                'equipment' => O('equipment', $form['eq_id']),
+                                'size' => 30,
+                            ]);
+                        ?>
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '请选择相应仪器')?></td>
+                </tr>
+            </tbody>
+        </table>
+    </fieldset>
+    <div class="hr_2">&#160;</div>
+    <fieldset class="bottom">
+        <legend><?= I18N::T('nrii', '基本信息') ?></legend>
+        <table class="form">
+            <tbody>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '仪器设备名称')?></td>
+                    <td><input class="text" name="eq_name"  size="30" value="<?= H($form['eq_name']) ?>" /></td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '英文名称') ?></td>
+                    <td><input class="text" name="ename"  size="30" value="<?= H($form['ename']) ?>" /></td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '所属单位内部门')?></td>
+                    <td><input class="text" name="inside_depart"  size="30" value="<?= H($form['inside_depart']) ?>" /></td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '所属单位科学装置编号') ?></td>
+                    <td><input class="text" name="innerId"  size="30" value="<?= H($form['innerId']) ?>" /></td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '所属资源载体')?></td>
+                    <td>
+                        <?= Form::dropdown('affiliate', [-1 => '--请选择--'] + I18N::T('nrii', Nrii_Equipment_Model::$affiliate_type), isset($form['affiliate']) ? $form['affiliate'] : -1 , 'class="dropdown" size="30" '); ?>
+                    </td>
+                    <td class="nowrap right" ><?= I18N::T('nrii', '隶属资源载体名称')?></td>
+                    <td><input class="text" name="affiliate_name"  size="30" value="<?= H($form['affiliate_name']) ?>" /></td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '设备分类') ?></td>
+                    <td id="class_lg">
+                        <?= Form::dropdown('class_lg', [-1 => '-请选择大类-'] + Config::get('class._root_'), isset($form['class_lg']) ? $form['class_lg'] : -1 , 'class="dropdown" size="30" '); ?>
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '安放地址') ?></td>
+                    <td id="province">
+                        <?= Form::dropdown('province', [-1 => '- 请选择省-'] + Nrii_Address::get_provinces(), isset($form['province']) ? $form['province'] : -1 , 'class="dropdown" size="30" '); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"></td>
+                    <td id="class_md">
+                        <?= Form::dropdown('class_md', [-1 => '-请选择中类-'] + $class_md, isset($form['class_md']) ? $form['class_md'] : -1 , 'class="dropdown" size="30" '); ?>
+                    </td>
+                    <td class="nowrap right"></td>
+                    <td id="city">
+                        <?= Form::dropdown('city', [-1 => '- 请选择市-'] + $city, isset($form['city']) ? $form['city'] : -1 , 'class="dropdown" size="30" '); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"></td>
+                    <td id="class_sm">
+                        <?= Form::dropdown('class_sm', [-1 => '-请选择小类-'] + $class_sm, isset($form['class_sm']) ? $form['class_sm'] : -1 , 'class="dropdown" size="30" '); ?>
+                    </td>
+                    <td class="nowrap right"></td>
+                    <td id="area">
+                        <?= Form::dropdown('area', [-1 => '- 请选择区-'] + $area, isset($form['area']) ? $form['area'] : -1 , 'class="dropdown" size="30" '); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '原值（万元）')?></td>
+                    <td><input name="worth" class="text" size="30" value="<?php echo H($form['worth']) ?>" /></td>
+                    <td class="nowrap right"></td>
+                    <td>
+                        <input class="text" name="street" size="30" value="<?= H($form['street']) ?>"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '仪器设备来源')?></td>
+                    <td>
+                        <?= Form::dropdown('eq_source', [-1 => '-- 请选择 --'] + I18N::T('nrii', Nrii_Equipment_Model::$eq_source), isset($form['eq_source']) ? $form['eq_source'] : -1 , 'class="dropdown eq_source_text" size="30" '); ?>
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '仪器设备类别') ?></td>
+                    <td>
+                        <?= Form::dropdown('type_status', [-1 => '-- 请选择 --'] + I18N::T('nrii', Nrii_Equipment_Model::$type_status), isset($form['type_status']) ? $form['type_status'] : -1 , 'class="dropdown" size="30" '); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '主要学科领域')?></td>
+                    <td class="top">
+                        <?php
+                            echo Widget::factory('nrii:muti_selector',
+                                [
+                                    'name'=>'realm',
+                                    'autocomplete'=>URI::url('!nrii/autocomplete/search.subject'),
+                                    'value' => $form['realm'],
+                                    'extra'=>'token_verify'
+                                ]);
+                        ?>
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '产地国别')?></td>
+                    <td class="top">
+                        <?php
+                            echo Widget::factory('nrii:single_selector', 
+                                [
+                                    'name'=>'nation',
+                                    'autocomplete'=>URI::url('!nrii/autocomplete/search.nation'), 
+                                    'value'=>$form['nation'],
+                                    'extra'=>'token_verify'
+                                ]);
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '规格型号')?></td>
+                    <td><input class="text" name="model_no"  size="30" value="<?= H($form['model_no']) ?>" /></td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '生产制造商')?></td>
+                    <td><input class="text" name="manufacturer"  size="30" value="<?= H($form['manufacturer']) ?>" /></td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '建账日期') ?></td>
+                    <td><input class="text date" name="beginDate" value="<?= H($form['beginDate']) ?>" q-date_format="<?php echo HT('$year/$month/$day')?>" /></td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '图片')?></td>
+                    <td>
+                        <span><?= I18N::T('nrii', '将使用关联仪器图标')?></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '主要技术指标')?></td>
+                    <td>
+                        <textarea class="text autogrow" rows="3" cols="30" name="technical"><?= H($form['technical']) ?></textarea>
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '主要功能')?></td>
+                    <td>
+                        <textarea class="text autogrow" rows="3" cols="30" name="function"><?= H($form['function']) ?></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '用户须知')?></td>
+                    <td>
+                        <textarea class="text autogrow" rows="3" cols="30" name="requirement"><?= H($form['requirement']) ?></textarea>
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '参考收费标准')?></td>
+                    <td>
+                        <textarea class="text autogrow" rows="3" cols="30" name="fee"><?= H($form['fee']) ?></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '服务内容')?></td>
+                    <td>
+                        <textarea class="text autogrow" rows="3" cols="30" name="serviceContent"><?= H($form['serviceContent']) ?></textarea>
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '主要购置经费来源')?></td>
+                    <td>
+                        <?php
+                            echo Widget::factory('nrii:muti_selector',
+                                [
+                                    'name'=>'funds',
+                                    'autocomplete'=>URI::url('!nrii/autocomplete/search.funds'),
+                                    'value' => $no_error ? $equipment->funds : $form['funds'],
+                                    'extra'=>'token_verify'
+                                ]);
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '年总运行机时')?></td>
+                    <td>
+                        <input class="text" name="run_machine"  size="30" value="<?= H($form['run_machine']) ?>" />
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '年服务机时')?></td>
+                    <td>
+                        <input class="text" name="service_machine"  size="30" value="<?= H($form['service_machine']) ?>" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '海关监管情况')?></td>
+                    <td id="cus_switch">
+                        <?= Form::dropdown('customs', [0 => '否', 1 => '是'], isset($form['customs']) ? $form['customs'] : 0 , 'class="dropdown" size="30" '); ?>
+                    </td>
+                </tr>
+                <?php echo Event::trigger('nrii.equipment.add_columns',$form, $equipment);?>
+            </tbody>
+        </table>
+    </fieldset>
+    <div class="hr_2">&#160;</div>
+    <fieldset id="customs" class="bottom" style="width: 690px">
+        <legend><?= I18N::T('nrii', '海关信息') ?></legend>
+        <table class="form">
+            <tbody>
+                <tr>
+                    <td class="nowrap right" style="width: 108px"><?= I18N::T('nrii', '单位内部编号')?></td>
+                    <td><input class="text" name="cus_inner_id"  size="30" value="<?= H($form['cus_inner_id']) ?>" /></td>
+                    <td class="nowrap right" style="width: 108px"><?= I18N::T('nrii', '所属单位标识')?></td>
+                    <td><input class="text" name="cus_ins_code"  size="30" value="<?= H($form['cus_ins_code']) ?>" /></td>
+                </tr>
+                <tr>
+                    <td class="nowrap right" style="width: 108px"><?= I18N::T('nrii', '进口报关单编号')?></td>
+                    <td><input class="text" name="cus_declaration_number"  size="30" value="<?= H($form['cus_declaration_number']) ?>" /></td>
+                    <td class="nowrap right" style="width: 108px"><?= I18N::T('nrii', '进口报关单项号')?></td>
+                    <td><input class="text" name="cus_item_number"  size="30" value="<?= H($form['cus_item_number']) ?>" /></td>
+                    
+                </tr>
+                <tr>
+                    <td class="nowrap right" style="width: 108px"><?= I18N::T('nrii', '海关放行日期')?></td>
+                    <td>
+                        <input class="text date" name="cus_import_date" value="<?= H($form['cus_import_date']) ?>" q-date_format="<?php echo HT('$year/$month/$day')?>" />
+                    </td>
+                    <td class="nowrap right" style="width: 108px"><?= I18N::T('nrii', '仪器设备进口报关单名称')?></td>
+                    <td>
+                        <input class="text" name="cus_form_name"  size="30" value="<?= H($form['cus_form_name']) ?>" />
+                    </td>
+                </tr>
+                <?php echo Event::trigger('nrii.equipment.customs.add_columns',$form,$equipment);?>
+            </tbody>
+        </table>
+    </fieldset>
+    <div class="hr_2">&#160;</div>
+    <fieldset class="bottom">
+        <legend><?= I18N::T('nrii', '联系人信息') ?></legend>
+        <table class="form">
+            <tbody>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '联系人')?></td>
+                    <td>
+                        <input class="text" name="contact" size="20" value="<?= H($form['contact']) ?>"/>
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '联系人电话')?></td>
+                    <td>
+                        <input class="text" name="phone" size="20" value="<?= H($form['phone']) ?>"/>
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '电子邮箱')?></td>
+                    <td>
+                        <input class="text" name="email" size="28" value="<?= H($form['email']) ?>"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '通讯地址')?></td>
+                    <td colspan="3">
+                        <input class="text" name="contact_address" size="51" value="<?= H($form['contact_address']) ?>"/>
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '邮政编码')?></td>
+                    <td>
+                        <input class="text" name="zip_code" size="28" value="<?= H($form['zip_code']) ?>"/>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </fieldset>
+    <fieldset style="width:690px; border:0">
+        <table class="form">
+            <tr>
+                <td><input type="submit" name="submit" class="button button_save" value="<?php echo H(I18N::T('nrii', '添加')) ?>" /></td>
+            </tr>
+        </table>
+    </fieldset>
+    </form>
+</div>
+<?php echo JS::load('nrii:address', ['trigger_url'=>URI::url('!nrii/address')]) ?>
+<?php echo JS::load('nrii:class', ['trigger_url'=>URI::url('!nrii/class')]) ?>
+<?php echo JS::load('nrii:equipment', ['trigger_url'=>URI::url('!nrii/equipment')]) ?>
+<?php echo JS::load('nrii:customs', []) ?>

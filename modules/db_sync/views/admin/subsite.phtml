@@ -1,0 +1,83 @@
+<div class="panel padding_1 clearfix">
+	<?php if (count($panel_buttons) > 0): ?>
+	<div class="float_left">
+	<?php echo Widget::factory('application:links', ['links' => $panel_buttons, 'separator' => ' ']); ?>
+	</div>
+	<?php endif;?>
+</div>
+<?php
+// $sort_by = $form['sort'] ? : (Config::get('equipment.sort_reserv') ? 'reserv' : '');
+// $sort_asc = $form['sort_asc'];
+// $sort_flag = $sort_asc ? 'A':'D';
+
+$table            = Widget::factory('table');
+$table->sort_flag = $sort_flag;
+$table->sort_by   = $sort_by;
+$table->name      = 'subsite';
+
+$columns = [
+    // '@'           => null,
+    'ref_no'      => [
+        'title'  => I18N::T('db_sync', '分站标识'),
+        'nowrap' => true,
+    ],
+    'name'        => [
+        'title'  => I18N::T('db_sync', '分站名称'),
+        'nowrap' => true,
+    ],
+    'links'       => [
+        'title'  => I18N::T('db_sync', '访问地址'),
+        'nowrap' => true,
+    ],
+    'user'        => [
+        'title'  => I18N::T('db_sync', '分站管理员'),
+    ],
+    'user_ref'    => [
+        'title'  => I18N::T('db_sync', '学工号'),
+    ],
+    'user_phone'  => [
+        'title'  => I18N::T('db_sync', '联系电话'),
+    ],
+    'status'      => [
+        'title'  => I18N::T('db_sync', '关联状态'),
+        'align'  => 'center',
+        'nowrap' => true,
+    ],
+    'ctime'       => [
+        'title'  => I18N::T('db_sync', '关联时间'),
+        'nowrap' => true,
+    ],
+    'description' => [
+        'title'  => I18N::T('db_sync', '描述'),
+        'nowrap' => true,
+    ],
+    'rest'        => [
+        'align'  => 'right',
+        'nowrap' => true,
+    ],
+];
+
+$table->add_columns((array) $columns);
+
+$table->empty_message = I18N::T('equipments', '无符合条件的记录');
+$table->subsites      = $subsites;
+
+foreach ($subsites as $record) {
+    $links = $record->links();
+    $users = Q("{$record}<incharge user");
+    $row   = [
+        'ref_no'      => $record->ref_no,
+        'name'        => $record->name,
+        'links'       => "<a href=\"{$record->links}\" class=\"blue\">" . $record->links . '</a>',
+        'user'        => V('db_sync:admin/subsite_table/data/incharges', ['subsite' => $record, 'users' => $users]),
+        'user_ref'    => V('db_sync:admin/subsite_table/data/incharges_ref', ['subsite' => $record, 'users' => $users]),
+        'user_phone'  => V('db_sync:admin/subsite_table/data/incharges_phone', ['subsite' => $record, 'users' => $users]),
+        'status'      => Subsite_Model::$status[$record->status],
+        'ctime'       => $record->status ? Date('Y-m-d', $record->ctime) : '--',
+        'description' => H($record->description),
+        'rest'        => Widget::factory('application:links', ['links' => $links]),
+    ];
+    $table->add_row((array) $row);
+}
+
+echo $table;

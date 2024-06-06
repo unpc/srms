@@ -1,0 +1,76 @@
+<?php 
+$uniqid = uniqid();
+$plot_id = 'plot_'.$uniqid;
+$left_container_id = 'left_container_'.$uniqid;
+$legend_id = 'legend_'.$uniqid;
+?>
+<div class="hr_1">&#160;</div>
+<div class="bucket_vis clearfix">
+<table class="flexible">
+<tr>
+	<td class="top tight padding_1">
+	    <div id="<?php echo H($left_container_id ) ?>" class="bucket_box clearfix" style="width:215px;">
+			<fieldset>
+				<legend><?php echo I18N::HT('eq_meter', '统计有效机时') ?></legend>
+				<?php
+					$eq_meter = O('eq_meter', ['equipment_id'=>$equipment->id]);
+				?>
+				<?php echo V('eq_meter:bucket/edit_stat', ['equipment_id'=>$equipment->id,'axes' => $options['axes']]);?>
+			</fieldset>
+			<fieldset>
+				<legend><?php echo I18N::HT('eq_meter', '曲线坐标') ?></legend>
+				<?php echo V('eq_meter:bucket/curve_axis', ['axes' => $options['axes']]);?>
+			</fieldset>
+			<?php 
+				echo V('eq_meter:bucket/axis_parameters', [
+					'legend' => I18N::T('eq_meter', 'X轴'),
+					'axis' => 'xaxis',
+					'nolog' => TRUE,
+					'data' => $options['xaxis'],
+				]); 
+			?>
+			<?php 
+				echo V('eq_meter:bucket/axis_parameters', [
+					'legend' => I18N::T('eq_meter', 'Y1轴'),
+					'axis' => 'yaxis',
+					'data' => $options['yaxis'],
+				]); 
+			?>
+			<?php 
+				echo V('eq_meter:bucket/axis_parameters', [
+					'legend' => I18N::T('eq_meter', 'Y2轴'),
+					'axis' => 'y2axis',
+					'data' => $options['y2axis'],
+				]); 
+			?>
+			<fieldset>
+				<legend><?php echo I18N::HT('eq_meter', '其他') ?></legend>
+				<div class="lpadding_1">
+					<p>
+						<a class="button button_reset_zoom"  onclick="jQuery('#<?php echo $plot_id ?>').trigger('eq_meterplotResetZoom'); return false;"><?php echo I18N::T('eq_meter', '重置视图') ?></a>
+						<a class="button button_refresh"  onclick="jQuery('#<?php echo $plot_id ?>').trigger('eq_meterplotChange'); return false;"><?php echo I18N::T('eq_meter', '刷新')?></a>
+					</p>
+				</div>
+			</fieldset>
+		</div>
+	</td>
+	<td class="nowrap tight">&#160;&#160;&#160;</td>
+	<td class="top">
+		<div class="padding_1">
+			<div id="<?php echo H($plot_id); ?>" class="loading" style="position:relative"></div>
+		</div>
+	</td>
+</tr>
+</table>
+</div>
+<?php 
+echo JS::load('eq_meter:eq_meterplot', [
+				'equipment_id' => $equipment->id,
+				'plot_id' => $plot_id,
+				'left_container_id' => $left_container_id,
+				'bottom_container_id' => $bottom_container_id,
+				'legend_id' => $legend_id,
+				'fetch_data_url' => URI::url('!eq_meter/eq_meter'),
+				'options' => $options,
+			]); 
+echo JS::load_async('eq_meter:eq_meter');

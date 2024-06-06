@@ -1,0 +1,21 @@
+<div class="time_line_v1_main">
+    <ul class="time_line_v1">
+        <?php
+        $count = $object->total_count();
+        $i = 1;
+        foreach ($object as $v):?>
+        <li style="min-width: 300px">
+            <div class="time_line_v1_point" style="<?php if ($i == 1) echo 'border-color:var(--basiccolor)';?>">
+            </div>
+            <div class="time_line_v1_content" style="<?php
+            if ($i == 1) echo 'color:var(--basiccolor);';
+            if ($i == $count) echo 'border:none;';
+            $i++;
+            ?>">
+                <p class="time_line_v1_time"><?= H(T(date('Y-m-d H:i:s', $v->ctime)))?></p>
+                <p class="time_line_v1_desc"><?= Approval_Help::get_info_str($v)?></p>
+            </div>
+        </li>
+        <?php endforeach;?>
+    </ul>
+</div>

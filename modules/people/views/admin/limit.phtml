@@ -1,0 +1,35 @@
+<div class="form">
+<form method="post" autocomplete="off" class="edit">
+    <table class="form margin-left-half" width="100%">
+        <tbody>
+                <?php echo V('form_error', ['form'=>$form]);?>
+                <tr>
+                    <td class="left nowrap top" width="126"><strong><?php echo I18N::T('people', '保留帐号列表'); ?></strong></td>
+                    <td>
+                        <div class="token_box padding_2 clearfix" style="width: 100%;">
+                            <?php if($reserved): ?>
+                                <?php foreach($reserved as $name): ?>
+                                    <div class="token">
+                                        <strong> <?php echo H($name); ?> </strong>
+                                        <?php if(!in_array($name, Config::get('people.reserved.token'))):?>
+                                            <a class="remove_button"
+                                            href="<?php echo URI::url(NULL, ['del_resv'=>$name]); ?>">
+                                            &#160;</a>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <div class="padding_2"><?php echo I18N::T('people', '暂无系统保留帐号'); ?></div>
+                            <?php endif; ?>
+                        </div>
+                        <div class="interval_20"></div>
+                        <div>
+                            <input type="text" name="reserved" class="text" />
+                            <input type="submit" name="submit" class="font-button-save" value="<?php echo I18N::T('people', '添加'); ?>" />
+                        </div>
+                    </td>
+                </tr>
+        </tbody>
+    </table>
+    </form>
+</div>

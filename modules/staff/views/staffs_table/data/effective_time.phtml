@@ -1,0 +1,10 @@
+<?php
+if( $staff->contract_time ){
+	if( $staff->contract_time > time() ) {
+		$time = $staff->time_diff(null,$staff->contract_time);
+		echo "{$time['y']}年{$time['m']}月{$time['d']}天";
+	}else{
+		echo '合同已到期';
+	}
+}
+?>

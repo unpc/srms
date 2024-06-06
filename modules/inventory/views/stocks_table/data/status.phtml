@@ -1,0 +1,20 @@
+<?php 
+switch($stock->status) {
+case Stock_Model::INADEQUATE:
+	$class='warning';
+	break;
+case Stock_Model::EXHAUSTED:
+	$class='error';
+	break;
+case Stock_Model::ADEQUATE:
+	$class='normal';
+	break;
+default:
+	$class='disable';
+}
+?>
+<div class="padding_1">
+<a href="<?php echo H(URI::url('!inventory/index?status='.$stock->status)) ?>" class="status_tag status_tag_<?php echo $class?>" style="display:block">
+<?php echo I18N::HT('inventory', Stock_Model::$stock_status[$stock->status]); ?>
+</a>
+</div>

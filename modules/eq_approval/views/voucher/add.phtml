@@ -1,0 +1,109 @@
+<div class="form padding_1">
+<form class="prevent_default add_voucher" method="post" autocomplete="off" q-object="add_reserv_voucher" q-event="submit" q-src="<?= URI::url('!eq_approval/voucher')?>">
+    <?= V('form_error', ['form'=>$form]);?>
+    <?php 
+        $require = (string) V('form_require'); 
+        $no_error = !$form->no_error === FALSE;
+    ?>
+	<table class="form">
+        <tbody>
+        <tr>
+            <td colspan="2" class="nowrap label top">
+                <?php 
+                    echo Form::radio('voucher_type', 0, $no_error ? 0 : ( $form['voucher_type'] == EQ_Voucher_Model::RESERV ? 0 : 1 ), I18N::T('eq_approval', '预约'),'class="middle monitor"');
+                    echo '&#160;&#160;&#160;&#160;';
+                    echo Form::radio('voucher_type', 1, $no_error ? 0 : ( $form['voucher_type'] == EQ_Voucher_Model::SAMPLE ? 1 : 0 ), I18N::T('eq_approval', '送样'),'class="middle monitor"'); 
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="nowrap label top"><?php echo I18N::T('eq_approval', '仪器名称');?></td>
+            <td class="nowrap">
+                <?php
+                    echo Widget::factory('application:equipment_selector', [
+                            'name' => 'equipment',
+                            'tooltip' => I18N::T('eq_approval', '输入关键字自动关联设备'),
+                            'equipment' => $form['equipment'],
+                            'size' => 34
+                        ]);
+                    echo $require;
+                ?>
+            </td>
+		</tr>
+        <tr>
+            <td class="nowrap label top"><?php echo I18N::T('eq_approval', '仪器负责人');?></td>
+            <td class="nowrap">
+                <span name="contact" class="description"></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="nowrap label top"><?php echo I18N::T('eq_approval', '关联项目');?></td>
+            <td class="nowrap">
+                <?php
+                    $project_types = Q("$user lab")->current()->get_project_items();
+                    $project_select = $no_error ? 0 : $form['project'];
+                    echo Form::dropdown('project', ['--'] + $project_types, $project_select);
+                    echo Config::get('eq_reserv.must_connect_lab_project') ? $require : '';
+                ?>
+            </td>
+        </tr>
+        <tr class="toggle:voucher_type show_on:0 hidden">
+            <td class="nowrap label top "><?php echo I18N::T('eq_approval', '预计使用时长');?></td>
+            <td class="nowrap">
+                <input class="text right" name="used_time" value="<?= $no_error ? '' : $form['used_time'] ?>" q-hint="<?= I18N::T('eq_approval', '单位: (分)') ?>" /><?= $require; ?>
+            </td>
+        </tr>
+        <tr class="toggle:voucher_type show_on:1 hidden">
+            <td class="nowrap label top"><?php echo I18N::T('eq_approval', '送样数');?></td>
+            <td class="nowrap">
+                <input class="text number" name="samples" value="<?= $no_error ? 0 : $form['samples'] ?>" /><?= $require; ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="nowrap label top"><?php echo I18N::T('eq_approval', '预计价格');?></td>
+            <td class="nowrap">
+                <input class="text right" name="auto_amount" value="<?= $no_error ? '' : $form['auto_amount'] ?>" /><?= $require; ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="nowrap label top"><?php echo I18N::T('eq_approval', '描述');?></td>
+            <td class="nowrap">
+                <textarea class="text autogrow" rows="4" cols="37" style="width: 263px" name="description"><?= $no_error ? '' : $form['description'] ?></textarea>
+            </td>
+        </tr>
+		<tr>
+            <td />
+            <td>
+                <input class="button button_save font-button-save" name="submit" type="submit" value="<?= I18N::T('eq_approval', '添加'); ?>" />
+            </td>
+		</tr>
+        </tbody>
+	</table>
+    <script>
+    jQuery(function($){
+        var changeContact = function(val) {
+            Q.trigger({
+                url: '<?= URI::url("!eq_approval/voucher")?>',
+                object: 'get_equipment',
+                event: 'contacts',
+                data: { 'eid': val },
+                global: false,
+                success: function(data) {
+                    $('.add_voucher span[name=contact]').html(data.contacts)
+                }
+            })
+        }
+
+        $('input[name=equipment]')
+        .unbind('change')
+        .bind('change', function(e){
+            var me = $(this)
+                val = me.val()
+            changeContact(val)
+        })
+
+        changeContact("<?= $form['equipment'] ?>");
+    });
+    </script>
+</form>
+</div>

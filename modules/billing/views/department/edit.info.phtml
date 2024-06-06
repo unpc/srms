@@ -1,0 +1,165 @@
+<style>
+.tag_selector {
+    min-width: 400px;
+}
+</style>
+<?php
+	$can_edit_department_id = FALSE;
+	$tokens = (array)Config::get('lab.admin');
+	$me = L('ME');
+	if ( $me->access('管理所有内容') ) $can_edit_department_id = TRUE;
+?>
+<div class="interval_30"></div>
+<div class="form" style="padding-bottom: 30px;">
+    <form method="post" class="edit" autocomplete="off"
+        action="<?php $department->id ? $department->url(NULL, NULL, NULL, 'edit') : URI::url('!billing/department/add') ?>">
+        <?php echo V('form_error', ['form'=>$form]);?>
+        <?php $require = (string) V('form_require'); ?>
+        <table class="form">
+            <tbody>
+                <tr>
+                    <td class="icon top">
+                        <div class="short_container">
+                            <div class="img_icon" style="position: relative;">
+                                <?php echo $department->icon('104','icon_none_border'); ?>
+                                <div class="icon_cover" style="display: none;">
+                                    <div class="modify_icon">+</div>
+                                    <div class="interval_12"></div>
+                                    <div class="modify_font">修改图标</div>
+                                </div>
+                            </div>
+                            <input class="upload_icon" name="file" type="file" class="file" style="display: none;" />
+
+                            <!-- <div class="interval_24"></div> -->
+                        </div>
+                        <script>
+                        $.upload_icon(<?php echo '"'.URI::url().'"'; ?>);
+                        </script>
+                        <!--			<a href="--><?php //echo H($building->url('photo',NULL,NULL,'edit') ) ?>
+                        <!--"><img class="icon" src="--><?php //echo H($building->icon_url('100')) ?>
+                        <!--" /></a>-->
+                        <div class="interval_12"></div>
+                        <div class="short_info short_container">
+                            <a class="font-button-delete" style="display:block; text-align: center;"
+                                href="<?php echo H(URI::url('!billing/department/delete_photo.'.$department->id)) ?>"
+                                confirm="<?php echo H(I18N::T('billing', '确定要删除图标吗?')) ?>"><?php echo I18N::T('billing', '删除图标')?></a>
+                        </div>
+                    </td>
+                    <td class="top">
+                        <table class="form flexible" style="margin-left: 30px;">
+                            <tr>
+                                <td class="rpadding_4" colspan="2">
+                                    <div class="bpadding_1">
+                                        <span
+                                            class="rpadding_1"><?php echo I18N::T('billing', '名称')?></span><?php echo $require; ?>
+                                        <br>
+                                        <?php echo V('form_filter',['error'=>$form->errors['name'][0]]); ?>
+                                    </div>
+                                    <div>
+                                        <input name="name" class="text validator" size="54"
+                                            value="<?php echo H($department->name ?: $form['name']); ?>" />
+                                    </div>
+                                </td>
+                                <td class="lpadding_4" colspan="2">
+                                    <div class="bpadding_1">
+                                        <span
+                                            class="rpadding_1"><?php echo I18N::T('billing', '标识名')?></span><?php echo $require;?>
+                                        <br>
+                                        <?php echo V('form_filter',['error'=>$form->errors['nickname'][0]]); ?>
+                                    </div>
+                                    <div>
+                                        <input type="text" class="text" name="nickname" size="54"
+                                            value="<?php echo H($department->nickname ? : $form['nickname'])?>"
+                                            <?php if( !$can_edit_department_id ) echo 'disabled="disabled"'; ?> />
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <div class="interval_12"></div>
+                                </td>
+                            </tr>
+                            <?php if (isset($group_root)): ?>
+                            <tr>
+                                <td class="" colspan="2">
+                                    <div class="bpadding_1">
+                                        <span class="rpadding_1"><?php echo I18N::T('billing', '组织机构')?></span>
+                                    </div>
+                                    <div class="gray_tag_container">
+                                        <?php
+                                            echo Widget::factory('application:tag_selector', [
+                                                'tag'=>$department->group,
+                                                'root'=>$group_root,
+                                                'name'=>'group_id',
+                                                'ajax'=>true
+                                            ]);
+                                        ?>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <div class="interval_12"></div>
+                                </td>
+                            </tr>
+                            <?php endif; ?>
+                            <?php 
+                                $users = [];
+                                $tmp_users = Q("{$department} user"); 
+                                foreach ($tmp_users as $tmp_user) {
+                                    if ($GLOBALS['preload']['people.multi_lab']) {
+                                        $users[$tmp_user->id] = $tmp_user->name;
+                                    }
+                                    else {
+                                        $tmp_lab = Q("$tmp_user lab")->current();
+                                        $users[$tmp_user->id] = $tmp_user->name.'('.$tmp_lab->name.')';
+                                    }
+                                }
+                            ?>
+                            <tr>
+                                <td class="" colspan="4">
+                                    <div class="bpadding_1">
+                                        <span class="rpadding_1"><?php echo I18N::T('billing', '负责人')?></span>
+                                    </div>
+                                    <?php 
+                                        echo Widget::factory('billing:selector', 
+                                                [
+                                                    'name'=>'users', 
+                                                    'autocomplete'=>URI::url('!billing/autocomplete/users'), 
+                                                    'value'=> json_encode($users),
+                                            ]);
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <div class="interval_12"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="" colspan="4">
+                                    <div class="bpadding_1">
+                                        <span class="rpadding_1"><?php echo I18N::T('billing', '备注')?></span>
+                                    </div>
+                                    <textarea name="description" class="text autogrow" rows="3"
+                                        style="width: 100%;line-height: normal"><?php echo H($department->description ?: $form['description']); ?></textarea>
+                                    <?php echo Event::trigger('billing_department[edit].view.extra', $form, $department) ?>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="interval_60"></div>
+        <div class="float_right">
+            <?php if (L('ME')->is_allowed_to('删除', $department)): ?>
+            <input type="button" class="font-button-delete rmargin_16" name="delete"
+                value="<?php echo H(I18N::T('billing', '删除') ) ?>" q-object="delete_department" q-event="click"
+                q-static="<?php echo H(['d_id'=>$department->id])?>" />
+            <?php endif; ?>
+            <input type="submit" name="submit" class="font-button-save"
+                value="<?php echo H(I18N::T('billing', '更新') ) ?>" />
+        </div>
+    </form>
+</div>

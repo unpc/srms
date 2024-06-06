@@ -1,0 +1,41 @@
+<?php echo CSS::load_async('eq_reserv:status');?>
+<div class="clearfix">
+<?php echo I18N::T('eq_reserv', '预约时间'); ?>
+<strong> 
+<?php echo Date::range($reserv->dtstart, $reserv->dtend); ?>
+</strong>
+<?php
+
+$titles = [];
+$reserv_status = EQ_Reserv_Model::$reserv_status;
+//案例20190825。如果预约时间之前下机，会导致record->flag无法正常更新。所以取reserv里的status做补充判断
+$flag = $reserv->status;
+$flag = $flag === null ? 0 : $flag;
+switch($flag) {
+    case EQ_Reserv_Model::MISSED :
+        $titles['missed'] = $reserv_status[EQ_Reserv_Model::MISSED];
+    break;
+    case EQ_Reserv_Model::OVERTIME :
+        $titles['overtime'] = $reserv_status[EQ_Reserv_Model::OVERTIME];
+    break;
+    case EQ_Reserv_Model::LATE :
+        $titles['late'] = $reserv_status[EQ_Reserv_Model::LATE];
+    break;
+    case EQ_Reserv_Model::LEAVE_EARLY :
+        $titles['leave_early'] = $reserv_status[EQ_Reserv_Model::LEAVE_EARLY];
+    break;
+    case EQ_Reserv_Model::LATE_LEAVE_EARLY :
+        $titles['late'] = $reserv_status[EQ_Reserv_Model::LATE];
+        $titles['leave_early'] = $reserv_status[EQ_Reserv_Model::LEAVE_EARLY];
+    break;
+    case EQ_Reserv_Model::LATE_OVERTIME :
+        $titles['late'] = $reserv_status[EQ_Reserv_Model::LATE];
+        $titles['overtime'] = $reserv_status[EQ_Reserv_Model::OVERTIME];
+    default :
+}
+?>
+
+<?php foreach($titles as $class => $title) : ?>
+<span class="status_<?php echo $class;?>"><?php echo I18N::T('eq_reserv', $title);?></span>
+<?php endforeach;?>
+</div>

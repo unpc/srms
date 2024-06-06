@@ -1,0 +1,97 @@
+<?php
+$me = L('ME');
+if (Module::is_installed('credit')) :
+    $credit = O('credit', ['user' => $me]);
+?>
+<div class="violation">
+    <div class="violation_title">
+        <div class="title float_left">我的信用</div>
+        <div class="extra_info float_right">
+            更新时间：<?php echo Date('m月d日 H:i', $credit->utime) ?>
+        </div>
+    </div>
+    <div class="violation_body">
+        <div class="violation_total_content">
+            <a href="<?php echo H($me->url('credit_record')) ?>">
+                <div class="violation_total">
+                    <div class="total"><?php echo str_repeat('A', $credit->credit_level->level) ?></div>
+                    <div class="total_tips"><?php echo $credit->credit_level->name ?></div>
+                </div>
+            </a>
+        </div>
+
+        <div class="sub_violations">
+            <div class="violation_line">
+                <div class="sub_violation">
+                    <div class="current_ranking" style="font-size: 14px;line-height; 1;">
+                        <span style="font-weight: bold;"><?php echo I18N::T('credit', '当前排名: ') ?><?php echo $credit->line ?></span>
+                        <br>
+                        <span style="font-weight: bold;"
+                              class="nowrap"><?php echo H("超过系统{$credit->percent}%的用户") ?></span>
+                    </div>
+                    <div class="floating" style="text-align: center;padding-top: 18px;font-size: 14px;">
+                        <?php
+                        $dtstart = strtotime('-2 monday', Date::time());
+                        $dtend = strtotime('-1 sunday', Date::time());
+                        $sql = "select sum(score) from credit_record where user_id = {$me->id} and ctime between {$dtstart} and {$dtend}";
+                        $db = Database::factory();
+                        $floating = (int) ($db->value($sql));
+                        $type = $floating >= 0 ? '增加' : '减少';
+                        $class = $floating >= 0 ? 'blue' : 'red';
+                        $floating = abs($floating);
+                        ?>
+                        <?php // $prev_credit_record = Q("credit_record[user={$me}][total!={$credit->total}]:sort(id D)")->current(); ?>
+                        <?php // $floating = abs($prev_credit_record->total - $credit->total); ?>
+                        <span class="<?= $class ?>">较上周更新<?= $type ?><span
+                                    style="font-weight: bold;"> <?= $floating ?> </span>分</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php
+else:
+    $violation = O('user_violation', ['user' => $me]);
+?>
+    <div class="violation">
+        <div class="violation_title">
+            <div class="title float_left">违规情况</div>
+        </div>
+        <div class="violation_body">
+            <div class="violation_total_content">
+                <a href="<?php echo H($me->url('eq_record') . '?reserv_status=abnormal') ?>">
+                    <div class="violation_total">
+                        <div class="total"><?php echo $violation->id ? $violation->total_count : 0 ?></div>
+                        <div class="total_tips">违规总次数</div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="sub_violations float_left">
+                <div class="violation_line">
+                    <div class="sub_violation float_left" style="width: 50%">
+                        <div class="count"><?= $violation->id ? $violation->eq_late_count : 0 ?></div>
+                        <div class="count_tips"><i class="sign later"></i>迟到</div>
+                    </div>
+                    <div class="sub_violation float_right" style="width: 50%">
+                        <div class="count"><?= $violation->id ? $violation->eq_overtime_count : 0 ?></div>
+                        <div class="count_tips"><i class="sign over_time"></i> 超时</div>
+
+                    </div>
+                </div>
+
+                <div class="violation_line">
+                    <div class="sub_violation float_left" style="width: 50%">
+                        <div class="count"><?= $violation->id ? $violation->eq_miss_count : 0 ?></div>
+                        <div class="count_tips"><i class="sign miss_check"></i>爽约</div>
+                    </div>
+                    <div class="sub_violation float_right" style="width: 50%">
+                        <div class="count"><?= $violation->id ? $violation->eq_leave_early_count : 0 ?></div>
+                        <div class="count_tips"><i class="sign leave_early"></i>早退</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endif;?>

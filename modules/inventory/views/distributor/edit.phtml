@@ -1,0 +1,66 @@
+<div class="hr_1">&#160;</div>
+<?php 
+/*
+	NO. BUG#110 (Cheng.Liu@2010.11.09)
+	将<form>标签嵌套在<div>之内即可不闪动颜色
+	之前css中有冲突
+*/
+?>
+<div class="form padding_1">
+<form method="post" action="">
+<h3><?php echo I18N::T('inventory', '供应商信息')?></h3>
+<div class="hr_1">&#160;</div>
+<?php echo V('form_error', ['form'=>$form]);?>
+<table class="form flexible">
+<tbody>
+	<tr>
+		<td class="right nowrap" style="width:80px"><?php echo I18N::T('inventory', '供应商名称')?></td>
+		<td><input type="text" class="text autocomplete:<?php echo H($vendor->url(NULL, NULL, NULL, 'auto_dealer'));?>" size="40" name="company" value="<?php echo H($vendor->company ?: $form['company']); ?>" /></td>
+	</tr>
+	<tr>
+		<td class="right nowrap"><?php echo I18N::T('inventory', '联系人')?></td>
+		<td><input type="text" class="text" size="40" name="contact" value="<?php echo H($vendor->contact ?: $form['contact']); ?>" /></td>
+	</tr>
+	<tr>
+		<td class="right nowrap"><?php echo I18N::T('inventory', '电子邮件')?></td>
+		<td><input type="text" class="text" size="40" name="email" value="<?php echo H($vendor->email ?: $form['email']); ?>" /></td>
+	</tr>
+	<tr>
+		<td class="right nowrap"><?php echo I18N::T('inventory', '电话')?></td>
+		<td><input type="text" class="text" size="40" name="phone" value="<?php echo H($vendor->phone ?: $form['phone']); ?>" /></td>
+	</tr>
+	<tr>
+		<td class="right top nowrap"><?php echo I18N::T('inventory', '备注')?></td>
+		<td><textarea class="textarea" name="note" rows="3" cols="60"><?php echo H($vendor->note ?: $form['note']); ?></textarea></td>
+	</tr>
+</tbody>
+</table>
+</div>
+<div class="form padding_1">
+<h3><?php echo I18N::T('inventory', '订单邮件模板')?></h3>
+<div class="hr_1">&#160;</div>
+<table class="form flexible">
+<tbody>
+	<tr>
+		<td class="right top nowrap" style="width:80px"><?php echo I18N::T('inventory', '标题')?></td>
+		<td><input type="text" class="text" size="60" name="email_subject" value="<?php echo H($vendor->email_subject ?: $form['email_subject']); ?>" /></td>
+	</tr>
+	<tr>
+		<td class="right top nowrap"><?php echo I18N::T('inventory', '正文')?></td>
+		<td><textarea class="textarea" name="email_content" rows="8" cols="60"><?php echo H($vendor->email_content ?: $form['email_content']); ?></textarea></td>
+	</tr>
+</tbody>
+</table>
+</div>
+<div class="form padding_1">
+<table class="form flexible">
+<tbody>
+	<tr>
+		<td>
+			<input class="button button_save" type="submit" name="submit" value="<?php echo T('保存'); ?>" />
+			<input class="button button_cancel" type="reset" value="<?php echo T('取消'); ?>" />
+		</td>
+	</tr>
+</tbody></table></div>
+</form>
+</div>

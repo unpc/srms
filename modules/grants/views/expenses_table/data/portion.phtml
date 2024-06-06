@@ -1,0 +1,12 @@
+<?php
+	$links = [];
+	while($portion->id) {
+		$url = URI::url('',['portion'=>$portion->id]);
+		$link = '<a href="'.$url.'">'.H($portion->name).'</a>';
+		array_unshift($links,$link);
+		$portion = $portion->parent;
+	}
+
+	echo implode(' &#187; ', $links);
+?>
+

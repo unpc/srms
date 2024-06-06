@@ -1,0 +1,524 @@
+/*
+* @Date:2018-09-3 09:40:47
+* @Author: LiuHongbo
+* @Email: hongbo.liu@geneegroup.com
+* @Description:这里对所有的a.button做了重新定义（目前用的font-awesome之后会换成geneeicon）
+*/
+
+.icon-lg{
+	font-size: 14px;
+	font-weight: bold;
+  }
+.icon-dropdown02,.icon-drop_down {
+	color: #aba7a7;
+	font-size: 20px;
+}
+
+.font-button-icon {
+    display: inline-block;
+    height: 22px;
+    border: 1px solid var(--basiccolor);
+    border-radius: 3px;
+    line-height: 22px;
+    color: var(--basiccolor);
+    padding: 0 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: normal;
+    text-align: center;
+    outline: none;
+    text-decoration: none;
+
+    span {
+        font-size: 14px;
+        font-weight: 500;
+        padding-right: 4px;
+    }
+    &:hover {
+        text-decoration: none;
+        color: #FFF;
+        background-color: var(--basiccolor);
+    }
+}
+
+.h2-font-button-icon {
+    text-decoration: none;
+}
+
+.lg{
+	width:152px !important;
+	line-height: 30px !important;
+	height: 30px !important;
+}
+.md{
+	width:85px !important;
+}
+
+.sm {
+	width:65px !important;
+}
+.font-button-save, .font-button-delete, .font-button-default, .font-button-send {
+    display: inline-block;
+    width: auto;
+    box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    -webkit-box-sizing:border-box;
+    border-radius: 3px;
+    height: 30px;
+    padding: 0 15px;
+    line-height: 28px;
+    cursor: pointer;
+    outline: none;
+    text-decoration: none;
+}
+
+.font-button-delete {
+    background-color: #FFF;
+    color: #F5222D;
+    border: 1px solid #F5222D;
+    &:hover {
+        text-decoration: none;
+        background-color: #F5222D;
+        color: #FFF;
+        border: 1px solid #FFF;
+    }
+}
+
+.font-button-save {
+    background-color: var(--basiccolor);
+    color: #FFF;
+    border: 1px solid var(--basiccolor);
+    &:hover {
+        text-decoration: none;
+        opacity: 0.8;
+        color: #FFF;
+    }
+}
+
+.font-button-default {
+    background-color: #FFF;
+    color: #333;
+    border: 1px solid #E5E5E5;
+    &:hover {
+        text-decoration: none;
+        border-color: var(--basiccolor);
+    }
+}
+
+.font-button-send{
+	background-color: #FFF;
+	color: var(--basiccolor);
+	border: 1px solid var(--basiccolor);
+    &:hover {
+		 text-decoration: none;
+		 background-color: var(--basiccolor);
+		 color: #FFF;
+		 border: 1px solid #FFF;
+    }
+}
+
+.font-button-color-green {
+	height: 26px;
+	line-height: 24px;
+	border: 1px solid #86DAB0;
+	color: #4EC7A5;
+	padding: 0px 15px 0px 15px;
+	&:hover {
+	 	text-decoration: none;
+		color: #FFF;
+	 	border-color: #4EC7A5 !important;
+		background-color: #4EC7A5 !important;
+ 	}
+}
+
+.font-button-color-grey {
+	height: 26px;
+	line-height: 24px;
+	border: 1px solid #B8B8B8;
+	color: #4D4D4D;
+	padding: 0px 15px 0px 15px;
+	&:hover {
+	 text-decoration: none;
+	 color: #FFF;
+	 border-color: #B8B8B8 !important;
+	 background-color: #B8B8B8 !important;
+ 	}
+}
+
+.font-button-color-red {
+	height: 26px;
+	line-height: 24px;
+	border: 1px solid #FFB5B5;
+	color: #F87272;
+	padding: 0px 15px 0px 15px;
+	&:hover {
+	 text-decoration: none;
+	 color: #FFF;
+	 border-color: #FFB5B5 !important;
+	 background-color: #FFB5B5 !important;
+ 	}
+}
+
+
+a.button,span.button
+{
+
+	/**
+	fa
+	*/
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-weight: 700;
+  /* font-size: inherit; */
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /*fa-lg**/
+  /* font-size: 1.33333333em;
+  line-height: 0.75em;
+  vertical-align: -15%; */
+}
+/*a.button_edit:before{*/
+/*	content: "\e92e";*/
+/*}*/
+a.button{
+float: right;
+font-size: 14px;
+display: block;
+*zoom: 1;
+width: auto;
+height: 32px;
+-webkit-border-radius: 2px;
+-moz-border-radius: 2px;
+-webkit-border-radius: 2px;
+-moz-border-radius: 2px;
+border-radius: 2px;
+background-color: #ffffff;
+border: 1px solid var(--basiccolor);
+margin: 0 5px;
+cursor: pointer;
+padding: 0 10px;
+text-align: center;
+line-height: 30px !important;
+color: var(--basiccolor);
+text-decoration: none;
+
+/* use !important to prevent issues with browser extensions that change fonts */
+font-family: 'iconfont' !important;
+speak: none;
+font-style: normal;
+font-weight: normal;
+font-variant: normal;
+text-transform: none;
+line-height: 1;
+
+/* Enable Ligatures ================ */
+letter-spacing: 0;
+-webkit-font-feature-settings: "liga";
+-moz-font-feature-settings: "liga=1";
+-moz-font-feature-settings: "liga";
+-ms-font-feature-settings: "liga" 1;
+font-feature-settings: "liga";
+-webkit-font-variant-ligatures: discretionary-ligatures;
+font-variant-ligatures: discretionary-ligatures;
+
+/* Better Font Rendering =========== */
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+
+}
+a.button:last-child {
+	/*margin: 0 0 0 5px;*/
+}
+
+a.button:hover{
+	opacity: 93%;
+	background-color: var(--basiccolor);
+	color: #FFF;
+}
+
+.button_bind:before{
+	content: "\e9c6";
+}
+
+.button_print:before{
+	content: "\e758";
+	padding-right: var(--bottonPaddingRight);
+}
+
+.button_follow1:before {
+	content: "\e709";
+	padding-right: var(--bottonPaddingRight);
+}
+
+.button_follow:before {
+	content: "\e6f6";
+	padding-right: var(--bottonPaddingRight);
+}
+
+.button_upstairs:before {
+    content: "\e9cb";
+}
+
+.button_downstairs:before {
+    content: "\e9ca";
+}
+
+.button_zoomin:before {
+    content: "\e9c8";
+}
+
+.button_zoomout:before {
+    content: "\e9c9";
+}
+
+.button_print:hover{
+	opacity: 93%;
+	background-color: var(--basiccolor);
+	color: #FFF;
+}
+/**save*/
+.button_save:before{
+	content: "\e772";
+	padding-right: var(--bottonPaddingRight);
+}
+
+.button_bg{
+	background: var(--basiccolor) !important;
+	border: var(--basiccolor) !important;
+	color: white !important;
+}
+/*add*/
+.button_add:before{
+	content: "\e6f8";
+	padding-right: var(--bottonPaddingRight);
+}
+
+.button_edit:before {
+	content: "\e6e6";
+	padding-right: var(--bottonPaddingRight);
+}
+
+.button_delete:before {
+    content: "\e780";
+	padding-right: var(--bottonPaddingRight);
+}
+
+.button_precheck:before {
+	content: "\e77d";
+	padding-right: var(--bottonPaddingRight);
+}
+
+/**/
+.button_talk:before{
+	content: "\e70f";
+	padding-right: var(--bottonPaddingRight);
+}
+.button_unfollow:before{
+	content: "\f004";
+
+}
+
+.button_wechat:before {
+	content: "\e777";
+	padding-right: var(--bottonPaddingRight);
+}
+
+/*.button_follow:before{*/
+/*	content: "\e967";*/
+/*}*/
+
+/*#################################################################3*/
+
+
+
+input.button, button/*, a.button*/ {
+	text-decoration: none;
+	cursor: pointer;
+	margin: 0 10px;
+	padding: 0;
+	display: block;
+	float:left;
+	border-radius: 15px;
+	background-color: #EEF8FF;
+	overflow: hidden;
+
+	height: 30px;
+	line-height: 30px;
+	color: var(--basiccolor);
+	width: 30px;
+	text-align: center;
+	text-decoration: none !important;
+	-moz-user-select: none;
+	*white-space:nowrap;
+
+	font-weight: normal;
+
+	text-transform: capitalize;
+}
+
+input.button, button{
+	padding:0 4px;
+	height:24px;
+	line-height:24px;
+	_padding:0;
+	*width:auto;
+	_line-height:20px;
+	*overflow:hidden;
+}
+
+input.button:hover, button:hover, a.button:hover {
+	opacity: 93%;
+	background-color: var(--basiccolor);
+	color: #FFF;
+}
+
+input.button:active, button:active, a.button:active {
+	border-color: #999 #fff #fff #999;
+}
+
+
+.remove_button {
+	background: url("images/buttons/remove.png") no-repeat scroll 0 0 transparent;
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+	text-decoration: none;
+}
+
+.remove_button:hover, .delete_button.checked{
+	background-position: -16px 0px;
+	text-decoration: none;
+}
+
+
+/*IE6,IE7*/
+/*
+a:disabled.button, a.button{
+	*padding: 3px 4px 4px 4px;
+}
+*/
+
+/**
+修改后
+这里的a.button_$action会被前面的覆盖*/
+@css-define actions: ["add", "delete", "refresh", "save", "print", "edit", "attach", "export", "import", "cancel", "search", "setting", "list", "list_focus", "grid", "grid_focus", "logout", "login", "signup", "view", "help", "bucket", "follow", "unfollow", "mark_read", "mark_unread", "talk", "fullscreen", "tick", "stat_close", "calculate", "archive", "remote", "link", "merge", "cross", "samples_lock", "samples_unlock", "bind", "unbind"];
+
+@css-foreach(action in actions) {
+
+	input.button_$action, a.button_$action {
+		padding-left: 22px;
+		background-image: url(images/buttons/$action.png);
+		background-repeat: no-repeat;
+		background-position: 4px center;
+		_background-image: url(images/buttons/$action.gif);
+	}
+
+}
+
+input.button_empty, a.button_empty {
+	width: 14px;
+	height: 14px;
+	*width: 22px;
+	*height: 14px;
+	background-position: center center;
+	padding: 4px;
+}
+
+.toggle_button {
+
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	overflow:hidden;
+	line-height: 16px;
+	border:none;
+}
+
+#sidebar .sidebar_menu div.menu {
+
+	.toggle_button {
+		background: url(images/icons/minus.png) no-repeat center center;
+		_background-image: url(images/icons/minus.gif);
+	}
+
+	.toggle_button_collapsed {
+		background: url(images/icons/plus.png) no-repeat center center;
+		_background-image: url(images/icons/plus.gif);
+	}
+
+	a.toggle_button {
+		text-decoration: none;
+	}
+
+	a.toggle_button_hidden {
+		display: block;
+		height: 22px;
+		overflow:hidden;
+		line-height: 22px;
+		background: #eee url(images/icons/up.png) no-repeat center center;
+		_background-image: url(images/icons/up.gif);
+	}
+
+	a.toggle_button_hidden:hover {
+		background-color: #ddd;
+	}
+
+	a.toggle_button_show_hidden{
+		background: #eee url(images/icons/down.png) no-repeat center center;
+		*background-image: url(images/icons/down.gif);
+		text-decoration: none;
+	}
+
+}
+
+
+.toggle_collapse {
+	background: url(images/icons/collapse.png) no-repeat center center;
+	_background-image: url(images/icons/collapse.gif);
+}
+
+.toggle_expand {
+	background: url(images/icons/expand.png) no-repeat center center;
+	_background-image: url(images/icons/expand.gif);
+}
+
+.find_button {
+	background: url(images/icons/search.png) no-repeat center center;
+	display: inline-block;
+	width: 22px;
+	height: 22px;
+	overflow:hidden;
+	border: none;
+	border-radius: 4px;
+}
+
+.panel_button {
+	-moz-border-radius : 2px 2px 2px 2px;
+	background-color : #999999;
+	color : #FFFFFF !important;
+	cursor : pointer;
+	display : -moz-inline-box;
+	font-size : 12px;
+	font-weight : normal;
+	line-height : 1.231;
+	margin-right : 2px;
+	padding : 2px 4px;
+	text-decoration : none !important;
+	white-space : nowrap;
+}
+
+.find_button:hover {
+	text-decoration:none;
+	background-color: #ccc;
+}
+
+/* iPad */
+@media screen and (max-device-width: 800px) {
+	input.button, button {
+		-webkit-appearance: none;
+		line-height: 22px;
+		border-radius: 0;
+	}
+}

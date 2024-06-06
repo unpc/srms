@@ -1,0 +1,9 @@
+<?php
+    if ($credit_record->credit_rule->type) {
+        $class = 'red';
+    } else {
+        $class = 'blue';
+    }
+?>
+
+<span class="<?= $class ?>"><?= $class == 'red' ? '-' : '+' ?> <?= abs($credit_record->score); ?></span>

@@ -1,0 +1,36 @@
+<?php 
+$message = $update->message();
+$delete_update = 'delete_update_'.uniqid();?>
+<div class="update clearfix">
+	<div class="float_right">
+		<a class="remove_button" id="<?php echo H($delete_update) ?>">&#160;</a>
+	</div>
+	<div class="float_left" style="overflow:hidden">
+		<a href="<?php echo H($update->subject->url() ) ?>"><?php echo $update->subject->icon('40')?></a>
+	</div>
+	<div style="margin-left: 50px">
+	<div class="update_message">
+		<?php echo $message ?: I18N::HT('update', '因历史原因产生的未知活动'); ?>
+	</div>
+	<div class="update_message_view">
+		<?php echo $update->message_view() ?>
+	</div>
+	</div>
+</div>
+<?php 
+$u = $update->id ? [$update->id] : $update->reference ; 
+?>
+<script>
+jQuery(function($){
+	$("#<?php echo $delete_update?>").bind('click', function(){
+		Q.trigger({
+			object : 'update',
+			event : 'delete',
+			data : {
+				ids: <?php echo JS::quote($u) ?>
+			},
+			url : '<?php echo URI::url("!update/update")?>'
+		});
+	});
+});
+</script>

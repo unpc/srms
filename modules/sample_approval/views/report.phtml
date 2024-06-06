@@ -1,0 +1,51 @@
+<table style="width:600px;font-size:14px;padding:10px 5px 10px 5px;" border='1'>
+    <tbody>
+        <tr>
+            <td style="border: 1px solid #000;text-align:left;"><?= H('序号') ?></td>
+            <td style="border: 1px solid #000;text-align:left;"><?= H('样品名称') ?></td>
+            <td style="border: 1px solid #000;text-align:left;"><?= H('样品编码') ?></td>
+            <td style="border: 1px solid #000;text-align:left;"><?= H('检测项目') ?></td>
+            <td style="border: 1px solid #000;text-align:left;"><?= H('检测结果') ?></td>
+        </tr>
+        <?php $i = 0 ?>
+        <?php foreach ($sample_results as $sample_result): ?>
+        <?php $i++ ?>
+        <tr>
+            <td style="border: 1px solid #000;text-align:left;"><?= $i ?></td>
+            <td style="border: 1px solid #000;text-align:left;"><?= $sample->name ?></td>
+            <td style="border: 1px solid #000;text-align:left;"><?= $sample_result->subname ?></td>
+            <td style="border: 1px solid #000;text-align:left;"><?= $sample_result->parameter ?></td>
+            <td style="border: 1px solid #000;text-align:left;"><?= $sample_result->result ?></td>
+        </tr>
+        <?php endforeach; ?>
+        <tr>
+            <td style="border-bottom: 1px solid #000;text-align:left;" colspan="5"></td>
+        </tr>
+        <tr>
+            <td style="height:120px;">
+                <?= H('备注:') ?>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<table style="width:600px;font-size:14px;padding:10px 5px 10px 5px;" border='1'>
+    <tr>
+        <td style="border-top: 1px solid #000;text-align:left;">
+            <?= H('编写:') . Q("{$sample->equipment} user.incharge")->current()->name ?>
+        </td>
+        <td style="border-top: 1px solid #000;text-align:left;">
+            <?= H('审核:') . $sample->fir_trial->name ?>
+        </td>
+        <td style="border-top: 1px solid #000;text-align:left;">
+            <?= H('签发:') . $sample->sec_trial->name ?>
+        </td>
+        <td style="border-top: 1px solid #000;text-align:left;">
+            <?= H('时间:') . date('Y.m.d') ?>
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align:center;font-size:14px;" colspan="4">
+            <?= H('淄博高新区鲁泰大道51号 高分子材料产业创新园B座三楼 电话: 18906437679') ?>
+        </td>
+    </tr>
+</table>

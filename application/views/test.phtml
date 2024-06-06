@@ -1,0 +1,65 @@
+<style>
+    .panel-default {
+        background-color: #e7e7e7;
+    }
+</style>
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-static="1" data-parent="#accordion">
+                点击我进行展开，再次点击我进行折叠。第 1 部分
+                </a>
+            </h4>
+        </div>
+        <div id="collapse1" class="panel-collapse collapse in" style="display: none;">
+            <div class="panel-body">
+                Nihil anim keffiyeh helvetica, craft beer labore wes anderson 
+                cred nesciunt sapiente ea proident. Ad vegan excepteur butcher 
+                vice lomo.
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-static="2" data-parent="#accordion">
+                点击我进行展开，再次点击我进行折叠。第 2 部分
+            </a>
+            </h4>
+        </div>
+        <div id="collapse2" class="panel-collapse collapse" style="display: none;">
+        <div class="panel-body">
+            Nihil anim keffiyeh helvetica, craft beer labore wes anderson 
+            cred nesciunt sapiente ea proident. Ad vegan excepteur butcher 
+            vice lomo.
+        </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" data-static="3">
+                点击我进行展开，再次点击我进行折叠。第 3 部分
+                </a>
+            </h4>
+        </div>
+        <div id="collapse3" class="panel-collapse collapse" style="display: none;">
+            <div class="panel-body">
+                Nihil anim keffiyeh helvetica, craft beer labore wes anderson 
+                cred nesciunt sapiente ea proident. Ad vegan excepteur butcher 
+                vice lomo.
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    (function($){
+        var collapse = $('a[data-toggle="collapse"]')
+        collapse.bind('click', function(){
+            var collapse_id = $(this).attr('data-static')
+            $('.panel-collapse').hide()
+            $('#collapse'+collapse_id).toggle()
+        })
+    })(jQuery);
+</script>

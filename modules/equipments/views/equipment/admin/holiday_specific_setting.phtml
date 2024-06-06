@@ -1,0 +1,29 @@
+<?php
+?>
+<table class="form td_padding_2">
+	<tr>
+        <td class="right nowrap label middle">
+            <?php echo I18N::T('eq_sample', '仪器组织机构'); ?>
+        </td>
+        <td class="middle">
+			<?php
+	   			echo Widget::factory('application:multi_tag_selector', [
+	   					'autocomplete'=> URI::url('autocomplete/groups'),
+	   					'name'=>"specific_tags[$flexform_index]",
+	   					'value'=>@json_encode((array)$tags),
+	   			]);
+	   		?>
+		</td>
+	</tr>
+	<tr>
+        <td class="right nowrap middle"><?php echo I18N::T('equipments', '假期区间') ?></td>
+        <td class="middle">
+            <input type="text" class="text date middle" name="dtstart_special<?= $flexform_index?>"
+                   value="<?= $form['dtstart'] ?: ($dtstart ?? time()) ?>"
+                   q-date_format="$year/$month/$day $hour:$min:$sec" style="width: 112px;">~
+            <input type="text" class="text date middle" name="dtend_special<?= $flexform_index?>"
+                   value="<?= $form['dtend'] ?: ($dtend ?? time()) ?>"
+                   q-date_format="$year/$month/$day $hour:$min:$sec" style="width: 112px;">
+        </td>
+	</tr>
+</table>

@@ -1,0 +1,12 @@
+<?php $labs = Q("$user lab") ?>
+<?php 
+    if ($labs->total_count()):
+        foreach ($labs as $lab):
+?>
+        <a href="<?php echo H($lab->url()) ?>"><?php echo H($lab->name) ?></a> &nbsp;&nbsp;
+<?php 
+        endforeach;
+    else:
+	    echo '--';
+    endif;
+?>

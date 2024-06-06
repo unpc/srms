@@ -1,0 +1,6 @@
+<?php $root = Tag_Model::root('group');
+if ($lab->group->id && $lab->group->id !== $root->id)
+    echo H($lab->group->name);
+else
+    echo "--";
+    ?>

@@ -1,0 +1,28 @@
+<?php
+// NO.BUG#252(xiaopei.li@2010.12.18)
+$user = $equipment->current_user();
+if ($user->id) {
+	$user->render();
+}
+else {
+	echo T('--');
+}
+/*
+$now = time();
+if($equipment->status==EQ_Status_Model::IN_SERVICE){
+	if (!$equipment->is_using) {
+		echo T('--');
+	}
+	else {
+		$user = $equipment->current_user();
+		if ($user->id) $user->render();
+		else echo T('--');
+	}
+}
+else {
+	$user = $equipment->last_user();
+	if ($user->id) $user->render();
+	else echo T('--');
+}
+ */
+?>

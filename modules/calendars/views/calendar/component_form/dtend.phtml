@@ -1,0 +1,10 @@
+	<td class="label left nowrap">
+	<div class="title">	
+	<?php echo $properties['label'] ?>
+	<?php $error=($form->errors[H($name)][0]);?>
+	<?php echo V('form_filter',['error'=>$error]);?>
+</div>
+	<input id="<?php echo H($name) ?>" name="<?php echo H($name) ?>" type="text"
+	 class="date text small_search_text" value="<?php echo date('Y-m-d H:i:s',$component->dtend) ?: date('Y-m-d H:i:s',$properties['default_value']); ?>" /></td>
+
+   

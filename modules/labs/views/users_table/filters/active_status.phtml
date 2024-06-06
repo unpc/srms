@@ -1,0 +1,2 @@
+<?php
+echo Form::dropdown('active_status', ['0' => '全部','1' => '目前成员','2' => '未激活成员'], $active_status ? : (isset($form['active_status']) ? : 0), 'class="dropdown"'); ?>

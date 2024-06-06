@@ -1,0 +1,19 @@
+<?php
+	$items = [];
+	foreach ($equipments as $k => $equipment) {
+		$items[] = URI::anchor($equipment->url(), $equipment->name, 'class="blue"');
+	}
+?>
+<div class="padding_1">
+	<h3 class="center"><?= H("特别提醒") ?></h3>
+	<div class="hr_1">&#160;</div>
+	<div class="lmargin_2 left">
+		<strong><?= T("您所负责的仪器%equipments已经超过24小时没有关机, 请关注仪器使用情况!", [
+			'%equipments' => join(', ', $items)
+		]) ?></strong>
+	</div>
+	<div class="hr_2">&#160;</div>
+	<div class="lmargin_2 left">
+		<a href="#" class="blue" q-object="time_check_close" q-event="click" q-static="<?= H(['eids' => $equipments->to_assoc('id', 'id')])?>" q-src="<?= _U('!equipments/records') ?>"><?= T('知道了')?></a>
+	</div>
+</div>

@@ -1,0 +1,148 @@
+<div class="hr_1">&#160;</div>
+<div class="padding_1 approval_edit">
+	<form class="" action="<?= URI::url('')?>" method="POST" autocomplete="off" >
+		<div class="perms_title padding_1">
+			<img class="middle" src="<?php echo H($lab->icon_url('32')) ?>" />&#160;&#160;
+			<span class="middle" style="font-weight:bold;font-size:14px;"><?= I18N::T('eq_approval', '审核设置')?></span>
+		</div>
+		<?= V('form_error', ['form' => $form]); ?>
+		<?php $no_error = !$form->no_error === FALSE; ?>
+		<div class="padding_2 form">
+			<?= 
+				Form::checkbox('total_select',  0, I18N::T('eq_approval', '全选'), 'class="middle checkbox"', 'class="middle"');
+			?>
+			&#160;
+			<?php
+                $ss = EQ_Quota_Model::$TYPES;
+                foreach ($ss as &$s){
+                    $s = I18N::T('eq_approval',$s);
+                }
+				echo Form::dropdown('total_approval', [-1 => '--'] + $ss, -1,'class="middle monitor checkbox"')
+			?>
+			<span class="hidden toggle:total_approval show_on:1">
+				<input class="text num right" name="approval_value" size="8" value="" q-hint="<?= I18N::T('eq_approval', '每次额度')?>" />&#160;
+				<?= I18N::T('eq_approval', '元/次') ?>
+			</span>
+		</div>
+		<div class="hr_1">&#160;</div>
+		<div class="form padding_1">
+			<table class="form flexible">
+				<tbody>
+					<?php foreach ($users as $user): ?>
+						<tr class="row">
+							<td style="padding:2px 6px;">
+								<?= 
+									Form::checkbox("select_user[{$user->id}]",  0, '', 'class="middle checkbox"', 'class="middle"');
+
+								?>
+							</td>
+							<td class="nowrap" style="padding:6px;"><?= $user->icon('32', 'style="display:block"') ?></td>
+							<td class="nowrap" style="padding:2px 6px;">
+								<a href="<?php echo H($user->url() ) ?>">
+									<strong class="name"><?php echo H($user->name) ?></strong>
+								</a>
+							</td>
+							<td class="nowrap" style="padding:2px 16px;">
+								<?php 
+									$check_name = "user_approval[{$user->id}]";
+									$check_value = "user_value[{$user->id}]"; 
+									$quota = O('eq_quota', ['user'=>$user]);
+								?>
+								<?= 
+									Form::dropdown($check_name, $ss, $no_error ? (int)$quota->type : $form['user_approval'][$user->id], 'class="middle monitor checkbox"')
+								?>
+							</td>
+							<td  class="flexible" style="padding:2px 6px;">
+								<span class="hidden toggle:<?= $check_name ?> show_on:1">
+									<input class="text right" name="<?= $check_value ?>" size="8" value="<?= $no_error ? (int)$quota->value : (int)$form['user_value'][$user->id] ?>" q-hint="<?= I18N::T('eq_approval', '每次额度')?>" />&#160;
+									<?= I18N::T('eq_approval', '元/次') ?>
+								</span>
+							</td>
+						</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+			<?= $pagination; ?>
+		</div>
+		<div class="hr_1">&#160;</div>
+		<div class="form padding_2">
+			<input type="submit" class="button font-button-save" name="submit" value="<?= I18N::T('eq_approval', '更新')?>" />
+		</div>
+	</form>
+	<div class="padding_2">
+		<table>
+			<tbody>
+                <tr>
+                    <td class="description"><?= I18N::T('eq_approval', '备注:')?>&#160;&#160;&#160;&#160;</td>
+                    <td class="middle description">
+                    	<?= I18N::T('eq_approval', '1、额度为"0"则这些学生需要申请预约凭证进行仪器预约;')?>
+                    </td>
+                </tr>
+                <tr>
+                	<td></td>
+                    <td class="middle description">
+                    	<?= I18N::T('eq_approval', '2、额度为非"0"则全部学生在单次预计价格不超过预约额度情况下, 可以直接预约仪器, 在单次预计价格超过预约额度情况下需要申请预约凭证进行仪器预约. ')?>
+                    </td>
+                </tr>
+			</tbody>
+		</table>
+	</div>
+	<script>
+	jQuery(function($){
+		var $container = $(".approval_edit")
+			, $total_select = $("[name='total_select']")
+			, $selectors = $("[name^='select_user']")
+			, $total_approval = $("[name='total_approval']")
+			, $approval_value = $("[name='approval_value']")
+			, totalApprovalValue = $total_approval.val()
+
+		$total_select.bind('click', function(e){
+			var me = $(this)
+			if ( me.is(':checked') ) {
+				$selectors.each(function(){ this.checked = true })
+			}
+			else {
+				$selectors.each(function(){ this.checked = false })
+			}
+		})
+
+		$total_approval.bind('change', function(e){
+			var me = $(this)
+				, value = me.val()
+			if (value != totalApprovalValue) {
+				if (value != -1) {
+					$("select[name^='user_approval']", $container).each(function(){
+						var me = $(this)
+						if ($("[name^='select_user']", me.parents('tr:eq(0)')).is(':checked')) {
+							if (me.val() != value) {
+								me.find("option[selected]").removeAttr('selected')
+								me.find("option[value="+value+"]").attr('selected', 'selected')
+								me.change()
+
+								$(".dropdown_text", me.next('.dropdown_container')).html(
+									$("option[selected]", me).html()
+								)
+
+								$("[name^='user_value']", me.parents('tr:eq(0)')).val('')
+							}
+						}
+					})
+				}
+				totalApprovalValue = value
+			}
+
+		})
+
+		$approval_value.bind('change', function(e){
+			var me = $(this)
+				, value = me.val()
+			$("input[name^='user_value']", $container).each(function(e){
+				var me = $(this)
+				if ($("[name^='select_user']", me.parents('tr:eq(0)')).is(':checked')) {
+					me.val(value)
+				}
+			})
+		})
+	})
+	</script>
+</div>

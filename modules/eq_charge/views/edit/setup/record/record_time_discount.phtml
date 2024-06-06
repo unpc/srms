@@ -1,0 +1,207 @@
+<?php
+$charge_setting = EQ_Charge::get_charge_setting($equipment);
+$record_setting = $charge_setting['record'] ?: $charge_default_setting;
+$tag_discount = $record_setting['tag_discount'];
+$unit_price_title = I18N::T('eq_charge', '正常收费标准/小时');
+$disabled = L('ME')->is_allowed_to('修改计费设置', $equipment) ? '' : 'disabled="disabled"';
+$readonly = L('ME')->is_allowed_to('修改计费设置', $equipment) ? '' : '_readonly';
+?>
+<script>
+    <?php if(isset($record_setting['tag_discount'])):?>
+    var tagdiscount = JSON.parse('<?php echo json_encode($tag_discount);?>');
+    <?php else :?>
+    var tagdiscount = {};
+    <?php endif;?>
+</script>
+<form method="post" autocomplete="off" action="<?php echo H(URI::url()) ?>">
+    <div class="form padding_1">
+        <table class="form flexible">
+            <tbody>
+            <tr>
+                <td class="top icon tight">
+                    <div class="rpadding_2"><?php echo $equipment->icon('64'); ?></div>
+                </td>
+                <td class="top">
+                    <div>
+                        <table class="form">
+                            <tbody id="tag_discount">
+                            <tr>
+                                <td colspan="2"><h4><?php echo I18N::T('eq_charge', '计费参数设置') ?> (<?php echo $charge_title ?>)</h4></td>
+                            </tr>
+                            <tr>
+                                <td><div class="interval_20">&#160;</div></td>
+                            </tr>
+                            <tr>
+                                <td class="right nowrap middle rpadding_label"><?php echo $unit_price_title ?></td>
+                                <td class="top">
+                                    <input name="record_unit_price" class="text currency" size="10"
+                                           sign="<?php echo H(Config::get('lab.currency_sign')) ?>"
+                                           value="<?php echo H($record_setting['*']['unit_price']) ?>" <?php echo $disabled ?>/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><div class="interval_20">&#160;</div></td>
+                            </tr>
+                            <tr>
+                                <td class="right nowrap middle rpadding_label"><?php echo I18N::T('eq_charge', '每次使用的开机费用') ?></td>
+                                <td class="top">
+                                    <input name="record_minimum_fee" class="text currency" size="10"
+                                           sign="<?php echo H(Config::get('lab.currency_sign')) ?>"
+                                           value="<?php echo H($record_setting['*']['minimum_fee']) ?>" <?php echo $disabled ?>/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><div class="interval_30">&#160;</div></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><h4><?php echo I18N::T('eq_charge', '折扣参数设置(为用户标签设置折扣)') ?></h4></td>
+                            </tr>
+                            <tr>
+                                <td><div class="interval_20">&#160;</div></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <?php
+    unset($record_setting['*']);
+    unset($record_setting['tag_discount']);
+    //    var_dump($record_setting);
+    $tags = $record_setting;
+    if ($tags) foreach ($tags as $k => $tag) {
+        if ($tag) {
+            $key = serialize($tag);
+            if (!isset($specific[$key])) {
+                $specific[$key] = $tag;
+            }
+            $specific[$key]['special_tags'][] = $k;
+        }
+    }
+    $specific = (array)$specific;
+    if ($specific || !$disabled) :?>
+        <div class="form padding_2">
+            <?php
+            echo Widget::factory('flexform' . $readonly, [
+                'title' => I18N::T('eq_charge', '个别收费标准'),
+                'template_data' => ['disabled' => TRUE],
+                'existing_data' => array_values($specific),
+                'item_view' => 'eq_charge:edit/setup/record/record_time_discount_item' . $readonly,
+                'extra_vars' => [
+                    'equipment' => $equipment,
+                    'unit_price_title' => $unit_price_title,
+                ],
+            ]);
+            ?>
+        </div>
+    <?php endif; ?>
+    <div class="interval_60">&#160;</div>
+    <?php if (!$disabled): ?>
+        <div class="form float_right">
+            <input type="reset" name="cancel" class="font-button-default rmargin_16" value="<?php echo H(T('取消')) ?>" />
+            <input type="submit" name="submit" class="font-button-save" value="<?php echo H(T('保存修改')) ?>" />
+        </div>
+    <?php endif; ?>
+</form>
+<script>
+    function addItem(obj, data) {
+        var root = $(obj).parents('div.flexform_item')[0];
+        var index = $(root).children('input.indexid').val();
+        var template = mkItem(index);
+        $(obj).parent().parent().parent().children('.count_end').before(template);
+    }
+
+    function removeItem(obj, data) {
+        $(obj).parent().parent().remove();
+    }
+
+    function addDiscountItem(obj) {
+        var root = $(obj).parents('div.flexform_item')[0];
+        var index = $(root).children('input.indexid').val();
+        var template = mkDiscountItem(index);
+        $(obj).parent().parent().parent().children('.zone_end').before(template);
+    }
+
+    function removeDiscountItem(obj) {
+        $(obj).parent().parent().remove();
+    }
+
+    function mkItem(index, data) {
+        var template = '<tr>';
+        template += '<td class="top right nowrap"></td>';
+        template += '<td>';
+        template += '<input class="text currency inp" name="item_zone_start_time_count[' + index + '][]" value="0"/>小时<=单次累计使用机时<';
+        template += '<input class="text currency inp" name="item_zone_end_time_count[' + index + '][]' +
+            '' +
+            '" value="0"/>小时，';
+        template += '收费标准<input class="text currency inp" name="item_zone_discount[' + index + '][]" value="0"/>%';
+        template += '</td>';
+        template += '<td>';
+        template += '<a class="button button_delete deltime" onclick="removeItem(this);"><?php echo isset($this->add_button_text) ? $this->add_button_text : HT('删除'); ?></a>';
+        template += '</td>';
+        template += '</tr>';
+        template += '<tr><td><div class="interval_10">&#160;</div></td></tr>';
+        return template;
+    }
+
+    function mkDiscountItem(index, data) {
+        var template = '<tr>';
+        template += '<td class="top right nowrap"></td>';
+        template += '<td class="nowrap">'
+        <?php
+        $start = mktime(0, 0, 0);
+        $end = mktime(0, 0, 0);
+        ?>
+        template += '<input class="text date" date_type="time" name="time_zone[' + index + '][start][]" value="<?php echo H($start) ?>" q-date_format="<?php echo HT('$hour:$min')?>"/>（包含） - ';
+        template += '<input class="text date" date_type="time" name="time_zone[' + index + '][end][]" value="<?php echo H($end) ?>" q-date_format="<?php echo HT('$hour:$min')?>"/> ';
+        template += '收费标准<input class="text currency inp" name="time_zone_discount[' + index + '][]" value="0"/>%';
+        template += '</td>';
+        template += '<td>';
+        template += '<a class="button button_delete deltime" onclick="removeDiscountItem(this);"><?php echo isset($this->add_button_text) ? $this->add_button_text : HT('删除'); ?></a>';
+        template += '</td>';
+        template += '</tr>';
+        template += '<tr><td><div class="interval_10">&#160;</div></td></tr>';
+        return template;
+    }
+
+    function autocomplete_callback(obj) {
+        var tagname = $.trim($(obj).children('div.token').children().text());
+        var template = '<span data-desc="' + tagname + '"><strong>' + tagname + '</strong>: <input type="text" value=""/>%</span>';
+        var index = $(obj);
+        tagdiscount[tagname] = 100;
+        mkhtml();
+    }
+
+    function autoremove_callback(obj) {
+        var tagname = $.trim($(obj).parent().children().eq(0).text());
+        delete tagdiscount[tagname];
+        mkhtml();
+    }
+
+    function mkhtml() {
+        var template = '';
+        Object.keys(tagdiscount).forEach(function (key) {
+            template += '<tr name="tagdiscount_tr">';
+            template += '<td class="right nowrap middle rpadding_label">'+key+'</td>';
+            template += '<td class="top">';
+            template += '<input onkeyup="mkdata(this,\''+key+'\')" name="tag_discount['+key+']" class="text currency" size="10"';
+            template += 'value="'+tagdiscount[key]+'"';
+            template += '<?php echo $disabled ?>/> %';
+            template += '</td></tr>';
+            template += '<tr name="tagdiscount_tr"><td class="interval_20"></td></tr>'
+        });
+        $('tr[name=tagdiscount_tr]').remove();
+        $('#tag_discount').after(template);
+    }
+
+    function mkdata(obj,key) {
+        tagdiscount[key] = $(obj).val();
+    }
+
+    mkhtml();
+
+</script>

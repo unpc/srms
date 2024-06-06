@@ -1,0 +1,24 @@
+<?php
+
+/* 
+ * 因为预约的地方都增加了preview上显示的时间，所以该处可以去除，以避免遮住preview
+ * BUG #1579::仪器预约页面预约块的preview和仪器预约块的title出现重叠现象。导致部分信息显示不全。
+ * 	$title = Date::range($object->dtstart, $object->dtend);
+ * 
+ * 
+ */
+$content = Event::trigger('calendar.component_content.render', $object, $current_calendar, $mode);
+
+$class = '';
+$is_repeat = (bool) $object->cal_rrule->id;
+if ($is_repeat) $class .= ' repeat_event';
+?>
+<div class="<?php echo H($class) ?>">
+<span>
+	<?php echo Event::trigger('calendar.component_icon.present', $object); ?>
+</span>
+<span></span>
+<?php echo $content ?: H($object->name) ?>
+<p style="font-size: 14px;font-family: PingFangSC-Regular, PingFang SC;font-weight: 400;color: #FFFFFF;line-height: 20px;padding: 6px;">
+    <?php echo H($object->description, TRUE)?></p>
+</div>

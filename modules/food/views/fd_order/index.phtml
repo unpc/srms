@@ -1,0 +1,121 @@
+<?php $me = L('ME')?>
+<div class="hr_1">&#160;</div>
+<div>
+	<?php if (count($panel_buttons)): ?>
+		<div class="panel padding_1 clearfix">
+			<?php echo Widget::factory('links', ['links'=>$panel_buttons, 'separator'=>' ']); ?>
+			<span class="float_right">
+			   	<?php
+				echo I18N::T('food', '共计 %num 条记录, 花费 %expense', ['%num'=>$orders->total_count(), '%expense'=>Number::currency($total_expense)]);
+			   	?>
+			</span>
+		</div>
+	<?php endif; ?>
+	<?php echo $pagination;?>
+	<?php
+		$table = Widget::factory('table');
+
+		$table->name = 'order';
+
+		if ($form['dtstart_check'] && $form['dtend_check']) {
+			if ($form['dtstart'] == $form['dtend']) {
+				$form['time'] = H(date('Y/m/d', $form['dtstart']));
+			}
+			else {
+				$form['time'] = H(date('Y/m/d',$form['dtstart'])).'~'.H(date('Y/m/d',$form['dtend']));
+			}
+		}
+		elseif ($form['dtstart_check']) {
+			$form['time'] = H(date('Y/m/d',$form['dtstart']));
+		}
+		elseif ($form['dtend_check']) {
+			$form['time'] = H(date('Y/m/d',$form['dtend']));
+		}
+
+		$table->add_columns([
+			'@'=>[
+				'nowrap'=>TRUE,
+				'align'=>'center',
+			],
+			'user'=>[
+				'title'=>I18N::T('food', '姓名'),
+				'filter'=>[
+					'form'=> V('food:order_table/filters/user',['form'=>$form]),
+					'value'=> $form['user'] ? $form['user'] : NULL
+				],
+				'nowrap'=>TRUE,
+				'extra_class'=>'tight',
+			],
+			'ctime'=>[
+				'title'=>I18N::T('food', '预订时间'),
+				'filter'=>[
+					'form'=> V('food:order_table/filters/ctime',[
+									'dtstart_check'=>$form['dtstart_check'],
+									'dtstart'=>$form['dtstart'],
+									'dtend_check'=>$form['dtend_check'],
+									'dtend'=>$form['dtend']
+						]),
+					'value'=> $form['time'] ? H($form['time']) : NULL
+				],
+				'align'=>'center',
+				'nowrap'=>TRUE
+			],
+			'foods'=>[
+				'title'=>I18N::T('food', '菜式名称'),
+				'align'=>'left',
+				'nowrap'=>TRUE
+			],
+			'price'=>[
+				'title'=>I18N::T('food', '菜式价格'),
+				'align'=>'left',
+				'nowrap'=>TRUE
+			],
+			'remarks'=>[
+				'title'=>I18N::T('food', '备注'),
+				'align'=>'left',
+				'nowrap'=>TRUE
+			],
+			'rest'=>[
+				'nowrap'=>TRUE,
+				'align'=>'right',
+			],
+		]);
+
+		$table->empty_message = I18N::T('food', '没有找到已经预订的信息');
+
+
+
+		if (count($orders) > 0) {
+			//获取最后一条订餐记录的订餐时间的之后一天的时间，防止出现多天不订餐导致出现多个特殊行显示问题
+			$time = mktime(0, 0, 0, date('m', $time), date('d', $time), date('Y',$time)) + 86400;
+			foreach($orders as $order) {
+
+				if ($order->ctime < $time) {
+					$time = mktime(0, 0, 0, date('m', $order->ctime), date('d', $order->ctime), date('Y', $order->ctime));
+					$table->add_row([
+								'#special_view'=>V('food:order_table/data/special', ['time'=>$time]),
+								'#extra_class'=>'date_header'
+								]);
+				}
+
+				$links = $order->links();
+				$table->add_row([
+					'@'=>[
+						'view'=>$order->user->icon('32', 'style="display:block"'),
+						'extra'=>'style="padding:4px" align="right"'
+					],
+					'user'=>V('order_table/data/user', ['order'=>$order]),
+					'ctime'=>V('order_table/data/ctime', ['order'=>$order]),
+					'foods'=>V('order_table/data/foods', ['order'=>$order]),
+					'price'=>($order->price != 0) ? Number::currency($order->price) : V('order_table/data/price', ['order'=>$order]),
+					'remarks'=>I18N::T('food', H($order->remarks)),
+					'rest'=>Widget::factory('application:links', ['links'=>$links])
+				]);
+
+
+			}
+		}
+
+		echo $table;
+?>
+</div>

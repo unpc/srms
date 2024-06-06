@@ -1,0 +1,16 @@
+<tr>
+    <td class="label right top nowrap lpadding_2">
+    <?php if($properties['field']['required']) : ?>*<?php endif; ?>
+    <?php echo I18N::HT('eq_reserv', $properties['label'])?>
+    </td>
+    <td class="nowrap">
+        <?php $field = $properties['field'];?>
+        <?php 
+            $extra_value = O('extra_value', ['object'=> $component]); 
+            $values = $extra_value->values;
+            $vname = ltrim($name, 'extra_');
+            $default_value = $component->id ? $values[$vname] : '';
+        ?>
+        <input name="<?php echo H($name) ?>" type="text" class="text number" size="6" value="<?php echo $default_value; ?>" q-number_default_value="<?php echo $default_value; ?>" />
+    </td>
+</tr>

@@ -1,0 +1,2 @@
+<input class="text number middle" name="time" size="10" value="<?php echo H($form['time']) ?>" />&#160;
+<?php echo Form::dropdown('time_format', Date::units('ihd'), H($form['time_format'] ?: 'h'), 'class="middle"');?>

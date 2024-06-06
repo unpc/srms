@@ -1,0 +1,422 @@
+<?php
+/**
+* search_box.phtml
+* 作用：搜索框封装视图
+*
+* @author: lhb  hongbo.liu@geneegroup.com
+* @time: 2018-09-12
+* Required params: $columns, $form_url, $search_name, [$is_offset]
+**/
+
+$step = $step ?? 4;
+$trh = $step == 4 ? 30 : 40;
+$mgr = $step == 4 ? 10 : 50;
+
+if ($this->force_show_search_filter) {
+	$show_search_filter = $advanced_search = true;
+}
+    $order = [];
+	$weight = [];
+    $i = $search_count = $advanced_search_count = 0;
+    $columns = (array) $columns;
+
+	foreach($columns as $k=>$v) {
+		$order[$k] = $i++;
+		$weight[$k] = $columns[$k]['weight'];
+
+        // 搜索条目数量
+        if ($v['filter']['form']) $search_count ++;
+
+        if (!in_array($k, $top_input_arr) && (string) $v['filter']['value']) {
+            $show_search_filter = true;
+            if((string) $v['filter']['value'] == '--') $show_search_filter = false;//emmmmmm,没有好的方式
+        }
+
+        // 高级搜索区域搜索数量
+        if ($v['filter']['form'] && !in_array($k, $top_input_arr)) {
+            $advanced_search_count ++;
+            if ($k == 'balance') {//可用余额表单两个输入框
+                $advanced_search_count ++;
+            }
+        }
+
+        // 是否有高级搜索区域
+        if ( empty($advanced_search) && !in_array($k, $top_input_arr) && $v['title'] && !$v['suppressible'] && $v['filter']['form'])  {
+            $advanced_search = true;
+        }
+    }
+    
+	uksort($columns, function($ak, $bk) use($weight, $order) {
+		$aw = $weight[$ak];
+		$bw = $weight[$bk];
+
+		if ($aw != $bw) {
+			return $aw - $bw;
+		}
+		return $order[$ak] - $order[$bk];
+	});
+
+	$form_url = $form_url ?: URI::url('');
+
+    $top_input_filter_arr = [];
+?>
+
+<script type="text/javascript">
+// 获取窗口宽度
+if (<?= Module::is_installed('uno')  ? 1 : 0 ?>) {
+    // UNO返回的就是当前窗口的宽度
+	winMinWidth = Math.max(document.body.clientWidth, 1280);
+} else {
+	winMinWidth = Math.max(document.body.clientWidth, 1280) - 292;
+}
+document.documentElement.style.setProperty('--window-width', winMinWidth + 'px'); //将宽度传递给CSS变量
+</script>
+
+
+<?php if (!empty($columns)): ?>
+<div class="search_module <?php if (isset($is_offset) && $is_offset): ?>search_module_offset<?php endif; ?>">
+    <?php if ($is_ajax): ?>
+    <form id="search_form" style="min-width: 525px" q-object="<?= $q_object?>" q-static="<?= $q_static ?>"
+        q-src="<?= $q_src?>" q-event="<?= $q_event?>" autocomplete="off">
+        <?php else: ?>
+        <form id="search_form" method="post" style="min-width: 525px" action="<?php echo H($form_url) ?>">
+            <?php endif; ?>
+            <?php if (!$this->force_show_search_filter):?>
+            <div id="new_search" class="float_left">
+                <!-- 顶部搜索区域 -->
+                <?php
+			foreach($top_input_arr as $key):
+				if($columns[$key]['filter']):
+                $top_input_filter_arr[] = $key;
+                $search_count --;
+				?>
+                <div class="default_search float_left" style="text-align: right;padding-right: 20px;">
+                    <span class="label" style="color:#4D4D4D;line-height: 30px;"><?= $columns[$key]['title'];?></span>
+                </div>
+                <div class="default_search float_left">
+                    <?php
+					$filter = $columns[$key]['filter'];
+					$form=$filter['form'];
+					$vars=$form->vars;
+					$tip = $vars['tip'] ?: '请输入' . $columns[$key]['title'];
+					if (isset($columns[$key]['input_type']) && $columns[$key]['input_type'] != 'text'){
+                        if ($columns[$key]['filter']) {
+                            echo $columns[$key]['filter']['form'];
+                        }
+                    }else{
+					?>
+                    <input class="new_search_input" type="text"
+                        name="<?php echo $columns[$key]['filter']['field'] ? $columns[$key]['filter']['field'] : $key; ?>"
+                        placeholder="<?php echo H($tip);?>"
+                        value="<?php echo H($vars[$key] ?: $vars['form'][$key] ?: $filter['value']); ?>" />
+                    <?php } ?>
+                </div>
+                <?php endif; ?>
+                <?php endforeach; ?>
+                <!--end-->
+                <!--高级搜索区域-->
+
+                <?php if ($advanced_search) : ?>
+                <div class="filter_search float_left">
+                    <span><?= $show_search_filter ? '关闭高级搜索' : '高级搜索'; ?></span><span
+                        class="angle icon-<?= $show_search_filter ? 'up' : 'down'; ?> icon-lg"></span>
+                </div>
+                <?php endif; ?>
+            </div>
+            <div class="clearfix"></div>
+            <?php endif;?>
+            <div id="<?php echo H($uniqid) ?>" class="left filter_panel"
+                <?php if ($show_search_filter): ?>style="display: block;" <?php endif;?>>
+                <?php if($advanced_search && !$this->force_show_search_filter): ?><div class="interval_16"></div>
+                <?php endif; ?>
+                <div class="form">
+
+                    <table id="last_search_table_0">
+                        <?php $i = 0; ?>
+                        <?php foreach ((array) $columns as $key => $column):
+				 if (in_array($key, $top_input_arr) || !$column['title'] ||
+				 (!$column['suppressible'] && !$column['filter']['form']) ) continue;?>
+                        <?php if ($i % $step == 0): ?><tr><?php endif; ?>
+                            <td height="<?= $trh?>" style="padding-right: 20px;" class="label nowrap top right">
+                                <?php 
+                    if($columns[$key]['filter'])
+
+					$str_num = max(0, strlen($columns[$top_input_filter_arr[$i%4]]['title']) - strlen($column['title']));
+					echo '<span style="visibility: hidden;">'.str_repeat("&",$str_num).'</span>'; 
+					echo '<span class="label">'.$column['title'].'</span>';
+					?>
+                            </td>
+                            <!-- width="200"  -->
+                            <td height="<?= $trh?>"
+                                class=" <?= isset($column['filter']['nowrap']) ? ($column['filter']['nowrap'] ? 'nowrap' : '') : 'nowrap'?> top table_key_<?php echo $key?>">
+                                <?php if ($column['filter']) echo $column['filter']['form']; ?>
+                            </td>
+                            <?php if ($i % $step != 3): ?><td class="padding_td"></td><?php endif; ?>
+                            <?php if ($i % $step == 3 && $i < $search_count-1): ?>
+                        </tr>
+                        <tr>
+                            <td colspan="11">
+                                <div class="interval_16"></div>
+                            </td>
+                        </tr><?php endif; ?>
+                        <?php $i++; ?>
+                        <?php endforeach; ?>
+                        <?php unset($i); ?>
+                    </table>
+
+                    <?php if ($filter_footer): ?>
+                    <div class="hr_1">&#160;</div>
+                    <hr />
+                    <div class="hr_1">&#160;</div>
+                    <?php foreach ($filter_footer as $ff): ?>
+                    <?php if ($ff['title']) echo '<h4>'.$ff['title'].'</h4>'; ?>
+                    <?php echo $ff['form']; ?>
+                    <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </form>
+</div>
+<div class="interval_20"></div>
+<?php endif; ?>
+<?php if(!empty($panel_buttons) || $extra_view): ?>
+<div class="panel_buttons <?php echo $panel_buttons_float ?: 'float_left';?>">
+    <?= V('application:panel_buttons', ['panel_buttons' => $panel_buttons]); ?>
+</div>
+<?= $extra_view ?>
+<div class="interval_36"></div>
+<div class="interval_10"></div>
+<?php endif; ?>
+<?php if(count($top_input_arr) == 0 ): ?>
+<div class="interval_10"></div>
+<?php endif; ?>
+<?php
+//避免没有搜索项，却出现搜索按钮
+if (empty($columns)) return;
+?>
+<script type="text/javascript">
+jQuery(function($) {
+    init();
+
+    <?php if (!$show_search_filter) : ?>
+    TopSubmit();
+    <?php else: ?>
+    DownSubmit();
+    <?php endif;?>
+
+    var $filter_search = $('.filter_search');
+    var $filter_panel = $('.filter_panel');
+    var $angle = $('.angle');
+    var $text = $('.filter_search span:first-child');
+    $filter_search.bind('click', function() {
+        $filter_panel.slideToggle();
+        if ($angle.hasClass('icon-down')) {
+            $angle.removeClass('icon-down').addClass('icon-up');
+            $filter_search.css("margin-left", '20px');
+            $text.text('关闭高级搜索');
+            DownSubmit();
+        } else {
+            $angle.removeClass('icon-up').addClass('icon-down');
+            $filter_search.css("margin-left", '0');
+            $text.text('高级搜索');
+            TopSubmit();
+        }
+    });
+
+    $('#new_search_cancel').click(function() {
+
+        $("#search_form").find('input[type=text],select,input[type=hidden]').each(function() {
+            $(this).val('');
+            $(this).empty();
+        });
+
+
+        $('#search_form').submit();
+    });
+
+    $('body').on('click', 'input[type="reset"]', function() {
+        var $reset = $(this);
+        var $form = $('form#search_form');
+        $('form#search_form input[type="text"]').attr('value', '');
+        $('form#search_form .text').attr('value', '');
+
+        // $('form#search_form select option:first').attr('selected', 'selected');
+        // tag_selector
+        $tag_selector = $('form#search_form div.tag_selector');
+        $tag_selector.each(function() {
+            var $this = $(this);
+            $this.find('.tag_selector_link').remove();
+            $this.find('input[type="hidden"]:not(input[name="root_id"])').val(0);
+        })
+
+        // select
+        $select = $('form#search_form select');
+        $select.each(function() {
+            var $this = $(this);
+            $this.find('option:selected').removeAttr('selected');
+            $this.find('option:selected').prop('selected', false);
+            $(this).parent().find('div.dropdown_text').html('');
+
+            // selectpicker
+            if ($this.hasClass('selectpicker')) {
+                $this.find('option').first().attr('selected', 'selected');
+                $this.find('option').first().prop('selected', true);
+            }
+            $('div.selectpicker_container').find('li.picker_item_active').removeClass(
+                'picker_item_active');
+            $(this).parent().find('div.picker_item_value').remove();
+        })
+
+        // autocomplete
+        $auto_complete = $('form#search_form input[class*="autocomplete"]');
+        $auto_complete.each(function() {
+            var $this = $(this);
+            $this.attr('value', '');
+            var $prev = $this.prev();
+            if ($prev.get(0).tagName == 'INPUT') {
+                $prev.attr('value', '');
+            }
+        })
+
+        // date
+        $date = $('form#search_form input[class*="date"]');
+        $date.each(function() {
+            var $this = $(this);
+            $this.attr('value', '');
+            var $next = $this.next();
+            if ($next.get(0).tagName == 'INPUT') {
+                $next.attr('value', '');
+            }
+        });
+    })
+});
+
+function init() {
+    let index = 0;
+    $('#new_search .default_search').each(function() {
+        let n = Math.floor(index / 2);
+        let d_w = $('.filter_panel table tr td').eq(index % 2).width();
+        if ($('.filter_panel table tr td').length > n * 3 + index % 2) {
+            d_w = $('.filter_panel table tr td').eq(n * 3 + index % 2).width();
+        }
+        d_w = Math.min(Math.max(d_w, '168'), 200);
+        if (index % 2) {
+            $(this).find('.new_search_input').css('width', d_w);
+            //$(this).css('margin-right', "20px");
+        } else {
+            $(this).css('width', "");
+        }
+        index++;
+    })
+}
+
+function TopSubmit() {
+    $('#new_search_submit').remove();
+    // if ($('.filter_search').length) {
+    //     $('.filter_search').before('<div class="float_left" id="new_search_submit"><input class="font-button-save" type="submit" name="search" value="搜索"></div>');
+    // }else {
+    $('#new_search').append(
+        '<div class="float_right" id="new_search_submit"><input class="font-button-save" type="submit" name="search" value="<?= I18N::T('application', '搜索') ?>"></div>'
+        );
+    // }
+
+    let index = 0;
+    $('#new_search .default_search').each(function() {
+        if (index % 2) {
+            $(this).css('width', "");
+            $(this).css('margin-right', "20px");
+            // $(this).find('.new_search_input').css('width', "140px");
+        } else {
+            $(this).css('width', "");
+        }
+        index++;
+    })
+}
+
+function DownSubmit() {
+    var o = document.getElementById("layout_body");
+    var w_a = o.clientWidth || o.offsetWidth;
+
+    var o = document.getElementById("last_search_table_0");
+    var w_s = o.clientWidth || o.offsetWidth;
+    if (<?= Module::is_installed('uno')  ? 1 : 0 ?>) {
+		var w = w_a - w_s - 65;
+	} else {
+		var w = w_a - w_s - 270;
+	}
+    $('#new_search_submit').remove();
+    if ($('.filter_panel table tr:last-child td').length == 11) {
+        $('.padding_td').each(function() {
+            $(this).css('width', '<?= $mgr?>%');
+        });
+        if ($('.filter_panel .interval_60').length == 0) {
+            $('.filter_panel').append('<div class="interval_60"></div>')
+        }
+        $('.filter_panel table').after(
+            '<div id="new_search_submit"><input type="reset" name="cancel" class="font-button-default tdmargin_2 float_right lmargin_2" value="清空"><input class="font-button-save float_right tdmargin_2" type="submit" name="search" value="<?= I18N::T('application', '搜索') ?>"></div>'
+            );
+    } else {
+        var cols = 11 - $('.filter_panel table tr:last-child td').length;
+
+        if ($('.filter_panel table tr').length == 1) {
+            if ((w - 150) > 5) {
+                var padding_td_w = (w - 150) / 4;
+                $('.padding_td').each(function(i, o) {
+                    if (i == $('.padding_td').length - 1) {
+                        $(this).css('width', padding_td_w * (4 - i) + 'px');
+                    } else {
+                        $(this).css('width', padding_td_w + 'px');
+                    }
+
+                });
+            }
+            $('.filter_panel table tr:last-child td:last-child').after(
+                '<td id="new_search_submit" class="new_search_submit" colspan="' + cols + '">' +
+                '<div style="text-align: right;width:' + 150 + 'px;" class="float_right">' +
+                '<input class="font-button-save" type="submit" name="search" value="<?= I18N::T('application', '搜索') ?>">' +
+                '<input type="reset" name="cancel" class="font-button-default lmargin_2" value="清空">' +
+                '</div>' +
+                '</td>');
+        } else {
+            $('.padding_td').each(function() {
+                $(this).css('width', '<?= $mgr?>%');
+            });
+            $('.filter_panel table tr:last-child td:last-child').after(
+                '<td id="new_search_submit" class="new_search_submit" colspan="' + cols + '">' +
+                '<div class="float_right">' +
+                '<input class="font-button-save" type="submit" name="search" value="<?= I18N::T('application', '搜索') ?>">' +
+                '<input type="reset" name="cancel" class="font-button-default lmargin_2" value="清空">' +
+                '</div>' +
+                '</td>');
+        }
+    }
+
+    let index = 0;
+    $('#new_search .default_search').each(function() {
+        let n = Math.floor(index / 2);
+        let d_w = $('.filter_panel table tr td').eq(index % 2).width();
+        if ($('.filter_panel table tr td').length > n * 3 + index % 2) {
+            d_w = $('.filter_panel table tr td').eq(n * 3 + index % 2).width();
+        }
+        if (index % 2) {
+            $(this).find('.new_search_input').css('width', d_w);
+            if ($('.filter_panel table tr td').length > n * 3 + 2 && $('.filter_panel table tr td').length !==
+                n * 3 + 2 + 2) {
+                $(this).css('width', d_w + $('.filter_panel table tr td').eq(n * 3 + 2).width());
+                $(this).css('margin-right', "");
+            } else {
+                $(this).css('width', d_w);
+                $(this).css('margin-right', "20px");
+            }
+        } else {
+            if ($('.filter_panel table tr td').length == (n - 1) * 3 + 2 + 2) {
+                $(this).css('width', "");
+            } else {
+                $(this).css('width', d_w);
+            }
+        }
+        index++;
+    })
+
+}
+</script>

@@ -1,0 +1,49 @@
+<div class="form padding_3" >
+	<form method="post" q-object="add_stock" q-event="submit" autocomplete="off">
+	<?php 
+		echo V('form_error', ['form'=>$form]);
+		$to_new = $form['add_to_stock_mode'];
+		if ($to_new != 'old') $to_new = 'new';
+	?>
+		<div>
+			<?php echo Form::radio('add_to_stock_mode', 'new', $to_new, I18N::T('orders', '新建存货'), 'class="middle monitor"'); ?>
+			<table class="form">
+				<tr>
+					<td class="label right nowrap middle"><?php echo I18N::T('orders', '条码')?></td>
+					<td class="middle"> <input name="barcode" class="text toggle_status:add_to_stock_mode enable_on:new" size="20" value="<?php echo H($no_error?$stock->barcode:$form['barcode']); ?>" /> </td>
+				</tr>
+				<tr>
+					<td class="label right nowrap middle"><?php echo I18N::T('orders', '存放位置')?></td>
+					<td class="middle"><input name="location" class="text toggle_status:add_to_stock_mode enable_on:new" size="40" value="<?php echo H($no_error?$stock->location:$form['location']); ?>" /></td>
+				</tr>
+				<tr>
+					<td class="label right nowrap middle"><?php echo I18N::T('orders', '库存状态')?></td>
+					<td class="middle">
+	                        <?php echo Form::dropdown('status', I18N::T('orders', Stock_Model::$stock_status), ($no_error?$stock->status:$form['status']) ? : Stock_Model::UNKNOWN, 'class="toggle_status:add_to_stock_mode enable_on:new disable_on:on "'); ?>
+	                        &nbsp;&nbsp;
+	                        <?php echo Form::checkbox('auto_update_status', $stock->auto_update_status, I18N::T('orders', '根据存量自动更新状态'), 'class="middle monitor toggle_status:add_to_stock_mode enable_on:new"')?>
+					</td>
+				</tr>
+				<tr>
+					<td class="label right nowrap top"><?php echo I18N::T('orders', '备注')?></td>
+					<td class="top"><textarea name="note" class="text autogrow toggle_status:add_to_stock_mode enable_on:new" cols="40"><?php 
+					echo H($no_error?$stock->note:$form['note']); ?></textarea></td>
+				</tr>
+			</table>
+		</div>
+		<div>
+			<?php echo Form::radio('add_to_stock_mode', 'old', $to_new, I18N::T('orders', '加入已有存货'), 'class="middle monitor"'); ?>
+			<div class="lpadding_3 toggle_status:add_to_stock_mode enable_on:old">
+				<?php 
+					echo Widget::factory('inventory:stock_selector', [
+						'name' => 'stock',
+						'autocomplete' => URI::url('!inventory/autocomplete/stock'),
+						'size' => 55
+					]);
+				?>
+			</div>
+		</div>
+		<div class="hr_1">&#160;</div>
+		<input class="button button_add" name="submit" type="submit" value="<?php echo H(I18N::T('orders', '保存')) ?>" />
+	</form>
+</div>

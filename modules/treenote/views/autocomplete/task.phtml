@@ -1,0 +1,3 @@
+<span class="tag" style="width:48px"><?php echo Number::fill($task->id, 6); ?></span>
+<span class="label"><?php echo H($task->title); ?></span>
+<span>(<?php echo H($task->user->name); ?> @ <?php echo H(Date::format($task->mtime, 'Y/m/d'));?>)</span>

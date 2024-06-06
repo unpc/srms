@@ -1,0 +1,15 @@
+<?php
+$uniqid = 'gappersel_' . uniqid();
+$size = $this->size ?: '';
+$autocomplete = $this->autocomplete ?: URI::url('!gateway/autocomplete/user');
+$lp = $this->lpadding;
+$showStr = $selected_gapper_user['gapper_name'] . (!empty($selected_gapper_user['gapper_ref_no']) ? "({$selected_gapper_user['gapper_ref_no']})" : '');
+?>
+<input id="<?php echo $uniqid ?>_gapper" name="<?php echo H($this->name) ?>" type="hidden"
+       value='<?= json_encode($selected_gapper_user) ?>'/>
+<input id="<?php echo $uniqid ?>_gapper_name" placeholder="<?php echo I18N::T('gappers', '请输入学工号') ?>"
+       class="text middle <?php echo $lp ? 'lpadding_30' : '' ?> select_on_focus autocomplete:<?php echo H($autocomplete) ?> autocomplete_alt:#<?php echo $uniqid ?>_gapper"
+       size="<?php
+       echo $size ?>"
+       value="<?php echo $selected_gapper_user['gapper_id'] ? $showStr : '' ?>"
+    <?php echo $extra ?> />

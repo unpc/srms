@@ -1,0 +1,4 @@
+<?php
+$status = 'status_'.($record->is_locked() ? 'locked' : '');
+?>
+<span class="status_icon <?php echo $status; ?>">&#160;</span>

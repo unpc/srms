@@ -1,0 +1,160 @@
+<!-- <div class="panel clearfix">
+	<?php echo (string) Event::trigger('labs.index.panel'); ?>
+</div> -->
+
+<?php
+$me    = L('ME');
+$table = Widget::factory('table');
+
+$table->name     = 'labs_list';
+$table->sort_asc = $sort_asc;
+$table->sort_by  = $sort_by;
+
+$enable_show_creator = $me->is_allowed_to('查看建立者', 'lab') && !People::perm_in_uno();
+$enable_show_auditor = $me->is_allowed_to('查看审批者', 'lab') && !People::perm_in_uno();
+
+
+$show_fields = (array) Lab::get('labs_list_show_columns') ?: Config::get('labs.list_default_show_columns');
+$weight = 0;
+$searchFields = Config::get('lab.search_fields_no_follow_config');
+foreach ($show_fields as $key => $show_field) {
+    if (!$show_field['show']&&!in_array($key,$searchFields)) continue;
+    $weight += 10;
+    switch ($key) {
+        case 'lab_name':
+            $table->add_column($key, [
+                'title'    => I18N::T('labs', '名称'),
+                'sortable' => true,
+                'filter'   => [
+                    'form'  => V('labs:labs_table/filters/lab_name', ['value' => $form['lab_name']]),
+                    'value' => $form['lab_name'] ? H($form['lab_name']) : null,
+                ],
+                'nowrap'   => true,
+                'weight'   => $weight,
+                'invisible'=> !$show_field['show'],
+            ]);
+            break;
+        case 'group':
+            $table->add_column($key, [
+                'title'  => I18N::T('labs', '组织机构'),
+                'filter' => [
+                    'form'  => V('labs:labs_table/filters/group', [
+                        'name' => 'group_id',
+                        'tag'  => $group,
+                        'root' => $group_root,
+                    ]),
+                    'value' => $group->id ? H($group->name) : null,
+                    'field' => 'group_id',
+                ],
+                'nowrap' => true,
+                'weight' => $weight,
+                'invisible'=> !$show_field['show'],
+            ]);
+            break;
+        case 'description':
+            if (!People::perm_in_uno()) {
+                $table->add_column($key, [
+                    'title' => I18N::T('labs', '介绍'),
+                    'extra_class' => 'flexible',
+                    'weight' => $weight,
+                    'invisible'=> !$show_field['show'],
+                ]);
+            }
+            break;
+        case 'creator':
+            if ($enable_show_creator) {
+                $table->add_column($key, [
+                    'title' => I18N::T('labs', '建立者'),
+                    'filter' => [
+                        'form' => V('labs:labs_table/filters/creator', ['creator' => $form['creator'] ?: null]),
+                        'value' => $form['creator'] ? H($form['creator']) : null,
+                    ],
+                    'align' => 'center',
+                    'nowrap' => true,
+                    'weight' => $weight,
+                    'invisible'=> !$show_field['show'],
+                ]);
+            }
+            break;
+        case 'auditor':
+            if ($enable_show_auditor) {
+                $table->add_column($key, [
+                    'title' => I18N::T('labs', '审批者'),
+                    'filter' => [
+                        'form' => V('labs:labs_table/filters/auditor', ['auditor' => $form['auditor'] ?: null]),
+                        'value' => $form['auditor'] ? H($form['auditor']) : null,
+                    ],
+                    'align' => 'center',
+                    'nowrap' => true,
+                    'weight' => $weight,
+                    'invisible'=> !$show_field['show'],
+                ]);
+            }
+            break;
+        case 'ctime':
+            $table->add_column($key, [
+                'algin'  => 'left',
+                'nowrap' => true,
+                'title'  => I18N::T('labs', '创建时间'),
+                'weight' => $weight,
+                'invisible'=> !$show_field['show'],
+            ]);
+            break;
+    }
+}
+
+
+
+
+$add_columns_arr['rest']  = ['title'  => I18N::T('labs', '操作'), 'algin' => 'right', 'nowrap' => true, 'weight' => 100];
+$columns = new ArrayObject($add_columns_arr);
+Event::trigger('lab.table_list.columns', $form, $columns);
+
+$table->add_columns((array) $columns);
+
+$table->empty_message = I18N::T('labs', '无符合条件的实验室');
+
+if (count($labs) > 0) {
+    foreach ($labs as $lab) {
+        $links = $lab->links('index');
+        $add_row_arr = [
+                'rest'        => Widget::factory('application:links', ['links' => $links]),
+        ];
+        foreach ($show_fields as $key => $show_field) {
+            switch ($key) {
+                case 'lab_name':
+                case 'description':
+                case 'creator':
+                case 'auditor':
+                case 'ctime':
+                    $add_row_arr[$key] = V('labs:labs_table/data/'.$key, ['lab' => $lab]);
+                    break;
+                case 'group':
+                    $add_row_arr[$key] = V('labs:labs_table/data/'.$key, ['lab' => $lab, 'root' => $group_root]);
+                    break;
+            }
+        }
+        $row = new ArrayObject($add_row_arr);
+        Event::trigger('lab.table_list.row', $row, $lab);
+        $table->add_row((array) $row);
+    }
+}
+
+$param = [
+    'is_offset'     => true,
+    'top_input_arr' => ['lab_name'],
+    'columns'       => $table->columns,
+    'panel_buttons' => $panel_buttons,
+    'extra_view'    => '<div class="adj statistics middle">'.
+        I18N::T('labs', '共有%lab_count个实验室, %user_count位成员', [
+            '%lab_count'  => '<span class=" blue">' . $tol_count['lab_count'] . '</span>',
+            '%user_count' => '<span class=" blue">' . $tol_count['user_count'] . '</span>',
+        ]). $pagination. '</div>'
+];
+echo V('application:search_box', $param);
+?>
+
+<?php echo $table; ?>
+<div class="pages">
+    <?php echo $pagination; ?>
+</div>

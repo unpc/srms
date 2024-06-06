@@ -1,0 +1,140 @@
+  <table class="form flexible hidden toggle:add_from show_on:<?=$method?>">
+    <tr><td colspan="2"></td></tr>
+	<tr class="begin">
+        <td colspan="2" class="blue">
+            <input type="hidden" name="add_form" value="exsit_token">
+            <h1 class="">
+                <?php echo I18N::T('people', '登录信息') ?>
+            </h1>
+        </td>
+    </tr>
+    <tr>
+      <td class="label left nowrap" width="80px;">
+		<div class="title"><?php echo I18N::T('people', '登录帐号') ?></div>
+        <?php echo Widget::factory('user_selector', [
+    'autocomplete' => URI::url('!labs/autocomplete/user_token'),
+    'name'         => 'user_id',
+]); ?>
+      </td>
+	  <td></td>
+      <script>
+        $(function () {
+          var $user = $("input[name=user_id]")
+
+          $user.bind('change',function () {
+            Q.trigger({
+              object: 'add_member_token',
+              event: 'change',
+              url: "<?=$lab->url()?>",
+              data: {
+                'user_id': $user.val(),
+              },
+              success: function(ret){
+                var ret = ret.data.data
+                for(var i in ret){
+                  if (ret.hasOwnProperty(i)) {
+                    $("input[name="+i+"]").val(ret[i])
+                  };
+                }
+              }
+            })
+          })
+        });
+        </script>
+      </td>
+    </tr>
+	<tr><td colspan="2"></td></tr>
+	<tr class="begin">
+        <td colspan="2" class="blue">
+            <h1 class="">
+                <?php echo I18N::T('people', '个人信息') ?>
+            </h1>
+        </td>
+    </tr>
+    <tr>
+      <td class="label nowrap">
+	  	<div class="title"><?php echo I18N::T('people', '登录账号') ?></div>
+      	<input name="token" class="text" size="40" disabled="disabled" />
+      </td>
+      <td class="label nowrap">
+        <div class="title"><?php echo I18N::T('people', '姓名') ?></div>
+        <input name="name" class="text" size="40" disabled="disabled" />
+    </td>
+    </tr>
+    <tr>
+      <td class="label nowrap">
+        <div class="title"><?php echo I18N::T('people', '性别') ?></div>
+        <input type="text" size="15" class="text" name="gender" disabled="disabled" >
+        </td>
+      <td class="label nowrap">
+        <div class="title"><?php echo I18N::T('people', '人员类型') ?></div>
+        <input type="text" size="15" class="text" name="member_type" disabled="disabled" >
+        </td>
+    </tr>
+    <?php if (Config::get('people.show_ref_no', true)): ?>
+    <tr>
+      <td class="label nowrap">
+        <div class="title"><?php echo I18N::T('people', '学号/工号') ?></div>
+        <input name="ref_no" class="text" size="40" disabled="disabled" />
+        </td>
+    </tr>
+    <?php endif;?>
+    <?php if (Config::get('people.show_mentor_name', false)): ?>
+    <tr>
+      <td class="label nowrap"><div class="title"><?php echo I18N::T('people', '导师姓名'); ?></div>
+        <input name="mentor_name" class="text" size="40" disabled="disabled" /></td>
+    </tr>
+    <?php endif;?>
+    <tr>
+      <td class="label nowrap"><div class="title"><?php echo I18N::T('people', '专业') ?></div>
+        <input name="major" class="text" size="40" disabled="disabled" /></td>
+      <td class="label nowrap"><div class="title"><?php echo I18N::T('people', '单位名称') ?></div>
+      <input name="organization" class="text" size="40" disabled="disabled" /></td>
+    </tr>
+    <?php if (Module::is_installed('equipments') && $lab->id == Equipments::default_lab()->id): ?>
+    <?php echo Event::trigger('equipments.record.create_user_view', $form, 40); ?>
+    <tr>
+      <td class="label nowrap"><div class="title"><?php echo I18N::T('equipments', '税务登记号'); ?></div>
+      <input type="text" class="text" size="40" name="tax_no" disabled="disabled" /></td>
+    </tr>
+    <?php endif;?>
+    <?php if ($GLOBALS['preload']['people.enable_member_date']): ?>
+    <tr>
+      <td class="label nowrap">
+        <div class="title"><?php echo I18N::T('equipments', '所在时间'); ?></div>
+        <input type="text" class="text" name="dfrom" disabled="disabled" />
+      </td>
+      <td class="middle">
+        <div class="title">&nbsp;</div>
+        <input type="text" class="text" name="dto" disabled="disabled" />
+      </td>
+    </tr>
+    <?php endif;?>
+    <tr><td colspan="2"></td></tr>
+    <tr class="begin">
+        <td colspan="2" class="blue">
+            <h1 class="">
+                <?php echo I18N::T('people', '联系方式') ?>
+            </h1>
+        </td>
+    </tr>
+    <tr>
+      <td class="label nowrap"><div class="title"><?php echo I18N::T('people', '电子邮箱') ?></div>
+        <input name="email" class="text" size="40" disabled="disabled" /></td>
+      <td class="label nowrap middle"><div class="title"><?php echo I18N::T('people', '联系电话') ?></div>
+        <input name="phone" class="text" size="40" disabled="disabled" /></td>
+    </tr>
+    <?php if (Config::get('people.show_personal_phone', false)): ?>
+    <tr>
+      <td class="label nowrap middle"><div class="title"><?php echo I18N::T('people', '个人手机'); ?></div>
+        <input name="personal_phone" class="text" size="40" disabled="disabled" /></td>
+    </tr>
+    <?php endif;?>
+    <tr>
+      <td class="label nowrap middle"><div class="title"><?php echo I18N::T('people', '地址') ?></div>
+      <input name="address" class="text" size="40" disabled="disabled" /></td>
+    </tr>
+    <tr>
+      <td colspan="2"></td>
+    </tr>
+  </table>

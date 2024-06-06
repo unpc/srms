@@ -1,0 +1,13 @@
+<?php
+    $role_list = [];
+    foreach (L('ROLES') as $role) {
+        if (in_array($role->weight,
+            [ROLE_STUDENTS,ROLE_TEACHERS,ROLE_CURRENT_MEMBERS,ROLE_PAST_MEMBERS,ROLE_NRII_HELP])) {
+            continue;
+        }
+        $role_list[$role->id] = $role->name;
+    }
+    ksort($role_list);
+    $role_list = ['-1' => ''] + $role_list;
+    echo Form::dropdown("role[]", $role_list, isset($active_role) ? $active_role : -1, 'class="selectpicker"');
+ ?>

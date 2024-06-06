@@ -1,0 +1,104 @@
+<?php $me = L('ME');?>
+<div class="hr_1">&#160;</div>
+<div class="panel clearfix">
+  <div class="float_right padding_1 nowrap" style="line-height:24px">
+    <div class="inline_block middle">
+      <?= I18N::T('research', '共有%total_count项科研服务', ['%total_count' => '<span class="eq_number">'.$researches->total_count().'</span>']);?>
+    </div>
+  </div>
+  <div class="float_left padding_1 nowrap" style="line-height:24px">
+    <?php if ( count($panel_buttons) ) : ?>
+      <span><?php echo Widget::factory('application:links', ['links'=>$panel_buttons, 'separator'=>'&#160;']);?></span>
+    <?php endif; ?>
+</div>
+<?php
+echo $pagination;
+
+$table = Widget::factory('table');
+$table->name = 'research';
+$table->form = $form;
+$table->add_columns([
+  '@' => NULL,
+  'ref_no' => [
+    'title' => I18N::T('research', '服务编号'),
+    'filter' => [
+      'form' => V('research:research_table/filters/input', [
+        'name' => 'ref_no',
+        'value' => $form['ref_no'],
+      ]),
+      'value' => $form['ref_no'] ? H($form['ref_no']) :NULL,
+      'field' => 'ref_no',
+    ],
+    'nowrap'=>TRUE,
+  ],
+  'name' => [
+    'title' => I18N::T('research', '服务项目'),
+    'filter' => [
+      'form' => V('research:research_table/filters/input', [
+        'name' => 'name',
+        'value' => $form['name'],
+      ]),
+      'value' => $form['name'] ? H($form['name']) :NULL,
+      'field' => 'name',
+    ],
+    'nowrap'=>TRUE,
+  ],
+  'group' => [
+    'title' => I18N::T('research', '所属组织机构'),
+    'filter'=> [
+      'form' => V('equipments:equipments_table/filters/group', [
+        'name' =>'group_id',
+        'group' => $group,
+        'root' => $group_root,
+      ]),
+      'value' => V('application:tag/path', ['tag'=>$group, 'tag_root'=>$group_root, 'url_template'=>URI::url('', 'group_id=%tag_id')]),
+      'field' => 'group_id'
+    ],
+    'nowrap'=>TRUE,
+  ],
+  'charge' => [
+    'title' => I18N::T('research', '收费标准'),
+  ],
+  'location' => [
+    'title' => I18N::T('research', '服务地点'),
+  ],
+  'contacts' => [
+    'title' => I18N::T('research', '联系人'),
+    'nowrap'=> TRUE,
+    'filter' => [
+      'form' => V('research:research_table/filters/input', [
+        'name' => 'contacts',
+        'value' => $form['contacts'],
+      ]),
+      'value' => $form['contacts'] ? H($form['contacts']) :NULL,
+      'field' => 'contacts',
+    ],
+  ],
+  'links' => [
+    'nowrap' => TRUE,
+    'extra_class' => 'tight',
+  ],
+]);
+
+$table->empty_message = I18N::T('research', '无符合条件的服务项目');
+
+foreach($researches as $research) {
+
+  $table->add_row([
+    '@' => [
+      'view'=> URI::anchor($research->url(), $research->icon('32', 'style="display:block"')),
+      'extra'=>'style="padding:4px;min-width:44px;*width:44px;" align="right"',
+    ],
+    'ref_no' => H($research->ref_no),
+    'name' => V('research:research_table/data/name', ['research'=>$research]),
+    'group' => V('research:research_table/data/group', ['research'=>$research]),
+    'charge' => H($research->charge),
+    'location' => H($research->location),
+    'contacts' => V('research:research_table/data/contacts', ['research'=>$research]),
+    'links' => V('application:widgets/links', ['links'=>$research->links()]),
+  ]);
+
+}
+
+echo $table;
+echo $pagination;

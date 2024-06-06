@@ -1,0 +1,10 @@
+.triple {
+	width:350px;
+	overflow:hidden;
+}
+.triple li {
+	float:left;
+	display:inline;
+	width:30%;
+    white-space: nowrap;
+}

@@ -1,0 +1,14 @@
+<g-chart type="pie">
+  <g-series name="<?= H($title) ?>">
+    <g-color>
+      <g-param value="<?= H($data['in_service']['color']) ?>"></g-param>
+      <g-param value="<?= H($data['out_service']['color']) ?>"></g-param>
+    </g-color>
+    <g-data>
+      <g-param name="<?= H($data['in_service']['name']) ?>" 
+      value="<?= H($data['in_service']['value']) ?>"></g-param>
+      <g-param name="<?= H($data['out_service']['name']) ?>" 
+      value="<?= H($data['out_service']['value']) ?>"></g-param>
+    </g-data>
+  </g-series>
+</g-chart>

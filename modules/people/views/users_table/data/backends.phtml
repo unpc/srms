@@ -1,0 +1,3 @@
+<?php
+list($token, $backend) = Auth::parse_token($user->token);
+echo I18N::T('people',Config::get('auth.backends')[$backend]['title']);

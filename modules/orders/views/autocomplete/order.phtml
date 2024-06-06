@@ -1,0 +1,25 @@
+<?php
+	$source = $order->source;
+	$configs = Config::get('mall.sites');
+	$label = $configs[$source]['label'];
+?>
+<div>
+	<strong><?php echo H($order->product_name); ?></strong>
+	<span style="color:#70CC94">
+	<?php 
+		$type = ($order->name() == 'order') ? I18N::T('orders', '已有订单') : I18N::T('orders', '已有存货');
+		echo '('.$type.')';
+	?>
+	</span>
+	<?php if ($label): ?>
+	&#160;&#160;
+	<span class="source nowrap">
+		<?php 
+			echo $label;
+		?>
+	</span>
+	<?php endif; ?>
+</div>
+<div>
+	<p style="font-size:14px;color:B8BEAD"><?php echo $order->vendor; ?></p>
+</div>

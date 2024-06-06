@@ -1,0 +1,8 @@
+<?php 
+	$users = Q("{$value} user.contact");
+	$contacts = [];
+	foreach ($users as $user) {
+		$contacts[] = $user->name;
+	}
+	echo join(', ', $contacts);
+?>

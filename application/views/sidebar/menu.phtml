@@ -1,0 +1,100 @@
+<?php
+$me = L('ME');
+if ($me->id):
+$uniqid = 'sbmenu_'.uniqid(); ?>
+<div id="<?php echo H($uniqid) ?>" class="menu clearfix">
+<?php
+
+$ct_items = SBMenu_Widget::categorized_items($me);
+$hidden_count = 0;
+
+// $mode = $me->sbmenu_mode ?: Config::get('page.sbmenu_mode');
+
+// $modes = [
+// 	'icon' => '图标模式',
+// 	'list' => '列表模式',
+// ];
+
+// if (!$mode || !isset($modes[$mode])) $mode = key($modes);
+// switch ($mode) {
+// case 'list':
+// 	$view_name = 'application:sidebar/menu/list';
+// 	$show_hidden_class = 'list_item_show_hidden';
+// 	break;
+// default:
+// 	$view_name = 'application:sidebar/menu/icon';
+// 	$show_hidden_class = 'icon_item_show_hidden';
+// }
+
+$view_name = 'application:sidebar/menu/list';
+$show_hidden_class = 'list_item_show_hidden';
+// echo V('application:sidebar/menu/toggle', ['container_id'=>$uniqid, 'modes'=>$modes, 'curr_mode'=>$mode]);
+foreach ((array) $ct_items as $name => $items){
+	$content = '';
+	$count = 0;
+    $subMods = [];
+	$moreMods = [];
+	foreach ((array) $items as $id => $item) {
+        $userlistSwitch = Lab::get('people.userlistswitch.token');
+        $lablistSwitch = Lab::get('people.lablistswitch.token');
+        if($id == 'people'){
+            if($userlistSwitch === '0' && !$me->access('管理所有内容') ){
+                continue;
+            }
+            if (!$me->access('查看成员列表')){
+                continue;
+            }
+        }
+        if($id == 'labs'){
+            if($lablistSwitch === '0' && !$me->access('管理所有内容')){
+                continue;
+            }
+            if (!$me->access('查看所有实验室')){
+                continue;
+            }
+        }
+        $subMods[] = $id;
+		$mid = $item['#module'] ?: $id;
+		if ($mid != $id) $moreMods[] = $id;
+		if (!Module::is_accessible($mid)) continue;
+        if ($mid != $id && !Module::is_accessible($mid, $id))  continue;
+		$checked = $item['#checked'];
+		$class = '';
+		if (!$checked) {
+			$class .= ' item_hidden';
+			if ($_SESSION['sbmenu_show_hidden'] == TRUE) {
+				$class .= ' '.$show_hidden_class;
+			}
+			$hidden_count ++;
+		}
+		$item = $item['list'];
+        if (!$item['i18n']) $item['i18n'] = $mid;
+		$content .= trim((string) V($view_name, ['item'=>$item, 'class'=>$class, 'id'=>$id]));
+		$count ++;
+	}
+	if ($count == 0) {
+		continue;
+	}
+
+	if ($name == '@others') {
+		if (count($ct_items) == 1) $hide_category_title = TRUE;
+		$name = T('其他');
+	}
+	echo V('application:sidebar/menu/category', [
+	'name'=>$name, 
+	'content'=>$content, 
+	'hide_category_title'=> $hide_category_title,
+	'subMods'=>$subMods, 
+	'moreMods'=>$moreMods]);
+}
+
+// 注释 2018-09-09 Clh
+if ($hidden_count > 0):
+?>
+	<!-- <div>
+		<a class="middle toggle_button_hidden <?php // echo $_SESSION['sbmenu_show_hidden'] ? '':'toggle_button_show_hidden' ?>" href="#">&#160;</a>
+	</div> -->
+<?php endif; ?>
+<?php echo JS::load('application:sbmenu', ['menu_id'=> $uniqid, 'ajax_url'=>URI::url('admin'), 'mode'=>$mode]); ?>
+</div>
+<?php endif;

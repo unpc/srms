@@ -1,0 +1,65 @@
+<div class="interval_20">&#160;</div>
+<h2 class="section_title">
+	<span class="middle"><?php echo I18N::T('billing', '基本信息') ?></span>
+</h2>
+<?php if (!$account->id): ?>
+	 <div class="interval_20"></div>
+	 <div class="center"><span class="description"><?php echo I18N::T('billing', '该实验室尚未建立财务账户')?><div>
+<?php else: ?>
+<div>
+	<table class="form" style="min-width: 400px;">
+        <tr><td><div class="interval_20"></div> </td></tr>
+		<tr>
+			<td class="description nowrap tight"><?php echo I18N::T('billing', '总收入:') ?></td>
+			<td><?php echo Number::currency(Q("billing_transaction[account={$account}]")->sum('income')) ?></td>
+		</tr>
+        <tr><td><div class="interval_20"></div> </td></tr>
+		<tr>
+			<td class="description nowrap tight"><?php echo I18N::T('billing', '总支出:') ?></td>
+            <td><?php echo Number::currency($account->income_remote_confirmed + $account->income_local + $account->income_transfer - $account->balance) ?></td>
+		</tr>
+        <tr><td><div class="interval_20"></div> </td></tr>
+		<tr>
+			<td class="description nowrap tight"><span class="rpadding_2"><?php echo I18N::T('billing', '可用余额:') ?></span></td>
+			<td><?php echo Number::currency($account->balance) ?></td>
+		</tr>
+        <tr>
+            <td clospan="2">&#160;</td>
+        </tr>
+	</table>
+</div>
+
+<div class="summary">
+	<?php if (L('ME')->is_allowed_to('充值', $account)):  ?>
+		<a class="blue view object:credit_line event:click static:<?php echo H(['account_id'=>$account->id]) ?> src:<?php echo URI::url('!billing/account') ?>"><?php echo I18N::T('billing', '信用额度') ?></a>
+        <span class="separator">&nbsp;&nbsp;</span>
+	<?php endif; ?>
+	<?php if($account->source =='local' && !$account->voucher):?>
+		<?php if (L('ME')->is_allowed_to('充值', $account)): ?>
+			<a class="blue view object:account_credit event:click static:<?php echo H(['account_id'=>$account->id]) ?> src:<?php echo URI::url('!billing/account') ?>"><?php echo I18N::T('billing', '充值') ?></a>
+            <span class="separator">&nbsp;&nbsp;</span>
+		<?php elseif(L('ME')->id == $account->lab->owner->id):?>
+			<a class="blue view object:refill_notif event:click static:<?php echo H(['lab_id'=>$account->lab->id]) ?> src:<?php echo URI::url('!billing/account') ?>"><?php echo I18N::T('billing', '充值') ?></a>
+            <span class="separator">&nbsp;&nbsp;</span>
+		<?php endif; ?>
+	<?php elseif($account->source != 'local' && $account->voucher && $account->lab->owner->id == L('ME')->id): ?>
+		<?php
+			$billing_link = Config::get('billing.sources')[$account->source]['http_url'];
+			if($billing_link):
+		?>
+		<a class=""  href="<?= $billing_link;?>"><?php echo I18N::T('billing', '充值') ?></a>
+        <span class="separator">&nbsp;&nbsp;</span>
+		<?php endif;?>
+	<?php endif;?>
+
+	<?php if(L('ME')->is_allowed_to('扣费', $account)):?>
+		<a class="blue view object:account_deduction event:click static:<?php echo H(['account_id'=>$account->id]) ?> src:<?php echo URI::url('!billing/account') ?>"><?php echo I18N::T('billing', '扣费') ?></a>
+        <span class="separator">&nbsp;&nbsp;</span>
+	<?php endif;?>
+	<?php if(L('ME')->is_allowed_to('删除', $account)):?>
+		<a class="blue view object:delete_account event:click static:<?php echo H(['account_id'=>$account->id]) ?> src:<?php echo URI::url('!billing/account') ?>"><?php echo I18N::T('billing', '删除') ?></a>
+        <span class="separator">&nbsp;&nbsp;</span>
+	<?php endif;?>
+
+</div>
+<?php endif;?>

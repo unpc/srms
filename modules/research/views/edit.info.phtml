@@ -1,0 +1,106 @@
+<?php $me = L('ME');?>
+<div class="hr_1">&#160;</div>
+<div class="form padding_1">
+  <form method="post" autocomplete="off" action="<?php echo H(URI::url() ) ?>">
+    <?php echo V('form_error', ['form'=>$form]);?>
+    <?php $require = (string) V('form_require', ['extra_class' => 'top']); ?>
+    <table class="form">
+      <tbody>
+        <tr>
+          <td class="label right nowrap middle" style="width:120px"><?php echo I18N::T('research', '服务编号')?></td>
+          <td class="top">
+            <input name="ref_no" class="text" size="40" value="<?php echo H($form['ref_no'] ? : $research->ref_no)?>" />
+            <?= $require; ?>
+          </td>
+        </tr>
+        <tr>
+          <td class="label right nowrap middle" style="width:120px"><?php echo I18N::T('research', '服务名称')?></td>
+          <td class="top">
+            <input name="name" class="text" size="40" value="<?php echo H($form['name'] ? : $research->name)?>" />
+            <?= $require; ?>
+          </td>
+        </tr>
+        <tr>
+          <td class="label right nowrap middle"><?php echo I18N::T('research', '所属组织机构')?></td>
+          <td class="middle">
+            <div class="gray_tag_container">
+              <?php
+                if (!$me->is_allowed_to('管理全部', 'research')) {
+                  $group_root = $me->group;
+                }
+                if ($me->is_allowed_to('修改组织机构', $research)) {
+                  echo Widget::factory('application:tag_selector', [
+                    'tag'=>O('tag', $form['group_id'] ? : $research->group->id),
+                    'root'=>$group_root,
+                    'name'=>'group_id',
+                    'ajax'=>true,
+                  ]);
+                } else {
+                  echo V('research:research_table/data/group', ['research'=>$research]);
+                }
+              ?>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="label right nowrap top"><?php echo I18N::T('research', '服务内容')?></td>
+          <td class="top">
+            <textarea class="text autogrow" rows="3" cols="40" name="content"><?php echo H($form['content'] ? : $research->content) ?></textarea>
+            <?= $require; ?>
+          </td>
+        </tr>
+        <tr>
+          <td class="label right nowrap top"><?php echo I18N::T('research', '收费标准')?></td>
+          <td class="top">
+            <textarea class="text autogrow" rows="3" cols="40" name="charge"><?php echo H($form['charge'] ? : $research->charge) ?></textarea>
+            <?= $require; ?>
+          </td>
+        </tr>
+        <tr>
+          <td class="label right nowrap top"><?php echo I18N::T('research', '服务地点')?></td>
+          <td class="top">
+            <textarea class="text autogrow" rows="3" cols="40" name="location"><?php echo H($form['location'] ? : $research->location) ?></textarea>
+          </td>
+        </tr>
+        <tr>
+          <td class="label right nowrap top"><?php echo I18N::T('research', '联系人')?></td>
+          <td class="middle">
+            <?php
+            if ($me->is_allowed_to('修改联系人', $research)) {
+              echo Widget::factory('multi_user_selector', [
+                'name' => 'contacts',
+                'autocomplete' => URI::url('autocomplete/user'),
+                'value' => $form['contacts'] ? : json_encode(Q("{$research} user.contact")->to_assoc('id', 'name')),
+                'extra' => 'token_verify'
+              ]);
+              echo $require;
+            } else {
+              echo H(join(',', Q("{$research} user.contact")->to_assoc('id', 'name')));
+            }
+            ?>
+          </td>
+        </tr>
+        <tr>
+          <td class="label right nowrap middle"><?php echo I18N::T('research', '联系电话')?></td>
+          <td class="top">
+            <input name="phone" class="text" size="40" value="<?php echo H($form['phone'] ? : $research->phone) ?>" />
+          </td>
+        </tr>
+        <tr>
+          <td class="label right nowrap middle"><?php echo I18N::T('research', '联系邮箱')?></td>
+          <td class="top">
+            <input name="email" class="text" size="40" value="<?php echo H($form['email'] ? : $research->email) ?>" />
+            <?= $require; ?>
+          </td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <input type="submit" name="submit" class="button button_save" value="<?php echo H(I18N::T('research', '保存')) ?>" />
+            <input type="submit" name="delete" confirm="<?= H(I18N::T('research', '是否确认删除此记录？记录一旦删除，不可恢复'))?>" class="button button_delete" value="<?php echo H(I18N::T('research', '删除')) ?>" />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+</div>

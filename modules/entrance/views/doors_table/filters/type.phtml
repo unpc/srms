@@ -1,0 +1,3 @@
+<?php
+echo Form::dropdown('type',I18N::T('entrance', ['全部'] +  Door_Model::types()), $form['type'] ? : 0,'class="autosubmittable dropdown middle"');
+?>

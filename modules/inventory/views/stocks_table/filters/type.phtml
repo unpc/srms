@@ -1,0 +1,13 @@
+<?php
+
+$lab = Lab_Model::default_lab();
+$extra = Extra_Model::fetch($lab, 'stock');
+
+$_c = [];
+foreach($extra->get_categories() as $v) {
+    $_c[$v] = $v;
+}
+
+$types = ['-1'=> '--'] + $_c;
+
+echo Form::dropdown('_type', $types, $type ?  : '-1');

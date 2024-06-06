@@ -1,0 +1,92 @@
+div.notification_list {
+	position: relative;
+
+    .classification_container {border: 1px solid #E5E5E5;}
+
+	.notification_types {
+		position: absolute;
+		top:0px;
+		left:1px;
+		width:180px;
+        height: 100%;
+        border-right: 1px solid #E5E5E5;
+
+		.notification_type {
+			cursor:default;
+			height: 32px;
+            cursor: pointer;
+
+			.type_name {
+				display: block;
+				float:left;
+				height: 32px;
+				line-height: 32px;
+                padding-left: 30px;
+				width: 85px;
+				overflow: hidden;
+				input {
+					border: 0px;
+					vertical-align: middle;
+				}
+			}
+
+		}
+
+		.active {
+			background-color:rgba(43, 160, 127, 0.08);
+			color: var(--basiccolor);
+            font-weight: bold;
+		}
+	}
+
+    .relate_view {
+        margin-left: 204px;
+        overflow: auto;
+        _display: inline-block;
+
+        div.user_box {
+            div.main_title {
+                div.message_type {
+                    font-weight: bold;
+                    width: 542px;
+                }
+                div.device_type {
+                    font-weight: bold;
+                    width: 190px;
+                }
+            }
+
+            div.user_box_item {
+                min-width: 942px;
+
+                div.classification_title {
+                    margin-right: 243px;
+                    *margin-right: 241px;
+                    width: 300px;
+                    word-spacing: wrap;
+                }
+
+                hr{ width: 97%; }
+
+                ol li {
+                    list-style-type: decimal;
+                    margin-left: 40px;
+                    div.sub_notification {
+                        line-height: 24px;
+
+                        span {
+                            display: inline-block;
+                        }
+
+                        span.title {
+                            display: inline-block;
+                            width: 500px;
+                            height: 40px;
+                            line-height: 40px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

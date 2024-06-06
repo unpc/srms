@@ -1,0 +1,13 @@
+<table class="mini_form">
+	<tr>
+		<td class="top icon"><?php echo $user->icon('32') ?></td>
+		<td class="top">
+			<span class="name"><?php echo H($user->name) ?></span>
+			<?php if (!$GLOBALS['preload']['people.multi_lab']) :?>
+				<?php $lab = Q("$use lab")->current();?>
+				<br/>
+				<span class="lab"><?php echo H($lab->name) ?></span>
+			<?php endif;?>
+		</td>
+	</tr>
+</table>

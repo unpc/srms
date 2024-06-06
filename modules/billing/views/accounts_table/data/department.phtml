@@ -1,0 +1,16 @@
+<div class="tpadding_2 bpadding_2">
+<?php
+$department = $account->department;
+//object对象为lab
+if (L('ME')->is_allowed_to('列表收支明细', $object)):
+?>
+<a href="<?php echo $object->url('billing_account.transaction','department_id='.$department->id,NULL,'view'); ?>"><?php echo H($department->name); ?></a>
+<?php else:?>
+<?php echo H($department->name); endif;?>
+
+<?php if($account->source != 'local' && $account->voucher && ($account->lab->owner->id == L('ME')->id || L('ME')->is_allowed_to('列表收支明细', $object)) ): //财务中心管理员应该也可以看到远程字样?>
+<span class="lpadding_1">
+<span class="prevent_default status_tag status_tag_label" style="height:14px"><?= I18N::T('billing', '远程')?></span>
+</span>
+<?php endif;?>
+</div>

@@ -1,0 +1,180 @@
+.records_panel {
+    color:#cdcdcd;
+    /* border: 1px solid #cdcdcd; */
+    background: #fff;
+    /* width: 42px; */
+    /* height: 24px; */
+    text-align: center;
+    line-height: 24px;
+    *margin-top: 4px;
+    border-radius: 4px;
+
+    .show_button {
+        margin: 2px 0px 2px 6px;
+        *margin: 2px -4px 2px 4px;
+    }
+
+    .separator {
+        border-right: 1px solid #AAA;
+        display: inline-block;
+        height: 34px;
+        vertical-align: middle;
+        width: 0px;
+    }
+
+}
+
+.record_list {
+    width: 100%;
+}
+
+.operate_archive_div {
+    box-shadow: #666 0 3px 3px;
+
+    a {
+        background-color: #FFF;
+        color: #333;
+        display: block;
+        width: 155px;
+        padding: 2px 4px;;
+    }
+    a:hover {
+        background-color: var(--basiccolor);
+        color: #FFF;
+        text-decoration: none;
+    }
+}
+
+.add_archive {
+    border-right: 1px solid #CCC;
+    min-width:80px;
+}
+.default_archives {
+    text-indent: 6px;
+
+    a {
+        white-space: nowrap;
+        overflow: hidden;
+        cursor: default;
+        display: block;
+        padding: 4px;
+        text-decoration: none;
+        height: 18px;
+        /* background-color: #EEE; */
+        border-bottom: 1px solid #FFF;
+        border-right: 1px solid #CCC;
+    }
+
+    a.active {
+        color: #666;
+        background-color: rgba(71, 140, 210, 0.2);
+        /* background-color: #FFF; */
+        border-top: 1px solid #E5E5E5;
+        border-bottom: 1px solid #E5E5E5;
+        border-right-width: 0px;
+    }
+
+    a:hover {
+        color: #FFF;
+        background-color: var(--basiccolor);
+    }
+}
+.archive_tag {
+    color: #b8b8b8;
+    background-color: #FFFFFF;
+    padding: 1px 16px;
+    height: 22px;
+    line-height: 22px;
+    font-size: 10px;
+    border: 1px solid #e0e0e0;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    margin-right: 8px;
+    display: inline-block;
+    cursor: pointer;
+}
+.archive_tag_active {
+    height: 22px;
+    line-height: 22px;
+    font-size: 10px;
+    padding: 1px 16px;
+    border: 1px solid var(--basiccolor);
+    background-color: var(--basiccolor);
+    color: #FFF;
+}
+.more_archive_li a {
+    width: 100%;
+    text-align: center;
+}
+div.archive_list {
+	position: relative;
+    width: 10%;
+	.equipment_archives {
+        display: block;
+        width: 100%;
+
+		.equipment_archive {
+            cursor: default;
+            display: block;
+            padding: 4px;
+			/* background-color: #EEE; */
+			height: 18px;
+            border-right: 1px solid #CCC;
+            border-bottom: 1px solid #FFF;
+
+            .archive_name {
+                display: block;
+                text-indent: 6px;
+                overflow: hidden;
+                margin-right: 10px;
+                white-space: nowrap;
+            }
+
+            .archive_operate_button {
+                display: block;
+                background: url('images/icons/collapse.png') no-repeat right center;
+                float: right;
+                a {
+                    text-decoration: none;
+                }
+            }
+        }
+
+        .equipment_archive.last_archive:hover {
+            background-color: #FFF;
+        }
+        .equipment_archive.last_archive {
+            border-right: none;
+            height: 40px;
+            padding: 0px;
+            /* background: url('images/archive/last.png') repeat-x right top; */
+            background: none;
+
+            .border {
+                width: 1px;
+                height: 40px;
+                float: right;
+                background: url('images/archive/last_border.png')  no-repeat right top;
+            }
+        }
+
+        .equipment_archive:hover {
+            text-decoration: none;
+            background-color: var(--basiccolor);
+            color: #FFF;
+        }
+
+        .active {
+            border-top: 1px solid #E5E5E5;
+            border-bottom: 1px solid #E5E5E5;
+            border-right-width: 0px;
+            color: #333;
+            background-color:  rgba(71, 140, 210, 0.2);
+        }
+    }
+}
+
+input.new_archive {
+    width: 350px;
+}

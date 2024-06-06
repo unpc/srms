@@ -1,0 +1,10 @@
+<?php
+
+echo Widget::factory('multi_tag_selector',
+    [
+    'autocomplete'=>URI::url('!equipments/autocomplete/domain'),
+    'name' => 'domain',
+    'value' => $domain,
+    'size' => 18,
+    ]);
+?>

@@ -1,0 +1,6 @@
+<?php
+	$foods = json_decode($this->order->foods);
+	foreach($foods as $food => $value) {
+		echo H(O('food', $food)->supplier);
+	}
+?>

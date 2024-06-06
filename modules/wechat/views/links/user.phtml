@@ -1,0 +1,18 @@
+<?php
+
+/*switch($user->wechat_bind_status) {
+    case Wechat::BIND_STATUS_NOT_YET : //未绑定*/
+        $title = '绑定微信';
+        $extra_class = 'button_wechat';
+/*    break;
+    case Wechat::BIND_STATUS_SUCCESS : //已绑定, 可解除绑定
+        $title = '解绑微信';
+        $extra_class = 'button_unbind';
+    break;
+}*/
+?>
+<span>
+    <a q-object="bind" q-event="click" class="button <?php echo $extra_class;?>" title="<?php echo I18N::T('wechat', $title); ?>" q-src="<?php echo H(URI::url('!wechat/qrcode/'.$user->id) ) ?>">
+        <?php echo I18N::T('wechat', $title); ?>
+    </a>
+</span>

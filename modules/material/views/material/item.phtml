@@ -1,0 +1,39 @@
+<table class="form" style="margin-right: 100px;">
+    <tbody>
+        <tr>
+            <td class="label right top nowrap"">
+                <?= I18N::T('material', '耗材名称'); ?>
+                <input name="<?= "material[$flexform_index][name]" ?>" type="text" class="text"
+                value="<?= $form['material'][$flexform_index]['name'] ? : $result->name ?>">
+            </td>
+            <td class="small_text"></td>
+            <td class="label right top nowrap">
+                <?= I18N::T('material', '单价'); ?>
+                <input class="text currency" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>"
+                       name="<?= "material[$flexform_index][price]" ?>" q-number_default_value="0" type="text" value="<?= $form['material'][$flexform_index]['price'] ?: $result->price ?>">
+            </td>
+            <td class="small_text"></td>
+            <td class="label right top nowrap">
+                <?php $default_units = count($material_units) ? array_keys($material_units)[0] : 0 ?>
+                <?= I18N::T('material', '计量单位'); ?>
+                <?= Form::dropdown("material[$flexform_index][unit]",
+                    I18N::T('material', $material_units),
+                    $form['material'][$flexform_index]['unit'] ?: ($result->id ? $result->material_unit_id : $default_units),
+                    'class="monitor dropdown" style="width: 100px;"');?>
+            </td>
+            <td class="small_text"></td>
+            <td class="label right middle nowrap">
+                <?= Form::checkbox("material[$flexform_index][enable_use]",
+                    isset($form['material'][$flexform_index]['enable_use']) ? $form['material'][$flexform_index]['enable_use'] : ($result->id ? $result->enable_use : true),
+                    I18N::T('material','支持使用'),
+                    'class="middle checkbox"', 'class="middle"'); ?>
+                <?= Form::checkbox("material[$flexform_index][enable_sample]",
+                    isset($form['material'][$flexform_index]['enable_sample']) ? $form['material'][$flexform_index]['enable_sample'] : ($result->id ? $result->enable_sample : true),
+                    I18N::T('material','支持送样'),
+                    'class="middle checkbox"', 'class="middle"'); ?>
+            </td>
+            <input name="<?= "material[$flexform_index][id]" ?>" type="hidden" value="<?= $result->id ?>">
+        </tr>
+    </tbody>
+</table>
+<div class="interval_20"></div>

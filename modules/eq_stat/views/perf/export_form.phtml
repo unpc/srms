@@ -1,0 +1,13 @@
+<div class="form padding_2">
+  <form action="<?php echo H(URI::url('!eq_stat/perfs/perf_equipments.'.$perf_id, ['type'=>$type,'form_token'=>$form_token])) ?>" target="<?= $type == 'csv' ? '_self' : '_blank'?>" class="prevent_default" method="post">
+	<ul class="ep_triple">
+	  <?php
+	 		foreach ($columns as $p => $p_name) :?>
+	  <li class="nowrap">
+		<?php echo Form::checkbox("columns[{$p}]", TRUE, I18N::T('eq_stat', $p_name), 'class="middle monitor"', 'class="middle"');?>
+	  </li>
+	  <?php endforeach;?>
+	</ul>
+	<input type="submit" name="submit" class="button button_edit" value="<?php echo H(I18N::T('eq_stat', '提交')) ?>" />
+  </form>
+</div>

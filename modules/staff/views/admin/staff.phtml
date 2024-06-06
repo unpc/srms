@@ -1,0 +1,8 @@
+<div class="form padding_2">
+	<form method="post" autocomplete="off">
+		请选择提醒时间:
+		<?php echo Form::dropdown('time', $dropdown, $time); ?>
+		<input class="button button_save middle" name="submit" type="submit" value="<?php echo H(I18N::T('staff', '保存')) ?>" />
+		<input class="button button_cancel middle" type="reset" value="<?php echo H(I18N::T('staff', '取消')) ?>" />
+	</form>
+</div>

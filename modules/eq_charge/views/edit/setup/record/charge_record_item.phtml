@@ -1,0 +1,36 @@
+<table class="form lmaigin_1e5 bmargin_3">
+<tbody>
+	<tr>
+		<td class="top left nowrap rpadding_label"><?php echo I18N::T('eq_charge', '用户标签')?></td>
+		<td colspan="2">
+			<?php 
+	   			echo Widget::factory('equipments:tag_selector', [
+	   					'autocomplete'=> URI::url('!equipments/autocomplete/user_tags.'.$equipment->id),  
+	   					'name'=>'special_tags[]', 
+	   					'value'=>($error ? $form['special_tags'] : @json_encode($special_tags)),
+	   			]); 
+	   		?>
+		</td>
+	</tr>
+    <tr>
+        <td><div class="interval_20">&#160;</div></td>
+    </tr>
+	<tr>
+		<td class="top left nowrap">
+			<?php echo $unit_price_title?> 
+		</td>
+		<td>
+			<input class="text currency" name="special_unit_price[]" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo H((float)$unit_price) ?>"/>
+		</td>
+	</tr>
+    <tr>
+        <td><div class="interval_20">&#160;</div></td>
+    </tr>
+	<tr>
+		<td class="left nowrap middle rpadding_label"><?php echo I18N::T('eq_charge', '每次使用的开机费用')?></td>
+		<td >
+			<input class="text currency" name="special_minimum_fee[]" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo H((float)$minimum_fee) ?>"/>
+		</td>
+	</tr>
+</tbody>
+</table>

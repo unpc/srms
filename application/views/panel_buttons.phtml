@@ -1,0 +1,9 @@
+<div id="toggle_button" class="float_right">
+    <ul>
+        <?php if (count((array) $panel_buttons) ) : ?>
+            <span><?php echo Widget::factory('application:links', ['links'=>$panel_buttons, 'separator'=>'']);?></span>
+        <?php else:?>
+            <span style="width:10px"></span>
+        <?php endif;?>
+    </ul>
+</div>

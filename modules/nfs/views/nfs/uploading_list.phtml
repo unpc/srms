@@ -1,0 +1,136 @@
+<style>
+    ul {
+        list-style: none;
+    }
+
+    .fixed-menu {
+        position: fixed;
+        right: 2px;
+        top: 50%;
+        width: 2rem;
+        margin-top: -90px;
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, .3);
+        z-index: 999;
+        background: rgba(255, 249, 215, 0.9);
+    }
+
+    .fx-ul li {
+        position: relative;
+        line-height: 6rem;
+        border-bottom: 1px solid #fff;
+    }
+
+    .upload_title_list {
+        position: absolute;
+        left: 10px;
+        bottom: 1px;
+        color: gray;
+        text-align: center;
+        -webkit-transition: all 0.6s;
+        -ms-transition: all 0.6s;
+        -moz-transition: all 0.6s;
+        background-color: #fff;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, .3);
+        z-index: 1;
+        opacity: 0;
+        padding: .5rem;
+    }
+
+
+    .fx-ul li:hover .upload_title_list {
+        left: -17.6rem;
+        opacity: 1;
+    }
+
+    .fx-ul li.fx-shop .upload_title_list {
+        background: rgba(255, 249, 215, 0.9);
+        width: 16rem;
+        overflow: hidden;
+        padding: 0 .5rem 0 .5rem;
+        text-align: center;
+    }
+
+    .fx-ul li.fx-shop .upload_title_list:before {
+        background: rgba(255, 249, 215, 0.9);
+    }
+
+    .fx-ul li.fx-contact .upload_title_list {
+        background-color: #00b7ee;
+    }
+
+    .fx-ul li.fx-contact .upload_title_list:before {
+        background-color: #00b7ee;
+    }
+
+    .fx-ul li.fx-top .upload_title_list {
+        background-color: #333;
+    }
+
+    .fx-ul li.fx-top .upload_title_list:before {
+        background-color: #333;
+    }
+
+    .shuli {
+        margin: 0 auto;
+        width: 20px;
+        line-height: 24px;
+    }
+
+</style>
+<?php
+
+
+?>
+<div class="fixed-menu" style="display:none">
+    <ul class="fx-ul" style="height: 6rem;color: gray">
+        <li class="fx-shop">
+            <div class="shuli">正<br/>在<br/>上<br/>传</div>
+            <div class="upload_title_list">
+                <table id="file_uploading_list">
+                </table>
+            </div>
+        </li>
+    </ul>
+</div>
+<script>
+    <?php if (L('ME')->id):?>
+    $(function () {
+        $('.fixed-menu').hover(function () {
+            Q.trigger({
+                object: 'upload_lists',
+                event: 'get',
+                global: false,
+                url: "<?php echo H(URI::url('!nfs/nfs')) ?>",
+                success: function (data) {
+                    console.log(data);
+                    let s = '';
+                    Object.keys(data.data).forEach(function (i) {
+                        s += '<tr><td>';
+                        s += data.data[i].file_name;
+                        s += '</td><tr>';
+                    });
+                    s = Object.keys(data.data).length ? s : '<tr><td rowspan="2" style="text-align: center">没有上传任务</td></tr>';
+                    $('#file_uploading_list').empty().append(s);
+                }
+            });
+        });
+
+        Q.trigger({
+            object: 'upload_lists',
+            event: 'get',
+            global: false,
+            url: "<?php echo H(URI::url('!nfs/nfs')) ?>",
+            success: function (data) {
+                let s = '';
+                Object.keys(data.data).forEach(function (i) {
+                    s += '<tr><td>';
+                    s += data.data[i].file_name;
+                    s += '</td><tr>';
+                });
+                $('#file_uploading_list').empty().append(s);
+                Object.keys(data.data).length ? $('.fixed-menu').show() : $('.fixed-menu').hide();
+            }
+        });
+    });
+    <?php endif;?>
+</script>

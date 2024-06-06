@@ -1,0 +1,15 @@
+<?php
+if (count($equipments) == 0) {
+	echo '--';
+}
+else {
+	foreach ($equipments as $id => $name) {
+		$equipment = O('equipment', $id);
+?>
+<a target="_blank" href="<?php echo $equipment->url(); ?>"><?php echo H($name) ?></a><br/>
+<?php
+	}
+?>
+<?php
+}
+?>

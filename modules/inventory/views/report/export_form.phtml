@@ -1,0 +1,20 @@
+<?php echo CSS::load_async('inventory:common');?>
+<div class="form">
+	<div class="interval_20">&nbsp</div>
+	<form action="<?php echo H(URI::url('!inventory/report', ['type'=>$type, 'stock_id'=>$stock_id, 'form_token'=>$form_token])) ?>" target="<?=$type == 'csv' ? '_self' : '_blank' ?>" class="prevent_default" method="post">
+		<ul class="ep_triple">
+			<?php
+			foreach ($columns as $p => $p_name) :?>
+				<li class="nowrap">
+					<?php echo Form::checkbox("columns[{$p}]", TRUE, I18N::T('inventory', $p_name), 'class="middle monitor"', 'class="middle"');?>
+				</li>
+			<?php endforeach;?>
+		</ul>
+		<div class="button_container">
+		<div class="float_right">
+		<input name="cancel" id="cancel" type='reset' class="font-button-default sm rmargin_2e4" value="<?php echo I18N::HT('inventory', '取消');?>" />
+		<input name="submit" type='submit' class="font-button-save sm" value="<?php echo I18N::HT('inventory', '提交');?>" />
+		</div>
+		</div>
+	</form>
+</div>

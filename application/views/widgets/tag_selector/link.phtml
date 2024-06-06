@@ -1,0 +1,9 @@
+<a href="javascript:void(0);" class="tag_link prevent_default" q-tag-id="<?php echo H($id) ?>">
+	<?php
+    if (!isset($id)){
+        echo '<span style="color: #B8B8B8;font-size: 12px;">'.$field_title.'</span>';
+    }else{
+        echo H($name);
+    }
+    if ($is_next) echo '&nbsp;/&nbsp;'; ?>
+</a>

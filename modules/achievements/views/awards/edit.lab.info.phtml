@@ -1,0 +1,33 @@
+<?php
+$me = L('ME');
+$require = (string)V('form_require');
+if (Module::is_installed('labs')) : ?>
+<tr>
+  <td class="label left nowrap top">
+        <?php echo $require;?><?php echo I18N::T('achievements', '实验室'); ?>
+        <br>
+        <?php echo V('form_filter',['error'=>$form->errors['lab'][0]]); ?>
+  </td>
+
+  <td class="middle" width="300">
+    <?php
+      $autocomplete = $me->access('添加/修改所有实验室成果') ? FALSE : URI::url("!labs/autocomplete/lab.{$me->id}");
+      $selected_lab = !$form->no_error ? $form['lab'] : (Q("$award lab")->current()->id ?: '');
+      echo Widget::factory('labs:lab_selector', [
+        'name'=>'lab',
+        'selected_lab'=> $selected_lab,
+        'autocomplete'=> $autocomplete
+      ]);
+    ?>
+  </td>
+  <td class="table_interval"></td>
+  <td class="label left nowrap middle label_width">
+      <?php echo $require;?><?php echo I18N::T('achievements', '获奖名称'); ?>
+      <br>
+      <?php echo V('form_filter',['error'=>$form->errors['name'][0]]); ?>
+  </td>
+  <td class="middle" width="300">
+      <input name="name" class="text" value="<?php echo H(!$form->no_error ? $form['name'] : $award->name); ?>" />
+  </td>
+</tr>
+<?php endif; ?>

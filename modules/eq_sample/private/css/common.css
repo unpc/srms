@@ -1,0 +1,153 @@
+#table_eq_sample tr.date_header td {
+    background-color: #999;
+    color: var(--basiccolor);
+    padding: 4px;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.record_samples_table td {
+    padding: 2px;
+}
+
+div.sample_item {
+    display: block;
+    white-space: nowrap;
+    padding: 5px 4px;
+    line-height: 1.24;
+    *line-height: 24px;
+    vertical-align: middle;
+}
+
+.triple {
+    width: 350px;
+    overflow: hidden;
+}
+
+.triple li {
+    float: left;
+    display: inline;
+    width: 30%;
+}
+
+div.sample_dropdown {
+    min-width: 60px;
+    position: absolute;
+    margin: 0px;
+    padding: 0px;
+    z-index: 1000;
+    /*width: 92px;*/
+    box-shadow: #666 0px 1px 5px;
+    filter: progid: DXImageTransform.Microsoft.Shadow (Color=#000000, Direction=135, Strength=2);
+    a {
+        background-color: #FFF;
+        color: #3366CC;
+        display: block;
+        text-decoration: none;
+        padding: 4px;
+        text-align: left;
+        padding-left: 6px
+    }
+    a:hover {
+        filter: none;
+        background-color: #7498E0;
+        color: #fff;
+        text-decoration: none;
+    }
+}
+
+.clip_icon {
+    background-image: url("!eq_sample/icons/clip.png");
+    background-repeat: no-repeat;
+}
+
+.sample_link:hover {
+    text-decoration: none;
+}
+
+.sample_link {
+    margin-top: 2px;
+}
+
+.sample_link span {
+    /*	padding: 3px 6px 2px 6px;*/
+    margin-right: 24px;
+    padding: 3px 15px 3px 15px;
+    text-align: center;
+    background-color: #fff;
+    border-radius: 4px;
+}
+/*申请中*/
+#sample_applied {
+    border: 1px solid #F5D389;
+    color: #F1B94A;
+}
+/*已批准*/
+#sample_approved {
+    border: 1px solid #89C4EF;
+    color: #52A6E3;
+}
+/*已测试*/
+#sample_tested {
+    border: 1px solid #86DAB0;
+    color: #4EC7A5;
+}
+/*因故取消*/
+#sample_canceled {
+    border: 1px solid #B8B8B8;
+    color: #4D4D4D;
+}
+/*已拒绝*/
+#sample_rejected {
+    border: 1px solid #FFB5B5;
+    color: #F87272;
+}
+
+#sample_depart_exam {
+    border: 1px solid #d590e9;
+    color: #d590e9;
+}
+
+#sample_platform_exam {
+    border: 1px solid #8c6fde;
+    color: #8c6fde;
+}
+
+#sample_adopted {
+    border: 1px solid var(--basiccolor);
+    color: var(--basiccolor);
+}
+
+.bpadding_24 {
+    padding-bottom: 24px;
+}
+
+.fourth_tabs {
+    /*margin-left: 80px;*/
+    .tab {
+        border-radius: 0 !important;
+        background: white !important;
+        color: #a3a8ad !important;
+        margin-left: -1px !important;
+        height: 30px !important;
+        margin-top: -4px !important;
+        line-height: 29px !important;
+    }
+    .tab.active_tab {
+        border-radius: 0 !important;
+        background: white !important;
+        color: var(--basiccolor) !important;
+        border-left: 1px solid var(--basiccolor) !important;
+    }
+#sample_office {
+    background-color: #CC6699;
+}
+
+#sample_platform {
+    background-color: #9900FF;
+}
+
+#sample_access {
+    background-color: #00CCCC;
+}

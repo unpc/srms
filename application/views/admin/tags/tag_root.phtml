@@ -1,0 +1,24 @@
+<div style="display: flow-root;margin-top: -4px;margin-bottom: 12px;margin-right: 1rem">
+    <a class="lmargin_10 float_right view blue pointer event:click object:tag_export static:<?php echo H(['tag_name'=>$root->name()]); ?> src:<?php echo URI::url('tags')?>">
+        <span class="icon-upload vertical_middle"></span>
+        <span class="vertical_middle"><?= T('导出') . $button_title ?: '' ?></span>
+    </a>
+    <a class="float_right view blue pointer event:click object:tag_edit static:uniqid=<?=$uniqid?>&parent=<?=$root->id?>&is_root=1&title=<?=$title?>&tag_name=<?= $root->name()?> src:<?= URI::url('tags')?>" title="添加<?= $button_title ?: '' ?>">
+        <span class="icon-add vertical_middle"></span>
+        <span class="vertical_middle"><?= T('添加') . $button_title ?: '' ?></span>
+    </a>
+</div>
+
+<?php $uniqid?:'tag_'.uniqid(); ?>
+
+<div id="<?php echo $uniqid; ?>">
+	<div class="tag_container tag_root_container">
+		<?php echo V('application:admin/tags/tag_list', ['tags'=>$tags, 'parent_uniqid'=>$uniqid, 'title'=>$title]) ?>
+	</div>
+</div>
+<div class="interval_30"></div>
+<script type="text/javascript">
+jQuery(function($) {
+	Q.tag_sortable("<?php echo H((int)$root->id) ?>", "<?php echo H($uniqid) ?>", "<?php echo H(JS::escape(URI::url('tags')) ) ?>", "<?= $root->name()?>");
+});
+</script>

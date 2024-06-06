@@ -1,0 +1,31 @@
+<?php if (isset($project) && L('ME')->is_allowed_to('添加', 'tn_task') && (!$project->is_locked)):?>
+<div class="panel padding_1 clearfix">
+	<a class="prevent_default button button_add" href="<?php echo H(isset($project) ? $project->url(NULL, NULL, NULL, 'add_task') : URI::url('!treenote/task/add')) ?>"><?php echo I18N::HT('treenote', '添加任务')?></a>
+		&#160;&#160;
+</div>
+<?php elseif (isset($task)):?>
+<div class="panel nowrap padding_1 clearfix">
+	<?php if ($task->parent_task->id): ?>
+	<a class="prevent_default button button_backward" href="<?php echo H($task->parent_task->url()) ?>"><?php echo I18N::HT('treenote', '返回')?></a>
+	<?php else: ?>
+	<a class="prevent_default button button_backward" href="<?php echo H($task->project->url()) ?>"><?php echo I18N::HT('treenote', '返回')?></a>
+	<?php endif; ?>
+	<?php if ( L('ME')->is_allowed_to('添加', 'tn_task') && $task->is_editable()): ?>
+	<a class="prevent_default button button_add" href="<?php echo H($task->url(NULL, NULL, NULL, 'add_child')) ?>"><?php echo I18N::HT('treenote', '添加子任务')?></a>
+	<?php endif; ?>
+</div>
+<?php endif;?>
+<?php
+if ($tasks->total_count() == 0) :
+?>
+	<div class="padding_1 center description"><?php echo I18N::HT('treenote', '(无子任务)') ?></div>
+<?php 
+else:
+?>
+<div class="task_list">
+<?php
+	foreach ($tasks as $t) { echo V('treenote:task/sidebar_task', ['task'=>$t]); }
+?>
+</div>
+<?php
+endif;

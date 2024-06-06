@@ -1,0 +1,25 @@
+span.lua-char,
+span.lua-float,
+span.lua-integer,
+span.lua-string 	{color: #762;}
+
+span.lua-comment {color: #262;font-style: italic;}
+span.lua-pragma {color: #555;font-style: italic;}
+
+span.lua-special,
+span.lua-varid,
+span.lua-varsym {color: #000;}
+
+span.lua-conid,
+span.lua-consym {color: #b11;}
+
+span.lua-qualifier {color: #555;}
+
+span.lua-reservedid,
+span.lua-reservedop {color: #730;}
+
+span.lua-prelude-varid,
+span.lua-prelude-varsym {color: #30a;}
+span.lua-prelude-conid {color: #b11;}
+
+span.lua-error {background-color: #fdd;}

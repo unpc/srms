@@ -1,0 +1,15 @@
+<?php 
+	$calendar = Q("calendar[parent_name=meeting][parent_id=$meeting->id]")->current();
+	$now = Date::time();
+	
+	if ($calendar->id){
+		$status = Q("cal_component[calendar_id=$calendar->id|me_room={$meeting}][dtstart<$now][dtend>$now]")->current();	
+	}
+	
+	if ($status->id) {
+		echo I18N::T('meeting', '使用中');
+	}
+	else {
+		echo I18N::T('meeting', '空闲');
+	}
+?>

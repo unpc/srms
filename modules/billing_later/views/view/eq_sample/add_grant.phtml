@@ -1,0 +1,58 @@
+<?php
+	$me = L('ME');
+ 	$lab = $lab->id ? $lab : Q("$me lab")->current();
+
+ 	$grantSelect = $form['grant'] ?: 0 ;
+ 	$grants = (array)$lab->get_grants();
+ 	$tr_grant_id = $tr_grant_id ?: 'tr_grant_'.uniqid();
+?>
+
+<tr id="<?php echo $tr_grant_id; ?>" >
+	<td class="label right nowrap">
+		<div class="lpadding_3">
+    		<?php echo I18N::T('billing_later', '经费卡号'); ?>
+		</div>
+	</td>
+    <td>
+    	<div class="middle nowrap">
+			<?php echo Form::dropdown('grant', ['--'] + $grants, $grantSelect, 'style="width: 280px;"'); ?>
+    	</div>
+    </td>
+</tr>
+<script type="text/javascript">
+$(document).ready(function() {
+	var $user_selector = $("input:hidden[name=<?php echo $user_selector ? : 'sender'; ?>]");
+	var $tr_grant_id = "<?php echo $tr_grant_id; ?>";
+	var $url = "<?php echo $url ? : URI::url('!billing_later/index'); ?>";
+	
+	$user_selector.change(function() {
+		var $user_id = $(this).val();
+    	replace_grant_items($url, $user_id, $tr_grant_id);
+	});
+	
+	var $user_option = $(":radio[name=<?php echo $user_option ? : 'user_option'; ?>]");
+	//由于该页面需要替换, 先卸载绑定的事件, 否则可能会出现问题
+	$user_option
+	.unbind('click')
+	.bind('click', function(){
+		var $user_id = 0;
+		if ($(this).val() == 'existing_user') {
+			$user_id = $user_selector.val();
+		}
+		
+    	replace_grant_items($url, $user_id, $tr_grant_id);
+    });
+    
+    function replace_grant_items(rq_url, u_id, tr_id) {
+	    Q.trigger({
+	    	object: 'add_eq_sample_grants',
+			event: 'change',
+			data: {
+				'user_id': u_id,
+				'tr_grant_id': tr_id
+			},
+			url: rq_url
+    	});
+    }
+});	
+</script>

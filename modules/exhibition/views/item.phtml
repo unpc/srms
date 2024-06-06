@@ -1,0 +1,16 @@
+<table class="form">
+    <tbody>
+        <tr>
+            <td class="label middle nowrap">
+                <?php echo I18N::T('labs', '仪器');?>
+            </td>
+            <td>
+                <?php echo Widget::factory('equipments:equipment_selector', [
+                    'name' => $form_name.'['.$flexform_index.']',
+                    'equipment' => $equipment
+                ]);?>
+        </td>
+        </tr>
+    </tbody>
+</table>
+<input type="hidden" value="<?php echo $equipment->id; ?>"/>

@@ -1,0 +1,86 @@
+<?= CSS::load_async('calendars:common') ?>
+
+    <script>
+        Q.globals.cal_week_rel = 'edit_week';
+        Q.globals.mode = 'list';
+    </script>
+<?php
+
+$me = L('ME');
+$table = Widget::factory('table');
+$table->name = 'approval';
+$table->form = $form;
+
+$columns = [
+    'annual'=> [
+        'title' => I18N::T('yiqikong_approval', '申报年度'),
+        'align' => 'left',
+        'nowrap' => TRUE
+    ],
+    'num'=> [
+        'title' => I18N::T('yiqikong_approval', '申请编号'),
+        'align' => 'left',
+        'nowrap' => TRUE
+    ],
+    'equipment'=> [
+        'title' => I18N::T('yiqikong_approval', '仪器名称'),
+        'align' => 'left',
+        'nowrap' => TRUE
+    ],
+    'user'=> [
+        'title' => I18N::T('yiqikong_approval', '申请人'),
+        'align' => 'left',
+        'nowrap' => TRUE
+    ],
+    'ctime' => [
+        'title' => I18N::T('yiqikong_approval', '申请时间'),
+        'align' => 'left',
+        'nowrap' =>TRUE,
+    ],
+    'type'=> [
+        'title' => I18N::T('yiqikong_approval', '申请类型'),
+        'align' => 'left',
+        'nowrap' => TRUE
+    ],
+    'status' => [
+        'title' => I18N::T('yiqikong_approval', '申请状态'),
+        'align' => 'left',
+        'nowrap' =>TRUE,
+    ],
+    'rest'=>[
+        'align'=>'left',
+        'nowrap'=>TRUE,
+    ]
+];
+
+$table->add_columns($columns);
+
+$table->empty_message = I18N::T('yiqikong_approval', '没有查询到相应的项目!');
+
+if (count($approval) > 0) {
+
+    foreach($approval as $ap) {
+        $links['confirm'] = [
+            'url' => NULL,
+            'text' => '<span class="after_icon_span">'.I18N::T('eq_charge', '审批').'</span>',
+            'tip' => I18N::T('eq_charge', '审批'),
+            'extra' => 'class="blue" q-src="' . URI::url('!people/dashboard/') .
+                '" q-static="id=' . $ap->source_id . '" q-event="click" q-object="approval_apply"',
+        ];
+        $rows = [
+            'annual' => V('people:dashboard/tabs/fundreport_approval_table/data/annual', ['ap' => $ap]),
+            'num' => V('people:dashboard/tabs/fundreport_approval_table/data/num', ['ap' => $ap]),
+            'equipment' => V('people:dashboard/tabs/fundreport_approval_table/data/equipment', ['ap' => $ap]),
+            'user' => V('people:dashboard/tabs/fundreport_approval_table/data/user', ['ap' => $ap]),
+            'ctime' => V('people:dashboard/tabs/fundreport_approval_table/data/ctime', ['ap' => $ap]),
+            'type' => V('people:dashboard/tabs/fundreport_approval_table/data/type', ['ap' => $ap]),
+            'status' => V('people:dashboard/tabs/fundreport_approval_table/data/status', ['ap' => $ap]),
+            'rest' => Widget::factory('application:links', ['links' => $links])
+        ];
+        $table->add_row($rows);
+    }
+}
+echo $table;
+?>
+<div style="text-align: right"><?php echo $pagination; ?></div>
+<div class="interval_10"></div>

@@ -1,0 +1,250 @@
+<style>
+.title {
+    width: 5rem;
+    padding-bottom: 0px !important;
+}
+
+.required {
+    padding-right: 2px;
+
+}
+span div.dropdown_container{
+    min-width:revert !important;
+    width:4.3rem !important;
+}
+.dialog_content tr td div.dropdown_container div.dropdown_text{
+    min-width:revert !important;
+    /* width:2rem !important; */
+}
+</style>
+<div class="form">
+    <form method="post" q-object="add_service" q-event="submit"
+        action="<?php echo H(URI::url('!technical_service/service')) ?>" autocomplete="off">
+        <?php $require = (string)V('form_require'); ?>
+        <table class="form">
+            <tbody>
+                <tr>
+                    <td class="right nowrap label">
+                        <div class="title">
+                            <?= $require; ?>
+                            <?= I18N::T('technical_service', '服务名称') ?>
+                        </div>
+                    </td>
+                    <td>
+                        <input name="name" placeholder="请输入服务名称" class="text" value="<?php echo H($form['name']) ?>" />
+                        <!-- <div><?php // echo V('form_filter', ['error' => $form->errors['name'][0]]) ?></div> -->
+                    </td>
+                    <td class="lpadding_4 right">
+                        <div class="title">
+                            <?= $require; ?>
+                            <?php echo I18N::T('technical_service', '收费平台') ?>
+                        </div>
+                    </td>
+                    <td class="left nowrap label">
+                        <?php
+                    $billing_departments = Q('billing_department')->to_assoc('id', 'name');
+                    echo Form::dropdown('billing_department', ['' => '--'] + $billing_departments, $form['billing_department'], 'class="lmargin_2"')
+                    ?>
+                        <!-- <div><?php // echo V('form_filter', ['error' => $form->errors['billing_department'][0]]) ?></div> -->
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-top: 0;"></td>
+                    <td style="padding-top: 0;"><div><?php echo V('form_filter', ['error' => $form->errors['name'][0]]) ?></div></td>
+                    <td style="padding-top: 0;"></td>
+                    <td class="lpadding_2" style="padding-top: 0;"><div><?php echo V('form_filter', ['error' => $form->errors['billing_department'][0]]) ?></div></td>
+                </tr>
+
+                <tr>
+                    <td class="right nowrap label">
+                        <div class="title">
+                            <?= $require; ?>
+                            <?= I18N::T('technical_service', '服务编号') ?>
+                        </div>
+                    </td>
+                    <td>
+                        <input name="ref_no" placeholder="请输入服务编号" class="text"
+                            value="<?php echo H($form['ref_no']) ?>" />
+                        <!-- <div><?php // echo V('form_filter', ['error' => $form->errors['ref_no'][0]]) ?></div> -->
+                    </td>
+                    <td class="lpadding_4 right">
+                        <div class="title">
+                            <?= $require; ?>
+                            <?= I18N::T('technical_service', '服务分类') ?>
+                        </div>
+                    </td>
+                    <td class="lpadding_2">
+                        <?php
+                    echo Widget::factory('technical_service:service_type_selector', [
+                        'autocomplete' => URI::url('!technical_service/autocomplete/service_type'),
+                        'name' => 'service_type',
+                        'tag' => $form['service_type'] ? O('tag_service_type', $form['service_type']) : O('tag_service_type'),
+                        'root' => Tag_Model::root('service_type'),
+                        'ajax' => true,
+                    ]);
+                    ?>
+                        <!-- <div><?php // echo V('form_filter', ['error' => $form->errors['service_type'][0]]) ?></div> -->
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-top: 0;"></td>
+                    <td style="padding-top: 0;"><div><?php echo V('form_filter', ['error' => $form->errors['ref_no'][0]]) ?></div></td>
+                    <td style="padding-top: 0;"></td>
+                    <td class="lpadding_2" style="padding-top: 0;"><div><?php echo V('form_filter', ['error' => $form->errors['service_type'][0]]) ?></div></td>
+                </tr>
+
+                <tr>
+                    <td class="right nowrap label">
+                        <div class="title">
+                            <?php echo I18N::T('technical_service', '服务周期') ?>
+                        </div>
+                    </td>
+                    <td>
+                        <input type="text" name="intervals" size="20" class="text number"
+                            value="<?php echo H(isset($form['intervals']) ?  $form['intervals'] : (int) $intervals) ?>" />&#160;
+                        <span>
+                            <?php echo Form::dropdown('intervals_format', Date::units('hd'), isset($form['intervals_format']) ?  $form['intervals_format'] :  $intervals_format ? : Config::get('technical_service.intervals_format', 'h'),'class="middle"');?>
+                        </span>
+                        <!-- <div><?php // echo V('form_filter', ['error' => $form->errors['intervals'][0]]) ?></div> -->
+                    </td>
+                    <td class="lpadding_4 right">
+                        <div class="title">
+                            <?= I18N::T('technical_service', '所属单位') ?>
+                        </div>
+                    </td>
+                    <td class="lpadding_2">
+                        <?php
+                    $group_root = Tag_Model::root('group');
+                    if (!L('ME')->access('管理所有服务')) {
+                        $group_root = L('ME')->group;
+                    }
+                    echo Widget::factory('application:tag_selector', [
+                        'tag' => O('tag_group', $form['group_id']),
+                        'root' => $group_root,
+                        'name' => 'group_id',
+                        'ajax' => true,
+                    ]);
+                    ?>
+                        <div><?php // echo V('form_filter', ['error' => $form->errors['group'][0]]) ?></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-top: 0;"></td>
+                    <td style="padding-top: 0;"><div><?php echo V('form_filter', ['error' => $form->errors['intervals'][0]]) ?></div></td>
+                    <td style="padding-top: 0;"></td>
+                    <td class="lpadding_2" style="padding-top: 0;"><div><?php echo V('form_filter', ['error' => $form->errors['group'][0]]) ?></div></td>
+                </tr>
+
+                <tr>
+                    <td class="label right top">
+                        <span><?php echo I18N::T('technical_service', '服务简介') ?></span>
+                    </td>
+                    <td class="label" colspan="3">
+                        <textarea name="description" class="text autogrow" style="width: 100%;height: 70px;"
+                            cols="80"><?= $form['description'] ?></textarea>
+                        <!-- <div><?php // echo V('form_filter', ['error' => $form->errors['description'][0]]) ?></div> -->
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label right top">
+                        <span><?php echo I18N::T('technical_service', '样本要求') ?></span>
+                    </td>
+                    <td class="label" colspan="3">
+                        <textarea name="sample_requires" class="text autogrow" style="width: 100%;height: 70px;"
+                            cols="80"><?= $form['sample_requires'] ?></textarea>
+                        <!-- <div><?php // echo V('form_filter', ['error' => $form->errors['sample_requires'][0]]) ?></div> -->
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-top: 0;"></td>
+                    <td style="padding-top: 0;"><div><?php echo V('form_filter', ['error' => $form->errors['description'][0]]) ?></div></td>
+                    <td style="padding-top: 0;"></td>
+                    <td class="lpadding_2" style="padding-top: 0;"><div><?php echo V('form_filter', ['error' => $form->errors['sample_requires'][0]]) ?></div></td>
+                </tr>
+
+                <tr>
+                    <td class="label right top">
+                        <span><?php echo I18N::T('technical_service', '收费标准') ?></span>
+                    </td>
+                    <td class="label" colspan="3">
+                        <textarea name="charge_settings" class="text autogrow" style="width: 100%;height: 70px;"
+                            cols="80"><?= $form['charge_settings'] ?></textarea>
+                        <!-- <div><?php // echo V('form_filter', ['error' => $form->errors['charge_settings'][0]]) ?></div> -->
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label right top">
+                        <span><?php echo I18N::T('technical_service', '注意事项') ?></span>
+                    </td>
+                    <td class="label" colspan="3">
+                        <textarea name="attentions" class="text autogrow" style="width: 100%;height: 70px;"
+                            cols="80"><?= $form['attentions'] ?></textarea>
+                        <!-- <div><?php // echo V('form_filter', ['error' => $form->errors['attentions'][0]]) ?></div> -->
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-top: 0;"></td>
+                    <td style="padding-top: 0;"><div><?php echo V('form_filter', ['error' => $form->errors['charge_settings'][0]]) ?></div></td>
+                    <td style="padding-top: 0;"></td>
+                    <td class="lpadding_2" style="padding-top: 0;"><div><?php echo V('form_filter', ['error' => $form->errors['attentions'][0]]) ?></div></td>
+                </tr>
+
+                <tr>
+                    <td class="label right top" style="padding-top: 1.8rem;">
+                        <?= $require; ?>
+                        <span><?php echo I18N::T('technical_service', '负责人') ?></span>
+                    </td>
+                    <td class="nowrap label" colspan="3">
+                        <div class="tmargin_2">
+                            <?= V('service/incharges', ['service' => O('service'), 'form' => $form]) ?></div>
+                        <!-- <div><?php // echo V('form_filter', ['error' => $form->errors['incharges'][0]]) ?></div> -->
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-top: 0;"></td>
+                    <td style="padding-top: 0;"><div><?php echo V('form_filter', ['error' => $form->errors['incharges'][0]]) ?></div></td>
+                </tr>
+
+                <tr>
+                    <td class="right nowrap label">
+                        <div class="title">
+                            <?= $require; ?>
+                            <?= I18N::T('technical_service', '联系电话') ?>
+                        </div>
+                    </td>
+                    <td>
+                        <input name="phones" placeholder="请输入联系电话" class="text"
+                            value="<?php echo H($form['phones']) ?>" />
+                        <!-- <div><?php // echo V('form_filter', ['error' => $form->errors['phones'][0]]) ?></div> -->
+                    </td>
+                    <td class="nowrap lpadding_4 right label">
+                        <div class="title">
+                            <?= $require; ?>
+                            <?php echo I18N::T('technical_service', '联系邮箱') ?>
+                        </div>
+                    </td>
+                    <td class="left nowrap label lpadding_2">
+                        <input name="emails" placeholder="请输入联系邮箱" class="text"
+                            value="<?php echo H($form['emails']) ?>" />
+                        <!-- <div><?php // echo V('form_filter', ['error' => $form->errors['emails'][0]]) ?></div> -->
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-top: 0;"></td>
+                    <td style="padding-top: 0;"><div><?php echo V('form_filter', ['error' => $form->errors['phones'][0]]) ?></div></td>
+                    <td style="padding-top: 0;"></td>
+                    <td class="lpadding_2" style="padding-top: 0;"><div><?php echo V('form_filter', ['error' => $form->errors['emails'][0]]) ?></div></td>
+                </tr>
+
+            </tbody>
+        </table>
+        <div class="button_container bmargin_2">
+            <div class="float_right">
+                <input type="button" name="cancel" id="cancel" class="font-button-default"
+                    value="<?php echo H(I18N::T('technical_service', '取消')) ?>" />
+                <input type="submit" name="submit" class="font-button-save"
+                    value="<?php echo H(I18N::T('technical_service', '下一步')) ?>" />
+            </div>
+        </div>
+    </form>
+</div>

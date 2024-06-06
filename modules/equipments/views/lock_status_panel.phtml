@@ -1,0 +1,26 @@
+<div style="padding: 2px 0;" class="light_panel middle match_parent">
+  <!-- <span class='gray'>记录状态</span> -->
+  <a 
+    href="<?php echo URI::url('', 'lock_status=2'); ?>"
+    class="status_tag status_tag_lock status_tag_unlock <?= ($form['lock_status'] === '2') ? 'status_tag_lock_active' : ''  ?>"
+  >
+    <?php echo I18N::HT('equipments', '未锁定'); ?>
+  </a>
+  <a 
+    href="<?php echo URI::url('', 'lock_status=1'); ?>" 
+    class="status_tag status_tag_lock status_tag_locked <?= ($form['lock_status'] == 1) ? 'status_tag_lock_active' : ''  ?>"
+  >
+    <?php echo I18N::HT('equipments', '已锁定'); ?>
+  </a>
+
+ <?php if ($enable_add_eq_records) : ?>
+    <div class="float_right middle records_panel">
+        <a href="<?php URI::url();?>" class="archive_all" q-object="archive_all"
+        q-event="click" q-static="<?php echo H([
+            'form_token' =>$form['form_token'],
+            'archive_id'=>$archive->id,
+            'eid'=>$equipment->id
+        ])?>"><?php  echo I18N::T('equipments', '归档')?></a>
+    </div>
+  <?php endif; ?>
+</div>

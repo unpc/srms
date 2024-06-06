@@ -1,0 +1,337 @@
+<div class="form  max_dialog_W600" style="min-width:370px">
+<?php
+$me = L('ME');
+$equipment = $sample->equipment;
+$form_id = 'add_sample_record_form_'. uniqid();
+if ($form['user_option'] == 'new_user') {
+    $lab = O('lab', (int) Lab::get('equipment.temp_lab_id') );
+}
+
+//系统管理员/仪器负责人编辑送样
+if ($me->is_allowed_to('管理', $sample)) {
+	$is_admin = TRUE;
+	if ($user != $me->id) {
+		$disabled = 'disabled="disabled"';
+	}
+}
+$tr_project_id = 'tr_project_' . uniqid();
+$user_form = [
+	'existing_user' => 'existing_user',
+	'new_user' => 'new_user',
+	'user_selector' => 'sender',
+	'user_option' => 'user_option',
+	'tr_project_id' => $tr_project_id,
+];
+$notice = Event::trigger('eq_sample.notice');
+if ($notice) : 
+?>
+	<div class="message message_normal clearfix nowrap"><?= H($notice);?></div>
+<?php 
+endif;
+if (isset($message)): ?>
+	<div class="message message_error clearfix nowrap"><?php echo H($message['content']); ?></div>
+<?php 
+endif;
+echo Event::trigger('eq_sample.message', $sample); // 这个考虑和上面的eq_sample.notice合并？？
+?>
+<form q-object="edit_sample" q-event="submit" q-src="<?php echo H(URI::url('!eq_sample/index')) ?>" id="<?php echo H($form_id) ?>" autocomplete="off" method="post">
+	<?php echo V('form_error', ['form'=>$form]);?>
+	<input name="id" type="hidden" value="<?php echo H($sample->id)?>" />
+	<table class="form">
+		<tr class="begin">
+            <td class="label left top nowrap blue" colspan=""><h1><?php echo I18N::HT('eq_sample', '申请人');?></h1></td>
+            <td class="right description middle red">*&nbsp;必填项</td>
+        </tr>
+		<tr>
+            <td colspan="2">
+				<div>
+				<?php
+						if ($is_admin)	echo V('eq_sample:edit/edit_sample_sender', [
+							'user' => $user,
+							'form' => $form,
+							'user_form' => $user_form,
+							]);
+						else echo H($sample->sender->name);
+					?>
+				</div>
+			</td>
+		</tr>
+        <?php 
+            $extra = Extra_Model::fetch($equipment, 'eq_sample');
+            $extra_value = O('extra_value', ['object'=>$sample]);
+            if($extra_value->id) $values = $extra_value->values;
+
+            echo V('eq_sample:extra/display', ['extra'=>$extra, 'form'=>$form, 'values'=>$values, 'sample'=>$sample, 'is_edit'=>TRUE]);
+
+			if (Module::is_installed('sample_approval')) {
+				echo V('sample_approval:sample/advanced', ['form'=>$form, 'sample'=>$sample]);
+			}
+        ?>
+		
+		
+        <?php //关联项目
+            if (class_exists('Lab_Project_Model')): 
+        ?>
+
+        <tr class="begin">
+			<td colspan="2" class="label left top nowrap blue"><h1><?php echo I18N::T('eq_sample', '关联项目'); ?></h1></td>
+		</tr>
+        <tr>
+                <?php echo V('eq_sample:project/connect', [
+                    'lab' => $lab,
+                    'form' => $form,
+                    'user' => $user,
+                    'sample' => $sample,
+                    'equipment' => $equipment
+                ]); ?>
+        </tr>
+
+		<?php endif; ?>
+        <?= Event::trigger('eq_sample.prerender.edit.form', $sample, $form, $user); ?>
+        <tr>
+        	<td class="label left top nowrap blue" colspan="2"><h1><?php echo I18N::HT('eq_sample', '时间设定');?></h1></td>
+   		</tr>
+		<tr>
+            <td class="left label top nowrap" colspan="2">
+<!--                --><?php ////管理员和普通用户会走到这一个地方，所以缩进的显示会不同，以后可能需要将这个view进行拆分?>
+<!--                --><?php //if($is_admin):?>
+<!--                <span style="padding-left:16px">--><?php //echo I18N::HT('eq_sample', '送样时间');?><!--</span>-->
+<!--            	--><?php //else:?>
+        		<span><?php echo I18N::HT('eq_sample', '送样时间');?></span>
+<!--            	--><?php //endif;?>
+            </td>
+		</tr>
+        <tr>
+
+            <td class="left top nowrap" colspan="2">
+                <input id="dtsubmit" name="dtsubmit" type="text" date_type="datetime" class="text date small_search_text" value="<?php echo H($form['dtsubmit'] ? date('Y-m-d H:i:s', H($form['dtsubmit'])) : date('Y-m-d H:i:s',$sample->dtsubmit)); ?>" />
+            </td>
+        </tr>
+        <?php //和89行重复？//echo Event::trigger('eq_sample.prerender.edit.form', $sample, $form); ?>
+		<?php if($is_admin): ?>
+            <?php $trial_checkbox_id = 'sample_trial_'. uniqid();?>
+            <?php $trial_checkbox_checked = ($sample->dtstart || $sample->dtend) || ($form['dtrial_check'] == 'on');?>
+            <?php
+                $records = Q("$sample eq_record");
+                if (!$records->total_count()) :
+            ?>
+	        <tr>
+	            <td class="left label top nowrap">
+	                <input type="checkbox" class="baseline monitor checkbox" name="dtrial_check" id="<?php echo H($trial_checkbox_id) ?>" <?php if ($trial_checkbox_checked) :?>checked="checked"<?php endif;?>/>
+                    <label for="<?php echo H($trial_checkbox_id) ?>"><?php echo I18N::HT('eq_sample', '测样时间');?></label>
+                    <?php echo V('form_filter', ['error' => $form->errors['dtend'][0]]) ?>
+                </td>
+	        </tr>
+            <tr>
+                <td class="left top nowrap">
+	                <span class="trial_area">
+                    <input id="dtstart" name="dtstart" type="text" date_type="datetime" class="date text small_search_text" value="<?php echo H($form['dtstart']?:$sample->dtstart?:time()); ?>" <?php if (!$trial_checkbox_checked) :?> disabled="disabled" <?php endif;?> />
+                    </span>
+                </td>
+                <td>
+                    <span class="trial_area">
+                    <input id="dtend" name="dtend" type="text" date_type="datetime" class=" date text small_search_text" value="<?php echo H($form['dtend']?:$sample->dtend?:time()); ?>" <?php if (!$trial_checkbox_checked) :?> disabled="disabled" <?php endif;?> />
+	                </span>
+                </td>
+            </tr>
+            <?php else:?>
+            <tr>
+                <td class="left label top nowrap">
+                    <label><?php echo I18N::HT('eq_sample', '测样时间');?></label>
+                </td>
+            </tr>
+            <?php foreach ($records as $record):?>
+            <tr>
+                <td class="left top nowrap">
+	                <span class="trial_area">
+                    <input name="record_dtstart[]" type="text" date_type="datetime" class="date text small_search_text" value="<?php echo $record->dtstart; ?>" disabled="disabled" />
+                    </span>
+                </td>
+                <td>
+                    <span class="trial_area">
+                    <input name="record_dtend[]" type="text" date_type="datetime" class=" date text small_search_text" value="<?php echo $record->dtend; ?>" disabled="disabled" />
+	                </span>
+                </td>
+            </tr>
+        <?php endforeach;?>
+        <?php endif?>
+            <?php
+                // 该条记录发生时，具有开机预热/冷却设置 问过产品 取ctime
+                $eq_preheat_cooling = Equipment_Preheat_Cooling::get_preheat_cooling($equipment, $sample->ctime);
+                if ($eq_preheat_cooling->preheat_time || $eq_preheat_cooling->cooling_time) :
+            ?>
+                <tr class="toggle:dtrial_check show_on:on">
+                    <td class="label left top nowrap">
+                        <?php echo I18N::HT('eq_sample', '预热/冷却操作');?>
+                    </td>
+                </tr>
+                <tr class="toggle:dtrial_check show_on:on">
+		    <?php
+                    $chkclass = 'checkbox';
+                    if($sample->record->id || $records->total_count()){
+                        $chkclass = 'checkboxdisabled';
+                    }
+                    ?>
+                    <?php if ($eq_preheat_cooling->preheat_time) :?>
+                        <td class="label middle">
+                            <?php $power_on_preheating_id = 'power_on_preheating_'. uniqid();?>
+                            <input id="<?php echo H($power_on_preheating_id) ?>" name="power_on_preheating" type="checkbox" class="middle monitor <?php echo $chkclass ?>"
+                                <?php if ($form['power_on_preheating'] == 'on' ? : $sample->preheat) echo 'checked="checked"';?> <?php if($sample->record->id || $records->total_count()) echo 'disabled="disabled"';?> />
+                            <label for="<?php echo H($power_on_preheating_id) ?>" class="baseline middle"><?php echo I18N::T('eq_sample' ,'开机预热'); ?></label>
+                        </td>
+                    <?php endif;?>
+                    <?php if ($eq_preheat_cooling->cooling_time) :?>
+                        <td class="label middle">
+                            <?php $shutdown_cooling_id = 'shutdown_cooling_'. uniqid();?>
+                            <input id="<?php echo H($shutdown_cooling_id) ?>" name="shutdown_cooling" type="checkbox" class="middle monitor <?php echo $chkclass ?>"
+                                <?php if ($form['shutdown_cooling'] == 'on' ? : $sample->cooling) echo 'checked="checked"';?> <?php if($sample->record->id || $records->total_count()) echo 'disabled="disabled"';?> />
+                            <label for="<?php echo H($shutdown_cooling_id) ?>" class="baseline middle"><?php echo I18N::T('eq_sample' ,'关机冷却'); ?></label>
+                        </td>
+                    <?php endif;?>
+                </tr>
+            <?php endif; ?>
+	        <?php $dtpickup_check_id = 'sample_dtpickup_check_'. uniqid();?>
+	        <tr class="toggle:status hide_on:<?= EQ_Sample_Model::STATUS_APPLIED?>">
+	            <td class="label left top nowrap">
+	                <input type="checkbox" class="checkbox" name="dtpickup_check" id="<?php echo H($dtpickup_check_id) ?>" <?php if ($sample->dtpickup) :?>checked="checked"<?php endif;?>/>
+	                <label for="<?php echo H($dtpickup_check_id) ?>"><?php echo I18N::T('eq_sample', '取样时间');?></label>
+                </td>
+	        </tr>
+            <tr class="toggle:status hide_on:<?= EQ_Sample_Model::STATUS_APPLIED?>">
+                <td class="nowrap left top">
+                <span class="dtpickup_area">
+	                <input id="dtpickup" name="dtpickup" type="text" class="text small_search_text date" value="<?php echo empty(H($sample->dtpickup)) ? date('Y-m-d H:i:s',time()) : date('Y-m-d H:i:s', H($sample->dtpickup))?>" <?php if (!$sample->dtpickup) :?> disabled="disabled" <?php endif;?> />
+	                </span>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="label left top nowrap" colspan="2">
+                <span class="rpadding_4 nowrap">
+                    <?php echo I18N::HT('eq_sample', '送样状态');?>
+                </span>
+
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?php
+                    $ss = Event::trigger('sample.status.step', $sample);
+                    if (Module::is_installed('sample_approval') && Config::get('sample_approval.to_equipment') && !$sample->equipment->sample_approval_enable) {
+                        foreach (Sample_Approval::get_not_show_status() as $s)
+                            unset($ss[$s]);
+                    }
+                    echo Form::dropdown('status', I18N::T('eq_sample', $ss), $form['status'] ? : $sample->status , 'class="dropdown monitor" id="' . $sample_status_id . '"');
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="middle" colspan="2">
+            <span class="toggle:status show_on:<?= EQ_Sample_Model::STATUS_TESTED?>">
+            <?php echo I18N::HT('eq_sample', '测样成功数');?>&#160;
+            <input name="success_samples" type="text" class="text number" size="3" value="<?= max(H(isset($form['success_samples']) ? $form['success_samples'] : $sample->success_samples),0);?>" />
+            </span>
+                </td>
+            </tr>
+			<?php
+				//有权限用户增加送样时预估收费
+				echo Event::trigger('eq_sample.charge_forecast', $user->id ? $sample : null, $equipment);
+			?>
+			<tr>
+	            <td class="label left top nowrap blue" colspan="2"><h1><?php echo I18N::HT('eq_sample', '备注');?></h1></td>
+	        </tr>
+	        <tr>
+	            <td colspan="2">
+	                <textarea name="note" type="text" rows="3" class="text autogrow"><?php echo H($form['note'] ? : $sample->note);?></textarea>
+	            </td>
+	        </tr>
+            <script type="text/javascript">
+            $(document).ready(function() {
+                $('#<?php echo $trial_checkbox_id;?>').bind('click', function() {
+                    if ($(this).is(':checked')) {
+                        $('.trial_area input').removeAttr('disabled');
+                    }
+                    else {
+                        $('.trial_area input').attr('disabled', 'disabled');
+                    }
+                });
+                $('#<?php echo $dtpickup_check_id;?>').bind('click', function() {
+			        if ($(this).is(':checked')) {
+			            $('.dtpickup_area input').removeAttr('disabled');
+			        }
+			         else {
+			            $('.dtpickup_area input').attr('disabled', 'disabled');
+			        }
+			    });
+            });
+            </script>
+		<?php endif;?>
+<!--        <tr>-->
+<!--            <td class="label right top nowrap description" colspan="2">--><?php //echo I18N::T('eq_sample', '* 必填项');?><!--</td>-->
+<!--        </tr>-->
+        <tr>
+            <td colspan="2" class="nowrap top">
+                <?php
+                if (Module::is_installed('nfs') && $me->is_allowed_to('上传文件', $sample, ['type' => 'attachments'])) {
+                    echo V('eq_sample:edit/attachments', ['sample' => $sample]);
+                }
+                ?>
+            </td>
+        </tr>
+        <?php
+        if($is_admin){
+            echo $extra_content;
+        }
+        ?>
+        <tr>
+            <td colspan="2" class="nowrap" style="height:78px;vertical-align:center;padding-top:0px!important">
+                <div class="float_right">
+                    <input name="cancel" type='reset' id='cancel' class="font-button-default sm rmargin_2e4" value="<?php echo I18N::HT('eq_sample', '取消');?>" />
+                    <input name="submit" type='submit' class="font-button-save sm" value="<?php echo I18N::HT('eq_sample', '保存');?>" />
+                    <?php echo Event::trigger('eq_sample.buttons', $sample) ?>
+                </div>
+            </td>
+        </tr>
+	</table>
+</form>
+</div>
+<script>
+
+$(function () {
+	var selector = $("input:hidden[name=sender]")
+        , $project_lab = $("select[name=project_lab]")
+	    , url = "<?= URI::url('!eq_sample/index'); ?>";
+
+	selector.change(function() {
+        reset(url);
+	});
+	$project_lab.change(function() {
+        reset(url);
+    });
+
+	var option = $(":radio[name=user_option]");
+	//由于该页面需要替换, 先卸载绑定的事件, 否则可能会出现问题
+	option
+    .unbind('click')
+    .bind('click', function(){
+        reset(url);
+    });
+
+    function reset(url) {
+        Q.trigger({
+            object: 'edit_sample',
+            event: 'click',
+            data: {
+                'form': $('#<?php echo $form_id?>').serialize()
+            },
+            url: url
+        });
+    }
+    $("form[q-object=edit_sample]").submit(function () {
+        $("input[name=submit]").attr('disabled', 'disabled');
+    })
+})
+</script>
+<?php if ( $is_admin ) : ?>
+<?php echo JS::load('eq_sample:connect_project', $user_form + ['url' => URI::url('!eq_sample/index'), ]); ?>
+<?php endif; ?>

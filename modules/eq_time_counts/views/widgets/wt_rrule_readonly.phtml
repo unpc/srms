@@ -1,0 +1,45 @@
+<div class="tmargin_2">
+<table class="form">
+<tr>
+    <td class="right nowrap middle">
+        <input type="checkbox" name="time_counts_repeat[<?php echo $flexform_index?>]" class="monitor checkbox" <?php if($rtype) echo 'checked';?> disabled="disabled"/>
+    </td>
+    <td>
+        <?php echo I18N::T('application','每'); ?>
+    </td>
+    &nbsp;
+    <td class="left nowrap middle">
+        <input type="text" name="time_counts_rnum[<?php echo $flexform_index ?>]" size="5" value="<?php echo H($rnum ?: 1 ) ?>" class="text number toggle_status:time_counts_repeat[<?php echo $flexform_index?>] disable_on:on" disabled="disabled"/>
+    <td class="right nowrap middle">
+        <?php
+            $uniqid = uniqid();
+            unset($rtypes[WT_RRule::RRULE_YEARLY]);
+            $static = H(['rrule_uniqid'=>$rrule_uniqid, 'flexform_index'=>$flexform_index]);
+            echo Form::dropdown('time_counts_rtype['.$flexform_index.']', T($rtypes), $rtype, 'class="middle view event:change object:time_counts_rtype src:'.URI::url('rrule').' static:'.$static.' toggle_status:repeat['.$flexform_index.'] disable_on:on" disabled="disabled"', 'class="middle"');
+        ?>
+    </td>
+    &nbsp;
+    <td class="left nowrap middle flexible"><?php echo I18N::T('application','重复一次'); ?>&nbsp;&nbsp;<?= $rtype ? '' : '<span class="description">('.I18N::T('eq_time_counts','不重复').')</span>'?></td>
+</tr>
+</table>
+</div>
+<div id="<?php echo H($rrule_uniqid ) ?>">
+<?php
+    switch ($rtype) {
+        case WT_RRule::RRULE_DAILY:   //按照日计算
+            break;
+        case WT_RRule::RRULE_WEEKLY:  //按照周计算
+            echo V('eq_time_counts:widgets/rule_date/item/wt_week_day', ['flexform_index'=>$flexform_index,
+                                                  'week_day'=>$week_day,
+                                            ]);
+            break;
+        case WT_RRule::RRULE_MONTHLY: //按照月计算
+            echo V('eq_time_counts:widgets/rule_date/monthly/wt_month', ['flexform_index'=>$flexform_index,
+                                                    'month_day'=>$month_day,
+                                            ]);
+            break;
+        default:
+            break;
+    }
+?>
+</div>

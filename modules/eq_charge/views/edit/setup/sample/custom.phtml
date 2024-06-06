@@ -1,0 +1,119 @@
+<?php
+$disabled = L('ME')->is_allowed_to('修改计费设置', $equipment) ? '' : 'disabled="disabled"';
+$me = L('ME');
+$isGenee = in_array($me->token, (array) Config::get('lab.admin')) ? true : false;
+?>
+<form method="post" autocomplete="off" action="<?php echo H(URI::url() ) ?>">
+<div class="interval_30"></div>
+<div class="form">
+<table class="form flexible">
+	<tbody>
+	<tr>
+		<td class="top lpadding_30" style="display: <?= ($isGenee || $equipment->display_reserv_script["sample_charge_script"]) ? '' : 'none' ?>">
+			<h2 class="section_title"><?php echo I18N::T('eq_charge', '自定义脚本设置')?></h2>
+            <div class="interval_30">&#160;</div>
+			<div class="lmaigin_1e5">
+				<?php $script_uniqid = 'eqcharge_lua_'.uniqid(); ?>
+				<table class="form">
+					<tbody>
+						<tr>
+							<td class="right nowrap top">
+                                <div class="rmargin_1"><?php echo I18N::T('eq_charge', '计费标签')?></div>
+                            </td>
+							<td class="top">
+								<?php if ($disabled): ?>
+									<textarea name="sample_charge_tags" class="text" cols="80" disabled="disabled"/><?php echo H(@join($equipment->charge_tags['sample'], ','))?></textarea>
+								<?php else:?>
+									<input name="sample_charge_tags" class="text token token_tip:<?php echo I18N::T('eq_charge', '您可选择标签或按回车键输入新的标签')?>" size="60" value="<?php echo H(@json_encode($equipment->charge_tags['sample']))?>" />
+								<?php endif;?>
+							</td>
+						</tr>
+                        <?php if ($isGenee || $equipment->display_reserv_script["sample_charge_script"]):?>
+                        <tr>
+                            <td class="right nowrap"><?= I18N::T('eq_charge','界面预览')?></td>
+                            <td>
+                                <?php echo V('equipments:custom/custom_template_preview',['isGenee'=>$isGenee,'equipment'=>$equipment,'custom_type'=>'sample_charge_script']);?>
+                            </td>
+                        </tr>
+                        <?php endif;?>
+                        <?php if ($isGenee):?>
+                        <tr>
+                            <td class="right nowrap top"><?= I18N::T('eq_charge','界面编辑')?></td>
+                            <td>
+                                <?php echo V('equipments:custom/custom_template',['isGenee'=>$isGenee,'equipment'=>$equipment,'custom_type'=>'sample_charge_script']);?>
+                            </td>
+                        </tr>
+                        <tr><td><div class="interval_12"></div></td></tr>
+                        <?php endif;?>
+                        <tr>
+                            <td class="right nowrap top"><?php echo I18N::T('eq_charge', 'LUA脚本')?>
+                                <div style="display: <?= $isGenee ? '' : 'none'?> ;margin-top: 0.1rem">
+                                    <?php echo Form::checkbox('display_sample_charge_script',
+                                        $equipment->display_reserv_script["sample_charge_script"] || $form['display_sample_charge_script'] ? TRUE : FALSE,
+                                        I18N::HT('eq_reserv', '可见'),
+                                        'class="middle checkbox monitor"' . $disabled, 'class="middle"'); ?>
+                                </div>
+                            </td>
+                            <td class="top flexible">
+								<textarea id="<?php echo H($script_uniqid) ?>" name="sample_charge_script" class="text code tab_ok" rows="15" cols="80" <?php echo $disabled;?>><?php echo H(trim($equipment->charge_script['sample'])); ?></textarea>
+							</td>
+						</tr>
+						<tr>
+							<td>&#160;</td>
+                            <?php
+                                $lua_help_links = Config::get('lua.help_link'); 
+                                $locale = Config::get('system.locale');
+                                $lua_help_link = $lua_help_links[$locale];
+                                
+                            ?>
+							<td class="description red">
+                                <div class="interval_12"></div>
+                                <?php echo I18N::T('eq_charge','关于LUA脚本的使用, 请参考%link', ['%link'=>URI::anchor($lua_help_link, 'LUA WIKI', 'target="_blank" class="red"')]); ?></td>
+						</tr>
+					</tbody>
+				</table>
+				<?php 
+					echo CSS::load_async('codemirror codemirror.lua');
+					echo JS::load_async('codemirror codemirror.lua');
+				?>
+				<?php if (!$disabled):?>
+				<script>
+				if (!Q.browser.msie || Q.browser.version > 6) {
+					Q.js_ready('codemirror codemirror.lua', function(){
+						/* 需要系统中关于toggle和一些特殊class的处理脚本加载完之后才能进行之后的codemirror处理 */
+						setTimeout(function(){
+							var $editor = CodeMirror.fromTextArea($('#<?php echo $script_uniqid; ?>')[0], {
+								mode : 'lua',
+								lineNumbers : true
+							});
+							/* 在codemirror初始化数据的时候,其中会带有不少setTimeout的事件, 为了确保再次刷新在最后, 此处需要再次进行setTimeout */
+							setTimeout(function(){
+								$editor.refresh();
+							}, 1);
+						}, 1);
+					});
+				}
+				</script> 
+				<?php endif;?>
+			</div>
+		</td>
+        <?php if (!$isGenee && !$equipment->display_reserv_script["sample_charge_script"]):?>
+            <td class="top">
+            <h4><?php echo I18N::T('eq_charge', '设置计费规则')?></h4>
+            <div class="padding_2">
+                <?php echo V('equipments:custom/custom_template_preview',['isGenee'=>$isGenee,'equipment'=>$equipment,'custom_type'=>'sample_charge_script']);?>
+            </div>
+        </td>
+        <?php endif;?>
+	</tr>
+	</tbody>
+</table>
+</div>
+<div class="interval_60"></div>
+<?php if (!$disabled): ?>
+    <div class="form float_right">
+        <input type="reset" name="cancel" class="font-button-default rmargin_16" value="<?php echo H(T('取消')) ?>" />
+        <input type="submit" name="submit" class="font-button-save" value="<?php echo H(T('保存修改')) ?>" />
+    </div>
+<?php endif;?>
+</form>

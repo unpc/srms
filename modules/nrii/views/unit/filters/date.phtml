@@ -1,0 +1,7 @@
+<input type="checkbox" id="dateOn" name="dateOn" />
+<input class="text date" name="beginDate1" value="<?= H($form['innerId']) ?>" q-date_format="<?php echo HT('$year/$month/$day')?>" />
+~
+<input class="text date" name="beginDate2" value="<?= H($form['innerId']) ?>" q-date_format="<?php echo HT('$year/$month/$day')?>" />
+<script type="text/javascript">
+    $('#dateOn').prop('checked',$('#dateOn').prop("checked") ? 1 : 0)
+</script>

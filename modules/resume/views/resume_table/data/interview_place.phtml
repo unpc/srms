@@ -1,0 +1,9 @@
+<div style="margin-left:25px; margin-right:25px;">
+<?php if ($resume->interview_place): ?>
+<a class="search_link" href="<?php echo URI::url('', ['interview_place'=>$resume->interview_place]); ?>">
+	<?php echo H(Resume::$interview_place[$resume->interview_place]); ?>
+</a>
+<?php else: ?>
+<?php echo '--'; ?>
+<?php endif; ?>
+</div>

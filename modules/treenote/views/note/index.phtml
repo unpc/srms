@@ -1,0 +1,41 @@
+<div class="hr_1">&#160;</div>
+<table>
+<tr>
+	<td class="icon top"><?php echo $note->user->icon(48) ?></td>
+	<td class="lpadding_1 top">
+		<p>
+			<?php $note->user->render(); ?>
+			<span class="description">@</span>
+			<?php echo Date::format($note->ctime) ?>
+		</p>
+		<h2>
+			<?php echo H($note->title); ?>
+		</h2>
+		<div class="hr_1">&#160;</div>
+		<div class="nowrap">
+		<?php echo Widget::factory('application:links', ['links' => $note->links('view'), 'separator' => ' ']);?>
+			&#160;&#160;
+		</div>
+		<div class="hr_2">&#160;</div>
+		<div class="rte_container">
+			<?php echo H($note->content, TRUE); ?>
+		</div>
+		<?php if (Module::is_installed('nfs')) : ?>
+		<div class="hr_2">&#160;</div>
+		<div class="clearfix">
+		<?php
+			echo V('nfs:nfs_lite/downloads', [
+				'object'=>$note,
+				'path_type'=>'attachments'
+			]);
+	?>
+		</div>
+		<div class="hr_2">&#160;</div>
+		<?php endif;?>
+		<?php echo Widget::factory('application:comments', ['object'=>$note]); ?>
+	</td>
+</tr>
+</table>
+<div class="hr_1">&#160;</div>
+<?php echo $secondary_tabs; ?>
+<?php echo $secondary_tabs->content; ?>

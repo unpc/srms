@@ -1,0 +1,16 @@
+<div id="attachment_<?php echo md5($path)?>" class="thumbnail<?php echo $even?' thumbnail_even':''?> clearfix">
+<table>
+<tr>
+	<td class="top image">
+		<img src="<?php echo H(Wiki_Preview::url($root.$path, '64') ) ?>" />
+	</td>
+	<td class="flexible top information">
+		<h4><a class="view object:attachment_open event:click static:<?php echo H(['path'=>$path])?>"><?php echo File::basename($path); ?></a></h4>
+		<p class="description"><?php echo T('文件大小')?>: <?php echo File::bytes(filesize($root.$path))?></p>
+	</td>
+	<td class="right top">
+		<a class="nowrap font-button-delete view object:attachment_delete event:click static:<?php echo H(['path'=>$path])?>"><?php echo T('删除')?></a>
+	</td>
+</tr>
+</table>
+</div>

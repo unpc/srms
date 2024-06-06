@@ -1,0 +1,18 @@
+<?php
+if (!in_array($grant_check, ['unlinked', 'linked'])) $grant_check = 'linked';
+?>
+<div>
+<?php echo Form::radio('grant_check', 'unlinked', $grant_check, I18N::HT('orders', '未关联经费'), 'class="monitor"'); ?>
+</div>
+<div>
+	<?php echo Form::radio('grant_check', 'linked', $grant_check, I18N::HT('orders', '已关联经费'), 'class="monitor"'); ?>
+	<div class="inline_block toggle_status:grant_check enable_on:linked middle">
+		<?php echo Widget::factory('grants:grant_select', [ 'grant' => $grant, 		
+				'portion' => $portion, 
+				'no_balance'=>TRUE,
+				'grant_name' => 'grant_select',
+				'portion_name' => 'grant_portion_select',
+			
+			]); ?>
+	</div>
+</div>

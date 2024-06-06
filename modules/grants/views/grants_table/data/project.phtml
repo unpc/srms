@@ -1,0 +1,19 @@
+<p>
+<?php if (L('ME')->is_allowed_to('查看', $grant)):?>
+<strong><a href="<?php echo H($grant->url()) ?>"><?php echo H($grant->project) ?></a></strong>
+<?php else: ?>
+<strong><?php echo H($grant->project) ?></strong>
+<?php endif; ?>
+</p>
+<?php
+$today = mktime(0, 0, 0);
+
+if ($grant->dtend - $today < 86399) $class = 'over';
+elseif (($grant->dtend -  Date::get_day_end()) <= $grant->remind_time * 86400) $class = 'near';
+else $class = 'far_away';
+?>
+<p class="description middle">
+    <span class="middle small grant_time <?php echo $class;?>">
+        <?php echo Date::format($grant->dtstart, 'Y/m/d')?> - <?php echo Date::format($grant->dtend, 'Y/m/d')?>
+    </span>
+</p>

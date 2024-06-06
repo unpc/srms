@@ -1,0 +1,260 @@
+<?php
+$form_id = 'add_sample_record_form_'. uniqid();
+?>
+<div class="form max_dialog_W600" style="min-width:370px;">
+<form q-object="add_sample_record" q-event="submit" q-src="<?php echo H(URI::url('!eq_sample/index')) ?> " autocomplete="off" method="post" id="<?php echo H($form_id) ?>"  q-static="<?= $again?H(['again'=>$again]):'';?>">
+    <?php 
+   echo V('form_error', ['form' => $form]);
+    if ($status): 
+    ?>
+    <div id="form_error_box" class="message message_error">
+        <ul>
+            <li><?= H('目前仪器暂时故障，您的送样可能无法正常测试，但仍然会产生计费。请您谨慎操作!') ?></li>
+        </ul>
+    </div>
+    <?php 
+    endif 
+    ?>
+    <input name="equipment_id" type="hidden" value="<?php echo H($equipment->id)?>" />
+    <table class="form">
+        <tr class="begin">
+            <td class="label left top nowrap blue"><h1><?php echo I18N::HT('eq_sample', '申请人');?></h1></td>
+            <td class="right description middle red">*&nbsp;必填项</td>
+        </tr>
+        
+        <tr>
+            <?php
+                echo V('eq_sample:edit/edit_sample_sender', [
+                    'user' => $user,
+                    'form' => $form,
+             ]);
+             ?>
+        </tr>
+        <?php
+            if ($sample->id) {
+                $extra = Extra_Model::fetch($sample->equipment, 'eq_sample');
+                $extra_value = O('extra_value', ['object' => $sample]);
+                if ($extra_value->id) $values = $extra_value->values;
+                echo V('eq_sample:extra/display', ['extra' => $extra, 'form' => $form, 'values' => $values, 'sample' => $sample]);
+            }
+            else {
+                $extra = Extra_Model::fetch($equipment, 'eq_sample');
+                echo V('eq_sample:extra/display', ['extra'=>$extra, 'form'=>$form]);
+            }
+
+            if (Module::is_installed('sample_approval')) {
+                echo V('sample_approval:sample/advanced', ['form'=>$form, 'sample'=>$sample]);
+            }
+        ?>
+        <tr class="begin">
+            <td class="label left top nowrap blue" colspan="2"><h1>送样信息</h1></td>
+        </tr>
+
+        
+        <tr>
+            <?php
+            if (class_exists('Lab_Project_Model')):
+            ?>
+            <?php
+            echo V('eq_sample:project/connect', [
+                'user' => $user,
+                'sample' => $sample,
+                'equipment' => $equipment,
+                'form' => $form,
+                'url' => URI::url('!eq_sample/index'),
+            ]);
+            endif;
+            ?>
+            <?= Event::trigger('eq_sample.prerender.add.form', $form, $equipment, $sample); ?>
+        </tr>
+
+        <tr>
+            <td class="label left top nowrap">
+                <?php echo I18N::HT('eq_sample', '送样时间');?>
+            </td>
+        </tr>
+        <tr>
+
+            <td>
+                <!-- <input name="dtsubmit" type="text" class="text date" value="--><?php //echo H($form['dtsubmit']); ?><!--" q-date_format="--><?php //echo HT('$year/$month/$day $hour:$min:$sec')?><!--"/>-->
+                <input id="dtsubmit" name="dtsubmit" class="text date small_search_text" value="<?php echo (int) $form['dtsubmit']?:time(); ?>" />
+            </td>
+        </tr>
+
+        <?php $trial_checkbox_id = 'sample_trial_'. uniqid();?>
+        <?php $trial_checkbox_checked = ($form['dtrial_check'] == 'on');?>
+        <tr>
+            <td class="label nowrap left" colspan="2">
+                <input type="checkbox" class="baseline monitor checkbox" name="dtrial_check" id="<?php echo H($trial_checkbox_id) ?>" <?php if ($trial_checkbox_checked) :?>checked="checked"<?php endif;?>/>
+                <label for="<?php echo H($trial_checkbox_id) ?>" class="baseline"><?php echo I18N::HT('eq_sample', '测样开始时间');?></label>
+                <?php echo V('form_filter', ['error' => $form->errors['dtend'][0]]) ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="label left nowrap top">
+                <span class="trial_area">
+                <input id="dtstart" name="dtstart" type="text" class="text date small_search_text" value="<?php echo H($form['dtstart'])?:time();?>" <?php if (!$trial_checkbox_checked) :?> disabled="disabled" <?php endif;?> />
+                </span>
+            </td>
+            <td class="label left nowrap top">
+                <span class="trial_area">
+                <input id="dtend" name="dtend" type="text" class="text date small_search_text" value="<?php echo H($form['dtend'])?:time();?>" <?php if (!$trial_checkbox_checked) :?> disabled="disabled" <?php endif;?> />
+                </span>
+            </td>
+        </tr>
+        <?php
+            // 该条记录发生时，具有开机预热/冷却设置 问过产品 取ctime, 新增时就是当前时间
+            $eq_preheat_cooling = Equipment_Preheat_Cooling::get_preheat_cooling($equipment);
+            if ($eq_preheat_cooling->preheat_time || $eq_preheat_cooling->cooling_time) :
+        ?>
+                <tr class="toggle:dtrial_check show_on:on">
+                    <td class="label left top nowrap">
+                        <?php echo I18N::HT('eq_sample', '预热/冷却操作');?>
+                    </td>
+                </tr>
+                <tr class="toggle:dtrial_check show_on:on">
+                <?php if ($eq_preheat_cooling->preheat_time) :?>
+                    <td class="label middle">
+                        <?php $power_on_preheating_id = 'power_on_preheating_'. uniqid();?>
+                        <input id="<?php echo H($power_on_preheating_id) ?>" name="power_on_preheating" type="checkbox" class="middle monitor checkbox"
+                            <?php if ($form['power_on_preheating'] == 'on' ? : $sample->preheat) echo 'checked="checked"';?> <?php echo $disabled;?> />
+                        <label for="<?php echo H($power_on_preheating_id) ?>" class="baseline middle"><?php echo I18N::T('eq_sample' ,'开机预热'); ?></label>
+                    </td>
+                <?php endif;?>
+                <?php if ($eq_preheat_cooling->cooling_time) :?>
+                    <td class="label middle">
+                        <?php $shutdown_cooling_id = 'shutdown_cooling_'. uniqid();?>
+                        <input id="<?php echo H($shutdown_cooling_id) ?>" name="shutdown_cooling" type="checkbox" class="middle monitor checkbox"
+                            <?php if ($form['shutdown_cooling'] == 'on' ? : $sample->cooling) echo 'checked="checked"';?> <?php echo $disabled;?> />
+                        <label for="<?php echo H($shutdown_cooling_id) ?>" class="baseline middle"><?php echo I18N::T('eq_sample' ,'关机冷却'); ?></label>
+                    </td>
+                <?php endif;?>
+                </tr>
+            <?php endif; ?>
+        <?php $dtpickup_check_id = 'sample_dtpickup_check_'. uniqid();?>
+        <tr class="toggle:status hide_on:<?= EQ_Sample_Model::STATUS_APPLIED?>">
+            <td class="label left top nowrap" colspan="2">
+                <div>
+                    <input type="checkbox" class="checkbox" name="dtpickup_check" id="<?php echo H($dtpickup_check_id) ?>" <?php if ($form['dtpickup_check'] == 'on') :?>checked="checked"<?php endif;?>/>
+                    <label for="<?php echo H($dtpickup_check_id) ?>"><?php echo I18N::T('eq_sample', '取样时间');?></label>
+                </div>
+            </td>
+        </tr>
+        <tr class="toggle:status hide_on:<?= EQ_Sample_Model::STATUS_APPLIED?>">
+            <td class="left top nowrap">
+                <span class="dtpickup_area">
+                <input id="dtpickup" name="dtpickup" type="text" class="text date small_search_text" value="<?php echo H($form['dtpickup']?:time());?>" <?php if ($form['dtpickup_check'] != 'on') :?> disabled="disabled" <?php endif;?> />
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td class="label left top nowrap" colspan="2">
+                <span class="rpadding_4 nowrap">
+                    <?php echo I18N::HT('eq_sample', '送样状态');?>
+                </span>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+            <?php
+                echo Form::dropdown('status', I18N::T('eq_sample', EQ_Sample_Model::$status), $form['status'] ? : EQ_Sample_Model::STATUS_APPLIED , 'class="dropdown monitor" id="' . $sample_status_id . '"');
+            ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="middle" colspan="2">
+            <span class="toggle:status show_on:<?= EQ_Sample_Model::STATUS_TESTED?>">
+            <?php echo I18N::HT('eq_sample', '测样成功数');?>&#160;
+            <input name="success_samples" type="text" class="text number" size="3" value="<?= max(H($form['success_samples']),0);?>" />
+            </span>
+            </td>
+        </tr>
+        <?php
+            // 有权限用户增加送样时预估收费
+            echo Event::trigger('eq_sample.charge_forecast', $sample, $equipment);
+        ?>
+        <tr>
+            <td class="label left top nowrap" colspan="2"><h1><?php echo I18N::HT('eq_sample', '备注');?></h1></td>
+        </tr>
+        <tr>
+            <td colspan="2" class="nowrap top">
+                <textarea style="word-break: break-word;white-space: normal;line-height: normal;" name="note" type="text" rows="3" class="text autogrow"><?php echo H($form['note']);?></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" class="nowrap top">
+                <?php
+                if (Module::is_installed('nfs')) {
+                    echo V('eq_sample:edit/attachments', ['sample' => $sample ? : O('eq_sample')]);
+                }
+                ?>
+            </td>
+        </tr>
+
+        <?php
+        echo $extra_content;
+        ?>
+      
+    </table>
+    <div class="button_container">
+            <div class="float_right">
+                <input name="cancel" id="cancel" type='reset' class="font-button-default sm rmargin_2e4" value="<?php echo I18N::HT('eq_sample', '取消');?>" />
+                <input name="submit" type='submit' class="font-button-save sm" value="<?php echo I18N::HT('eq_sample', '保存');?>" />
+            </div>
+     </div>
+</form>
+</div>
+<script type="text/javascript">
+
+
+
+$().ready(function() {
+    $('#<?php echo $trial_checkbox_id;?>').bind('click', function() {
+        if ($(this).is(':checked')) {
+            $('.trial_area input').removeAttr('disabled');
+        }
+        else {
+            $('.trial_area input').attr('disabled', 'disabled');
+        }
+    });
+    $('#<?php echo $dtpickup_check_id;?>').bind('click', function() {
+        if ($(this).is(':checked')) {
+            $('.dtpickup_area input').removeAttr('disabled');
+        }
+         else {
+            $('.dtpickup_area input').attr('disabled', 'disabled');
+        }
+    });
+    $('#<?php echo $form_id?>').find('.validate_error').nextAll('label').addClass('error');
+
+    var selector = $("input:hidden[name=sender]")
+        , $project_lab = $("select[name=project_lab]")
+        , url = "<?= URI::url('!eq_sample/index'); ?>";
+
+    selector.change(function() {
+        reset(url);
+    });
+    $project_lab.change(function() {
+        reset(url);
+    });
+    
+    //由于该页面需要替换, 先卸载绑定的事件, 否则可能会出现问题
+    $(":radio[name=user_option]")
+    .unbind('click')
+    .bind('click', function(){
+        reset(url);
+    });
+    
+    function reset(url) {
+        Q.trigger({
+            object: 'add_sample_record',
+            event: 'click',
+            data: {
+                'form': $('#<?php echo $form_id?>').serialize()
+            },
+            url: url
+        });
+    }
+});
+</script>

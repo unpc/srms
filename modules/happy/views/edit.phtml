@@ -1,0 +1,91 @@
+<div class="hr_1">&#160;</div>
+<div class="hr_1">&#160;</div>
+<?php $require = V('form_require', ['form'=>$form]);?>	
+<form action="" method="post">
+	<?php echo V('form_error', ['form'=>$form])?>
+	<div class="message_content padding_2">
+
+		<table class="form">
+			<tr>
+				<td class="right middle">
+					<strong class="description"><?php echo I18N::HT('happy', '发起人:')?></strong>
+				</td> 
+				<td class="middle"><?php echo H($happyhour->creater->name); ?></td>
+			</tr>
+			<tr>
+				<td class="label right nowrap middle"><?php echo I18N::T('equipments', '主题')?></td>
+				<td class="label left top">
+					<input name="title" class="text" size="30" value="<?php echo H($happyhour->title);?>"/><?php echo $require;?>
+				</td>
+			</tr>
+			<tr>
+				<td class="label right nowrap middle"><?php echo I18N::T('equipments', '内容')?></td>
+				<td class="label left top">
+						<input name="body" class="text" size="30" value="<?php echo H($happyhour->body); ?>"/>
+				</td>
+			</tr>	
+			<tr>
+				<td class="label right nowrap middle"><?php echo I18N::T('equipments', '发起时间')?></td>
+				<td class="label left top">
+						<input name="ctime" class="text date" value="<?php echo $happyhour->ctime; ?>" />
+				</td>
+			</tr>
+			<tr>
+				<td class="label right nowrap middle"><?php echo I18N::T('equipments', '截止时间')?></td>
+				<td class="label left top">
+					<input name="dtime" class="text date" value="<?php echo $happyhour->dtime; ?>" />
+				</td>
+			</tr>
+		</table>
+	</div>
+	
+	
+	<h2 class="section_title">
+		<span class="middle" >选购单</span>
+	</h2>
+	
+	
+	<div class="message_content padding_2">
+		<table class="form">
+			<?php 
+				$num = 1;
+				foreach($replys as $reply) {
+			?>
+			<tr>
+				<td class='right middle'><?php echo $num;?></td>
+				<td><input name="contents[<?php echo $reply->id;?>]" class="text" size="15" value="<?php echo H($reply->content);?>"></td>
+				<td><strong class='description'>X</td>
+				<td><input name="stocks[<?php echo $reply->id;?>]" class="text number" size="5" value="<?php echo H($reply->stock) ?>"></td>
+			</tr>
+			<?php	
+				$num = $num+1;
+				} 
+			?>
+		</table>	
+
+
+		<table class="form">				
+			<tr>
+				<td class="right middle"><strong class="description"><?php echo I18N::T('happy', '添加菜单:')?>
+				</td>
+				<td class="label left top">
+					<input name="content" class="text" size="20">
+				</td>	
+				<td>
+					<input name="stock" class="text" size="5" value='1'>
+				</td>
+			</tr>	
+			<tr>
+				<td class="label right nowrap middle">
+				</td>
+				<td>
+					<input type="submit" value="提交" class="button button_add" name="submit">
+					<?php if(L('ME')->is_allowed_to('创建', $happyhour)) : ?>
+						&#160;&#160;&#160;
+						<a class="font-button-delete" confirm="<?php echo H(I18N::T('happy', '您确定删除该活动吗?')) ?>" href="<?php echo H($happyhour->url(NULL, NULL, NULL, 'delete') ) ?>"><?php echo I18N::T('happy', '删除活动')?></a>
+					<?php endif; ?>
+				</td>
+			</tr>		
+		</table>
+	</div>
+</form>

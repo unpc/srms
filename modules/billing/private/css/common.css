@@ -1,0 +1,82 @@
+.triple {
+	width:350px;
+	overflow:hidden;
+    li {
+        float:left;
+        display:inline;
+        width:30%;
+    }
+}
+
+.balance_0 {
+	background-color: rgb(140, 191, 64);
+}
+
+.balance_1 {
+	background-color: rgb(76, 176, 82);
+}
+
+.balance_2 {
+	background-color: rgb(230, 115, 153);
+}
+
+.balance_3
+{
+	background-color: rgb(102, 140, 217);
+}
+
+.balance_4
+{
+	background-color: rgb(242, 166, 64);
+}
+
+.balance_5
+{
+	background-color: rgb(89, 191, 179);
+}
+
+.balance_6
+{
+	background-color: #eee;
+}
+/*
+NO.TASK#300(guoping.zhang@2010.12.10)
+列表财务部门收支明细时：
+	概要信息：财务帐号个数｜总收入｜总支出｜总余额的样式
+*/
+span.eq_number{
+	color:var(--basiccolor);
+}
+
+.transaction_count {
+    line-height: 24px;
+    margin-right: 10px;
+}
+
+tr.pending_transaction td{
+	color:#666;
+}
+
+.referred_transaction {
+	background-color: #F6F8FD;
+	color:#666;
+}
+
+.panel .additional_info {
+	line-height: 24px;
+}
+.account_grid td{
+	word-break:break-all;
+}
+
+.billing_markup_content {
+    a.markup_link {
+        color: var(--basiccolor);
+    }
+}
+
+.summary{
+	a{
+		cursor: pointer;
+	}
+}

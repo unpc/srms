@@ -1,0 +1,5 @@
+<?php $can_action = $voucher->status == EQ_Voucher_Model::PENDDING; ?>
+<?php if ($can_action):?>
+<span style="cursor:pointer;" class="blue voucher_id:<?= $voucher->id ?> action:pass"><?= I18N::T('eq_approval', '通过')?></span>
+<span style="padding-left: 16px; cursor:pointer;" class="blue voucher_id:<?= $voucher->id ?> action:reject"><?= I18N::T('eq_approval', '拒绝')?></span>
+<?php endif;?>

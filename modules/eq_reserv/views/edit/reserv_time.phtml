@@ -1,0 +1,561 @@
+<style>
+    div .reserv_rules .tab_content {
+        padding: 0px;
+        margin: 0px;
+        min-width: 950px !important;
+    }
+</style>
+<?php
+$hidden = $disabled && $equipment->accept_reserv ? '' : ' hidden toggle:accept_reserv show_on:on';
+$readonly = $disabled ? '_readonly' : '';
+$me = L('ME');
+?>
+<div class="form <?php echo $hidden?>">
+	<h2 class="section_title">
+        <span class="border"></span>
+        <span class="black_title"><?php echo I18N::HT('eq_reserv', '预约规则'); ?></span>
+    </h2>
+    <div class="interval_12"></div>
+	<div class="lmaigin_1e5">
+		<div class="<?php echo $hidden?>">
+            <div>
+                <?php echo Form::checkbox('reserv_require_pc', $equipment->reserv_require_pc, I18N::T('eq_reserv', 'PC端预约提醒'), 'class="middle checkbox monitor"' . $disabled, 'class="middle"');?>
+                <div class="interval_6"></div>
+                <div class="description" style="color: #E02020">
+                    <span class="required">*</span><?php echo I18N::T('eq_reserv', '开启后，用户在移动端预约时，将提示“当前仪器表单较复杂，建议前往pc端预约”');?>
+                </div>
+            </div>
+            <div class="interval_6"></div>
+            <div>
+                <?php echo Form::checkbox('accept_merge_reserv', $equipment->accept_merge_reserv, I18N::T('eq_reserv', '合并同一用户连续预约'), 'class="middle checkbox monitor"' . $disabled, 'class="middle"');?>
+            </div>
+            <div class="interval_6"></div>
+            <div <?php if (!$disabled) {echo 'class="hidden toggle:accept_merge_reserv show_on:on"';} ?>
+                <?php if (!$equipment->accept_merge_reserv) {echo 'class="hidden"';}?>>
+                &#160;&#160;&#160;&#160;&#160;&#160;<?= I18N::T('eq_reserv', '连续预约的最大间距：');?><input class="text number middle" name="merge_reserv_interval" size="5" value="<?php echo H(isset($merge_reserv_interval) ? $merge_reserv_interval : Config::get('eq_reserv.default_merge_reserv_interval')) ?>" <?php echo $disabled;?>/><?php echo I18N::T('eq_reserv', '分钟')?>
+                <div class="interval_6"></div>
+                &#160;&#160;&#160;&#160;&#160;&#160;<?= Form::checkbox('merge_in_same_project', $equipment->merge_in_same_project, I18N::T('eq_reserv', '仅在相同关联项目合并'), !$equipment->accept_merge_reserv ? 'hidden' : 'class="middle checkbox"' . $disabled, 'class="middle"')?>
+            </div>
+            <?php if (Config::get('eq_reserv.single_equipemnt_reserv')) : ?>
+                <div class="interval_6"></div>
+                <div>
+                    <?= Form::checkbox('single_equipemnt_reserv', $equipment->single_equipemnt_reserv,
+                        I18N::T('eq_reserv', '不允许与其他仪器同时被预约'), 'class="middle checkbox monitor"' . $disabled, 'class="middle"');?>
+                </div>
+            <?php endif; ?>
+            <div class="interval_6"></div>
+            <div>
+				<?= Form::checkbox('unbind_reserv_time', $equipment->unbind_reserv_time, I18N::T('eq_reserv', '允许用户在他人预约时段使用仪器（非预约时段除外）'), 'class="middle checkbox"' . $disabled, 'class="middle"')?>
+                <div class="interval_6"></div>
+                <div class="description" style="color: #E02020">
+                    <span class="required">*</span><?php echo I18N::T('eq_reserv', '在仪器联网情况下此功能有效');?>
+                    <div class="interval_6"></div>
+                    <span class="required">*</span><?php echo I18N::T('eq_reserv', '在仪器无人使用情况下, 允许用户使用该仪器');?>
+                </div>
+            </div>
+            <div class="interval_6"></div>
+            <?php
+            /* NO.BUG#240(xiaopei.li@2010.12.15) */
+            if ($equipment->require_training): ?>
+            <?php if (Module::is_installed('exam')) :?>
+                    <?php echo Form::checkbox('reserv_require_training', $equipment->reserv_require_training, I18N::HT('eq_reserv', '必须满足“安全准入”要求才能预约'), 'class="middle checkbox"' . $disabled, 'class="middle"'); ?>
+                <?php else: ?>
+                    <?php echo Form::checkbox('reserv_require_training', $equipment->reserv_require_training, I18N::HT('eq_reserv', '必须通过培训才能预约'), 'class="middle checkbox"' . $disabled, 'class="middle"'); ?>
+                <?php endif; ?>
+            <div class="interval_10"></div>
+            <?php endif; ?>
+            <table>
+                <tbody>
+                    <tr>
+                        <td class="left nowrap middle"><?php echo I18N::T('eq_reserv', '添加预约最早可提前')?></td>
+                    </tr>
+                    <tr class="interval_6"></tr>
+                    <tr>
+                        <td class="nowrap middle">
+                            <?php
+                            echo Form::radio('default_add_earliest', 'customize',
+                                is_null($add_reserv_earliest_time) && !isset($form['add_reserv_earliest_time']) ?
+                                    'default' : 'customize','','class="middle monitor"' . $disabled); ?>
+                            <span class="middle toggle_status:default_add_earliest enable_on:customize" style="padding-left: 8px">
+                            <input class="text number middle set_time_value" name="add_reserv_earliest_time" value="<?php echo H(isset($add_reserv_earliest_time) ?  $add_reserv_earliest_time : $default_add_reserv_earliest_time) ?>" <?php echo $disabled?>/>&#160;
+                            <?php echo Form::dropdown('add_reserv_earliest_format', Date::units('ihd'), $add_reserv_earliest_format ? :
+                                $default_add_reserv_earliest_format ? : Config::get('eq_reserv.default_add_reserv_limit_format', 'd'),'class="middle set_time_format" ' . $disabled);?>
+                            </span>
+                            <div class="interval_6"></div>
+                            <?php
+                            echo Form::radio('default_add_earliest', 'default',
+                                is_null($add_reserv_earliest_time) && !isset($form['add_reserv_earliest_time']) ?
+                                    'default' : 'customize',
+                                I18N::T('eq_reserv', '系统默认值'),'class="monitor"' . $disabled,'class="middle" style="padding-left: 8px"');
+                            ?>
+                        </td>
+                    </tr>
+                    <tr><td><div class="interval_20"></div></td></tr>
+                    <tr>
+                        <td class="left nowrap middle"><?php echo I18N::T('eq_reserv', '添加预约最晚可提前')?></td>
+                    </tr>
+                    <tr class="interval_6"></tr>
+                    <tr>
+                        <td class="nowrap middle">
+                            <?php echo Form::radio('default_add_latest','customize', is_null($add_reserv_latest_time) && !isset($form['add_reserv_latest_time']) ? 'default' : 'customize','','class="middle monitor"' . $disabled); ?>
+                            <span class="middle toggle_status:default_add_latest enable_on:customize" style="padding-left: 8px">
+                            <input class="text number middle  set_time_value" name="add_reserv_latest_time" value="<?php echo H(isset($add_reserv_latest_time) ?  $add_reserv_latest_time : $default_add_reserv_latest_time) ?>" <?php echo $disabled?>/>&#160;
+                            <?php echo Form::dropdown('add_reserv_latest_format', Date::units('ihd'), $add_reserv_latest_format ? : $default_add_reserv_latest_format ? : Config::get('eq_reserv.default_add_reserv_limit_format', 'd'),'class="middle  set_time_format"' . $disabled);?>
+                            </span>
+                            <div class="interval_6"></div>
+                            <?php echo Form::radio('default_add_latest','default', is_null($add_reserv_latest_time) && !isset($form['add_reserv_latest_time']) ? 'default' : 'customize',I18N::T('eq_reserv', '系统默认值'),'class="monitor"' . $disabled,'class="middle" style="padding-left: 8px"'); ?>
+                        </td>
+                    </tr>
+                    <tr><td><div class="interval_20"></div></td></tr>
+                    <tr>
+                        <td class="left nowrap middle"><?php echo I18N::T('eq_reserv', '修改预约最晚可提前')?>&#160;&#160;</td>
+                    </tr>
+                    <tr class="interval_6"></tr>
+                    <tr>
+                        <td class="nowrap middle">
+                            <?php echo Form::radio('default_modify_latest', 'customize', is_null($modify_reserv_latest_time) && !isset($form['modify_reserv_latest_time']) ? 'default' : 'customize','','class="middle monitor"' . $disabled); ?>
+                            <span class="middle toggle_status:default_modify_latest enable_on:customize" style="padding-left: 8px">
+                            <input class="text number middle  set_time_value" name="modify_reserv_latest_time"  value="<?php echo H(isset($modify_reserv_latest_time) ?  $modify_reserv_latest_time : $default_modify_reserv_latest_time) ?>" <?php echo $disabled?>/>&#160;
+                            <?php echo Form::dropdown('modify_reserv_latest_format', Date::units('ihd'), $modify_reserv_latest_format ? : $default_modify_reserv_latest_format ? : Config::get('eq_reserv.default_modify_reserv_latest_format','d'),'class="middle  set_time_format"' . $disabled);?>
+                            </span>
+                            <div class="interval_6"></div>
+                            <?php echo Form::radio('default_modify_latest', 'default', is_null($modify_reserv_latest_time) && !isset($form['modify_reserv_latest_time']) ? 'default' : 'customize',I18N::T('eq_reserv', '系统默认值'),'class="monitor"' . $disabled,'class="middle" style="padding-left: 8px"'); ?>
+                        </td>
+                    </tr>
+
+                    <tr><td><div class="interval_20"></div></td></tr>
+                    <tr>
+                        <td class="left nowrap middle"><?php echo I18N::T('eq_reserv', '删除预约最晚可提前')?>&#160;&#160;</td>
+                    </tr>
+                    <tr class="interval_6"></tr>
+                    <tr>
+                        <td class="nowrap middle">
+                            <?php echo Form::radio('default_delete_latest', 'customize', is_null($delete_reserv_latest_time) && !isset($form['delete_reserv_latest_time']) ? 'default' : 'customize','','class="middle monitor"' . $disabled); ?>
+                            <span class="middle toggle_status:default_delete_latest enable_on:customize" style="padding-left: 8px">
+                            <input class="text number middle  set_time_value" name="delete_reserv_latest_time"  value="<?php echo H(isset($delete_reserv_latest_time) ?  $delete_reserv_latest_time : $default_delete_reserv_latest_time) ?>" <?php echo $disabled?>/>&#160;
+                            <?php echo Form::dropdown('delete_reserv_latest_format', Date::units('ihd'), $delete_reserv_latest_format ? : $default_delete_reserv_latest_format ? : Config::get('eq_reserv.default_delete_reserv_latest_format','d'),'class="middle  set_time_format"' . $disabled);?>
+                            </span>
+                            <div class="interval_6"></div>
+                            <?php echo Form::radio('default_delete_latest', 'default', is_null($delete_reserv_latest_time) && !isset($form['delete_reserv_latest_time']) ? 'default' : 'customize',I18N::T('eq_reserv', '系统默认值'),'class="monitor"' . $disabled,'class="middle" style="padding-left: 8px"'); ?>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="middle description nowrap" colspan="2" style="color: #E02020">
+                            <div class="interval_6"></div>
+                            <?php echo I18N::HT('eq_reserv', '* 设置为0, 表示不限制添加 / 修改 / 删除的提前时间')?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="middle description nowrap" colspan="2" style="color: #E02020">
+                            <div class="interval_6"></div>
+                            <?php echo I18N::HT('eq_reserv', '* 建议 “修改 / 删除预约最晚可提前” 时间小于 “添加预约最晚可提前” 时间, 否则会出现添加预约后用户不可编辑的情况');?>
+                        </td>
+                    </tr>
+
+                    <tr><td><div class="interval_20"></div></td></tr>
+                    <tr>
+                        <td class="left nowrap middle"><?php echo I18N::T('eq_reserv', '用户最低起约时长')?>&#160;&#160;</td>
+                    </tr>
+                    <tr class="interval_6"></tr>
+                    <tr>
+                        <td class="nowrap middle">
+                            <?php echo Form::radio('default_minimum_duration', 'customize', is_null($reserv_minimum_duration) && !isset($form['reserv_minimum_duration']) ? 'default' : 'customize','','class="middle monitor"' . $disabled); ?>
+                            <span class="middle toggle_status:default_minimum_duration enable_on:customize">
+                            <input class="text number middle" name="reserv_minimum_duration" size="10" value="<?php echo H(isset($reserv_minimum_duration) ?  $reserv_minimum_duration : $default_reserv_minimum_duration) ?>" <?php echo $disabled?>/>&#160;
+                            <?php echo Form::dropdown('reserv_minimum_duration_format', Date::units('ih'), $reserv_minimum_duration_format ? : $reserv_minimum_duration_format ? : Config::get('eq_reserv.default_minimum_duration_format','i'),'class="middle"' . $disabled);?>
+                            </span>
+                          </td>
+                    </tr>
+                    <tr class="interval_6"></tr>
+                    <tr>
+                        <td class="nowrap middle">
+                            <?php echo Form::radio('default_minimum_duration', 'default', is_null($reserv_minimum_duration) && !isset($form['reserv_minimum_duration']) ? 'default' : 'customize',I18N::T('eq_reserv', '无限制'),'class="middle monitor"' . $disabled,'class="middle"'); ?>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+		</div>
+    </div>
+</div>
+<div class="interval_24"></div>
+<?= V('eq_reserv:edit/edit_visible_range', [
+    'equipment' => $equipment, 'hidden' => $hidden, 'form' => $form
+]); ?>
+
+<?php
+$configs = Config::get("eq_reserv.equipment_edit_time_view", []);
+foreach ($configs as $key => $conf) {
+    // 可考虑进行排序 $conf['weight']
+    echo V($conf['view'], $this->vars + [
+        'equipment'=> $equipment,
+        'form'=> $form
+    ]);
+}
+?>
+
+<?php if (Module::is_installed('eq_empower')) :?>
+<div class="form <?php echo $hidden?>">
+    <div>
+        <?php
+            $readonly = !$me->is_allowed_to('修改预约设置', $equipment);
+            if ($readonly) {
+                echo V('eq_empower:empower_setting_readonly', ['times' => $times, 'form' => $form]);
+            }
+            else {
+                echo V('eq_empower:empower_setting', ['times' => $times, 'form' => $form]);
+            }
+        ?>
+        
+    </div>
+</div>
+<div class="interval_24"></div>
+<?php endif; ?>
+
+<?php if (Module::is_installed('eq_time_counts')) :?>
+    <div class="form <?php echo $hidden?>">
+        <?php
+        if ($readonly) {
+            echo (string)V('eq_time_counts:time_counts_setting_readonly', ['times' => $eq_times, 'form' => $form]);
+        } else {
+            echo (string)V('eq_time_counts:time_counts_setting', ['times' => $eq_times, 'form' => $form]);
+        }
+        ?>
+
+    </div>
+    <div class="interval_24"></div>
+<?php endif; ?>
+
+<div class="form <?php echo $hidden?>">
+<h2 class="section_title">
+    <span class="border"></span>
+    <span class="black_title"><?php echo I18N::T('eq_reserv', '预约表单')?></span>
+</h2>
+<div class="interval_12"></div>
+    <?php $extra = Extra_Model::fetch($equipment, 'eq_reserv');?>
+<div class="lmaigin_1e5" src="<?php echo H($extra->url()) ?>"></div>
+</div>
+<div class="interval_24"></div>
+
+<div class="form <?php echo $hidden?>">
+    <h2 class="section_title">
+        <span class="border"></span>
+        <span class="black_title"><?= I18N::T('eq_reserv', '提前上机设置') ?></span>
+    </h2>
+    <div class="interval_12"></div>
+    <div class="lmaigin_1e5">
+        <div>
+            <?php echo Form::checkbox('advance_use_is_allowed', $equipment->advance_use_is_allowed, I18N::T('eq_reserv', '用户自主预约允许提前上机'), 'class="middle checkbox monitor"' . $disabled, 'class="middle"');?>
+        </div>
+        <div <?php if (!$disabled) {echo 'class="hidden toggle:advance_use_is_allowed show_on:on"';} ?>
+            <?php if (!$equipment->advance_use_is_allowed) {echo 'class="hidden"';}?>>
+            <div class="interval_12"></div>
+            <div class="rmargin_2e4"><?= I18N::T('eq_reserv', '允许提前上机时间: ');?><input class="text number middle" name="advance_use_time" size="5" value="<?php echo H($equipment->advance_use_time ? ($equipment->advance_use_time / 60) : Config::get('eq_reserv.default_advance_use_time')) ?>" <?php echo $disabled;?>/>&#160;&#160;<?php echo I18N::T('eq_reserv', '分钟')?></div>
+        </div>
+    </div>
+</div>
+<div class="interval_24"></div>
+<?php
+
+	$tagged = P($equipment)->get('@TAG');
+	if ($tagged) foreach ($tagged as $tag => $data) {
+		$new_data = [];
+		if(isset($data['specific_add_earliest_limit'])){
+			$new_data['specific_add_earliest_limit'] = $data['specific_add_earliest_limit'];
+		}
+		if(isset($data['specific_add_latest_limit'])){
+			$new_data['specific_add_latest_limit'] = $data['specific_add_latest_limit'];
+		}
+		if(isset($data['specific_modify_latest_limit'])){
+			$new_data['specific_modify_latest_limit'] = $data['specific_modify_latest_limit'];
+		}
+		if(isset($data['specific_delete_latest_limit'])){
+        	    $new_data['specific_delete_latest_limit'] = $data['specific_delete_latest_limit'];
+       		}
+		if(isset($data['foo'])){
+			$new_data['foo'] = $data['foo'];
+		}
+
+		if ($new_data) {
+			ksort($new_data);
+			$key = serialize($new_data);
+			if (!isset($specific[$key])) {
+				$specific[$key] = $new_data;
+			}
+			$specific[$key]['tags'][] = $tag;
+		}
+	}
+	$specific = (array)$specific;
+if ($specific || !$disabled): ?>
+<div class="form <?php echo $hidden?>">
+<?php
+	echo Widget::factory('flexform' . $readonly, [
+		'title' => I18N::T('eq_reserv', '个别预约设置'),
+		'template_data' => ['disabled'=>TRUE],
+		'existing_data' => array_values($specific),
+		'item_view' => 'eq_reserv:edit/reserv_special_item' . $readonly,
+		'extra_vars' => [
+			'equipment' => $equipment,
+            'add_reserv_earliest_time'=>$add_reserv_earliest_time,
+            'add_reserv_latest_time'=>$add_reserv_latest_time,
+            'add_reserv_earliest_format'=>$add_reserv_earliest_format,
+            'add_reserv_latest_format'=>$add_reserv_latest_format,
+            'modify_reserv_latest_time'=>$modify_reserv_latest_time,
+            'modify_reserv_latest_format'=>$modify_reserv_latest_format,
+            'delete_reserv_latest_time'=>$delete_reserv_latest_time,
+            'delete_reserv_latest_format'=>$delete_reserv_latest_format,
+		],
+	]);
+
+?>
+</div>
+<?php endif; ?>
+
+<div class="interval_24"></div>
+
+<?php
+echo V('eq_reserv:edit/edit.block_time' . $readonly, ['equipment'=>$equipment, 'hidden' => $hidden]);
+?>
+
+<?php
+
+echo CSS::load_async('codemirror codemirror.lua');
+echo JS::load_async('codemirror codemirror.lua');
+// 预约提醒
+if (Lab::get('eq_reserv.glogon_arrival')) {
+    echo V('eq_reserv:edit/arrival_limit', ['form' => $form, 'equipment' => $equipment,
+    'hidden' => $hidden, 'disabled' => $disabled]);
+}
+// 早退设置
+echo CSS::load_async('eq_reserv:common');
+
+$allow_leave_early_mins = $form['allow_leave_early_mins'] ? :
+($equipment->allow_leave_early_time ? $equipment->allow_leave_early_time / 60 : 0);
+
+$accept_leave_early = $form['accept_leave_early'] ? true :
+($equipment->accept_leave_early ? true : false);
+?>
+<div class="form <?= $hidden?>">
+	<h2 class="section_title">
+        <span class="border"></span>
+        <span class="black_title"><?php echo I18N::T('eq_reserv', '早退设置'); ?></span>
+    </h2>
+    <div class="interval_12"></div>
+	<div class="lmaigin_1e5">
+        <table class="form">
+            <tr>
+                <td class="label middle">
+                    <?php $accept_leave_early_id = 'accept_leave_early_'. uniqid();?>
+                    <input id="<?php echo H($accept_leave_early_id) ?>" name="accept_leave_early" type="checkbox" class="middle checkbox monitor" <?php if ($accept_leave_early) echo 'checked="checked"';?> <?php echo $disabled;?> />
+                </td>
+                <td class="label">
+                    <label for="<?php echo H($accept_leave_early_id) ?>" class="baseline"><?php echo I18N::T('eq_reserv' ,'用户提前'); ?></label>
+                    <span class="toggle_status:accept_leave_early enable_on:on"> &nbsp;
+                    <input type="text" class="number text" name="allow_leave_early_mins" value="<?php echo $allow_leave_early_mins; ?>" q-number_default_value="0" <?php if ( !$accept_leave_early ) echo 'disabled="disabled"'; ?>  <?php echo $disabled;?>/>
+                     &nbsp;
+                    </span>
+                    <label for="<?php echo H($accept_leave_early_id) ?>" class="baseline"><?php echo I18N::T('eq_reserv', '分钟结束仪器使用, 标记为 "早退"') ?></label>
+                </td>
+            </tr>
+            <tr>
+                <td class="middle description nowrap" colspan="2" style="color: #E02020">
+                    <div class="interval_12"></div>
+                    <?php echo I18N::HT('eq_reserv', '* 设置为0, 表示用户实际下机时间一旦早于预约结束时间，将标记为"早退"')?>
+                </td>
+            </tr>
+        </table>
+	</div>
+</div>
+<div class="interval_24"></div>
+
+<!--预约迟到超时设置-->
+<?php
+    $allow_late_mins = $form['allow_late_mins'] ?: ( $equipment->allow_late_time ? $equipment->allow_late_time/60 : 0);
+	$accept_late = $form['accept_late'] ? true : ($equipment->accept_late ? true : false);
+    $allow_overtime_mins = $form['allow_overtime_mins'] ?: ( $equipment->allow_over_time ? $equipment->allow_over_time / 60 : 0);
+	$accept_overtime = $form['accept_overtime'] ? true : ($equipment->accept_overtime ? true : false);
+	$late_use = $form['late_use'] ? : ($equipment->late_use ? : EQ_Reserv_Model::LATE_USE_ALLOW );
+?>
+<div class="form <?php echo $hidden?>">
+	<h2 class="section_title">
+        <span class="border"></span>
+        <span class="black_title"><?php echo I18N::T('eq_reserv', '迟到设置'); ?></span>
+    </h2>
+    <div class="interval_12"></div>
+	<div class="lmaigin_1e5">
+        <table class="form">
+            <tr>
+                <td class="label middle">
+                    <?php $accept_late_id = 'accept_late_'. uniqid();?>
+                    <input id="<?php echo H($accept_late_id) ?>" name="accept_late" type="checkbox" class="middle checkbox monitor" <?php if ($accept_late) echo 'checked="checked"';?> <?php echo $disabled;?> />
+                </td>
+                <td class="label">
+                    <label for="<?php echo H($accept_late_id) ?>" class="baseline"><?php echo I18N::T('eq_reserv' ,'超出预约'); ?></label>
+                    <span class="toggle_status:accept_late enable_on:on"> &nbsp;
+                    <input type="text" class="number text" name="allow_late_mins" value="<?php echo $allow_late_mins; ?>" q-number_default_value="0" <?php if ( !$accept_late ) echo 'disabled="disabled"'; ?>  <?php echo $disabled;?>/>
+                     &nbsp;
+                    </span>
+                    <label for="<?php echo H($accept_late_id) ?>" class="baseline"><?php echo I18N::T('eq_reserv', '分钟未登录使用仪器, 标记为 "迟到"') ?></label>
+                </td>
+            </tr>
+            <tr class="toggle:accept_late show_on:on <?php if (!$accept_late) echo 'hidden';?>">
+                <td>&#160;</td>
+                <td>
+                    <div style="display: inline-block;overflow: hidden; height: 30px;line-height: 47px;"> <?php echo I18N::T('eq_reserv', '迟到后'); ?></div>
+                    &nbsp;
+                    <?php echo Form::dropdown('late_use', I18N::T('eq_reserv', EQ_Reserv_Model::$late_use), $late_use, 'class="dropdown"' . $disabled);?>
+                    &nbsp;
+                    <div style="display: inline-block;overflow: hidden; height: 30px;line-height: 47px;">
+                    <?php echo I18N::T('eq_reserv', '使用仪器'); ?>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="middle description nowrap" colspan="2" style="color: #E02020">
+                    <div class="interval_12"></div>
+                    <?php echo I18N::HT('eq_reserv', '* 设置为0, 表示用户实际上机时间一旦晚于预约开始时间，将标记为"迟到"')?>
+                </td>
+            </tr>
+        </table>
+	</div>
+</div>
+<div class="interval_24"></div>
+
+<div class="form <?php echo $hidden ?>">
+	<h2 class="section_title">
+        <span class="border"></span>
+        <span class="black_title"><?php echo I18N::T('eq_reserv', '超时设置'); ?></span>
+    </h2>
+    <div class="interval_12"></div>
+	<div class="lmaigin_1e5">
+        <table class="form">
+            <tr>
+                <td class="label middle">
+                    <?php $accept_overtime_id = 'accept_overtime_'. uniqid();?>
+                    <input id="<?php echo H($accept_overtime_id) ?>" name="accept_overtime" type="checkbox" class="middle checkbox monitor" <?php if ($accept_overtime) echo 'checked="checked"';?> <?php echo $disabled;?> />
+                </td>
+                <td class="label">
+                    <label for="<?php echo H($accept_overtime_id) ?>" class="baseline"><?php echo I18N::T('eq_reserv' ,'超出预约结束时间'); ?></label>
+                    <span class="toggle_status:accept_overtime enable_on:on"> &nbsp;
+                    <input type="text" class="number text" name="allow_overtime_mins" value="<?php echo $allow_overtime_mins; ?>" q-number_default_value="0" <?php if ( !$accept_overtime ) echo 'disabled="disabled"'; ?>  <?php echo $disabled;?>/>
+                     &nbsp;
+                    </span>
+                    <label for="<?php echo H($accept_overtime_id) ?>" class="baseline"><?php echo I18N::T('eq_reserv', '分钟仍未结束仪器使用, 标记为 "超时"') ?></label>
+                </td>
+            </tr>
+            <tr>
+                <td class="middle description nowrap" colspan="2" style="color: #E02020">
+                    <div class="interval_12"></div>
+                    <?php echo I18N::HT('eq_reserv', '* 设置为0, 表示用户实际使用结束时间一旦晚于预约结束时间，将标记为"超时"')?>
+                </td>
+            </tr>
+        </table>
+	</div>
+</div>
+<div class="interval_24"></div>
+
+<div class="form <?php echo $hidden?>">
+    <h2 class="section_title">
+        <span class="border"></span>
+        <span class="black_title"><?php echo I18N::T('eq_reserv', '使用记录设置'); ?></span>
+    </h2>
+    <div class="interval_12"></div>
+    <div class="lmaigin_1e5">
+        <div>
+            <?php $auto_create_record_id = 'reserv_'. uniqid()?>
+            <input type="checkbox" id="<?php echo H($auto_create_record_id) ?>" name="auto_create_record" class="middle checkbox monitor"
+                <?php  if ($equipment->auto_create_record) echo 'checked="checked"'; ?> <?php echo $disabled;?> />
+            <label for="<?php echo H($auto_create_record_id) ?>">
+                <?php echo I18N::T('eq_reserv' ,'预约自动生成使用记录'); ?>
+            </label>
+        </div>
+    </div>
+</div>
+<div class="interval_24"></div>
+
+<div class="form <?php echo $hidden?>">
+    <h2 class="section_title">
+        <span class="border"></span>
+        <span class="black_title"><?php echo I18N::T('eq_reserv', '违规状态设置'); ?></span>
+    </h2>
+    <div class="interval_12"></div>
+    <div class="lmaigin_1e5">
+        <div>
+            <?php $auto_status_id = uniqid();
+                $ban_status_settings = $equipment->ban_status_settings ?? EQ_Reserv_Model::$ban_status_settings;
+            ?>
+            <?php foreach(EQ_Reserv_Model::$ban_status_settings as $k => $v):?>
+                <input type="checkbox" value="<?= $k?>" id="ban_status_settings_<?= $k?>" name="ban_status_settings[<?= $k?>]" class="middle checkbox monitor"
+                    <?php  if (array_key_exists($k,$ban_status_settings)) echo 'checked="checked"'; ?> <?php echo $disabled;?> />
+                <label for="ban_status_settings_<?= $k?>">
+                    <?php echo I18N::T('eq_reserv' ,$v); ?>
+                </label>
+            <?php endforeach?>
+        </div>
+    </div>
+</div>
+<div class="interval_24"></div>
+
+<div class="form <?php echo $hidden?>">
+	<h2 class="section_title">
+        <span class="border"></span>
+        <span class="black_title"><?php echo I18N::T('eq_reserv', '自定义预约设置')?></span>
+    </h2>
+    <?php
+        $isGenee = in_array($me->token, (array) Config::get('lab.admin')) ? true : false;
+        $script_uniqid = 'script_'.uniqid();
+        $script_edit_uniqid = 'script_'.uniqid().uniqid();
+        $reserv_script = $form['reserv_script'] && $form['enable_reserv_script'] ? $form['reserv_script'] : $equipment->reserv_script;
+    ?>
+    <div class="padding_2">
+    <div style="display: <?= $isGenee ? '' : 'none'?>">
+        <?php echo Form::checkbox('enable_reserv_script', $equipment->reserv_script || ($reserv_script && $form['enable_reserv_script']) ? TRUE : FALSE, I18N::HT('eq_reserv', '使用自定义脚本'), 'class="middle checkbox monitor"' . $disabled, 'class="middle"'); ?>
+    </div>
+    <div class="interval_12"></div>
+    <?php if (!$isGenee && !$equipment->reserv_script):?>
+        <div style="padding-left: 1rem;">
+            <?php echo T("如欲设置脚本计费规则，请联系工程师处理");?>
+        </div>
+    <?php endif;?>
+	<div class="lmaigin_1e5">
+		<div style="padding-top: 6px" class="toggle:enable_reserv_script show_on:on <?php if (!$equipment->reserv_script) echo ' hidden'?>">
+            <?php echo V('equipments:custom/custom_template_preview',['isGenee'=>$isGenee,'equipment'=>$equipment,'custom_type'=>'eq_reserv']);?>
+            <?php echo V('equipments:custom/custom_template',['isGenee'=>$isGenee,'equipment'=>$equipment,'custom_type'=>'eq_reserv']);?>
+            <div class="reserv_script_lua"  style="display: <?= ($isGenee || $equipment->display_reserv_script["eq_reserv"]) ? '' : 'none'?> ;margin-top: 1rem">
+            <span><?php echo T("自定义脚本");?></span>
+            <div style="display: <?= $isGenee ? '' : 'none'?> ;margin-top: 0.1rem">
+                <?php echo Form::checkbox('display_reserv_script',
+                    $equipment->display_reserv_script["eq_reserv"] || $form['display_reserv_script'] ? TRUE : FALSE,
+                    I18N::HT('eq_reserv', '可见'),
+                    'class="middle checkbox monitor"' . $disabled, 'class="middle"'); ?>
+            </div>
+            <div class="description middle">
+                <?= V('equipments:custom/custom_tips');?>
+            </div>
+            <textarea id="<?php echo H($script_uniqid) ?>" name="reserv_script" class="text code tab_ok" rows="15" cols="80" <?php echo $disabled;?> ><?php echo H(trim($reserv_script)); ?></textarea>
+        </div>
+        </div>
+		<?php if(!$disabled) :?>
+		<script>
+		var $editor_edit;
+		(function($){
+			if (!Q.browser.msie || Q.browser.version > 6) {
+				Q.js_ready('codemirror codemirror.lua', function(){
+					setTimeout(function(){
+						var $editor = CodeMirror.fromTextArea($('#<?php echo $script_uniqid; ?>')[0], {
+							mode : 'text/x-lua',
+							lineNumbers : true
+						});
+						setTimeout(function(){
+							$editor.refresh();
+						}, 250);
+					}, 250);
+				});
+			}
+		})(jQuery);
+		</script>
+		<?php endif;?>
+	</div>
+    </div>
+</div>
+<div class="interval_24"></div>

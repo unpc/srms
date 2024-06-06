@@ -1,0 +1,14 @@
+<td class="label left nowrap">
+		<div class="title">
+		<?php echo $properties['label'] ?>
+       </div>
+
+        <?php
+					$type=!is_null($component->type) ? $component->type : $properties['default_value']['value'];
+					$default=$properties['default_value']['types'];
+			foreach($default as $value=>$label):
+				echo '<span class="rpadding_4">'.Form::radio($name,$value,$type,"&nbsp&nbsp".$label).'</span>';
+			endforeach;
+		?>
+
+    </td>

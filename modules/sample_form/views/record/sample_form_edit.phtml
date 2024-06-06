@@ -1,0 +1,35 @@
+<?php
+  $element = $record->sample_element;
+?>
+<tbody>
+  <tr>
+    <td class="top" colspan="2">
+      <h1><?php echo I18N::T('sample_form','检测信息');?></h1>
+    </td>
+  </tr>
+  <tr>
+    <td class="label right nowrap"><?php echo I18N::T('sample_form', '关联样品检测记录'); ?></td>
+    <td>
+      <input id="sample_form_record_id" name="sample_form_record_id" type="hidden" value="<?php echo H($element->id) ?>" />
+      <input type="text" class="text middle select_on_focus autocomplete:<?php echo H(URI::url('!sample_form/autocomplete/element.'.$record->equipment->id)) ?> autocomplete_alt:#sample_form_record_id"
+        name="sample_form_records" size="39"
+        value="<?php echo H($form['sample_form_records'] ? : ($element->id ? $element->toString() : '')) ?>"
+        q-tooltip="<?php echo H(T('请输入关键字并选择') ) ?>" />
+    </td>
+  </tr>
+  <tr>
+    <td class="label right top nowrap"><?php echo I18N::T('sample_form', '检测数量'); ?></td>
+    <td class="nowrap">
+      <input name="sample_form_count" type="text"
+        q-number_default_value="0"
+        class="text right number"
+        value="<?php echo H($form['sample_form_count'] ? : $element->count) ?>"/>
+    </td>
+  </tr>
+  <tr>
+    <td class="label right top nowrap"><?php echo I18N::T('sample_form', '检测结果'); ?></td>
+    <td class="nowrap">
+      <textarea name="sample_result" class="text autogrow" cols="42" rows="3" ><?= $form['sample_result'] ? : $element->result ?></textarea>
+    </td>
+  </tr>
+</tbody>

@@ -1,0 +1,12 @@
+<?php
+if (!($user->dto && $user->dto < time())):
+    ?>
+    <span>
+    <a q-object="app_bind" q-event="click" class="button button_bind"
+       q-src="<?= H(URI::url('!yiqikong/qrcode')) ?>">
+        <?= I18N::T('yiqikong', '绑定App'); ?>
+    </a>
+</span>
+<?php
+endif;
+?>

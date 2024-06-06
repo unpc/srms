@@ -1,0 +1,18 @@
+<div class="interval_30"></div>
+<h3 style="padding: 3px 0;"><?= I18N::T('equipment', '机主服务的评价'); ?></h3>
+<div class="interval_12"></div>
+
+<p>
+    <?= I18N::T('equipments', '服务态度'); ?>
+    <span style="margin-left: -5px; display: inline-block; width: 130px; "><?php echo Widget::factory('rateit_input', ['name' => "score", 'rateit_value' => ($form['score'] || (!empty($form['score']) && $form['score'] == 0)) ? $form['score'] : ($record->evaluate->score ? : $default), 'rateit_tip' => TRUE, 'tip' => $tip]) ?></span>
+    <span style="position: relative; bottom: 1px;"><?= Config::get('eq_evaluate')['score.require'] ? $require: ''; ?></span>
+</p>
+<div class="interval_12"></div>
+
+<p style="padding-top: 5px;">
+    <p><?= I18N::T('equipments', '服务评价'); ?></p>
+    <div class="interval_6"></div>
+    <textarea style="line-height: normal" name="content" placeholder="请填写您的本次使用评价，您最多可以输入 240 个字" class="text autogrow" cols="" rows="3"><?= isset($form['content']) ? $form['content'] : $record->evaluate->content; ?></textarea>
+</p>
+
+</div>

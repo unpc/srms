@@ -1,0 +1,5 @@
+<?php if ( $type == 'print' ) : ?>
+<span class="point_value"><?php echo $value ? : '-';?></span>
+<?php else : ?>
+<?php echo $value ? H($value) : '-';?>
+<?php endif; ?>

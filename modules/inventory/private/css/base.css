@@ -1,0 +1,71 @@
+@css-define actions: ["scan", "revert"];
+
+@css-foreach(action in actions) {
+
+	input.button_$action, a.button_$action {
+		padding-left: 22px;
+		background-image: url(!inventory/images/buttons/$action.png);
+		background-repeat: no-repeat;
+		background-position: 4px center;
+		/* _background-image: url(!inventory/images/buttons/$action.gif); */
+	}
+	
+}
+
+
+.inventory_info {
+
+	padding: 5px 10px;
+
+	.product_name {
+		font-weight: bold;
+		font-size: 16px;
+	}
+	
+	.manufacturer, .catalog_no {
+		font-size: 14px;
+		color: #999;
+	}
+
+	.product_info li {
+		margin: 0;
+		width: 200px;
+		float: left;
+		font-size: 14px;
+
+		.label {
+			font-weight: bold;
+			color: #666;
+		}
+	}
+
+	.status_tag.requesting {
+		background-color: #F93;
+	}
+	.status_tag.not_received {
+		background-color: #3AF;
+	}
+	.status_tag.received {
+		background-color: #6C9;
+	}
+	.status_tag.canceled {
+		background-color: #888;
+	}
+}
+
+.inventory_tag {
+	color: #fff;
+	background-color: #abd;
+	text-decoration: none;
+	padding: 1px 2px;
+
+	&:hover {
+		text-decoration: none;
+		color: #fff;
+		background-color: #7498E0;
+	}
+}
+
+input.fixwidth {
+	font-family: monospace;
+}

@@ -1,0 +1,23 @@
+<table class="form">
+	<tbody>
+		<tr>
+			<td class="top icon">
+				<?php $icon_equipment = $equipment->id ? $equipment : O('equipment');?>
+				<?php echo $icon_equipment->icon('32'); ?>
+			</td>
+			<td class="top">
+				<table class="form">
+					<tr>
+						<td class="nowrap"><?php echo I18N::T('eq_door', '仪器')?></td>
+						<td>
+							<?php echo Widget::factory('equipments:equipment_selector', [
+								'name' => 'special_equipments['.$flexform_index.']',
+								'equipment' => $equipment
+							]);?>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</tbody>
+</table>

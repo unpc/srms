@@ -1,0 +1,154 @@
+<div class="height_23"></div>
+<?php
+if ($form['ctime_s'] || $form['ctime_e']) {
+    $form['ctime'] = true;
+}
+
+$table = Widget::factory('table');
+$table->name = 'records';
+$columns = [
+    'ref_no' => [
+        'weight' => 10,
+        'title' => I18N::T('technical_service', '任务编号'),
+        'align' => 'left',
+        'filter' => [
+            'form' => V('technical_service:apply_record_table/filters/text', ['name' => 'ref_no', 'value' => $form['ref_no']]),
+            'value' => $form['ref_no'] ? H($form['ref_no']) : NULL
+        ],
+        'nowrap' => TRUE,
+    ],
+    'project_name' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '项目名称'),
+        'align' => 'left',
+        'filter' => [
+            'form' => V('technical_service:apply_record_table/filters/text', ['name' => 'project_name', 'value' => $form['project_name']]),
+            'value' => $form['project_name'] ? H($form['project_name']) : NULL
+        ],
+        'nowrap' => TRUE,
+    ],
+    'equipment_name' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '使用仪器'),
+        'sortable' => TRUE,
+        'align' => 'left',
+        'filter' => [
+            'form' => V('technical_service:apply_record_table/filters/text', ['name' => 'equipment_name', 'value' => $form['equipment_name']]),
+            'value' => $form['equipment_name'] ? H($form['equipment_name']) : NULL
+        ],
+        'nowrap' => TRUE,
+    ],
+    'user' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '预约者'),
+        'align' => 'left',
+        'filter' => [
+            'form' => V('technical_service:apply_table/filters/user', ['form' => $form]),
+            'value' => $form['user'] ? H($form['user']) : NULL
+        ],
+        'nowrap' => TRUE,
+    ],
+    'service_name' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '服务名称'),
+        'align' => 'left',
+        'filter' => [
+            'form' => V('technical_service:apply_record_table/filters/text', ['name' => 'service_name', 'value' => $form['service_name']]),
+            'value' => $form['service_name'] ? H($form['service_name']) : NULL
+        ],
+        'nowrap' => TRUE,
+    ],
+    'phone' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '联系方式'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'ctime' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '分配时间'),
+        'align' => 'left',
+        'filter' => [
+            'form' => V('technical_service:apply_record_table/filters/ctime', [
+                'form' => $form,
+            ]),
+            'field' => 'ctime_s,ctime_e',
+            'value' => $form['ctime'] ?: null,
+        ],
+        'nowrap' => TRUE,
+    ],
+    'dtrequest' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '期望完成时间'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+//    'status' => [
+//        'weight' => 20,
+//        'title' => I18N::T('technical_service', '检测状态'),
+//        'align' => 'center',
+//        'filter' => [
+//            'form' => V('technical_service:apply_record_table/filters/status', ['form' => $form]),
+//            'value' => $form['status'] ? H($form['status']) : NULL
+//        ],
+//        'nowrap' => TRUE,
+//    ],
+    'lab' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '课题组'),
+        'invisible' => 'true',
+        'filter' => [
+            'form' => V('technical_service:apply_record_table/filters/text', ['name' => 'lab', 'value' => $form['lab']]),
+            'value' => $form['lab'] ? H($form['lab']) : NULL
+        ],
+        'nowrap' => TRUE,
+    ],
+    'status' => [
+        'weight' => 20,
+        'align' => 'left',
+        'title' => I18N::T('technical_service', '状态'),
+        'nowrap' => TRUE,
+    ],
+    'rest' => [
+        'title' => I18N::T('technical_service', '操作'),
+        'weight' => 70,
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ]
+];
+
+$table->add_columns($columns);
+$table->empty_message = I18N::T('technical_service', '没有相关任务数据');
+
+foreach ($records as $record) {
+    $links = $record->links();
+    $table->add_row([
+        'ref_no' => V('technical_service:apply_record_table/data/ref_no', ['record' => $record]),
+        'project_name' => V('technical_service:apply_record_table/data/project_name', ['record' => $record]),
+        'equipment_name' => V('technical_service:apply_record_table/data/equipment', ['record' => $record]),
+        'user' => V('technical_service:apply_record_table/data/user', ['record' => $record]),
+        'service_name' => V('technical_service:apply_record_table/data/service_name', ['record' => $record]),
+        'phone' => V('technical_service:apply_record_table/data/user_phone', ['record' => $record]),
+        'ctime' => V('technical_service:apply_record_table/data/ctime', ['record' => $record]),
+        'dtrequest' => V('technical_service:apply_record_table/data/dtrequest', ['record' => $record]),
+        'status' => V('technical_service:apply_record_table/data/status', ['record' => $record]),
+        'rest' => Widget::factory('application:links', ['links' => $links])
+    ]);
+}
+
+$param = [
+    'is_offset' => true,
+    'top_input_arr' => Config::get('search.top_input_arr')['apply_record.list'],
+    'columns' => $table->columns,
+    'panel_buttons' => $panel_buttons,
+    'extra_view' => '<div class="adj statistics middle">' .
+        I18N::T('technical_service', '共有 %service_count 个任务', [
+            '%service_count' => '<span class=" blue">' . $records->total_count() . '</span>',
+        ]) . $pagination . '</div>'
+];
+echo V('application:search_box', $param);
+echo $table; ?>
+
+<div class="interval_12"></div>
+<div class="float_right"><?php echo $pagination; ?></div>
+<div class="interval_12"></div>

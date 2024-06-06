@@ -1,0 +1,35 @@
+<?php
+
+$columns = EQ_Charge::get_charge_field([], []);
+Event::trigger('lab_charges.table_list.columns', $form, $columns, $obj);
+
+$table       = Widget::factory('table');
+$table->name = 'record_feedback';
+$table->add_columns($columns);
+$table->empty_message = I18N::T('eq_charge', '您暂无未报销的计费记录');
+
+foreach ($charges as $c) {
+    $links = $c->links('lab_view');
+    $row   = [
+        'charge_id' => V('eq_charge:charges_table/data/ref', ['c' => $c]),
+        'user'      => V('eq_charge:charges_table/data/user', ['obj' => $obj, 'c' => $c]),
+        'equipment' => V('eq_charge:charges_table/data/equipment', ['obj' => $obj, 'c' => $c]),
+        'amount'    => V('eq_charge:charges_table/data/amount_with_date', ['c' => $c]),
+        'type'      => V('eq_charge:charges_table/data/type', ['c' => $c]),
+        'status'    => V('eq_charge:charges_table/data/status', ['c' => $c]),
+        'summary'   => V('eq_charge:charges_table/data/summary', ['c' => $c]),
+        'rest'      => Widget::factory('application:links', ['links' => $links]),
+    ];
+
+    $row = Event::trigger('lab_charges.table_list.row', $row, $c, $obj) ?: $row;
+    $table->add_row($row);
+}
+
+echo $table;
+
+?>
+
+
+<?php if ($charges->total_count() > 20) : ?>
+    <div class="pages"><?= $pagination ?></div>
+<?php endif; ?>

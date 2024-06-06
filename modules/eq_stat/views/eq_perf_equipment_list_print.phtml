@@ -1,0 +1,211 @@
+<!DOCTYPE html PUBLIC "-//W3C/DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <meta name="renderer" content="webkit" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1" />
+	<title><?php echo I18N::T('eq_stat', '%p_name(%e_name)报表', ['%p_name'=>$perf->name, '%e_name'=>$equipment->name]); ?></title>
+	<base href="<?php echo H(Config::get('system.base_url') ) ?>" />
+	<link type="text/css" rel="stylesheet" href="<?php echo H(URI::url('css', ['f'=>'core'])) ?>" />
+	<style>
+	a {
+		color:blue;
+		text-decoration:underline;
+	}
+	table.report {
+		
+		font-size: 14px;
+		margin:auto;
+	}
+	
+	thead{
+		border-top:2px solid  #000;
+		border-bottom:1px solid #000;
+	}
+	
+	tbody{
+		border-bottom:2px solid #000;
+	}
+	
+	thead#stat{
+		font-size: 10px;
+		border:none;
+	}
+	
+	table.report caption {
+		font-size: 150%;
+		margin-bottom: 10px;
+	}
+
+	table.report tbody td {
+		vertical-align: top;
+		border-bottom: 1px dotted #CCC;
+	}
+	table.report .referred_charge {
+		background-color: #eee;
+		border:1px dotted #CCC;
+	}
+	</style>
+	<style media="print">
+	.buttons{
+		display:none;
+	}
+	</style>
+</head>
+<?php 
+	$items = json_decode($perf->rating_items);
+	$colspan = count($items);
+?>
+<body>
+	<div class="buttons">
+		<a href="#" onclick="window.print(); return false;"><?php echo T('打印'); ?></a>
+		<a href="#" onclick="window.close(); return false;"><?php echo T('关闭'); ?></a>
+	</div>
+	<table class="report" cellpadding="5" cellspacing="5" style="border-collapse:collapse;">
+	<caption><?php echo I18N::T('eq_stat', '%p_name(%e_name) 明细列表', ['%p_name'=>$perf->name, '%e_name'=>$equipment->name]); ?></caption>
+	<thead id="stat">
+		<tr>
+			<td colspan="<?php echo H($colspan+1) ?>">
+			<?php echo I18N::T('eq_stat', '评估范围:'); ?>
+			&#160;
+			<?php
+				$tag = $perf->collection;
+				echo $tag->root->id ? $tag->name : T('所有');
+			?>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="<?php echo H($colspan+1) ?>">
+			<?php echo I18N::T('eq_stat', '评估时间:'); ?>
+			&#160;
+			<?php
+				echo Date::format($perf->dfrom, 'Y/m/d').' - '.Date::format($perf->dto, 'Y/m/d');
+			?>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="<?php echo H($colspan+1) ?>">
+			<?php echo I18N::T('eq_stat', '评分时间:'); ?>
+			&#160;
+			<?php
+				echo Date::format($perf->rating_from, 'Y/m/d').' - '.Date::format($perf->rating_to, 'Y/m/d');
+			?>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="<?php echo H($colspan+1) ?>">
+			<?php echo I18N::T('eq_stat', '仪器名称:'); ?>
+			&#160;
+			<?php
+				echo H($equipment->name);
+			?>
+			</td>
+		</tr>
+	</thead>
+	<thead>
+		<tr>
+		<th class="left nowrap">&#160;</th>
+		<?php foreach ($items as $item):?>
+		<th class="left nowrap"><?php echo H($item); ?></th>
+		<?php endforeach;?>
+		<th class="left nowrap"><?php echo I18N::T('eq_stat', '平均分')?></th>
+		</tr>
+	</thead>
+	<tbody>
+		<?php
+			$ratings = Q("eq_perf_rating[perf={$perf}][equipment={$equipment}]");
+			foreach($ratings as $rating):
+				$user = $rating->user;
+		?>
+		<tr>
+			<td class="left nowrap"><?php echo H($user->name); ?></td>
+			<?php 
+				$scores = (array)$rating->score_list;
+				foreach($scores as $score): 
+			?>
+			<td class="left nowrap"><?php echo H($score); ?></td>
+			<?php endforeach;?>
+			<td class="left nowrap"><?php echo H($rating->average); ?></td>
+		</tr>
+		<?php endforeach; ?>
+		<tr>
+			<td colspan="8" class="right nowrap">
+				<?php echo I18N::T('eq_stat', '总计: ') . H($ratings->sum(average) ? : 0); ?>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="8" class="right nowrap">
+				<?php echo I18N::T('eq_stat', '平均分: ') . H(round($ratings->sum(average)/count($ratings))); ?>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="8">
+				<div class="hr_2">&#160;</div>
+				<div class="hr_2">&#160;</div>
+				<div class="hr_2">&#160;</div>
+				<div class="hr_2">&#160;</div>
+			</td>
+		</tr>
+	</tbody>
+	<thead>
+		<tr>
+			<th class="left nowrap" colspan="2"><?php echo I18N::T('eq_stat', '各项评分标准')?></th>
+			<th class="left nowrap"><?php echo I18N::T('eq_stat', '分数')?></th>
+			<th class="left nowrap"><?php echo I18N::T('eq_stat', '权重指标')?></th>
+			<th class="left nowrap"><?php echo I18N::T('eq_stat', '最后得分')?></th>
+			<th colspan="<?php echo H($colspan-3) ?>">&#160;</th>
+		</tr>
+	</thead>
+	<tbody>
+		<?php 
+			$options = Config::get("eq_stat.perf_opts");
+			$scores = Perf::perf_score($equipment, $perf);
+			$items = (array)$perf->formula;
+		?>
+		<tr>
+			<td class="left nowrap"><?php echo I18N::T('eq_stat', '用户评分')?></td>
+			<td>&#160;</td>
+			<td class="left nowrap"><?php echo $scores['user_score']/$items['user_score']?></td>
+			<td class="left nowrap"><?php echo H($items['user_score'])?></td>
+			<td class="left nowrap"><?php echo H($scores['user_score'])?></td>
+			<td colspan="<?php echo H($colspan-3) ?>"></td>
+		</tr>
+		<?php
+			foreach ($options as $key => $opts):
+			if (!is_array($opts)):
+		?>
+		<tr>
+			<td class="left nowrap"><?php echo I18N::HT('eq_stat', $opts)?></td>
+			<td>&#160;</td>
+			<td class="center nowrap"><?php echo $scores[$key] ? H($scores[$key]/$items[$key]) : '-'; ?></td>
+			<td class="left nowrap"><?php echo H($items[$key])?></td>
+			<td class="left nowrap"><?php echo H($scores[$key])?></td>
+			<td colspan="<?php echo H($colspan-3) ?>"></td>
+		</tr>
+		<?php else: ?>
+		<tr>
+			<td class="left nowrap" colspan="2"><?php echo I18N::HT('eq_stat', $opts['name'])?></td>
+			<td colspan="<?php echo H($colspan) ?>"></td>
+		</tr>
+		<?php
+			unset($opts['name']);
+			foreach($opts as $key => $opt):
+		?>
+		<tr>
+			<td>&#160;</td>
+			<td class="left nowrap"><?php echo I18N::HT('eq_stat', $opt)?></td>
+			<td class="center nowrap"><?php echo $scores[$key] ? H($scores[$key]/$items[$key]) : '-';?></td>
+			<td class="left nowrap"><?php echo H($items[$key])?></td>
+			<td class="left nowrap"><?php echo H($scores[$key])?></td>
+			<td colspan="<?php echo H($colspan-3) ?>"></td>
+		</tr>
+		<?php endforeach; endif; endforeach;?>
+		<tr>
+			<td colspan="4">&#160;</td>
+			<td class="left nowrap"><?php echo I18N::T('eq_stat', '总计: ').H($scores['total'])?></td>
+			<td colspan="<?php echo H($colspan-3) ?>">&#160;</td>
+		</tr>
+	</tbody>
+	</table>
+</body>
+</html>

@@ -1,0 +1,12 @@
+<table class="form" style="width: 100%">
+    <tr>
+        <td class="left nowrap middle" width="126"><?php echo I18N::T('entrance','仪器') ?></td>
+        <td class="left nowrap top">
+        <?= Widget::factory('entrance:rule_selector', [
+          			'name' => "equipment[$flexform_index]",
+          			'autocomplete'=>URI::url('autocomplete/equipment'),
+          			'value'=> $equipments ? $equipments : null,
+        		]); ?>
+        </td>
+    </tr>
+</table>

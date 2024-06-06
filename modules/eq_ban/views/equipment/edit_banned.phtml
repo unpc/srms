@@ -1,0 +1,51 @@
+<div class="form padding_1">
+<form method="post" autocomplete="off" q-event="submit" q-object="edit_banned" q-static="<?php echo H(['banned_id'=>$banned->id])?>">
+<?php echo V('form_error', ['form'=>$form]);?>
+<?php $require = (string) V('form_require'); ?>
+<table class="form flexible">
+	<tbody>
+	<tr>
+		<td class="label right nowrap"><?php echo I18N::T('eq_ban', '用户')?></td>
+		<td class="label top">
+			<?php
+            echo T('%name(%lab)', ['%name'=>H($banned->user->name), '%lab'=>H($banned->user->lab->name)]);
+            /*
+            if ($banned->equipment->id) {
+                $url = URI::url('!equipments/autocomplete/user.'.$banned->equipment->id);
+            }
+            else {
+                $url = URI::url('!equipments/autocomplete/user');
+            }
+            echo Widget::factory('user_selector', array(
+                    'autocomplete'=>$url,
+                    'name'=> 'user',
+                    'user'=> O('user', $form['user'] ?: $banned->user->id ),
+            ));
+            echo $require;
+            */
+            ?>
+		</td>
+	</tr>
+	<tr>
+		<td class="label right nowrap top"><?php echo I18N::T('eq_ban', '封禁原因')?></td>
+		<td class="top nowrap">
+			<textarea name="reason" rows="3" cols="37" class="autogrow"><?php echo H($form['reason'] ?: $banned->reason) ?></textarea>
+			<?php echo $require; ?>
+		</td>
+	</tr>
+	<tr>
+		<td class="label right nowrap"><?php echo I18N::T('eq_ban', '到期时间')?></td>
+		<td class="top nowrap">
+            <input name="atime" class="text date" value="<?php echo H($form['atime'] ?: $banned->atime) ?>" q-date_format="<?php echo HT('$year/$month/$day')?>" />
+            <?php echo $require; ?>
+		</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td>
+			<input type="submit" name="submit" class="button button_edit" value="<?php echo H(I18N::T('eq_ban', '更新')) ?>" />
+		</td>
+	</tr>
+</table>
+</form>
+</div>

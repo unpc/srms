@@ -1,0 +1,5 @@
+<?php
+$form['ctstart'] = $form['ctstart'] ? date('Y-m-d', $form['ctstart']) : '';
+$form['ctend']   = $form['ctend'] ? date('Y-m-d', $form['ctend']) : '';
+?>
+<input id="ctstart" name="ctstart" date_type="date" class="text date small_search_text" value="<?php echo H($form['ctstart']) ?>" /><span class="middle description date_interval">-</span><input id="ctend" name="ctend" date_type="date" class="text date small_search_text" value="<?php echo H($form['ctend']) ?>" />

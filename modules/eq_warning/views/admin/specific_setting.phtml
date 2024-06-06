@@ -1,0 +1,79 @@
+<?php
+?>
+<style>
+	.dropdown_container {
+		width: 24rem;
+	}
+</style>
+<table class="form td_padding_2" width="80%" style="width:10rem;">
+	<tr>
+        <td class="right nowrap label middle">
+            <?php echo I18N::T('eq_reserv', '时间范围'); ?>
+        </td>
+        <td class="middle">
+			<?php
+	   			echo Form::dropdown("unit[$flexform_index]",EQ_Warning::$unit_lebals,$unit ?: 'month', 'style="width:10px"');
+	   		?>
+		</td>
+	</tr>
+	<tr>
+		<td class="right nowrap middle label"><?php echo I18N::T('eq_warning', '仪器额定机时') ?></td>
+		<td class="" style="line-height: 0px;">
+			<input
+				type="text"
+				name="machine_hour[<?php echo $flexform_index; ?>]"
+				size="55" class="text number"
+				value="<?php echo H(isset($form['machine_hour'][$flexform_index]) ? $form['machine_hour'][$flexform_index] : $machine_hour) ?>" />&#160;
+		</td>
+	</tr>
+	<tr>
+		<td class="right nowrap middle label"><?php echo I18N::T('eq_warning', '使用时长最大值') ?></td>
+		<td class="middle" style="line-height: 0px;">
+			<input
+				type="text"
+				name="use_limit_max[<?php echo $flexform_index; ?>]"
+				size="55" class="text number"
+				value="<?php echo H(isset($form['use_limit_max'][$flexform_index]) ? $form['use_limit_max'][$flexform_index] : $use_limit_max) ?>" />&#160;
+		</td>
+	</tr>
+	<tr>
+		<td class="right nowrap middle label"><?php echo I18N::T('eq_warning', '使用时长最小值') ?></td>
+		<td class="middle" style="line-height: 0px;">
+			<input
+				type="text"
+				name="use_limit_min[<?php echo $flexform_index; ?>]"
+				size="55" class="text number"
+				value="<?php echo H(isset($form['use_limit_min'][$flexform_index]) ? $form['use_limit_min'][$flexform_index] : $use_limit_min) ?>" />&#160;
+		</td>
+	</tr>
+	<tr>
+		<td class="right nowrap middle label" style="width:50px"><?php echo I18N::T('eq_warning', '应用范围') ?>&nbsp;&nbsp;仪器分类</td>
+		<td class="middle"  colspan="4" style="line-height: 0px;">
+		<?php
+			echo Widget::factory('equipments:tag_selector', [
+				'autocomplete'=> URI::url('!equipments/autocomplete/tags'),
+				'name'=>"control_tag[{$flexform_index}]",
+				'value'=>$control_tag,
+			]);
+		?>
+		</td>
+	</tr>
+	<tr>
+		<td class="right nowrap middle label">个别仪器</td>
+		<td class="middle">
+		<?php
+			echo Widget::factory('eq_warning:equipment_selector', [
+				'autocomplete'=> URI::url('!eq_warning/autocomplete/equipment'),
+				"name"=>"control_equipment[{$flexform_index}]",
+				'value'=>$control_equipment,
+			]);
+		?>
+		</td>
+	</tr>
+	<tr>
+		<td class="middle"></td>
+		<td class="middle description" style="color: #F5222D;">提示:最终预警设置以仪器编辑页显示为准</td>
+	</tr>
+</table>
+<br/>
+<div class="clear"></div>

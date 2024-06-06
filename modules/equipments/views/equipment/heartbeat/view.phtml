@@ -1,0 +1,51 @@
+<?php
+	$control_uniqid = 'control_id_'. uniqid();
+?>
+<div class="equipment_detail clearfix" id="<?php echo $control_uniqid; ?>">
+<table class="form flexible">
+<tbody>
+<tr>
+	<td class="top icon">
+		<?php echo $equipment->icon('64'); ?>
+	</td>
+	<?php $is_admin = L('ME')->is_allowed_to('修改', $equipment); ?>
+	<td class="top flexible">
+		<?php if (!$equipment->is_mirror): ?>
+		<h2>
+		<a href="<?php echo H($equipment->url() ) ?>"><?php echo H($equipment->name); ?></a>
+		<small>(<?php echo I18N::T('equipments', EQ_Status_Model::$status[$equipment->status]); ?>)</small>
+		</h2>
+		<?php if($equipment->status != EQ_Status_Model::NO_LONGER_IN_SERVICE): ?>
+			<p><?php echo I18N::T('equipments', '联系人')?>:
+				<?php echo V('equipments:equipments_table/data/contacts', ['equipment'=>$equipment]);?>
+			</p>
+		<?php if ($equipment->require_training && !$is_admin) : ?>
+			<p><?php echo V('training/status', ['equipment'=>$equipment]); ?></p>
+			<?php endif; ?>
+        <?php endif; ?>
+        <?php if ($equipment->phone) :?>
+            <p><?php echo I18N::T('equipments', '电话')?>&nbsp;:&nbsp;<?php echo H($equipment->phone);?></p>
+        <?php endif;?>
+        <?php if ($equipment->email) :?>
+            <p><?php echo I18N::T('equipments', '邮箱')?>&nbsp;:&nbsp;<?php echo URI::mailto($equipment->email)?></p>
+        <?php endif;?>
+		<?php if ($GLOBALS['preload']['tag.group_limit'] >= 0 && $equipment->group->id): ?>
+		<div class="hr_1">&#160;</div>
+			<?php echo V('application:tag/path', ['tag'=>$equipment->group, 'tag_root'=>$equipment->group->root, 'url_template'=>URI::url('!equipments/index','group_id=%tag_id')]) ?>
+		<?php endif ?>
+        <?php echo V('equipments:equipment/brief', ['equipment'=> $equipment]);?>
+		<?php if($equipment->status!=EQ_Status_Model::NO_LONGER_IN_SERVICE):?>
+			<div class="hr_1">&#160;</div>
+			<?php echo V('equipments:equipment/control', ['equipment'=>$equipment]); ?>
+		<?php endif ?>
+		<?php else: ?>
+		<?php echo V('equipments:equipment/mirror.info', ['equipment'=>$equipment])?>
+		<?php endif;?>
+		<div class="hr_2">&#160;</div>
+		<?php echo Widget::factory('application:links', ['links' => $equipment->links('view') + L('ME')->follow_links($equipment,'view'), 'separator'=>' ']) ?>
+		<div class="hr_2">&#160;</div>
+	</td>
+</tr>
+</tbody>
+</table>
+</div>

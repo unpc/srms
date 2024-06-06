@@ -1,0 +1,23 @@
+<table class="mini_form">
+	<tr>
+		<td class="middle icon"><?php echo $equipment->icon('32') ?></td>
+		<td class="middle">
+			<span class="name"><?php echo H($equipment->name) ?></span>
+	 		<br/>
+			<span class="place">
+                <?php
+                if (Config::get('equipment.location_type_select')){
+                    $ls = Q("{$equipment} tag_location")->to_assoc('id', 'name');
+                    if (count($ls)) {
+                        echo join(' ', $ls);
+                    }else{
+                        echo '--';
+                    }
+                } else {
+                    echo H($equipment->location );
+                }
+                ?>
+            </span>
+		</td>
+	</tr>
+</table>

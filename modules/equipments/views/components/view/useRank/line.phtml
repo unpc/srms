@@ -1,0 +1,20 @@
+<g-chart type="line">
+  <g-tooltip>
+    <g-formatter value="<?= H('{b} <br> {a}: {c}小时') ?>"></g-formatter>
+  </g-tooltip>
+  <g-xaxis name="<?= H(I18N::T('equipments', '仪器')) ?>" type="category">
+  <?php foreach ($data as $item) : ?>
+    <g-param value="<?= H($item['name']) ?>"></g-param>
+  <?php endforeach ?>
+  </g-xaxis>
+  <g-yaxis name="<?= H(I18N::T('equipments', '使用机时(h)')) ?>" type="value">
+  </g-yaxis>
+  <g-series name="<?= H($title) ?>" type="line">
+    <g-color value="#3983d4"></g-color>
+    <g-data>
+    <?php foreach ($data as $item) : ?>
+      <g-param value="<?= H($item['value']) ?>"></g-param>
+    <?php endforeach ?>
+    </g-data>
+  </g-series>
+</g-chart>

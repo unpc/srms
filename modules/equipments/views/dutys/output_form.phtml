@@ -1,0 +1,35 @@
+<div class="tmargin_3"></div>
+<div class="form">
+    <?php if ($type == 'csv'): ?>
+    <form id="report_form" method="POST" q-object="dutys_export" q-src="<?= URI::url('!equipments/dutys') ?>"
+          q-static="<?php echo H(['form_token' => $form_token, 'type' => $type]) ?>" q-event="submit" autocomplete="off"
+          class="prevent_default">
+        <?php else: ?>
+        <form id="report_form" name="report_form"
+              action="<?php echo H(URI::url('!equipments/dutys', ['type' => $type, 'form_token' => $form_token, 'oname' => $oname, 'oid' => $oid])) ?>"
+              target="<?= $type == 'csv' ? '_self' : '_blank' ?>" class="prevent_default" method='post'>
+            <?php endif; ?>
+            <?php echo V('form_error', ['form' => $form]); ?>
+            <ul class="ep_triple" style="width:375px;">
+                <?php
+                foreach ($columns as $p => $p_name) :?>
+                    <?php if ($p < 0): ?>
+                        <div class="clear">&#160;</div>
+                        <h4><?php echo I18N::HT('equipments', $p_name) ?></h4>
+                    <?php else: ?>
+                        <li class="nowrap">
+                            <?php echo Form::checkbox("columns[{$p}]", TRUE, I18N::T('equipments', $p_name), 'class="middle checkbox monitor"', 'class="middle"'); ?>
+                        </li>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </ul>
+            <div class="button_container">
+                <div class="float_right">
+                    <input name="cancel" id="cancel" type='reset' class="font-button-default sm rmargin_2e4"
+                           value="<?php echo I18N::HT('eq_sample', '取消'); ?>"/>
+                    <input name="submit" type='submit' class="font-button-save sm"
+                           value="<?php echo I18N::HT('eq_sample', '提交'); ?>"/>
+                </div>
+            </div>
+        </form>
+</div>

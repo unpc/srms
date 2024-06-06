@@ -1,0 +1,7 @@
+<?php 
+if ($tags) foreach($tags as $tag) {
+	echo V('admin/tags/tag_item', ['tag'=>$tag, 'parent_uniqid'=>$parent_uniqid, 'title'=>$title]);
+}
+?>
+
+

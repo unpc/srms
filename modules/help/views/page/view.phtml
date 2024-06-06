@@ -1,0 +1,13 @@
+<div class="hr_1">&#160;</div>
+<?php if (L('ME')->access('修改帮助中心内容')): ?>
+<div class="panel right padding_1">
+	<a class="button button_edit" href="<?php echo H($wiki->url(NULL, 'edit')) ?>"><?php echo I18N::T('help', '修改页面')?></a>
+	<a class="font-button-delete" href="<?php echo H($wiki->url(NULL, 'delete')) ?>" confirm="<?php echo I18N::HT('help', '您确定删除该页面吗?') ?>"><?php echo I18N::HT('help', '删除页面') ?></a>
+</div>
+<?php endif; ?>
+<div class="wiki_content">
+	<div class="form right padding_1 clearfix">
+		<?php echo $wiki->breadcrumb('r') ?>
+	</div>
+	<?php echo $wiki->render() ?>
+</div>

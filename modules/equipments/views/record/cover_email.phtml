@@ -1,0 +1,46 @@
+<style type="text/css">
+.top_text {
+    font-size:14px;
+    margin-left:42px;
+    padding:4px;
+}
+.top_text_3 {
+    font-size:14px;
+    margin-left:42px;
+    margin-bottom: 42px;
+    padding:4px;
+}
+</style>
+<div class="hr_1">&#160;</div>
+<div>
+    <p><?php echo I18N::T('equipments','%incharge, 您好!', ['%incharge'=> URI::anchor($incharge->url(), H($incharge->name))])?></p>
+</div>
+
+<div>
+	<div class="top_text"><?php echo I18N::T('equipments', '在您负责的[%equipment_name]下, 系统添加一条使用记录失败!', ['%equipment_name'=>URI::anchor($equipment->url(), H($equipment->name))])?></div>
+</div>
+
+<div>
+    <p><b><?php echo I18N::T('equipments', '添加失败原因')?></b></p>
+</div>
+
+<div class="top_text">
+    <?php echo I18N::T('equipments', '该时段存在其他使用记录!')?>
+</div>
+
+<div>
+    <p><b><?php echo I18N::T('equipments', '失败记录信息')?></b></p>
+</div>
+
+<div>
+    <div class="top_text"><?php echo I18N::T('equipments', '使用者: %user_name', ['%user_name'=> $user->id ? URI::anchor($user->url(), H($user->name)) : '--'])?></div>
+    <div class="top_text"><?php echo I18N::T('equipments', '使用时段: %dtstart -  %dtend', ['%dtstart'=> Date::format($dtstart, 'Y/m/d H:i:s'), '%dtend'=> Date::format($dtend, 'Y/m/d H:i:s')]);?></div>
+    <div class="top_text"><?php echo I18N::T('equipments', '使用时长: %use 小时', ['%use'=> round(($dtend - $dtstart) / 3600, 2)])?></div>
+    <div class="top_text"><?php echo I18N::T('equipments', '样品数: %samples', ['%samples'=> $samples])?></div>
+    <div class="top_text_3">&#160;</div>
+</div>
+
+<div>
+    <p><b><?php echo URI::anchor(Config::get('system.company_link', 'http://www.geneegroup.com'), 'LabScout LIMS Team');?></b></p>
+    <p><b><?php echo I18N::T('equipments', '[系统消息,请勿回复]');?></b></p>
+</div>

@@ -1,0 +1,57 @@
+<?php $flexform_index = 0;?>
+<h2 class="section_title">
+    <span class="border"></span>
+    <span class="black_title"><?= I18N::T('yiqikong_approval', '不受限用户设置') ?></span>
+</h2>
+<div class="interval_12"></div>
+<div class="toggle:controlall[<?= $flexform_index ?>] show_on:0 lmaigin_1e5">
+    <table class="form" style="width: 50%">
+        <tr>
+            <td class="left nowrap top">
+                <?php extract($uncontrolInfo);?>
+                <?= Form::checkbox("select_user_mode_user[{$flexform_index}]", !!$uncontroluser, I18N::T('yiqikong_approval','个别用户'), 'class="middle checkbox monitor"', 'class="middle"') ?>
+            </td>
+            <td>
+                <div class="toggle:select_user_mode_user[<?= $flexform_index ?>] show_on:on" style="display:none">
+                    <?= Widget::factory('yiqikong_approval:selector', [
+                        'name' => "user[{$flexform_index}]",
+                        'autocomplete'=>URI::url('autocomplete/user'),
+                        'value'=> $uncontroluser ? $uncontroluser : null,
+                        ]); ?>
+                </div>
+            </td>
+        </tr>
+        <tr><td colspan="2"><div class="interval_6"></div></td></tr>
+        <?php if (!$GLOBALS['preload']['people.multi_lab'] && Module::is_installed('labs')): ?>
+        <tr>
+            <td class="left nowrap top">
+                <?= Form::checkbox("select_user_mode_lab[{$flexform_index}]", $uncontrollab, I18N::T('yiqikong_approval','课题组'),'class="middle monitor checkbox"', 'class="middle"') ?>
+            </td>
+            <td>
+                <div class="toggle:select_user_mode_lab[<?= $flexform_index ?>] show_on:on" style="display:none">
+                    <?= Widget::factory('yiqikong_approval:selector', [
+                        'name' => "lab[{$flexform_index}]",
+                        'autocomplete'=>URI::url('!yiqikong_approval/autocomplete/labs'),
+                        'value'=> $uncontrollab ? $uncontrollab : null,
+                        ]); ?>
+                </div>
+            </td>
+        </tr>
+        <tr><td colspan="2"><div class="interval_6"></div></td></tr>
+        <?php endif ?>
+        <tr>
+            <td class="left nowrap top">
+                <?= Form::checkbox("select_user_mode_group[{$flexform_index}]", $uncontrolgroup, I18N::T('yiqikong_approval','组织机构'),'class="middle monitor checkbox"', 'class="middle"') ?>
+            </td>
+            <td>
+                <div class="toggle:select_user_mode_group[<?= $flexform_index ?>] show_on:on" style="display:none">
+                    <?= Widget::factory('yiqikong_approval:tag_selector',  [
+                        'name' => "group[{$flexform_index}]",
+                        'autocomplete'=>URI::url('autocomplete/groups'),
+                        'value'=> $uncontrolgroup ? $uncontrolgroup : null,
+                        ]); ?>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>

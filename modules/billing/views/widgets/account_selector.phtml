@@ -1,0 +1,7 @@
+<?php 
+$uniqid = 'labsel_'.uniqid();
+$autocomplete = $this->autocomplete ?: URI::url('!billing/autocomplete/account');
+?>
+
+<input id="<?php echo $uniqid?>_lab" name="<?php echo H($this->name ) ?>" type="hidden" />
+<input id="<?php echo $uniqid?>_lab_name" class="text middle select_on_focus autocomplete:<?php echo H($autocomplete) ?> autocomplete_alt:#<?php echo $uniqid?>_lab" size="30" q-tooltip="<?php echo H(I18N::T('billing', '请选择实验室') ) ?>" q-static="<?php echo H(['department_id'=> $department->id, 'lab_id'=> $lab->id]);?>)" />

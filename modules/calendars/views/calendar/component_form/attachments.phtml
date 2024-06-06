@@ -1,0 +1,31 @@
+<?php if($calendar->allows['attachments']): ?>
+<tr>
+	<td class="label right top nowrap">
+		<?php echo $properties['label'] ?>
+	</td>
+	<td>
+		<?php
+			$id = 'attachments'.uniqid();
+		?>
+		<div class="form form_border">
+		<?php 
+		$files = $component->files;
+		if (is_array($files)):
+		?>
+		<ul class="clearfix">
+		<?php foreach($files as $file):?>
+		<li class="description padding_text" id="<?php echo H($id) ?>">
+			<?php echo $file; ?>
+		</li>
+		<?php endforeach;?>
+		</ul>
+		<?php endif;?>
+		<div class="bottom_form">
+			<input class="button button_import float_right" name="upload" type="submit" value="<?php echo H(I18N::T('calendars', '上传')) ?>" />
+			<input name="<?php echo H($name) ?>" type="file" class="file" />
+		</div>
+		</div>
+	</td>
+</tr>
+<?php endif; ?>
+

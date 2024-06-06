@@ -1,0 +1,53 @@
+<?php
+switch($equipment->reserv_type) :
+case 'time' :
+case NULL : //如果为空, 则为默认的 time
+    echo JS::load_async('preview');
+    echo CSS::load_async('preview');
+    ?>
+    <div class="calendar_week_header_left">
+        <?php
+        $calendar_content = Event::trigger('calendar.calendar_left_content.get', $calendar);
+        if ( $calendar_content )  echo $calendar_content;
+        ?>
+        <?php echo $fourth_tabs;?>
+    </div>
+    <div class="calendar_week_header_right">
+        <?php
+        $calendar_content = Event::trigger('calendar.calendar_right_content.get', $calendar, $fourth_tabs->form);
+        if ( $calendar_content )  echo $calendar_content;
+        ?>
+    </div>
+    <div class='display_with_calendar_week_header_content' style="background-color: #fff;"></div>
+    <div class='interval_30'>&nbsp</div>
+    <?php if($fourth_tabs->panel_buttons || $fourth_tabs->search_box): ?>
+    <div class='search_panel no_padding_secondary_search'>
+        <?php
+        echo $fourth_tabs->panel_buttons;
+        echo $fourth_tabs->search_box;
+        ?>
+    </div>
+    <?php else: ?>
+        <div class="interval_16"></div>
+    <?php endif ?>
+
+    <?php echo $fourth_tabs->content;?>
+<?php
+    break;
+default :
+      echo Event::trigger('eq_reserv.tab_reserv.content', $equipment);
+    break;
+
+endswitch;
+
+?>
+<script>
+    jQuery(function($){
+        $(".no_padding_secondary_search").next(".tab_content")
+            .css('margin', '0px 16px 66px 16px')
+            .css('padding', '0px 16px 16px 16px');
+        $(".no_padding_secondary_search")
+            .css('margin', '0px')
+            .css('padding', '16px 0 0 0');
+    })
+</script>

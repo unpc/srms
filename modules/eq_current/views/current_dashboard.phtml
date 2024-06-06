@@ -1,0 +1,39 @@
+<?php
+$now = Date::time();
+?>
+<div class="clearfix">
+	<h2 class="section_title"><?php echo I18N::HT('eq_current', '能耗情况'); ?></h2>
+	<div class="padding_1 lpadding_2">
+		<table class="miniform">
+		<tr>
+			<td class="label middle right"><?php echo I18N::HT('eq_current', '本日耗电')?></td>
+			<td class="middle lpadding_1">
+				<big><strong>
+					<?php echo EQ_Current::get_power_degrees($equipment, strtotime('midnight', $now), $now);?>
+				</strong></big>
+				<?php echo I18N::HT('eq_current', '度|:energy_unit') ?>
+			</td>
+		</tr>
+		<tr>
+			<td class="label middle right"><?php echo I18N::HT('eq_current', '本月耗电')?></td>
+			<td class="middle lpadding_1">
+				<big><strong><?php echo EQ_Current::get_power_degrees($equipment, 
+					strtotime(Date('Y-m-1', $now)), $now); ?>
+</strong></big>
+				<?php echo I18N::HT('eq_current', '度|:energy_unit') ?>
+			</td>
+		</tr>
+		<tr>
+			<td class="label middle right"><?php echo I18N::HT('eq_current', '总耗电')?></td>
+			<td class="middle lpadding_1">
+				<big><strong><?php echo EQ_Current::get_power_degrees($equipment, 0, $now); ?>
+</strong></big>
+				<?php echo I18N::HT('eq_current', '度|:energy_unit') ?>
+			</td>
+		</tr>
+		</table>
+		<div class="description">
+			* <?php echo I18N::HT('eq_current', '以上数值均为估计数值, 与实际数值可能有出入, 仅供参考.'); ?>
+		</div>
+	</div>
+</div>

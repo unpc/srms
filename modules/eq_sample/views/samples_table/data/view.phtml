@@ -1,0 +1,7 @@
+<?php 
+	$view_id = 'view_sample_'.$sample->id; 
+	if (L('ME')->is_allowed_to('下载文件', $sample, ['type' => 'attachments'])) {
+		$n_attachments = NFS::count_attachments($sample);
+	}
+?>
+<a id="<?php echo H($view_id) ?>" class="prevent_default blue" target="_blank" title="查看" href="<?php echo H($sample->url(NULL, NULL, NULL, 'print')) ?>">查看<?php echo I18N::T('eq_sample', '%num', ['%num' => ($n_attachments > 0) ? '(<span class="clip_icon"">&#160;&#160;</span>'.$n_attachments.')' : null])?></a>

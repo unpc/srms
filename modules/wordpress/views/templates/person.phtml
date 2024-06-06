@@ -1,0 +1,52 @@
+<?php
+$default_icon = '';				/* TODO */
+
+if ($user['role'] == 'pi'):
+   ?>
+<h2 class="section_title top_title">Principal Investigator</h2>
+<?php
+   endif;
+?>
+
+<div class="person">
+	<div class="icon"><img src="<?php echo H($user['wp_icon'] ?:$default_icon ) ?>"/></div>
+  <div class="info">
+	<div><span class="name"><?php echo $user['name'] ?></span></div>
+	<div><?php /* <span class="ename"><?php echo $user['ename'] ?></span> */ ?><span class="degree"><?php echo $user['degree'] ?></span></div> 
+	<div><span class="label">Email</span>: <span class="email"><?php echo $user['email'] ?></span></div>
+	<div><span class="label">Phone</span>: <span class="phone"><?php echo $user['phone'] ?></span></div>
+	<div><span class="label">Time</span>: <span class="time"><?php echo Person_Page::generate_duration($user['dfrom'], $user['dto']);?></span></div>
+  </div>
+</div>
+<?php
+   if (isset($user['introduction'])):
+   ?>
+<h2 class="section_title">个人简介</h2>
+<div class="introduction"><?php echo $user['introduction'] ?></div>
+<?php
+   endif;
+   ?>
+<?php
+   if (isset($user['eintroduction'])):
+   ?>
+<h2 class="section_title">Introduction</h2>
+<div class="introduction"><?php echo $user['eintroduction'] ?></div>
+<?php
+   endif;
+   ?>
+<?php
+
+if (isset($user['pids']) && count($user['pids'])):
+   ?>
+<h2 class="section_title">Publications</h2>
+	 <ol>
+<?php
+	global $publications;
+
+	foreach ($user['pids'] as $pid) {
+   		echo V('publication_item', ['publication' => $publications[$pid]]);
+   	}
+   ?>
+   </ol>
+<?php
+endif;

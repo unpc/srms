@@ -1,0 +1,190 @@
+<?php
+$me        = L('ME');
+$multi_lab = $GLOBALS['preload']['people.multi_lab'];
+$panel_buttons = [];
+if ($me->is_allowed_to('添加成果', 'lab')) {
+    $panel_buttons['add'] = [
+        'url' => URI::url('!achievements/publications/publication/add'),
+        'tip' => I18N::T('achievements', '添加论文'),
+        'text' => I18N::T('achievements', '添加论文'),
+        // 'extra' => 'q-object="add_publication" q-event="click" q-src="'.URI::url('!achievements/publications/publication').'" class="button button_add"'
+        'extra' => 'class="button button_add"'
+    ];
+
+    if (Module::is_installed('db_sync') && DB_SYNC::is_slave() && DB_SYNC::is_module_unify_manage('publications')) {
+        $master = Config::get('site.master');
+        $panel_buttons['add']['url'] = "{$master['host']}!achievements/publications/publication/add?oauth-sso=db_sync." . LAB_ID;
+    }
+
+    if ($me->is_allowed_to('查看成果', $lab->id ? $lab : O('lab', $form['lab_id'])))
+    {
+        $panel_buttons[] = [
+            'text' => I18N::T('achievements', '导出Excel'),
+            'tip' => I18N::T('achievements', '导出Excel'),
+            'extra' => 'q-static="'. H(['type' => 'csv', 'form_token' => $form_token]) .'" q-object="export" q-event="click" q-src="!achievements/publications/publication" class="button button_save"'
+        ];
+    }
+
+    if ($me->is_allowed_to('导入成果', 'lab')) {
+        $panel_buttons[] = [
+            'url' => URI::url('!achievements/download.publications'),
+            'tip' => I18N::T('achievements', '下载模板'),
+            'text' => I18N::T('achievements', '下载模板'),
+            'extra' => 'class="button button_export"'
+        ];
+        $panel_buttons[] = [
+            'tip' => I18N::T('achievements', '导入数据'),
+            'text' => I18N::T('achievements', '导入数据'),
+            'extra' => 'class="button button_import middle prevent_default" onclick="return inputFile();"'
+        ];
+        echo V('upload', ['template' => 'publications']);
+    }
+
+}
+?>
+
+<?php
+if ($form['dtstart'] || $form['dtend']) {
+    $form['publication_date'] = true;
+}
+$table           = Widget::factory('table');
+$table->name     = 'achievements_publications';
+$table->sort_asc = $sort_asc;
+$table->sort_by  = $sort_by;
+$table->add_columns([
+    'icon'=>['extra_class'=>'tight'],
+    'title'   => [
+        'title'    => I18N::T('achievements', '标题'),
+        'align'    => 'left',
+        'filter'   => [
+            'form'  => V('achievements:publications_table/filters/name', ['title' => H($form['title'])]),
+            'value' => $form['title'] ? H($form['title']) : null,
+        ],
+        'sortable' => true,
+    ],
+    'author'  => [
+        'title'    => I18N::T('achievements', '作者'),
+        'align'    => 'left',
+        'filter'   => [
+            'form'  => V('achievements:publications_table/filters/author', ['author' => H($form['author'])]),
+            'value' => $form['author'] ? H($form['author']) : null,
+        ],
+        'sortable' => true,
+    ],
+    'journal' => [
+        'title'    => I18N::T('achievements', '期刊'),
+        'align'    => 'left',
+        'filter'   => [
+            'form'  => V('achievements:publications_table/filters/journal', ['journal' => H($form['journal'])]),
+            'value' => $form['journal'] ? H($form['journal']) : null,
+        ],
+        'nowrap'   => true,
+        'sortable' => true,
+    ],
+    'date'    => [
+        'title'    => I18N::T('achievements', '日期'),
+        'filter'   => [
+            'form'  => V('achievements:publications_table/filters/date',
+                [
+                    'dtstart'       => H($form['dtstart']),
+                    'dtend'         => H($form['dtend']),
+                ]),
+            'value' => $form['publication_date'] ?: null,
+            'field' => 'dtstart,dtend',
+        ],
+        'align'  => 'left',
+        'nowrap'   => true,
+        'sortable' => true,
+    ],
+    'volume'  => [
+        'title'  => I18N::T('achievements', '卷号'),
+        'align'  => 'left',
+        'nowrap' => true,
+    ],
+    'issue'   => [
+        'title'  => I18N::T('achievements', '刊号'),
+        'align'  => 'left',
+        'nowrap' => true,
+    ],
+    'page'    => [
+        'title'  => I18N::T('achievements', '页码'),
+        'align'  => 'left',
+        'nowrap' => true,
+    ],
+    'tag'     => [
+        'title'       => I18N::T('achievements', '标签'),
+        'invisible'   => true,
+        'filter'      => [
+            'form'  => V('achievements:publications_table/filters/tag', [
+                'tag'      => $tag,
+                'tag_root' => $tag_root,
+                'name'     => 'tag_id',
+            ]),
+            'value' => $tag->id ? H($tag->name) : null,
+            'field' => 'tag_id',
+        ],
+        'align'  => 'left',
+        'nowrap'      => true,
+    ],
+    'rest'    => [
+        'title'  => I18N::T('achievements', '操作'),
+        'align'  => 'left',
+        'nowrap' => true,
+    ],
+]);
+
+if (Module::is_installed('labs') && (
+    $me->access('查看所有实验室成果') || ($multi_lab && $me->is_allowed_to('查看成果实验室', 'achievements'))
+)) {
+    $table->add_column('lab_id', [
+        'title'        => I18N::T('achievements', '实验室'),
+        'invisible'    => true,
+        'suppressible' => true,
+        'filter'       => [
+            'form'  => Widget::factory('labs:lab_selector', [
+                'name'         => 'lab_id',
+                'selected_lab' => $lab->id ?: $form['lab_id'],
+                'size'         => 25,
+                'all_labs'     => true,
+            ]),
+            'value' => $form['lab_id'] ? H(O('lab', $form['lab_id'])->name) : null,
+        ],
+    ]);
+}
+$table->empty_message = I18N::T('achievements', '没有符合条件的文献');
+
+if (count($publications) > 0) {
+    foreach ($publications as $publication) {
+        $links = $publication->links();
+        $table->add_row([
+            'icon'=>[
+                'view' => $publication->icon('32', 'style="display:block"'),
+            ],
+            'title'   => V('achievements:publications_table/data/title', ['publication' => $publication]),
+            'author'  => V('achievements:publications_table/data/author', ['publication' => $publication]),
+            'journal' => V('achievements:publications_table/data/journal', ['publication' => $publication]),
+            'date'    => V('achievements:publications_table/data/date', ['publication' => $publication]),
+            'volume'  => V('achievements:publications_table/data/volume', ['publication' => $publication]),
+            'issue'   => V('achievements:publications_table/data/issue', ['publication' => $publication]),
+            'page'    => V('achievements:publications_table/data/page', ['publication' => $publication]),
+            'rest'    => Widget::factory('application:links', ['links' => $links]),
+        ]);
+    }
+}
+
+$param = [
+    'panel_buttons' => $panel_buttons,
+    'top_input_arr'=> ['title', 'author'],
+    'columns'=> (array)$table->columns,
+    'extra_view'    => '<div class="adj statistics middle">'. $pagination. '</div>'
+];
+echo V('application:search_box', $param);
+
+echo $table;
+
+?>
+
+<div class="interval_12"></div>
+<div class="pages">
+    <?php echo $pagination; ?>
+</div>

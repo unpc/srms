@@ -1,0 +1,4 @@
+<?php
+$billing_departments = Q('billing_department')->to_assoc('id', 'name');
+echo Form::dropdown('billing_department', [-1 => '--'] + $billing_departments, $form['billing_department'] ?? -1, 'class="lmargin_2"')
+?>

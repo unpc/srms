@@ -1,0 +1,45 @@
+<?php
+$me = L('ME');
+$form_id = 'edit_distribution_form_'. uniqid();
+?>
+
+<div class="form" style="min-width:470px">
+    <form q-object="<?php echo $q_object; ?>" q-event="submit" q-src="<?php echo H(URI::url('!billing_standard/index')) ?>" id="<?php echo H($form_id) ?>" autocomplete="off" method="post">
+        <?php echo V('form_error', ['form' => $form]);?>
+
+        <?php foreach($distribution_ids as $distribution_id): ?>
+        <input type="hidden" name="select[<?php echo $distribution_id; ?>]" value="on">
+        <?php endforeach; ?>
+
+        <table class="form">
+            <tr>
+                <td style="width: 140px; text-align: right;">可用经费列表</td>
+                <td style="width: 240px;">
+                    <?php
+                        $opt = Config::get('rpc.servers')['billing_standard'];
+                        $rpc = new RPC($opt['api']);
+                        $funds = [];
+            
+                        try {
+                            $funds = $rpc->transaction->funds($me->id);
+                        } catch (Exception $e) {
+
+                        }
+
+                        echo Form::dropdown('fund_id', I18N::T('billing_standard', $funds), $form['fund_id'] ?: ($fund_id ?: null), 'class="dropdown monitor"');
+                    ?>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2" class="nowrap" style="height:78px;vertical-align:center;padding-top:0px!important;">
+                    <div class="float_right">
+                        <input name="cancel" type='reset' id='cancel' class="font-button-default sm rmargin_2e4" value="<?php echo I18N::HT('billing_standard', '取消');?>" />
+                        <input name="edit" type='submit' class="font-button-save sm" value="<?php echo I18N::HT('billing_standard', '保存');?>" />
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+    </form>
+</div>

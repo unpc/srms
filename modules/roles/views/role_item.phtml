@@ -1,0 +1,4 @@
+<?php $uniqid = 'role_' . uniqid();?>
+<div id="<?php echo $uniqid;?>" data-rid='<?= $role->id?>' class="role_item_list <?php echo $class?> item_weight:<?php echo $role->weight?>">
+	<?php echo V('role_title', ['role' => $role, 'uniqid' => $uniqid]);?>
+</div>

@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" style="overflow: hidden; margin: 0px;">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+	<title>Glogon Login</title>
+
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <meta http-equiv="Content-Script-Type" content="text/javascript" />
+
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    
+    <link href="css/core.css" rel="stylesheet" type="text/css" />
+    <link href="css/text.css" rel="stylesheet" type="text/css" />
+    <link href="css/lims.css" rel="stylesheet" type="text/css" />
+    <link href="css/reset.css" rel="stylesheet" type="text/css" />
+    <link href="css/table.css" rel="stylesheet" type="text/css" />
+    <link href="css/glogon.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="js/jquery.js"></script>
+
+</head>
+
+<body>
+    <img src="images/glogon_banner.bmp" />
+    <div class="form">
+        <form window_width="420" window_height="320" action="glogon_action_submit" method="get" id="form">
+            <table class="form">
+                <tr id="static_card">
+                    <td class="middle right nowrap label">
+                        IC Card No.
+                    </td>
+                    <td class="top">
+                        <input type="password" name="card_no" class="text" value_type="int" size="40" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="middle right nowrap label">
+                        Account
+                    </td>
+                    <td class="top">
+                        <input name="token" class="text middle " size="25" value=""  tabindex="1" />
+                        <span class="separator middle">@</span>
+                        <select name="backend" class="dropdown middle">
+                            <option value="database" selected="selected">
+                                LIMS User
+                            </option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="middle right nowrap label">
+                        Password
+                    </td>
+                    <td class="top">
+                        <input type="password" name="password" class="text" size="40" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>&#160;</td>
+                    <td class="top">
+                        <div>
+                            <input class="button button_login middle" type="submit" value="Submit" />
+                            &#160;
+                            <input class="button button_cancel middle" type="button" value="Cancel" onclick="javascript:window.location.href='glogon_action_cancel'"/>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</body>
+</html>

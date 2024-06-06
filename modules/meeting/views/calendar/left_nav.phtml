@@ -1,0 +1,23 @@
+<?php $form_token = Session::temp_token('me_reserv_',300);?>
+<a class="button button_save reserv_calendar_left_nav_anchor prevent_default" type="csv"><?php echo I18N::T('eq_reserv', '导出CSV')?></a>
+<a class="button button_print  reserv_calendar_left_nav_anchor prevent_default" type="print"><?php echo I18N::T('eq_reserv', '打印')?></a>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('.reserv_calendar_left_nav_anchor').bind('click', function() {
+
+        Q.trigger({
+            url: '<?php echo URI::url('!meeting/reserv')?>',
+            object: 'export_components',
+            event: 'click',
+            data: {
+                type:  $(this).attr('type'),
+                dtstart:  Q.Calendar.dtstart,
+                dtend: Q.Calendar.dtend,
+                form_token: "<?php echo H($form_token) ?>",
+                calendar_id: <?php echo $calendar_id;?>
+            }
+        });
+        return false;
+    });
+});
+</script>

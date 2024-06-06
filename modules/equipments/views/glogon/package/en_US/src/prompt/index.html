@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" style="overflow: hidden; margin: 0px;">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <title>Glogon Prompt</title>
+
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <meta http-equiv="Content-Script-Type" content="text/javascript" />
+
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    
+    <link href="css/core.css" rel="stylesheet" type="text/css" />
+    <link href="css/text.css" rel="stylesheet" type="text/css" />
+    <link href="css/lims.css" rel="stylesheet" type="text/css" />
+    <link href="css/reset.css" rel="stylesheet" type="text/css" />
+    <link href="css/table.css" rel="stylesheet" type="text/css" />
+    <link href="css/glogon.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="js/jquery.js"></script>
+
+</head>
+
+<body>
+    <img src="images/glogon_banner.bmp" />
+    <div class="form" style="padding-left: 45px;">
+        <div>
+            <table class="form">
+                <tr>
+                    <td class="middle nowrap label" style="padding-bottom: 5px;">
+                        You have already used this equipment over 24 hours, <br/>in order to avoid forgetting to shut down the equipment
+                    </td>
+                </tr>
+                <tr>
+                    <td class="middle nowrap label" style="padding-bottom: 5px;">
+                        Would you like to continue using it?
+                    </td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td class="top" style="padding-bottom: 10px;">
+                        <div>
+                            <input class="button button_save middle" type="button" value="Confirm" onclick="javascript:window.location.href='glogon_action_cancel'"/>
+                            &#160;
+                            <input class="button button_logout middle" type="button" value="Quit" onclick="javascript:window.location.href='glogon_action_redirect'"/>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
+

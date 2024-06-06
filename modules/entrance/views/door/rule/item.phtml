@@ -1,0 +1,46 @@
+<?php
+	//在此组合数据,传入相应view
+	// #1.user.phtml
+	$user_view = [];
+	if ($select_user_mode_group && $select_user_mode_group == 'on') {
+		$user_view['controlgroup'] = json_encode($groups);
+	}
+	if ($select_user_mode_user && $select_user_mode_user == 'on') {
+		$user_view['controluser'] = json_encode($users);
+	}
+	if ($select_user_mode_lab && $select_user_mode_lab == 'on') {
+		$user_view['controllab'] = json_encode($labs);
+	}
+
+	// #4.date.phtml
+	if (!is_array($rrule)) $rrule = [];
+	$date_view = ['dtstart'=>$dtstart,
+					   'dtend'=>$dtend,
+					   'rtype'=>$rtype,
+					   'rnum'=>$rnum,
+					   'dtfrom'=>$dtfrom,
+					   'dtto'=>$dtto,
+					   'monthly_type'=>$monthly_type,
+					   'yearly_type'=>$yearly_type,
+					   'rrule'=>$rrule,
+					];
+
+	// #3.direction.phtml
+	if (!is_array($directions)) $directions = [];
+	$direction_view = ['directions'=>$directions, 'access'=>$access];
+
+?>
+<div class="dc_rule_form">
+	<?php echo V('door/rule/user', ['flexform_index'=>$flexform_index] + $user_view) ?>
+	<div class="interval_20"></div>
+	<?php echo V('door/rule/date',['flexform_index'=>$flexform_index, 'dtstart'=>$dtstart, 'dtend'=>$dtend]) ?>
+    <div class="interval_20"></div>
+
+	<?php echo Widget::factory('tm_rrule',['flexform_index'=>$flexform_index] + $date_view) ?>
+
+    <div class="interval_20"></div>
+
+	<?php echo V('door/rule/direction', ['flexform_index'=>$flexform_index] + $direction_view) ?>
+
+    <div class="interval_30"></div>
+</div>

@@ -1,0 +1,20 @@
+<?php
+$me = L('ME');
+$hide_button = Event::trigger('calendar.hide_add_button', $calendar);
+if (!$hide_button && $me->is_allowed_to('添加事件', $calendar)):
+?>
+<?php
+/*if (Module::is_installed('db_sync') && DB_SYNC::is_slave()):*/?><!--
+		<a class="middle button button_add prevent_default" href="<?php /*echo Event::trigger('db_sync.transfer_to_master_url', "!equipments/{$calendar->parent_name}/index.{$calendar->parent_id}.reserv", ['q_params'=>[
+            'q-object' => 'just_show_insert_component',
+            'q-event' => 'click',
+            'q-src' => Event::trigger('db_sync.transfer_to_master_url', '', '', true),
+        ]])*/?>"><?php /*echo I18N::T('calendars', '添加');*/?></a>
+<?php /*else:*/?>
+    <a class="middle button button_add reserv_calendar_left_nav_anchor prevent_default" q-object="just_show_insert_component" q-event="click" href="#"><?php /*echo I18N::T('calendars', '添加');*/?></a>
+--><?php /*endif*/?>
+
+<!--		<a class="middle button button_add  prevent_default" q-object="just_show_insert_component" q-event="click" href="#">--><?php //echo I18N::T('calendars', '');?><!--</a>-->
+<a class="middle button button_add  prevent_default" q-object="just_show_insert_component" q-event="click" q-src="<?php echo H(URI::url('!calendars/calendar')) ?>" q-static="<?php echo H(['id' => $calendar->id]) ?>"  href="#"><?php echo I18N::T('calendars', '');?></a>
+<?php
+endif; 

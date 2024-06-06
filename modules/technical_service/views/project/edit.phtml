@@ -1,0 +1,56 @@
+<?php
+$cache_css = Cache::cache_file(MODULE_PATH . 'technical_service/private/css/select2.min.css');
+$cache_css_base = Cache::cache_file(MODULE_PATH . 'technical_service/private/css/base.css');
+$cache_js = Cache::cache_file(MODULE_PATH . 'technical_service/private/js/select2.min.js');
+$cache_js_auto = Cache::cache_file(MODULE_PATH . 'technical_service/private/js/autocomplete.select2.js');
+?>
+<link href="<?= $cache_css ?>" rel="stylesheet" />
+<link href="<?= $cache_css_base ?>" rel="stylesheet" />
+<script src="<?= $cache_js ?>"></script>
+<script src="<?= $cache_js_auto ?>"></script>
+<?php $me = L('ME'); ?>
+<div class="form padding_2">
+    <form method="post" q-object="edit_project" q-static="<?php echo H(['project_id' => $project->id]) ?>"
+          q-src="<?= URI::url('!technical_service/project') ?>" q-event="submit"
+          autocomplete="off" class="prevent_default">
+        <?php $require = (string)V('form_require', ['extra_class' => 'right']); ?>
+        <table class="form">
+            <tr>
+                <td class="nowrap right"><?= $require ?><?= I18N::T('technical_service', '项目名称') ?></td>
+                <td class="nowrap">
+                    <input type="text" size="80" class="text" name="name"
+                           value="<?= $form['name'] ?? $project->name ?>">
+                    <br><?php echo V('form_filter', ['error' => $form->errors['name'][0]]) ?>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="nowrap right top"><?= I18N::T('technical_service', '关联仪器') ?></td>
+                <td>
+                <select data-src="<?php echo H(URI::url('!technical_service/autocomplete/equipment')) ?>" class="autocomplete_select2 no_dropdown" name="eqs[]" multiple="multiple" style="width: 100%">
+                    <?php 
+                    $eqs = (isset($form) && isset($form['eqs'])) ? $form['eqs'] : $eqs;
+                        foreach ($eqs as $key => $value):
+                            $equipment = O('equipment',$value);
+                    ?>
+                    <option value=<?=$equipment->id?> selected><?= $equipment->name?></option>
+                    <?php endforeach;?>
+                </select>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <div class="button_container">
+                        <div class="float_right">
+                            <input type="button" name="cancel" id="cancel" class="font-button-default sm"
+                                   value="<?php echo H(I18N::T('labs', '取消')) ?>"/>
+                            <input type="submit" name="submit" class="font-button-save sm"
+                                   value="<?php echo H(I18N::T('labs', '保存')) ?>"/>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>

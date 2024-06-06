@@ -1,0 +1,17 @@
+<tr>
+    <td class="label right top nowrap">
+    <?php if($properties['field']['required']) : ?>*<?php endif; ?>
+    <?php echo I18N::HT('eq_reserv', $properties['label'])?>
+    </td>
+    <td>
+        <?php 
+            $field = $properties['field'];
+            $extra_value = O('extra_value', ['object'=> $component]);
+            $values = $extra_value->values;
+            $vname = ltrim($name, 'extra_');
+        ?>
+        <?php foreach ($field['params'] as $checkbox_name):?>
+            <span class="rpadding_2 nowrap"><?php echo Form::checkbox($name. '['. $checkbox_name. ']', $values[$vname][$checkbox_name]== 'on', $checkbox_name);?></span>
+        <?php endforeach;?>
+    </td>
+</tr>

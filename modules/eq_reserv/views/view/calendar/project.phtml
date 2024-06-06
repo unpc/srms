@@ -1,0 +1,78 @@
+<?php //添加预约: 关联项目
+if ( class_exists('Lab_Project_Model') ) :
+  $tr_project_id = $tr_project_id ? : 'tr_project_' . uniqid();
+  $eq_reserv_must_connect_project = Config::get('eq_reserv.must_connect_lab_project');
+  if ($user->id) {
+    $organizer = $user;
+  }
+  elseif ($form['organizer']) {
+    $organizer = O('user', $form['organizer']);
+  }
+  elseif ($component->organizer->id) {
+    $organizer = $component->organizer;
+  }
+  else {
+    $organizer = L('ME');
+  }
+
+
+  $reserv = $component->id ? O('eq_reserv', ['component' => $component ] ) : O('eq_reserv');
+  if ($GLOBALS['preload']['people.multi_lab']) {
+    $lab = $lab->id ? $lab : ($reserv->project->lab->id ? $reserv->project->lab : O('lab', $form['project_lab']));
+  }
+  else {
+    $lab = Q("$organizer lab")->current();
+  }
+
+  $project_types = (array)$lab->get_project_items($organizer);
+  if ($reserv->project->id && $reserv->project->lab->id == $lab->id) {
+      $project_types[I18N::T('labs', Lab_Project_Model::$types[$reserv->project->type])][$reserv->project->id] = $reserv->project->name;
+  }
+  $project_select = $form->no_error ? (int)($reserv->project->id ? : 0) : (int)$form['project'];
+  ?>
+    <td id="<?php echo $tr_project_id; ?>" class="label left  top nowrap" valign="middle">
+      <div class="title">
+      <?php if ( $eq_reserv_must_connect_project ) echo '<span class="red float_left rmargin_1">*</span>'; ?>
+      <?php echo I18N::T('eq_reserv', '关联项目'); ?>
+      <?php echo V('form_filter', ['error' => $form->errors['project'][0]]) ?>
+      </div>
+      <?php echo Form::dropdown('project', ['--'] + $project_types, $project_select, ''); ?>
+    </td>
+<?php endif; ?>
+
+<script type="text/javascript">
+$().ready(function () {
+  <?php if ($GLOBALS['preload']['people.multi_lab']) :?>
+    $('form.view').undelegate('select[name=project_lab]','change');
+    $('form.view').delegate('select[name=project_lab]','change', function(e){
+      var $lab_id = $(this).val();
+      Q.trigger({
+        object: 'eq_reserv_organizer',
+        event: 'change',
+        data: {
+          'project_lab': $lab_id,
+          'tr_project_id': '<?php echo $tr_project_id ?>'
+        },
+        url: "<?php echo URI::url('!eq_reserv/index'); ?>"
+      });
+    });
+    if ($('form.view select[name=project]').hasClass('validate_error')) {
+      $('form.view select[name=project_lab]').change();
+    }
+  <?php elseif ( L('ME')->is_allowed_to('修改预约', 'equipment') || L('ME')->is_allowed_to('修改预约', $component->calendar->parent) ): ?>
+		$('input[name=organizer]').unbind('change');
+    $('input[name=organizer]').bind('change', function(e){
+      var $user_id = $(this).val();
+      Q.trigger({
+        object: 'eq_reserv_organizer',
+        event: 'change',
+        data: {
+          'user_id': $user_id,
+          'tr_project_id': '<?php echo $tr_project_id ?>'
+        },
+        url: "<?php echo URI::url('!eq_reserv/index'); ?>"
+      });
+    });
+  <?php endif; ?>
+})
+</script>

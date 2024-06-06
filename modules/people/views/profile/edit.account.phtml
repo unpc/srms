@@ -1,0 +1,175 @@
+<?php
+$me = L('ME');
+$backends = (array)Config::get('auth.backends');
+$n_backends = count($backends);
+?>
+<div class="form">
+    <table class="form" width="100%">
+        <tr>
+            <td class="left top icon" style="width: 100px;">
+                <div class="short_container">
+                    <div class="img_icon" style="position: relative;">
+                        <?php echo $user->icon('104', 'class="icon_none_border"');?>
+                    </div>
+                </div>
+            </td>
+            <td class="lpadding_30">
+                <form class="edit" method="post" action="<?php echo H(URI::url() ) ?>" autocomplete="off">
+                    <?php echo V('form_error', ['form'=>$form]);?>
+                    <div class="interval_12"></div>
+                    <table class="form" width="100%">
+                        <tbody>
+                        <?php
+                        // 登录帐号和验证后台
+                        if ($me->access('管理所有内容')):
+                            ?>
+                            <?php $no_error = ($form->no_error!==FALSE) ?>
+                            <tr>
+                                <td class="label nowrap top">
+                                    <h2 class="section_title"><?php echo I18N::T('people', '登录帐号')?></h2>
+                                </td>
+                                <?php /*  <td class="middle"><input name="token" class="text" size="20" value="<?php echo H($no_error?$token:$form['token'])?>" /><?php echo I18N::T('people', ' @ %backend', array('%backend'=>$backend)); ?></td> */ ?>
+                            </tr>
+                            <tr><td><div class="interval_12"></div> </td></tr>
+                            <tr>
+                                <td class="top"><input placeholder="请输入登录账号" name="token" class="text middle" value="<?php echo H($no_error ? $token : $form['token']) ?>" tabindex="1" />
+                                    <span class="middle">@</span>
+                                    <?php
+                                    echo Widget::factory('people:backend_selector', [
+                                        'select'=> $form['backend'] ? I18N::T('people', $form['backend']) : I18N::T('people', $backend),
+                                        'extra_class' => 'middle monitor',
+                                    ]);
+                                    ?>
+                                    <?php if ($n_backends > 1): ?>
+                                        <div class="interval_12"></div>
+                                        <?php echo Form::checkbox('remove_former_auth', Input::form('remove_former_auth'), I18N::T('people', '修改验证后台后，尝试删除原验证信息'), ' class="middle checkbox"', 'class="middle"'); ?>
+                                    <?php endif; ?>
+                                    <!-- 防止360浏览器自动将账号密码填充到ic卡号。。 -->
+                                    <input type="text" autocomplete="off"  style="visibility: hidden;"/>
+                                    <input type="password" autocomplete="off" style="visibility: hidden;"/>
+                                </td>
+                            </tr>
+                            <tr><td><div class="interval_12"></div> </td></tr>
+                            <tr>
+                                <td class="top description red">
+                                    <?php
+                                    $message = Config::get('auth.enable_cn_token') ?
+                                        Config::get('people.signup.label.cn') : Config::get('people.signup.label.en'); ?>
+                                    <?php echo I18N::T('people', $message);?>
+                                </td>
+                            </tr>
+                        <?php
+                        else:
+                            ?>
+                            <tr>
+                                <td class="label left nowrap middle"><h2 class="section_title"><?php echo I18N::T('people', '登录帐号')?></h2></td>
+                            </tr>
+                            <tr><td><div class="interval_12"></div> </td></tr>
+                            <tr>
+                                <td class="middle">
+                                    <input class="text readonly"  value="<?php echo I18N::T('people', H($token)); ?>" disabled="disabled" tabindex="1"/>
+                                    <?php
+                                    if ($n_backends > 1) {
+                                        echo "@ " . H(I18N::T('people', $backends[$backend]['title']));
+                                    }
+                                    ?>
+                                    <!-- 防止360浏览器自动将账号密码填充到ic卡号。。 -->
+                                    <input type="text" autocomplete="off" id="aaa" style="visibility: hidden;"/>
+                                    <input type="password" autocomplete="off" id="aaa" style="visibility: hidden;"/>
+                                </td>
+                            </tr>
+                        <?php
+                        endif;
+                        ?>
+
+                        <?php
+                        // 密码
+                        $pw_tr_class = "";
+                        if ( $me->access('管理所有内容') && $n_backends > 1 ) {
+                            $hide_on_backends = [];
+                            foreach ($backends as $key => $backend) {
+                                if ($backend['readonly']) {
+                                    $hide_on_backends[] = $key;
+                                }
+                            }
+                            if (count($hide_on_backends)) {
+                                $pw_tr_class = 'toggle:backend' .
+                                    ' hide_on:'.join(' hide_on:', $hide_on_backends);
+                            }
+                        }
+                        else {
+                            if ($backends[$backend]['readonly']) {
+                                $pw_tr_class = 'hidden';
+                            }
+                        }
+                        if (Config::get('people.link_gapper_system')) {
+                            $pw_tr_class = 'hidden';
+                        }
+                        ?>
+                        <?php
+                        if ($me->id == $user->id): // 修改自己的密码时必须验证旧密码
+                            ?>
+                            <tr><td><div class="interval_30"></div> </td></tr>
+                            <tr class="<?php echo $pw_tr_class; ?>">
+                                <td class="label left nowrap middle"><h2 class="section_title"><?php echo I18N::T('people', '旧密码')?></h2></td>
+                            </tr>
+                            <tr><td><div class="interval_12"></div> </td></tr>
+                            <tr class="<?php echo $pw_tr_class; ?>">
+                                <td class="middle">
+                                    <input placeholder="请输入旧密码" name="old_pass" type="password" class="text" tabindex="2" />
+                                    <!-- 防止chrome浏览器自动将账号密码填充到ic卡号。。 -->
+                                    <input type="password" style="visibility: hidden;">
+                                </td>
+                            </tr>
+                        <?php
+                        endif;
+                        ?>
+                        <tbody class="<?php echo $pw_tr_class; ?>">
+                        <tr><td><div class="interval_30"></div> </td></tr>
+                        <tr><td class="label nowrap middle"><h2 class="section_title"><?php echo I18N::T('people', '新密码')?></h2></td></tr>
+                        <tr><td><div class="interval_12"></div> </td></tr>
+                        <tr>
+                            <td class="middle">
+                                <input placeholder="请输入新密码" type="password" name="new_pass" class="text" tabindex="3" />
+                            </td>
+                        </tr>
+                        <?php if ($me->id != $user->id && !Config::get('people.link_gapper_system')): ?>
+                        <tr><td><div class="interval_12"></div> </td></tr>
+                        <tr>
+                            <td>
+                                <?php echo Form::checkbox('must_change_password', Input::form('must_change_password'), I18N::T('people', '下一次登录时修改密码'), 'tabindex="5" class="middle checkbox"', 'class="middle"'); ?>
+                            </td>
+                        </tr>
+                        <?php endif; ?>
+                        </tbody>
+
+                        <tbody class="<?php echo $pw_tr_class; ?>">
+                        <tr><td><div class="interval_30"></div> </td></tr>
+                        <tr> <td class="label nowrap middle"><h2 class="section_title"><?php echo I18N::T('people', '确认新密码')?></h2></td></tr>
+                        <tr><td><div class="interval_12"></div> </td></tr>
+                        <tr>
+                            <td class="middle">
+                                <input placeholder="请输入确认密码" type="password" name="confirm_pass" class="text" tabindex="4" />
+                            </td>
+                        </tr>
+                        <tr><td><div class="interval_12"></div> </td></tr>
+                        <tr class="description red">
+                            <td><?= H(I18N::T('people','8-24个字符，必须包含数字和大小写字母')) ?></td>
+                        </tr>
+                        </tbody>
+                        <tr><td><div class="interval_60"></div> </td></tr>
+                    </table>
+                    <div class="float_right">
+                        <?php
+                        if (!(!is_array($backend) && $backends[$backend]['readonly']) || !$backend['readonly'] || ($n_backends > 1 && $me->access('管理所有内容'))):
+                            ?>
+                            <input type="submit" name="submit" class="font-button-save" value="<?php echo H(I18N::T('people', '保存修改')) ?>" tabindex="5"/>
+                        <?php
+                        endif;
+                        ?>
+                    </div>
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>

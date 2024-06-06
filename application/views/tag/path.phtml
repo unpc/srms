@@ -1,0 +1,25 @@
+<?php
+
+if (!$tag || !$tag->id) {echo "--";return;};
+
+if (!isset($tag_root)) $tag_root = $tag->root;
+
+// 防止出现显示 组织机构 样式的组织机构出现
+if ($tag->id == Tag_Model::root('group')->id) {echo "--";return;};
+
+$anchors = [];
+$found_root =  ($tag_root->id == $tag->root->id);
+
+// update tag paths
+// $tag->update_tag_paths();
+
+foreach ((array) $tag->path as $unit) {
+	list($tag_id, $tag_name) = $unit;
+	if (!$found_root) {
+		if ($tag_id != $tag_root->id) continue;
+		$found_root = TRUE;
+	}
+	$anchors[] = $url_template ? URI::anchor(strtr($url_template,['%tag_id'=>$tag_id]), HT($tag_name)) : HT($tag_name);
+}
+
+echo implode(' <i class="icon-right group_icon_font_style"></i> ', $anchors);

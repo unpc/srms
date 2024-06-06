@@ -1,0 +1,40 @@
+<?php
+$me = L('ME'); 
+$sort_fields = Config::get('eq_charge.sortable_columns');
+echo CSS::load_async('eq_charge:common');
+?>
+
+<div class="pages"><?= $pagination ?></div>
+<?php 
+$table = Widget::factory('table');
+
+$table->name = 'eq_charge_charges';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+$table->add_columns((array)$columns);
+
+$table->empty_message = I18N::T('eq_charge', '无符合条件的收费记录');
+
+foreach ($charges as $c) {
+	$links = $c->links('lab_view');
+	$row = [
+		// '@' => V('eq_charge:charges_table/data/ref', ['c'=>$c]),
+		'user'=>V('eq_charge:charges_table/data/user', ['obj'=>$obj, 'c'=>$c]),
+        'charge_id' => V('eq_charge:charges_table/data/ref', ['c'=>$c]),
+		'equipment'=>V('eq_charge:charges_table/data/equipment', ['obj'=>$obj, 'c'=>$c]),
+		'amount'=>V('eq_charge:charges_table/data/amount_with_date', ['c'=>$c]),
+		'type'=>V('eq_charge:charges_table/data/type', ['c'=>$c]),
+		'status' => V('eq_charge:charges_table/data/status', ['c' => $c]),
+		'summary' => V('eq_charge:charges_table/data/summary', ['c' => $c]),
+		'rest'=>Widget::factory('application:links', ['links'=>$links])
+	];
+
+	$row = Event::trigger('lab_charges.table_list.row', $row, $c, $obj) ? : $row;
+	$table->add_row($row);
+}
+
+echo $table;
+?>
+
+<div class="pages"><?= $pagination ?></div>

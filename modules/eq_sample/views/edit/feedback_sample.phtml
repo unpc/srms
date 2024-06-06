@@ -1,0 +1,32 @@
+<?php
+    $equipment = $sample->equipment;
+    $default_status = (int)$sample->feedback_status ?: 0;
+?>
+<div class="hr_1">&#160;</div>
+<div class="form padding_1">
+<table class="form">
+<tbody>
+<tr>
+    <td class="top icon" style="padding-right: 10px;">
+        <?php echo $equipment->icon('64'); ?>
+    </td>
+    <td class="top">
+        <?php echo V('form_error', ['form'=>$form]);?>
+        <?php $no_error = $form->no_error; ?>
+        <p><strong><?= T($equipment->name)?></strong></p>
+        <form method="post" q-object="feedback_sample" q-event="submit" q-static="<?= H(['id'=>$sample->id])?>" action="" autocomplete="off">
+            <p class="padding_1 lmargin_-2">
+                <?php echo Form::radio('sample_status', EQ_Sample_Model::FEEDBACK_NORMAL, $no_error ? $default_status : $form['sample_status'], I18N::T('equipments', '测试正常'), 'class="radio middle"', 'class="middle"'); ?>
+                <?php echo Form::radio('sample_status', EQ_Sample_Model::FEEDBACK_PROBLEM, $no_error ? $default_status : $form['sample_status'], I18N::T('equipments', '测试质疑'), 'class="radio middle"', 'class="middle"'); ?>
+            </p>
+            <p>
+                <textarea name="feedback" class="text autogrow" cols="42" rows="3"><?php echo H($no_error ? $sample->feedback_description : $form['feedback'])?></textarea>
+            </p>
+            <div class="hr_1">&#160;</div>
+            <p><input class="button button_save" type="submit" value="<?= T('提交')?>" /></p>
+        </form>
+    </td>
+</tr>
+</tbody>
+</table>
+</div>

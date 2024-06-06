@@ -1,0 +1,9 @@
+<?php
+$bal_str = H(Number::currency($account->balance));
+?>
+<?php if ($account->balance < 0):?>
+	<span class="red"><?php echo $bal_str?></span>
+<?php else: ?>
+	<?php echo $bal_str;?>
+<?php endif; ?>
+

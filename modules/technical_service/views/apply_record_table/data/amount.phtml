@@ -1,0 +1,4 @@
+<?php
+$charge = O('eq_charge', ['source' => $record]);
+echo $charge->id ? $charge->amount : 0;
+?>

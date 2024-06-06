@@ -1,0 +1,13 @@
+<a href="<?php echo H($staff->user->url() ) ?>"><strong class="name"><?php echo H($staff->user->name) ?></strong></a>
+<?php
+	$remind_time = Lab::get('staff.remind_time');
+	if( $remind_time && $staff->contract_time){
+		$current = getdate();
+		$deadline = mktime(0, 0, 0, ($current['mon']+$remind_time), $current['mday'], $current['year'] );
+		if($staff->contract_time <= $deadline ){
+			?>
+			<div class="clearfix"><span class="status_tag status_tag_error">合同即将到期</span></div>
+			<?php
+		}
+	}
+?>

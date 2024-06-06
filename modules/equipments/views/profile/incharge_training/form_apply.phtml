@@ -1,0 +1,40 @@
+<div class="form">
+    <div class="interval_12"></div>
+    <form autocomplete="off" q-object="batch_apply" q-event="submit" q-src="<?= URI::url('!equipments/training') ?>">
+        <table class="form">
+            <tr>
+                <td class="right middle nowrap"><?php echo I18N::T('equipments', '* 审批操作') ?></td>
+                <td class="left middle nworap padding_1">
+                    <?= Form::radio('apply_type', 'apply', TRUE, I18N::T('equipments', '通过')); ?>
+                    &nbsp;&nbsp;
+                    <?= Form::radio('apply_type', 'reject', FALSE, I18N::T('equipments', '驳回')); ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="right middle nowrap"><?php echo I18N::T('equipments', '* 过期时间') ?></td>
+                <td class="left middle nowrap padding_1">
+                    <?php
+                        echo Form::radio('atime', 0, 0, I18N::T('equipments', '不过期'), 'class="monitor middle"', 'class="middle"');
+                        echo '&nbsp;&nbsp;';
+                        echo Form::radio('atime', 1, 0, NULL, 'class="monitor middle"', 'class="middle"'); 
+                    ?>
+                    <span class="toggle_status:atime enable_on:1">
+                        <input id="deadline" name="deadline" class="text date" date_type="date" />
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="right top nowrap"><?php echo I18N::T('equipments', '授权备注') ?></td>
+                <td class="left middle padding_1" style="width: 500px;">
+                    <textarea name="description" class="textarea autogrow padding_1" cols="50" rows="5" placeholder='<?php echo I18N::T('equipments', '不能超过50字')?>'></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="right middle">
+                    <input type="submit" class="font-button-save" value="<?php echo H(I18N::T('equipments', '添加') ) ?>" />
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>

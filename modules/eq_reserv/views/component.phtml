@@ -1,0 +1,30 @@
+<?php
+$equipment = $object->calendar->parent;
+$user = $object->organizer;
+$dtstart = $object->dtstart; $dtend = $object->dtend;
+$eq_record = Q("{$equipment} eq_record[dtstart=$dtstart~$dtend]")->current();
+?>
+<tr class="eq_record">
+	<td class="icon middle nowrap"><?php echo $equipment->icon('32'); ?></td>
+	<td class="middle nowrap"><?php $equipment->render(); ?></td>
+	<td class="middle"><?php $user->render(); ?></td>
+	<td class="middle nowrap">
+		<small class="description">
+		<?php echo Date::relative($object->dtstart); ?> - <?php echo $object->dtend ? Date::relative($object->dtend, $object->dtstart) : I18N::T('equipments', '使用中'); ?>
+		</small>
+	</td>
+	<td class="middle">
+		<?php if($eq_record): ?>
+			<p>
+			<small class="description">
+			<?php echo Date::relative($eq_record->dtstart); ?> - <?php echo Date::relative($eq_record->dtend, $eq_record->dtstart); ?>
+			</small>
+			</p>
+			<p>
+                <?php echo I18N::T('eq_reserv', '爽约, 超时');?>
+			</p>
+		<?php else: ?>
+			&#160;
+		<?php endif; ?>
+	</td>
+</tr>

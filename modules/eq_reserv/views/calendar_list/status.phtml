@@ -1,0 +1,6 @@
+<?php
+$reserv = O('eq_reserv', ['component'=> $component]);
+if ($reserv->id) {
+    echo I18N::T('eq_reserv', EQ_Reserv_Model::$reserv_status[$reserv->status]);
+}
+    

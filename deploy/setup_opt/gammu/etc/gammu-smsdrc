@@ -1,0 +1,23 @@
+[gammu]
+# Please configure this!
+port = /dev/phone
+name = Wavecom GSM modem
+connection = at9600
+# Debugging
+#logformat = textall
+gammucoding = utf8
+
+# SMSD configuration, see gammu-smsdrc(5)
+[smsd]
+service = sql
+driver = native_mysql
+pin = 1234
+user = genee
+pc = localhost
+database = lims2_sms
+# 短信发送记录会记在db中, 若开log由于重试服务可能过多, 调试时再开
+logfile = /var/log/smsd.log
+# Increase for debugging information
+debuglevel = 0
+checksecurity = 0
+ReceiveFrequency = 300

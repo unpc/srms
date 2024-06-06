@@ -1,0 +1,72 @@
+<?php $tbody = isset($tbody_log_list_id); ?>
+<?php if ($tbody): ?>
+<tbody id= "<?php echo $tbody_log_list_id;  ?>">
+<?php endif; ?>
+<?php
+	//显示日志文件列表
+	$row_odd = TRUE;
+	foreach ($logs as $log) :
+
+		if ( $log['type'] ) {
+			$log_class = 'log_'.$log['type'];
+		 }
+
+		$class = $row_odd ? ' row_odd' : ' row_even';
+		$log_type = $log['type'];
+
+ ?>
+	<tr>
+		<td class="left nowrap <?php echo $class?>"><input name="select[]" type="checkbox" class="checkbox" value="<?php echo H($log['name']); ?>" /></td>
+
+		<td class="left nowrap <?php echo $class?>">
+			<span class="log <?php echo $log_class; ?>">
+				<a href="<?php echo H(URI::url('!logs/log', ['name' => $log['name']])) ?>" class='prevent_default'>
+					<?php echo H($log['name']); ?>
+				</a>
+			</span>
+
+		</td>
+		<td class="left nowrap <?php echo $class?>">
+			<?php echo  $log_type == 'file' ? Date::format($log['mtime'], 'm/d H:i:s') : Date::format($log['mtime'], 'Y/m/d H:i:s'); ?>
+		</td>
+		<td class="left nowrap <?php echo $class?>"><?php echo File::bytes($log['size']); ?></td>
+		<td class="right nowrap <?php echo $class?>">
+			<?php
+				$links = [];
+				$links['download'] = [
+					'text' =>'',
+					'title' => I18N::T('logs', '下载'),
+					'url' => URI::url('!logs/log', ['name' => $log['name'],]),
+					'extra' => 'class="icon-download"',
+				];
+			/*
+//跟踪代码
+			if ( $log_type=='file' ) {
+					$links['track'] = array(
+						'text'  => I18N::T('logs', '追踪'),
+						'url' => URI::url('!logs/track', array(
+							'name' => $log['name'],
+							'mtime' => $log['mtime'],
+						)),
+						'extra' => 'class="blue middle prevent_default" target="_blank"',
+	 				);
+				}
+*/
+				echo V('application:widgets/links', ['links'=>$links]);
+			?>
+		</td>
+	</tr>
+<?php $row_odd = !$row_odd; endforeach; ?>
+<?php if ($tbody): ?>
+</tbody>
+<?php endif; ?>
+<?php
+	echo JS::load('logs:log',[
+		'logs_form_id' => $logs_form_id,
+		'select_all_id' => $select_all_id,
+		'download_id' => $download_id,
+		'tbody_log_list_id ' => $tbody_log_list_id ,
+		'submit_url' => URI::url('!logs/log'),
+
+	]);
+?>

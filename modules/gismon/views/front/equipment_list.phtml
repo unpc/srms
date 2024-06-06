@@ -1,0 +1,29 @@
+<?php if ($this->building_name):?>
+<div style="padding-left:7px">
+	<span class="square">&#160;</span>
+	<strong style="font-size:15px;font-weight:bold"><?php echo $building_name; ?></strong>
+</div>
+<?php else: ?>
+	<strong style="font-size:15px;font-weight:bold"><?php echo I18N::T('gismon', '请点击楼宇气球查看楼内仪器'); ?></strong>
+<?php endif;?>
+
+<div class="<?php echo H($this->building_name ? 'tpadding_2' : '') ?>">
+	<table class="form">
+		<tbody>
+			<?php foreach((array)$equipments as $equipment):?>
+			<tr>
+				<td class="nowrap">
+					<a href="<?php echo H($equipment['url']) ?>" target="_blank" class="name">
+						<img src="<?php echo H($equipment['icon_url']) ?>" />
+					</a>
+				</td>
+				<td class="nowrap">
+					<a href="<?php echo H($equipment['url']) ?>" target="_blank" class="name">
+						<strong><?php echo $equipment['name']?></strong>
+					</a>
+				</td>
+			</tr>
+			<?php endforeach;?>
+		</tbody>
+	</table>
+</div>

@@ -1,0 +1,25 @@
+<div class="interval_30"></div>
+<div class="form">
+	<table class="form flexible">
+		<tr>
+			<td class="left top icon" style="width: 100px;">
+				<img src="<?php echo H($user->icon_url('100')) ?>" />
+                <div class="interval_24"></div>
+                <a class="font-button-delete lmargin_10" confirm="<?php echo H(I18N::T('people', '您确定删除头像吗?')) ?>" href="<?php echo H(URI::url('!people/profile/delete_photo.'.$user->id)) ?>"><?php echo I18N::T('people', '删除头像')?></a>
+			</td>
+			<td class="top lpadding_30">
+                <div class="interval_12"></div>
+                <form class="edit" action="<?php echo H(URI::url()) ?>" method="post" enctype="multipart/form-data">
+                        <p>
+                            <input name="file" type="file" class="file" />
+
+                        </p>
+                    <div class="interval_60"></div>
+                        <div class="float_right">
+                            <input type="submit" class="font-button-save" name="submit" value="<?php echo H(I18N::T('people', '上传头像')) ?>"/>
+                        </div>
+                    </form>
+			</td>
+		</tr>
+	</table>
+</div>

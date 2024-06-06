@@ -1,0 +1,212 @@
+#!/bin/bash
+#===============================================================================
+#
+#        FILE: postinst
+#       USAGE: ---
+# DESCRIPTION: postinst script for lims2
+#
+#
+#        BUGS: ---
+#       NOTES:
+#      AUTHOR: xiaopei.li
+#     COMPANY: GENEEGROUP
+#     VERSION: v1.0
+#     CREATED: 2013-04-11
+#    REVISION: ---
+#
+#===============================================================================
+
+#===============================================================================
+#        NAME: configure_lighttpd
+# DESCRIPTION: 配置lighttpd
+#===============================================================================
+configure_lighttpd() {
+    echo "Configuring... lighttpd"
+    lighty-enable-mod redirect rewrite magnet setenv fastcgi genee
+}
+
+#===============================================================================
+#        NAME: configure_xinetd
+# DESCRIPTION: 配置xinetd
+#===============================================================================
+configure_lims2_daemon() {
+    echo "Configuring... lims2 daemon"
+
+    daemon_conf="/etc/lims2/daemon.conf"
+    chown root:root $daemon_conf
+	
+	chmod -R g-w "/usr/share/lims2/cli"
+
+    update-rc.d lims2_daemon defaults
+}
+
+#===============================================================================
+#        NAME: configure_xinetd
+# DESCRIPTION: 配置xinetd
+#===============================================================================
+configure_cron() {
+    echo "Configuring... cron"
+
+    lims_cron="/etc/cron.d/lims2"
+
+    # 由于 cron 配置中可写任意用户的 crontab,
+    # 所以文件必须 owned by root:root(否则会报错 WRONG FILE OWNER)
+    chown root:root $lims_cron
+	chmod 600 $lims_cron
+
+    lims_global_cron="/etc/cron.d/lims2_global"
+
+		# 由于 cron 配置中可写任意用户的 crontab,
+    # 所以文件必须 owned by root:root(否则会报错 WRONG FILE OWNER)
+    chown root:root $lims_global_cron
+	chmod 600 $lims_global_cron
+
+
+}
+
+compareVersion () {
+    typeset IFS='.'
+    typeset -a v1=( $1 )
+    typeset -a v2=( $2 )
+    typeset n diff
+
+    for (( n=0; n<4; n+=1 )); do
+        diff=$((v1[n]-v2[n]))
+        if [ $diff -ne 0 ] ; then
+            [ $diff -le 0 ] && echo '-1' || echo '1'
+            return
+        fi
+    done
+    echo  '0'
+}
+
+#===============================================================================
+#        NAME: configure_xinetd
+# DESCRIPTION: 配置xinetd
+#===============================================================================
+run_upgrade_scripts() {
+
+    #获取旧版本
+    old_version=$( zgrep 'upgrade lims2' /var/log/dpkg.log* | grep '%BASE_VERSION%' | sort -V | cut -d " " -f 5 | tail -n 1 )
+
+    #升级脚本目录
+    upgrade_dirs=$( find "/usr/share/lims2/cli/upgrade/" -type d | sort -V )
+
+    #遍历目录
+    for _upgrade_dir in $upgrade_dirs; do
+
+        upgrade_dir=$( basename "$_upgrade_dir" )
+
+        #版本比对
+        if [ $( compareVersion "$upgrade_dir" "$old_version" ) -eq 1 ]; then
+            upgrade_script_dir="/usr/share/lims2/cli/upgrade/$upgrade_dir/"
+
+            #执行升级脚本
+            if [[ -d "$upgrade_script_dir" ]]; then
+                while read SITE_ID LAB_ID; do
+                    echo "==== excuting upgrade scripts under $upgrade_script_dir "
+
+                    upgrade_scripts=$( find "$upgrade_script_dir/" -type f -name "*.php" | sort -n )
+                    for upgrade_script in $upgrade_scripts; do
+                        echo "=== $SITE_ID $LAB_ID $upgrade_script"
+                        sudo -u www-data bash -c "SITE_ID=$SITE_ID LAB_ID=$LAB_ID php $upgrade_script"
+                    done
+
+                done < $projlist
+            fi
+        fi
+    done
+while read SITE_ID LAB_ID; do
+    echo "=== $SITE_ID $LAB_ID create_orm_tables"
+    sudo -u www-data bash -c "SITE_ID=$SITE_ID LAB_ID=$LAB_ID php /usr/share/lims2/cli/create_orm_tables.php"
+done < $projlist
+}
+
+#===============================================================================
+#        NAME: configure_xinetd
+# DESCRIPTION: 配置xinetd
+#===============================================================================
+configure_sphinx() {
+
+	# data
+    sphinx_data="/var/lib/sphinxsearch/data/lims2/"
+
+    mkdir -p $sphinx_data
+    chown -R sphinxsearch:sphinxsearch $sphinx_data
+
+    # 若索引有区别, 则重启 sphinx 后会造成服务失效, 所以不重启,
+    # 并提示需要重建索引
+    alert_echo '[ALERT] sphinx conf diffs! need to rebuild the indexes!'
+    # else 若索引无区别, 则不用重启 sphinx
+
+}
+
+#===============================================================================
+#        NAME: configure_xinetd
+# DESCRIPTION: 配置xinetd
+#===============================================================================
+alert_echo() {
+    # $@ 为参数
+    echo -e "\033[0;31m$@\033[0m"
+}
+
+# change owner and perms
+# TODO owner and group are always wrong maybe should use fakeroot(xiaopei.li@2011-12-16)
+# TODO /var/lib/lims2 中 own 可能不对, 且可能还无 log/private,
+#   需想清目录和权限(xiaopei.li@2011-12-16)
+chown -R www-data:www-data /usr/share/lims2 /var/lib/lims2 /var/cache/lims2
+chmod -R ug+x /usr/share/lims2/cli
+
+projlist=/etc/lims2/proj_list
+chown www-data:www-data $projlist
+
+while read SITE_ID LAB_ID; do
+    # init db
+    # create database if not exists
+    mysql -u genee -e "CREATE DATABASE IF NOT EXISTS lims2_$LAB_ID DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci"
+done < $projlist
+
+# start memcached
+service memcached restart
+configure_sphinx
+service sphinxsearch restart
+
+# upgrade db (excute some upgrade scripts)
+run_upgrade_scripts
+
+# start servers
+configure_lims2_daemon
+service lims2_daemon restart
+service php5-fpm restart
+# configure_lighttpd
+# service lighttpd restart
+service nginx restart
+service xinetd restart
+start node-lims2
+service cron restart
+service monit restart
+# TODO 现在更新 lims2 时, 会覆盖 lighttpd, xinetd 等配置文件, 造成配置丢失
+# 处理方法如下:
+# 1. 配置文件也应备份
+# 2. postinst中把配置文件
+#    保存在别的地方, 以防被更新
+# (xiaopei.li@2011-12-09)
+
+configure_cron
+
+while read NFS_ROOT; do
+
+    if [[ $NFS_ROOT ]]; then
+
+        if [[ ! -d "$NFS_ROOT" ]]; then
+
+            mkdir -p "$NFS_ROOT"
+
+            if [[ -d "$NFS_ROOT" ]]; then
+                chown -R www-data:www-data "$NFS_ROOT"
+            fi
+
+        fi
+
+    fi
+done < /etc/lims2/nfs_list

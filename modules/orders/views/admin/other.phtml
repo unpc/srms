@@ -1,0 +1,83 @@
+<div class="form padding_2">
+    <form method="post" autocomplete="off" action="<?php echo H(URI::url()) ?>">
+        <table class="form">
+            <tbody>
+                <tr>
+                    <td class="label nowrap top">
+                        <span class="lmargin_2">
+                            <?php echo I18N::T('orders', '默认订单负责人'); ?></td>
+                        </span>
+                    <td class="top">
+                        <?php echo Widget::factory('multi_user_selector', [
+                            'name' => 'incharges',
+                            'autocomplete'=>URI::url('!orders/autocomplete/incharge'),
+                            'value'=> $form['incharges'] ? : $incharges,
+                            'extra'=>'token_verify'
+                        ]);?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>&#160;</td>
+                    <td><span class="description"><?php echo I18N::T('orders', '* 添加申购时, 会向订单负责人发送消息提醒')?></span></td>
+                </tr>
+                <tr class="flexible">
+                    <td colspan="2">
+                        <hr class="margin_1" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label nowrap top">
+                        <span class="lmargin_2">
+                            <?php echo I18N::T('orders', '默认收货地址'); ?></td>
+                        </span>
+                    <td>&#160;</td>
+                </tr>
+                <tr>
+                    <td class="label nowrap right top">
+                            <?php echo I18N::T('orders', '配送地址');?>
+                    </td>
+                    <td class="label nowrap left top">
+                        <input type="text" class="text" size="40" name="address" value="<?php echo H($form['address'] ? : Lab::get('orders.receive_address'));?>"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label nowrap right top">
+                        <?php echo I18N::T('orders', '邮政编码');?>
+                    </td>
+                    <td class="label nowrap left top">
+                        <input type="text" class="text" size="40" name="postcode" value="<?php echo H($form['postcode'] ? : Lab::get('orders.receive_postcode'));?>"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label nowrap right top">
+                        <?php echo I18N::T('orders', '联系电话');?>
+                    </td>
+                    <td class="label nowrap left top flexible">
+                        <input type="text" class="text" size="40" name="phone" value="<?php echo H($form['phone'] ? : Lab::get('orders.receive_phone'));?>"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label nowrap right top">
+                        <?php echo I18N::T('orders', '电子邮箱');?>
+                    </td>
+                    <td class="label nowrap left top">
+                        <input type="text" class="text" size="40" name="email" value="<?php echo H($form['email'] ? : Lab::get('orders.receive_email'));?>"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>&#160;</td>
+                    <td class="label nowrap left top"><span class="description"><?php echo I18N::T('orders', '* 添加订单申购时, 该地址为默认配送地址.')?></span></td>
+                </tr>
+                <tr class="flexible">
+                    <td colspan="2">
+                        <hr class="bmargin_1" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>&#160;</td>
+                    <td class="label left nowrap top"><input type="submit" name="submit" class="button button_save" value="<?php echo I18N::T('orders', '保存'); ?>" /></td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>

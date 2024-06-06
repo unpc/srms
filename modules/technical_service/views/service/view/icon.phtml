@@ -1,0 +1,27 @@
+<div class="img_icon icon-radius">
+	<?= $service->icon('104'); ?>
+	<div class="icon_cover" style=''>
+	    <?= I18N::T('technical_service', '+') ?>
+	</div>
+</div>
+
+<script>
+$(function () {
+    var icon_cover = $('#<?= $id ?>').find('.icon_cover')
+    $('#<?= $id ?>')
+    .find('.img_icon').hover(function () {icon_cover.show(); }, function () {icon_cover.hide(); })
+
+    icon_cover.bind('click', function (e) {
+        Q.trigger({
+            object: 'photo',
+            event: 'click',
+            global: false,
+            data: {
+                id: '<?= $service->id ?>'
+            },
+            success: function (d) { }
+        });
+        return false;
+    })
+})
+</script>

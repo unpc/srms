@@ -1,0 +1,74 @@
+<?php echo CSS::load_async('achievements:info'); ?>
+<div class="tab_content">
+    <div class="achievements_info_style dashboard-info">
+        <h2 class="section_title">
+            <span class="border"></span>
+            <span class="black_title"><?php echo I18N::T('equipments', '基本信息') ?></span>
+        </h2>
+        <div class="interval_30"></div>
+        <ul class="form achievement_info_form clearfix" style="min-width: 400px">
+            <li class="li_1_3">
+                <span class="left" style="width: 100px;"><?php echo  I18N::T('achievements', '获奖级别')?></span>
+                <span class="right">
+                    <?php
+                    $root = Tag_Model::root('achievements_award');
+                    $tags = Q("$award tag_achievements_award[root=$root]");
+                    foreach ($tags as $tag) {
+                        $links .= V('application:tag/path', ['tag'=>$tag, 'tag_root'=>$root, 'url_template'=>URI::url('!achievements/awards/index','tag_id=%tag_id')]) . ', ';
+                    }
+                    echo empty($links) ? T('--') : substr($links, 0, -2)
+                    ?>
+                </span>
+            </li>
+            <li class="li_1_3">
+                <span class="left"><?php echo I18N::T('achievements', '获奖日期')?></span>
+                <span class="right"><?php echo $award->date ? H(date('Y-m-d', $award->date)) : ''; ?></span>
+            </li>
+            <div class="interval_30 float_left" style="width: 100%"></div><br/>
+            <li class="li_1_12">
+                <span class="left"  style="width: 100px;"><?php echo I18N::T('achievements', '获奖人员')?></span>
+                <span class="right">
+                    <?php
+                    $ac_authors = Q("ac_author[achievement=$award]:sort(position A)");
+                    $authors = [];
+                    foreach ($ac_authors as $ac_author) {
+                        if ($ac_author->user->id) {
+                            $authors[] = URI::anchor($ac_author->user->url(), H($ac_author->name));
+                        } else {
+                            $authors[] = H($ac_author->name);
+                        }
+                    }
+
+                    $links = empty($authors) ? T('--') : implode(', ',$authors);
+
+                    echo $links;
+                    ?>
+                </span>
+            </li>
+            <div class="interval_30 float_left" style="width: 100%"></div><br/>
+            <?php if (isset($relations)) echo $relations ?>
+            <div class="interval_30 float_left" style="width: 100%"></div><br/>
+            <li class="li_1_12">
+                <span class="left"  style="width: 100px;"><?php echo I18N::T('achievements', '备注')?></span>
+                <span class="right">
+                    <?php
+                        $description=$award->description;
+                        echo empty($description) ? T('--') : H($award->description);
+                    ?>
+                </span>
+            </li>
+            <div class="interval_30 float_left" style="width: 100%"></div><br/>
+            <?php if (Module::is_installed('nfs')) :?>
+            <li class="li_1_12">
+                <span class="left" style="width: 100px;"><?php echo I18N::T('achievements', '附件'); ?></span>
+                <div style="margin-left: 110px;">
+                <?php echo V('achievements:attachments', ['achievement'=>$award]);?>
+                </div>
+            </li>
+            <?php endif;?>
+        </ul>
+	</div>
+    <div style="float: left; padding-left: 110px">
+        <?php echo Widget::factory('application:links', ['links' => $award->links('view'), 'separator'=>' ']); ?>
+    </div>
+</div>

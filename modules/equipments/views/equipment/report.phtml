@@ -1,0 +1,65 @@
+<div class="edit_title">
+    <div class="name">
+        <a class="float_left" href="<?php echo $equipment->url(); ?>"><?php echo $equipment->name; ?></a>
+        <span class="angle-right float_left icon-right"></span>
+        <span class="modify">故障报告</span>
+
+        <a href="<?php echo $url; ?>" title="关闭修改" class="close float_right fa fa-close angle-right"></a>
+    </div>
+</div>
+
+<div class="interval_24"></div>
+<div class="form" style="padding-right: 48px;">
+<table class="form" width="100%">
+	<tbody>
+	<tr>
+		<td class="top icon" width="130" rowspan="2">
+			<img width="100" height="100" src="<?php echo H($equipment->icon_url('100')) ?>" />
+		</td>
+		<td class="top">
+			<form method="post" action="<?php echo H(URI::url() ) ?>" autocomplete="off">
+			<?php $require = (string) V('form_require'); ?>
+			<?php echo V('form_error', ['form'=>$form]);?>
+            <div class="interval_12"></div>
+			<h2>
+                <a style="padding-right: 30px;"><?php echo H($equipment->name); ?></a>
+                <span class="right fa fa-bug" style="color: orange;"></span>
+                <small style="color: orange;">故障</small>
+            </h2>
+			<div class="interval_24"></div>
+			<?php
+				$users = Q("{$equipment} user.contact");
+				$contacts = [];
+				foreach ($users as $user) {
+					$contacts[] = URI::anchor($user->url(), H($user->name), 'class="description"');
+				}
+			?>
+			<p class="description"><?php echo I18N::T('equipments', '故障报告会通过电子邮件的方式发给相关负责人. 如果您有紧急需求, 请联系:'); ?></p>
+			<?php foreach ($contacts as $contact) : ?>
+			<p style="padding-top: 12px;"><?php echo $contact; ?></p>
+			<?php endforeach; ?>
+			<?php if ($equipment->phone) : ?>
+			<p class="description" style="padding-top: 12px;"><?php echo I18N::T('equipments', '仪器联系电话: %eq_phone', ['%eq_phone' => $equipment->phone]); ?></p>
+			<?php endif; ?>
+			<?php if ($equipment->email) : ?>
+			<p class="description" style="padding-top: 12px;"><?php echo I18N::T('equipments', '仪器电子邮箱: %eq_email', ['%eq_email' => $equipment->email]); ?></p>
+			<?php endif; ?>
+            <div class="interval_40"></div>
+
+			<h2 class="label section_title">
+                <?php echo I18N::T('equipments', '故障描述'); ?>
+                <span class="float_right" style="font-size: 14px;font-weight: normal;color: #666;"><span class="required">*</span>必填</span>
+            </h2>
+            <div class="interval_30"></div>
+			<textarea name="report" rows="3" class="text autogrow" placeholder="请填写故障描述"><?php echo $form['report']?></textarea>
+			<div class="interval_24"></div>
+			<div class="buttons float_right">
+				<input type="reset" name="reset" class="font-button-default rmargin_16" value="<?php echo H(I18N::T('equipments', '取消')) ?>" />
+				<input type="submit" name="submit" class="font-button-save" value="<?php echo H(I18N::T('equipments', '提交报告')) ?>" />
+			</div>
+			</form>
+		</td>
+	</tr>
+	</tbody>
+</table>
+</div>

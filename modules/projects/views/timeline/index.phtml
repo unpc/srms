@@ -1,0 +1,29 @@
+<div class="hr_1">&#160;</div>
+<div class="panel padding_1 clearfix">
+	<?php
+		$roles = $parent_task->user_roles(L('ME'));
+		$is_admin = L('ME')->access('添加/修改任务', $parent_task) || L('ME')->access('添加/修改项目', $project);
+		if (count($roles)>0 || $is_admin):
+	?>
+	<div class="float_left">
+		<a href="<?php echo $parent_task->url(); ?>" class="button"><?php echo I18N::T('projects', '普通视图')?></a>
+	</div>
+	<?php 
+		endif; 
+		if (in_array('worker', $roles) || in_array('supervisor', $roles) || in_array('parent_supervisor', $roles) || $is_admin):
+	?>
+	<div class="float_right">
+		<a href="<?php echo ($parent_task->id==$project->task->id) ? $project->url(NULL, NULL, NULL, 'edit') : $parent_task->url(NULL, NULL, NULL, 'edit'); ?>" class="button button_edit"><?php echo I18N::T('projects', '编辑')?></a>
+		<a href="<?php echo $parent_task->url(NULL, NULL, NULL, 'add'); ?>" class="button button_add"><?php echo I18N::T('projects', '添加任务')?></a>
+		<a href="<?php echo $parent_task->url(NULL, 't=container', NULL, 'add'); ?>" class="button button_add"><?php echo I18N::T('projects', '添加任务集')?></a>
+	</div>
+	<?php
+		endif;
+	?>
+</div>
+<div class="hr_1">&#160;</div>
+
+<?php $uniqid = uniqid(); ?>
+<div id="<?php echo $uniqid; ?>">
+<?php echo V('timeline/week', ['dtstart'=>$dtstart, 'dtprev'=>$dtprev, 'dtnext'=>$dtnext, 'tasks'=>$tasks, 'parent_task'=>$parent_task, 'uniqid'=>$uniqid]); ?>
+</div>	

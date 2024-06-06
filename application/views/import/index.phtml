@@ -1,0 +1,31 @@
+<div class="interval_6"></div>
+<div class="form margin-left-half">
+    <div class="interval_30"></div>
+	<form autocomplete="off" action="<?php echo H(URI::url()) ?>" method="post" enctype="multipart/form-data" class="edit margin-left-1">
+		<p>
+			<input name="file" type="file" class="file" />
+		</p>
+        <div class="interval_20"></div>
+        <p style="color: #F5222D"><?php echo T('目前支持xlsx格式的文件。'); ?></p>
+        <div class="interval_1"></div>
+        <p style="color: #F5222D"><?php echo T('系统会按照第一行有效字段确定最大字段数，请确保没有表格标题！'); ?></p>
+<!-- 		<p>
+		<?php echo Form::checkbox('has_title',FALSE, T('含有'),'class="middle monitor"');?>
+			<input type="text" name="title_count" class="middle text right toggle_status:skip_rows enable_on:on src:<?php echo URI::url('')?> view object:rows_count event:change static:uniqid=<?php echo $uniqid; ?>" value="1" size="5" />
+			<?php echo T('行标题');?>
+		</p>
+		<p>
+		<?php echo Form::checkbox('has_header',FALSE, T('含有'),'class="middle monitor"');?>
+			<input type="text" name="header_count" class="middle text right toggle_status:skip_rows enable_on:on src:<?php echo URI::url('')?> view object:rows_count event:change static:uniqid=<?php echo $uniqid; ?>" value="1" size="5" />
+			<?php echo T('行表头');?>
+		</p> -->
+
+        <div class="interval_60"></div>
+		<p>
+			<input type="submit" class="font-button-save float_left" name="submit" value="<?php echo H(T('上传')) ?>"/>
+		</p>
+        <div class="interval_60"></div>
+	</form>
+</div>
+<?php echo $preview;?>
+<?php echo $results;?>

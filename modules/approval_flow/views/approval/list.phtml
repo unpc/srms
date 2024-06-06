@@ -1,0 +1,170 @@
+<div class="pages"><?= $pagination ?></div>
+<?php
+
+$me = L('ME');
+if ($flag == 'approve_incharge' && $me->can_approval($flag)):
+$uniqid = uniqid();
+$select_all_id = 'select_all_' . $uniqid;
+$batch_form_id = 'batch_form_' . $uniqid;
+?>
+<div class="padding_1 clearfix">
+    <form q-object="batch_action" q-event="submit" q-src="<?= H(URI::url('!approval_flow/index'))?>"
+        q-static="<?= H(['flag' => $flag])?>" q-src="<?php echo H(URI::url('!approval_flow/index')) ?>"
+        id="<?php echo H($batch_form_id ) ?>" method="post" autocomplete="off">
+        <div class="float_left lpadding_1">
+            <?php echo Form::checkbox('', false, I18N::T('approval_flow', '全选'), 'id="' . $select_all_id . '" class="checkbox middle"') ?>
+            <?php foreach ($approval as $ap) echo Form::checkbox('select[' . $ap->id . ']', FALSE, NULL, 'class="hidden" value="'.$ap->id.'"'); ?>
+            <label><?php echo I18N::T('approval_flow', '批量操作')?></label>
+            <input name="pass" type="submit" class="font-button-save" value="<?php echo I18N::T('approval_flow', '通过'); ?>" />
+            <input name="reject" type="submit" class="font-button-default" value="<?php echo I18N::T('approval_flow', '驳回'); ?>" />
+        </div>
+    </form>
+</div>
+<?php endif?>
+<?php
+
+$table = Widget::factory('table');
+$table->name = 'approval';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+$table->form = $form;
+
+if($form['dtstart_check'] && $form['dtend_check']) {
+    $form['date'] = H(date('Y/m/d',$form['dtstart'])).'~'.H(date('Y/m/d',$form['dtend']));
+} elseif($form['dtstart_check']) {
+    $form['date'] = H(date('Y/m/d',$form['dtstart'])).'~'.I18N::T('eq_charge','最末');
+} elseif($form['dtend_check']) {
+    $form['date'] = I18N::T('eq_charge','最初').'~'.H(date('Y/m/d',$form['dtend']));
+}
+
+switch($flag) {
+    case 'approve':
+        $stime_title = '';
+        break;
+    case 'done':
+        $stime_title = '通过时间';
+        break;
+    case 'rejected':
+        $stime_title = '驳回时间';
+        break;
+    case 'expired':
+        $stime_title = '过期时间';
+        break;
+}
+
+$table->add_columns([
+    'checkbox' => [
+        'align' => 'center'
+    ],
+    'equipment'=> [
+        'title' => I18N::T('approval', '仪器名称'),
+        'filter' => [
+            'form' => V('approval_flow:approval_table/filters/equipment', ['equipment' => $form['equipment']]),
+            'value' => $form['equipment'] ? H($form['equipment']) : NULL
+        ],
+        'nowrap' => TRUE
+    ],
+    'date' => [
+        'title' => I18N::T('approval', '预约时间'),
+        'align' => 'left',
+        'nowrap' =>TRUE,
+        'sortable' => TRUE,
+        'filter' => [
+            'form' => V('approval_flow:approval_table/filters/date', ['form' => $form]),
+            'value' => $form['date'] ? H($form['date']) : NULL,
+            'field' => 'dtstart_check,dtend_check,dtstart,dtend'
+        ]
+    ],
+    'lab'=> [
+        'title' => I18N::T('approval', '课题组'),
+        'nowrap' => TRUE
+    ],
+    'user'=> [
+        'title' => I18N::T('approval', '申请人'),
+        'filter' => [
+            'form' => V('approval_flow:approval_table/filters/user', ['user' => $form['user']]),
+            'value' => $form['user'] ? O('user', H($form['user']))->name : NULL
+        ],
+        'nowrap' => TRUE
+    ],
+    'flag'=> [
+        'title' => I18N::T('approval', '状态'),
+        'nowrap' => TRUE
+    ],
+    'ctime'=> [
+        'title' => I18N::T('approval', '申请时间'),
+        'nowrap' => TRUE
+    ],
+    'stime'=> [
+        'title' => I18N::T('approval', $stime_title),
+        'nowrap' => TRUE
+    ],
+    'description'=> [
+        'title' => I18N::T('approval', '备注'),
+        'nowrap' => TRUE
+    ],
+    'rest'=>[
+		'align'=>'right',
+		'nowrap'=>TRUE,
+	]
+]);
+
+$table->empty_message = I18N::T('approval', '没有查询到相应的项目!');
+
+if (count($approval) > 0) {
+    $sort_by_time = in_array($sort_by, ['date']);
+    $flag_time = $sort_asc ? -1 : 2147483647;
+    $table->approval = $approval;
+    $approval_trunk_time = $approval->dtstart ? Date::get_day_start($approval->dtstart) : 0;
+
+    $flow = Config::get('flow.eq_reserv');
+    foreach($approval as $ap) {
+        if ($sort_by_time) {
+            $ap_time = $ap->dtstart;
+            $ap_trunk_time = $ap_time ? Date::get_day_start($ap_time) : 0;
+
+            if ($ap_trunk_time != $flag_time) {
+                if ($ap_trunk_time == 0 && $sort_by == 'date') {
+                    $separator = I18N::T('approval', '未设项目');
+                } else {
+                    $separator = H(Date::fuzzy($ap_trunk_time));
+                }
+
+                $table->add_row([
+                    '#special_view' => $separator,
+                    '#extra_class' => 'date_header',
+                ]);
+
+                $flag_time = $ap_trunk_time;
+            }
+        }
+
+        $stime = $stime_title ? O('approved', ['source' => $ap, 'flag' => $flag])->ctime : '';
+
+        if ($flag == 'approve_incharge' && $me->can_approval($flag)) {
+            $select = V('approval_flow:approval_table/data/select', ['object'=>$ap, 'select_all_id'=>$select_all_id]);
+        }
+        $table->add_row([
+            'checkbox' => $select,
+            '@'=>[
+                'view'=>$ap->equipment->icon('32', 'style="display:block"'),
+                'extra'=>'style="padding:4px" align="right" align="right" align="right"'
+            ],
+            'equipment' => '<a href="'.$ap->equipment->url().'">'.$ap->equipment->name.'</a>',
+            'date' => date('Y/m/d H:i:s', $ap->dtstart).' - '.date('Y/m/d H:i:s', $ap->dtend),
+            'lab' => Approval::reserv_lab($ap),
+            'user' => '<a class="prevent_default" href="'.$ap->user->url().'">'.$ap->user->name.'</a>',
+            'flag' => $flow[$ap->flag]['title'],
+            'ctime' => date('Y/m/d H:i:s', $ap->ctime),
+            'stime' => $stime_title ? date('Y/m/d H:i:s', $stime) : '',
+            'description' => $ap->source->component->description ? H($ap->source->component->description) : H($ap->reserv_desc),
+            'rest' => Widget::factory('application:links', ['links' => $ap->links()])
+        ]);
+    }
+}
+echo $table;
+?>
+<div class="pages"><?= $pagination ?></div>
+<?php
+echo JS::load('messages:index_operate', ['select_all_id'=>$select_all_id, 'batch_form_id' => $batch_form_id]);
+?>

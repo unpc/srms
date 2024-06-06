@@ -1,0 +1,7 @@
+<?php
+$backends = [-1 => '--'];
+foreach (Config::get('auth.backends') as $key => $value) {
+    $backends[$key] = $value['title'];
+}
+echo Form::dropdown('backends',I18N::T('equipments', $backends), $form['backends'] ? : -1,'class="autosubmittable dropdown middle"');
+?>

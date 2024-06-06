@@ -1,0 +1,31 @@
+<div class="padding_1 clearfix">
+	<table class="form">
+		<tbody>
+			<tr>
+				<td class="top icon">
+					<?php echo $happyhour->creater->icon('64'); ?>
+				</td>
+				<td class="top">
+					<h2>
+					<a href="<?php echo H($happyhour->url() ) ?>"><?php echo H($happyhour->title); ?></a>
+					</h2>
+					<?php echo H($happyhour->body); ?>
+				</td>
+			</tr>
+			<tr>
+				<td>
+				菜单:
+				</td>
+				<td>
+				<?php 
+						
+						foreach($replys as $reply) {
+							echo "[".H($reply->content)."]";
+						} 
+						?>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+

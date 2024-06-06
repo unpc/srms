@@ -1,0 +1,115 @@
+<?php 
+$form_uniqid = 'form_'.uniqid();
+$no_error = $form->no_error;
+// echo V('form_error', ['form'=>$form]);
+?>
+<div class="form padding_2" class="prevent_default">
+    <form id="<?php echo H($form_uniqid) ?>" method="POST" q-object="batch_edit" q-src="<?= URI::url('!nrii/record') ?>" q-event="submit" autocomplete="off" class="nowrap"  style="padding:1px">
+    <?php echo V('form_error', ['form'=>$form]);?>
+        <fieldset class="bottom">
+        <legend><?= I18N::T('nrii', '服务记录') ?></legend>
+        <table class="form">
+            <tbody>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '服务方式')?></td>
+                    <td colspan="3">
+                        <?php 
+                            $_checkWay = function($key) use ($form, $no_error) {
+                                return $form['service_way'][$key]=='on'? true: false;
+                            };
+                            foreach (Nrii_Record_Model::$service_way as $key => $name) :?>
+                            <div style='display: inline-block;width: 100px;'>
+                            <?php 
+                                echo Form::checkbox("service_way[{$key}]", $_checkWay($key), 
+                                $name, 'class="middle monitor" ', 'class="middle"'); 
+                            ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '实际服务内容') ?></td>
+                    <td>
+                        <textarea class="text autogrow" rows="3" cols="30" name="service_content"><?= H($form['service_content']) ?></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '课题名称')?></td>
+                    <td><input class="text" name="subject_name"  size="30" value="<?= H($form['subject_name']) ?>" /></td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '课题经费来源') ?></td>
+                    <td colspan="3">
+                        <?php 
+                        $_checkWay = function($key) use ($record, $form, $no_error) {
+                            if ($no_error) {
+                                return (bool)in_array($key, explode(',', $record->subject_income));
+                            }
+                            else {
+                                return $form['subject_income'][$key] == 'on' ? true : false;
+                            }
+                        };
+                        ?>
+                        <div>
+                        <?php
+                        foreach (Nrii_Record_Model::$subject_income as $key => $name) :?>
+                            <div>
+                            <?php 
+                                echo Form::checkbox("subject_income[{$key}]", $_checkWay($key), 
+                                $name, 'class="middle monitor" ', 'class="middle"'); 
+                            ?>
+                            </div>
+                        <?php endforeach; ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '课题主要科学领域')?></td>
+                    <td>
+                        <?php
+                            echo Widget::factory('nrii:muti_selector',
+                                [
+                                    'name'=>'subject_area',
+                                    'autocomplete'=>URI::url('!nrii/autocomplete/search.subject'),
+                                    'value' => $form['subject_area'] ? : '{}',
+                                    'extra'=>'token_verify'
+                                ]);
+                        ?>
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '课题研究内容')?></td>
+                    <td>
+                        <textarea class="text autogrow" rows="2" cols="30" name="subject_content"><?= H($form['subject_content']) ?></textarea>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </fieldset>
+    <div class="hr_2">&#160;</div>
+    <fieldset class="bottom">
+        <legend><?= I18N::T('nrii', '服务评价') ?></legend>
+        <table class="form">
+            <tbody>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '用户评价')?></td>
+                    <td>
+                        <?= Form::dropdown('comment', [-1 => '-- 请选择 --'] + I18N::T('nrii', Nrii_Record_Model::$comment), $form['comment'] ? : -1, 'class="dropdown" size="20" '); ?>
+                    </td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '用户意见')?></td>
+                    <td colspan="3">
+                        <textarea class="text autogrow" rows="2" cols="30" name="comment2"><?= H($form['comment2']) ?></textarea>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </fieldset>
+    <fieldset style="width:680px; border:0">
+        <table class="form">
+            <tr>
+                <td class="nowrap right">
+                    <input type="submit" name="submit" class="button button_save" value="<?php echo H(I18N::T('nrii', '保存')) ?>" />
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+    </form>
+</div>

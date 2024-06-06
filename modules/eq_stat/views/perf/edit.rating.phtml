@@ -1,0 +1,45 @@
+<form method="post" action="<?php echo H(URI::url() ) ?>" autocomplete="off">
+	<?php 
+		echo V('form_error', ['form'=>$form]);
+		$no_error = ($form->no_error!==FALSE);
+	?>
+	<div class="form padding_2">
+		<h4><span class="middle">
+		<?php echo I18N::T('eq_stat', '分数限制')?>
+		</span></h4>
+		<div class="hr_1">&#160;</div>
+		<?php 
+			$score_values = Config::get('eq_stat.score_values');
+			echo Form::dropdown('score_value', I18N::T('eq_stat', $score_values), $perf->score_value ?: 10);
+		?>
+	</div>
+	<div class="padding_2 form">
+		<?php
+			$items = $perf->rating_items;
+			$items = json_decode($items);
+			$existing_data = [];
+			foreach ((array)$items as $item) {
+				$existing_data[] = ['item'=>$item];
+			} 
+			echo Widget::factory('flexform', [
+				'title' => I18N::T('eq_stat', '评分问题'),
+				'template_data' => ['disabled'=>TRUE],
+				'existing_data' => $existing_data,
+				'item_view' => 'eq_stat:perf/questions',
+			]);	
+		?>
+	</div>
+	<div class="form padding_2">
+		<h4><span class="middle">
+		<?php echo I18N::T('eq_stat', '评分期限')?>
+		</span></h4>
+		<div class="hr_1">&#160;</div>
+		<input class="text date" name="dfrom" value="<?php echo H($no_error?$perf->rating_from:$form['dfrom']);?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/>
+		-
+		<input class="text date" name="dto" value="<?php echo H($no_error?$perf->rating_to:$form['dto']);?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/>
+	</div>
+	<div class="form padding_2">
+		<input name="submit" type="submit" class="button button_save" value="<?php echo I18N::T('eq_stat', '更新'); ?>" />
+	</div>
+</form>
+

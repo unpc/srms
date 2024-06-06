@@ -1,0 +1,6 @@
+<span class="nowrap">
+    <?php
+        $incharges = Q("{$apply->service}<incharge user")->to_assoc('id','name');
+    ?>
+    <?= implode(',',$incharges) ?>
+</span>

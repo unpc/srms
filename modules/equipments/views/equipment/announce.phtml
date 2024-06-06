@@ -1,0 +1,33 @@
+<?php
+$me          = L('ME');
+$table       = Widget::factory('table', ['extra_class' => 'eq_announcement_table']);
+$table->name = 'eq_announces';
+$table->add_columns([
+    'mtime' => [
+        'title'  => I18N::T('equipments', '日期'),
+        'nowrap' => true,
+    ],
+    'title' => [
+        'title'       => I18N::T('equipments', '公告'),
+        'nowrap'      => true,
+    ],
+    'rest'  => [
+        'title'  => I18N::T('equipments', '操作'),
+        'align'  => 'right',
+        'nowrap' => true,
+    ],
+]);
+$table->empty_message = I18N::T('equipments', '此仪器暂无公告!');
+foreach ($announces as $announce) {
+    $is_read = $me->connected_with($announce, 'read');
+
+    $links = $announce->links('index');
+    $table->add_row([
+        'mtime'        => Date::format($announce->mtime),
+        'title'        => V('equipments:announce/table/data/title', ['announce' => $announce, 'is_read' => $is_read]),
+        'rest'         => Widget::factory('application:links', ['links' => $links]),
+        '#extra_class' => $is_read ? 'eq_announce_is_read' : '',
+    ]);
+}
+
+echo $table;

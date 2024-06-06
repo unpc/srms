@@ -1,0 +1,7 @@
+<?php
+$locations = Equipment_Model::locations();
+if(is_array($locations)){
+	/* BUG #1035::仪器列表中仪器放置房间没有加H函数，可能导致xss发生(kai.wu@2011.08.19) */
+	echo Form::dropdown($location_name, $locations, $location_value, 'class="dropdown autosubmittable middle"');
+}
+?>

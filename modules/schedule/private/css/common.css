@@ -1,0 +1,30 @@
+.calendar_week, .calendar_month {
+	.flag_attachment {
+		background : url(images/icons/attachments.png) no-repeat scroll -120px -40px transparent;
+		height : 15px;
+		width : 15px;
+		display : inline-block;
+	}
+
+}
+.floatleft{
+	position:relative;
+	diplay:inline;
+	float:left;
+	height : 0px;
+}
+
+
+.schedule_value {
+	min-height: 36px;
+}
+
+.triple {
+    width: 350px;
+    overflow: hidden;
+    li {
+        float: left;
+        display: inline;
+        width: 30%;
+    }
+}

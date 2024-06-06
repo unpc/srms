@@ -1,0 +1,392 @@
+<form class="edit eq_preheat_cooling rmargin_100" method="post" action="<?php echo H(URI::url()) ?>" autocomplete="off">
+    <div class="form">
+        <?php
+        $require = (string)V('form_require');
+        ?>
+        <table class="form">
+            <tbody>
+            <tr>
+                <td class="top icon" width="130">
+                    <?php echo $equipment->icon('104'); ?>
+                </td>
+                <td class="top">
+                    <?php echo V('form_error', ['form' => $form]); ?>
+                    <h2 class="section_title">
+                        <span class="border"></span>
+                        <span class="black_title"><?php echo I18N::T('equipments', '使用要求') ?></span>
+                    </h2>
+
+                    <div class="interval_12"></div>
+                    <div class="lmaigin_1e5">
+                        <table>
+                            <tr>
+                                <td class="middle">
+                                    <?php $require_training_id = 'require_training_' . uniqid(); ?>
+                                    <input type="checkbox" name="require_training"
+                                           id="<?php echo H($require_training_id) ?>"
+                                           class="middle monitor checkbox" <?php echo $equipment->require_training ? 'checked="checked"' : NULL; ?> />
+                                    <label for="<?php echo H($require_training_id) ?>" class="middle">
+                                        <?php echo I18N::T('equipments', '需要培训 / 授权才能使用'); ?>
+                                    </label>
+                                </td>
+                            </tr>
+
+                            <?php if (Module::is_installed('exam')) : ?>
+                            <tr><td><div class="interval_12"></div></td></tr>
+                            <tr>
+                                <td class="middle">
+                                    <?php $require_exam_id = 'require_exam_' . uniqid(); ?>
+                                    <input type="checkbox" name="require_exam"
+                                        id="<?php echo H($require_exam_id) ?>"
+                                        class="middle monitor checkbox toggle_status:require_training enable_on:on" <?php echo $equipment->require_exam ? 'checked="checked"' : NULL; ?> />
+                                    <label for="<?php echo H($require_exam_id) ?>" class="middle">
+                                        <?php echo I18N::T('equipments', '是否需要理论考试'); ?>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="middle" >
+                                    <div title="<?php echo I18N::T('equipments', '指定考试'); ?>" class="form padding_1 hidden toggle:require_exam show_on:on">
+                                        <div><span class="red">若未设置任何系统安全考试，请先到考试系统中设置系统安全考试内容，再开启系统安全考试。</span>
+                                        </div>
+                                        <?php
+                                        echo Widget::factory('exam_selector', [
+                                            'name' => 'equipment_exam',
+                                            'id' => $form['equipment_exam'],
+                                            'value' => $form['equipment_exam'],
+                                            'text' => $form['exam_title'],
+                                            'size'=>40
+                                        ]);
+                                        ?>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php endif; ?>
+                            
+                            <?php echo Event::trigger('equipments_edit_use_view', $equipment); ?>
+                        </table>
+                    </div>
+
+                    <div class="interval_24"></div>
+
+                    <h2 class="section_title">
+                        <span class="border"></span>
+                        <span class="black_title"><?php echo I18N::T('equipments', '控制方式') ?></span>
+                    </h2>
+                    <div class="interval_12"></div>
+                    <div class="lmaigin_1e5">
+                <span class="red_tip" style="font-weight: normal;color: #F5222D;">
+                    <?php echo I18N::T('equipments', '<span class="required">*</span> 不可随意更改仪器的控制方式，更改后仪器的配置将不会再保存') ?>
+                </span>
+                    </div>
+                    <div class="interval_12"></div>
+                    <div class="lmaigin_1e5">
+                        <?php
+                        if (!in_array($equipment->control_mode, ['power', 'computer', 'ultron', 'bluetooth', 'agent'])) $equipment->control_mode = "nocontrol";
+
+                        echo '<span class="inline_block rpadding_48">';
+                        echo Form::radio(
+                            'control_mode',
+                            'nocontrol',
+                            $equipment->control_mode,
+                            I18N::T('equipments', '不控制'),
+                            'class="middle monitor radio"',
+                            'class="middle"'
+                        );
+
+                        echo '</span><span class="inline_block rpadding_48">';
+
+                        echo Form::radio(
+                            'control_mode',
+                            'power',
+                            $equipment->control_mode,
+                            I18N::T('equipments', '电源控制'),
+                            'class="middle monitor radio"',
+                            'class="middle"'
+                        );
+
+                        echo '</span><span class="inline_block rpadding_48">';
+
+                        echo Form::radio(
+                            'control_mode',
+                            'computer',
+                            $equipment->control_mode,
+                            I18N::T('equipments', '电脑登录'),
+                            'class="middle monitor radio"',
+                            'class="middle"'
+                        );
+
+                        /*
+                        echo '</span><span class="inline_block rpadding_48">';
+
+                        echo Form::radio(
+                            'control_mode',
+                            'ultron',
+                            $equipment->control_mode,
+                            I18N::T('equipments', '平板控制'),
+                            'class="middle monitor radio"',
+                            'class="middle"'
+                        );
+                        */
+
+                        echo '</span><span class="inline_block rpadding_48">';
+
+                        echo Form::radio(
+                            'control_mode',
+                            'bluetooth',
+                            $equipment->control_mode,
+                            I18N::T('equipments', '蓝牙控制'),
+                            'class="middle monitor radio"',
+                            'class="middle"'
+                        );
+
+                        echo '</span><span class="inline_block rpadding_48">';
+
+                        echo Form::radio(
+                            'control_mode',
+                            'agent',
+                            $equipment->control_mode,
+                            I18N::T('equipments', '终端控制'),
+                            'class="middle monitor radio"',
+                            'class="middle"'
+                        );
+                        echo '</span>';
+                        ?>
+
+                        <div class="interval_10"></div>
+                        <div title="<?php echo I18N::T('equipments', '电源控制'); ?>"
+                             class="hidden toggle:control_mode show_on:power">
+                            <table class="form">
+                                <tr>
+                                    <td class="label middle"
+                                        width="130"><?php echo $require; ?><?php echo I18N::T('equipments', '终端地址'); ?></td>
+                                    <td><input size="40" type="text" name="control_power_address" class="text ip middle"
+                                               value="<?php echo H($equipment->control_mode == 'power' ? $equipment->control_address : ''); ?>"/>
+                                        <?php echo V('form_filter', ['error' => $form->errors['control_power_address'][0]]); ?>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" class="description" height="30">
+                                        <?php echo I18N::T('equipments', '警告: 如果仪器终端名输入不正确, 则系统无法对仪器进行远程控制.'); ?>
+                                    </td>
+                                </tr>
+
+                                <?php if (Module::is_installed('watcher')) : ?>
+                                    <tr>
+                                        <td class="interval_12" colspan="2"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label middle"><span
+                                                    class="lpadding_21"></span><?php echo I18N::T('equipments', '基站地址'); ?>
+                                        </td>
+                                        <td><input type="text" name="control_power_gstation" class="text ip middle"
+                                                   value="<?php echo H($equipment->control_mode == 'power' ? $equipment->control_gstation : ''); ?>"/>
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
+                            </table>
+                        </div>
+
+                        <div title="<?php echo I18N::T('equipments', '电脑登录'); ?>"
+                             class="hidden toggle:control_mode show_on:computer">
+                            <table class="form" width="100%">
+                                <tr>
+                                    <td class="label left middle nowrap"
+                                        width="110"><?php echo I18N::T('equipments', '验证码') ?></td>
+                                    <td class="label nowrap"
+                                        width="820"><?php echo V('equipments:equipment/access_code', ['equipment' => $equipment]); ?></td>
+                                </tr>
+                                <?php $ips = (array)Config::get('equipment.capture_stream_to'); ?>
+                                <?php if (count($ips)) : ?>
+                                    <tr>
+                                        <td colspan="2" class="interval_6"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label left top nowrap"><?php echo I18N::T('equipments', '视频地址') ?></td>
+                                        <td class="nowrap">
+                                            <?php
+                                            $default_name = Config::get('equipment.default_capture_stream_name');
+                                            foreach ($ips as $key => $ip) :
+                                                ?>
+                                                <div>
+                                                    <?php
+                                                    echo Form::radio(
+                                                        'capture_stream_to',
+                                                        $ip['address'],
+                                                        $equipment->capture_stream_to ?: $ips[$default_name]['address'],
+                                                        $ip['title'] . ' ( ' . $ip['address'] . ' )',
+                                                        'class="middle monitor radio"',
+                                                        'class="middle"'
+                                                    );
+                                                    ?>
+                                                </div>
+                                                <div class="interval_6"></div>
+                                            <?php endforeach; ?>
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
+                                <?php $upload_tos = Config::get('equipment.capture_upload_to'); ?>
+                                <?php if (count($upload_tos)) : ?>
+                                    <tr>
+                                        <td class="interval_6" colspan="2"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label left top nowrap"><?php echo I18N::T('equipments', '上传地址') ?></td>
+                                        <td class="label nowrap">
+                                            <?php
+                                            $default_upload = Config::get('equipment.default_capture_upload_to');
+                                            foreach ($upload_tos as $key => $upload_to) :
+                                                ?>
+                                                <div>
+                                                    <?php
+                                                    $upload_tos[$default_upload]['address'] = strtr($upload_tos[$default_upload]['address'], ['%id' => $equipment->id]);
+                                                    $upload_to['address'] = strtr($upload_to['address'], ['%id' => $equipment->id]);
+                                                    echo Form::radio(
+                                                        'capture_upload_to',
+                                                        $upload_to['address'],
+                                                        $equipment->capture_upload_to ?: $upload_tos[$default_upload]['address'],
+                                                        $upload_to['title'] . ' ( ' . $upload_to['address'] . ' )',
+                                                        'class="middle monitor radio"',
+                                                        'class="middle"'
+                                                    );
+                                                    ?>
+                                                    <div class="interval_6"></div>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
+                            </table>
+                        </div>
+
+                        <div title="<?php echo I18N::T('equipments', '蓝牙控制'); ?>"
+                             class="hidden toggle:control_mode show_on:bluetooth">
+                            <table class="form">
+                                <tr>
+                                    <td class="label middle"
+                                        width="130"><?php echo $require; ?><?php echo I18N::T('equipments', '蓝牙插座序列号'); ?></td>
+                                    <td><input type="text" name="bluetooth_serial_address" class="text ip middle"
+                                               value="<?php echo H($equipment->control_mode == 'bluetooth' ? $equipment->control_address : ''); ?>"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div title="<?php echo I18N::T('equipments', '终端控制'); ?>"
+                             class="hidden toggle:control_mode show_on:agent">
+                            <table class="form">
+                                <tr>
+                                    <td class="label left middle nowrap" width="130" style="padding-left: 22px;"><?php echo I18N::T('equipments', '授权码') ?></td>
+                                    <td class="label nowrap"
+                                        width="820"><?php echo V('equipments:equipment/auth_code', ['equipment' => $equipment]); ?></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" class="description" height="30">
+                                        <?php echo I18N::T('equipments', '警告: 有效期为15分钟, 请及时使用, 超时请重新生成'); ?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label middle"
+                                        width="130"><?php echo $require; ?><?php echo I18N::T('equipments', '控制地址'); ?></td>
+                                    <td><input size="40" type="text" name="control_address" class="text middle"
+                                               value="<?php echo H($equipment->control_mode == 'agent' ? $equipment->control_address : ''); ?>"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="interval_24"></div>
+                    <h2 class="section_title">
+                        <span class="border"></span>
+                        <span class="black_title"><?php echo I18N::T('equipments', '预热/冷却时间设置') ?></span>
+
+                        <span class="red_tip" style="font-weight: normal;">
+                    <?php echo I18N::T('equipments', '(需要在使用记录中手动勾选)') ?>
+                </span>
+                    </h2>
+                    <div class="interval_12"></div>
+                    <div class="lmaigin_1e5">
+                        <table class="form">
+                            <?php
+                            // 获取第一条当前可用的配置
+                            $eq_preheat_cooling = Equipment_Preheat_Cooling::get_preheat_cooling($equipment);;
+                            $power_on_preheating_id = 'power_on_preheating_' . uniqid();
+                            ?>
+                            <tr>
+                                <td class="label middle">
+                                    <input id="<?php echo H($power_on_preheating_id) ?>" name="power_on_preheating"
+                                           type="checkbox" class="middle checkbox monitor"
+                                        <?php if ($form['power_on_preheating'] || $eq_preheat_cooling->preheat_time) echo 'checked="checked"'; ?> <?php echo $disabled; ?> />
+                                </td>
+                                <td class="label middle">
+                                    <label for="<?php echo H($power_on_preheating_id) ?>"
+                                           class="baseline middle"><?php echo I18N::T('eq_reserv', '开机预热时间'); ?></label>
+                                    <span class="toggle_status:power_on_preheating enable_on:on"> &nbsp;
+                            <?php
+                            $format = $form['power_on_preheating_format'] ?: $eq_preheat_cooling->preheat_unit ?: 'i';
+                            $format = Date::format_interval($eq_preheat_cooling->preheat_time, $format);
+                            ?>
+                            <input class="number text middle set_time_value" name="power_on_preheating_mins"
+                                   value="<?php echo $form['power_on_preheating_mins'] ?: $format[0]; ?>"
+                                   q-number_default_value="0" <?php if (!$eq_preheat_cooling->preheat_time) echo 'disabled="disabled"'; ?>  <?php echo $disabled; ?>/>&nbsp;
+                            <?php echo Form::dropdown('power_on_preheating_format', Date::units('ihd'), $format[1], 'class="middle set_time_format_80"' . $disabled); ?>
+                            </span>
+                                </td>
+                            </tr>
+                            <tr class="interval_6"></tr>
+                            <tr>
+                                <td class="label middle">
+                                    <?php $shutdown_cooling_id = 'shutdown_cooling_' . uniqid(); ?>
+                                    <input id="<?php echo H($shutdown_cooling_id) ?>" name="shutdown_cooling"
+                                           type="checkbox" class="middle checkbox monitor"
+                                        <?php if ($form['shutdown_cooling'] || $eq_preheat_cooling->cooling_time) echo 'checked="checked"'; ?> <?php echo $disabled; ?> />
+                                </td>
+                                <td class="label middle">
+                                    <label for="<?php echo H($shutdown_cooling_id) ?>"
+                                           class="baseline middle"><?php echo I18N::T('eq_reserv', '关机冷却时间'); ?></label>
+                                    <span class="toggle_status:shutdown_cooling enable_on:on middle"> &nbsp;
+                            <?php
+                            $format = $form['shutdown_cooling_format'] ?: $eq_preheat_cooling->cooling_unit ?: 'i';
+                            $format = Date::format_interval($eq_preheat_cooling->cooling_time, $format);
+                            ?>
+                            <input class="number text middle set_time_value" name="shutdown_cooling_mins"
+                                   value="<?php echo $form['shutdown_cooling_mins'] ?: $format[0]; ?>"
+                                   q-number_default_value="0" <?php if (!$eq_preheat_cooling->cooling_time) echo 'disabled="disabled"'; ?>  <?php echo $disabled; ?>/>&#160;
+                                <?php echo Form::dropdown('shutdown_cooling_format', Date::units('ihd'), $format[1], 'class="middle set_time_format_80"' . $disabled); ?>
+                            </span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="interval_24"></div>
+
+    <?php if (Config::get('use.enable_usetype') && Module::is_installed('extra')) : ?>
+        <div class="toggle:accept_sample show_on:on">
+            <div class="form" style="padding-left: 130px;">
+                <h2 class="section_title">
+                    <span class="border"></span>
+                    <span class="black_title"><?php echo I18N::T('eq_sample', '使用表单') ?></span>
+                </h2>
+                <div class="interval_12"></div>
+                <?php $extra = Extra_Model::fetch($equipment, 'use'); ?>
+                <div class="lmaigin_1e5" src="<?php echo H($extra->url()) ?>"></div>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <?php echo Event::trigger('equipments_edit_use_extra_view', $equipment); ?>
+    <div class="interval_30"></div>
+    <div class="form">
+        <input type="submit" name="submit" class=" float_right font-button-save" value="<?php echo H(T('保存修改')) ?>"/>
+    </div>
+    <div class="interval_30"></div>
+</form>

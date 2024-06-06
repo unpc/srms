@@ -1,0 +1,22 @@
+#!/bin/bash
+
+echo "============ preinst"
+symlinks_should_delete="/etc/lighttpd/conf-available/20-genee.conf \
+/etc/lighttpd/conf-enabled/20-genee.conf \
+/etc/lighttpd/lua \
+/etc/xinetd.d/lims_device \
+/etc/init.d/lims2_daemon \
+/etc/cron.d/lims2 \ 
+/etc/logrotate.d/genee \
+/etc/sphinxsearch/conf.d/lims2.conf \
+"
+
+for link in $symlinks_should_delete; do
+	if [[ -L $link ]]; then
+		rm $link
+	fi
+done
+
+echo "============= preinst done"
+
+exit 0

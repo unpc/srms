@@ -1,0 +1,6 @@
+<?php
+if (!$record->dtend) {
+    echo I18N::T('equipments', '使用中');
+}else {
+    echo Date::format_duration($record->dtstart, $record->dtend, 's');
+}

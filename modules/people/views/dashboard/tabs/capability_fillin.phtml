@@ -1,0 +1,62 @@
+<?= CSS::load_async('calendars:common') ?>
+
+    <script>
+        Q.globals.cal_week_rel = 'edit_week';
+        Q.globals.mode = 'list';
+    </script>
+<?php
+
+$me = L('ME');
+$table = Widget::factory('table');
+$table->name = 'approval';
+$table->form = $form;
+$columns = [
+    'equipment'=> [
+        'title' => I18N::T('equipment', '设备名称'),
+        'align' => 'left',
+        'nowrap' => TRUE
+    ],
+    'time'=> [
+        'title' => I18N::T('equipment', '填报起止时间'),
+        'align' => 'left',
+        'nowrap' => TRUE
+    ],
+    'group' => [
+        'title' => I18N::T('equipment', '组织机构'),
+        'align' => 'left',
+        'nowrap' =>TRUE,
+    ],
+    'rest'=>[
+        'title' => I18N::T('people', '操作'),
+        'align'=>'left',
+        'nowrap'=>TRUE,
+    ]
+];
+
+$table->add_columns($columns);
+
+$table->empty_message = I18N::T('yiqikong_approval', '没有查询到相应的项目!');
+
+if (count($fillin) > 0) {
+
+    foreach($fillin as $ap) {
+        $links['confirm'] = [
+            'url' => NULL,
+            'text' => '<span class="after_icon_span">'.I18N::T('eq_charge', '填报').'</span>',
+            'tip' => I18N::T('eq_charge', '填报'),
+            'extra' => 'class="blue" q-src="' . URI::url('!people/dashboard/') .
+                '" q-static="id=' . $ap->source_id . '" q-event="click" q-object="capability_fillin"',
+        ];
+        $rows = [
+            'equipment' => V('people:dashboard/tabs/capability_fillin_table/data/equipment', ['ap' => $ap]),
+            'time' => V('people:dashboard/tabs/capability_fillin_table/data/time', ['ap' => $ap]),
+            'group' => V('people:dashboard/tabs/capability_fillin_table/data/group', ['ap' => $ap]),
+            'rest' => Widget::factory('application:links', ['links' => $links])
+        ];
+        $table->add_row($rows);
+    }
+}
+echo $table;
+?>
+<div style="text-align: right"><?php echo $pagination; ?></div>
+<div class="interval_10"></div>

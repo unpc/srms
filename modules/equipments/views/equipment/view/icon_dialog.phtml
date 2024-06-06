@@ -1,0 +1,27 @@
+<div style="width: 100%;text-align: center;padding: 60px 0 100px 0;">
+    <img src="<?= $url ?>" class='equipment-size-img'>
+</div>
+
+<script>
+  var bodyWidth = $(window).width();
+  var bodyHeight = $(window).height();
+  $('.dialog_close_border').css('min-width','0');
+  $('.equipment-size-img').css({'max-height':bodyHeight - 100});
+  $('.equipment-size-img').css({'max-width':bodyWidth - 100});
+
+// 根据浏览器大小改变仪器图标
+  $(window).resize(function(){
+    bodyWidth = $(window).width();
+    bodyHeight = $(window).height();
+    $('.dialog_close_border').css('min-width','0');
+
+    // 方形状图片
+    if( $('.equipment-size-img').width() >= $('.equipment-size-img').height() ){
+      $('.equipment-size-img').width( bodyWidth - 100 ).css({'max-height':bodyHeight - 100,'max-width': bodyWidth - 100});
+    }
+    // 长条形状图片
+    else{
+      $('.equipment-size-img').height( bodyHeight - 100 ).css({'max-height':bodyHeight - 100});
+    }
+  })
+</script>

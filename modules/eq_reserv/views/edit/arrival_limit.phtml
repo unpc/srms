@@ -1,0 +1,38 @@
+<?php
+$reserv_arrival_limit_mins = $form['reserv_arrival_limit_mins'] ? :
+($equipment->reserv_arrival_limit_time ? $equipment->reserv_arrival_limit_time / 60 : 30);
+
+$reserv_arrival_limit = $form['reserv_arrival_limit'] ? true : 
+($equipment->reserv_arrival_limit ? true : false);
+?>
+<div class="form <?= $hidden?>">
+    <h2 class="section_title">
+        <span class="border"></span>
+        <span class="black_title"><?php echo I18N::T('eq_reserv', '提醒设置'); ?></span>
+    </h2>
+	<div class="padding_2">
+        <table class="form">
+            <tr>
+                <td class="label middle">
+                <?php 
+                $reserv_arrival_limit_id = 'reserv_arrival_limit_'. uniqid();
+                ?>
+                <input id="<?php echo H($reserv_arrival_limit_id) ?>" name="reserv_arrival_limit" type="checkbox" class="baseline checkbox monitor" <?php if ($reserv_arrival_limit) echo 'checked="checked"';?> <?= $disabled;?> />
+                </td>
+                <td class="label">
+                    <label for="<?= $reserv_arrival_limit_id ?>" class="baseline">
+                        <?= I18N::T('eq_reserv', '预约结束前'); ?>
+                    </label>
+                    <span class="toggle_status:reserv_arrival_limit enable_on:on"> &nbsp;
+                    <input type="text" class="number text" name="reserv_arrival_limit_mins" 
+                    value="<?= $reserv_arrival_limit_mins; ?>" q-number_default_value="30" <?php if (!$reserv_arrival_limit) echo 'disabled="disabled"'; ?>  <?= $disabled;?>/>
+                     &nbsp;
+                    </span>
+                    <label for="<?= $reserv_arrival_limit_id ?>" class="baseline">
+                        <?= I18N::T('eq_reserv', '分钟, 提醒用户预约即将结束') ?>
+                    </label>
+                </td>
+            </tr>
+        </table>
+	</div>
+</div>

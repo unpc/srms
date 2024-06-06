@@ -1,0 +1,46 @@
+<div class="form padding_2" class="prevent_default">
+    <div style="width:300px" class="message message_normal">
+    <p>
+        <?= T('点击刷新后，将根据大仪系统真实数据更新：在线服务平台网址、服务收入总金额、50万元以上仪器总数量、50万元以上仪器总原值')?>
+    </p>
+    <p>
+        <?= T('如果您已填入上述内容，此更新将不会进行')?>
+    </p>
+    </div>
+    <div class="hr_1">&#160;</div>
+    <a name="refresh" href="javascript:" class="button button_refresh middle prevent_default"><?php echo I18N::HT('nrii', '确定刷新')?></a>
+    <a name="cancel" href="<?= URI::url('!nrii/service/edit') ?>" class="button button_cancel middle prevent_default"><?php echo I18N::HT('nrii', '取消')?></a>
+</div>
+<script>
+jQuery(function($) {
+    
+    var $refresh_btn = $("a[name=refresh]")
+        , btn_click = function (){
+            Q.trigger({
+                object: 'refresh',
+                event: 'click',
+                url: "<?= $trigger_url ?>",
+                success: function(ret){
+                    if (!$("input[name=serviceUrl]").val()) {
+                        $("input[name=serviceUrl]").val(ret['info']['serviceUrl']);
+                    }
+                    if (!$("input[name=billWorth]").val()) {
+                        $("input[name=billWorth]").val(ret['info']['billWorth']);
+                    }
+                    if (!$("input[name=instrNum]").val()) {
+                        $("input[name=instrNum]").val(ret['info']['instrNum']);
+                    }
+                    if (!$("input[name=instrWorth]").val()) {
+                        $("input[name=instrWorth]").val(ret['info']['instrWorth']);
+                    }
+                    Dialog.close();   
+                },
+                error : function (data){
+                    Dialog.close(); 
+                }
+            })          
+        }
+    
+    $refresh_btn.click( function() {btn_click()});
+});
+</script>

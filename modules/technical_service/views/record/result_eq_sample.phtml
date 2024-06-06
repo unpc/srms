@@ -1,0 +1,188 @@
+<style>
+.wid6 {
+    width: 7rem;
+}
+
+.select2-container .select2-selection--multiple .select2-selection__rendered {
+    display: inline-table !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    float: left;
+    display: revert;
+}
+</style>
+<?php
+$cache_css = Cache::cache_file(MODULE_PATH . 'technical_service/private/css/select2.min.css');
+$cache_css_base = Cache::cache_file(MODULE_PATH . 'technical_service/private/css/base.css');
+$cache_js = Cache::cache_file(MODULE_PATH . 'technical_service/private/js/select2.min.js');
+?>
+<link href="<?= $cache_css ?>" rel="stylesheet" />
+<link href="<?= $cache_css_base ?>" rel="stylesheet" />
+<script src="<?= $cache_js ?>"></script>
+<?php
+$connects = ['connect_records' => [], 'connect_samples' => []];
+if(isset($form['connect_type'])){
+    foreach($form['connect_samples'] as $sid){
+        if(!$sid) continue;
+        $eq_sample = O('eq_sample',$sid);
+        $connects['connect_samples'][$eq_sample->id] = Number::fill($eq_sample->id, 6) . "  " . $eq_sample->sender->name . "(" . $eq_sample->count . ")" . " " . Date::format($eq_sample->dtsubmit, 'Y/m/d H:i');
+    }
+    foreach($form['connect_records'] as $sid){
+        if(!$sid) continue;
+        $eq_record = O('eq_record',$sid);
+        $connects['connect_records'][$eq_record->id] = Number::fill($eq_record->id, 6) . "  " . date('Y/m/d H:i:s', $eq_record->dtstart) . "  " . date('Y/m/d H:i:s', $eq_record->dtend);
+    }
+}else{
+    if ($record->connect_type == 'eq_record') {
+        $eq_records = Q("$record {$record->connect_type}");
+        foreach ($eq_records as $eq_record) {
+            $connects['connect_records'][$eq_record->id] = Number::fill($eq_record->id, 6) . "  " . date('Y/m/d H:i:s', $eq_record->dtstart) . "  " . date('Y/m/d H:i:s', $eq_record->dtend);
+        }
+    } elseif ($record->connect_type == 'eq_sample') {
+        $eq_samples = Q("$record {$record->connect_type}");
+        foreach ($eq_samples as $eq_sample) {
+            $connects['connect_samples'][$eq_sample->id] = Number::fill($eq_sample->id, 6) . "  " . $eq_sample->sender->name . "(" . $eq_sample->count . ")" . " " . Date::format($eq_sample->dtsubmit, 'Y/m/d H:i');
+        }
+    }
+}
+?>
+<div class="form" style="min-width:550px">
+    <?php
+    $form_id = 'result_' . uniqid();
+    $require = (string)V('form_require', ['extra_class' => 'right']);
+    ?>
+    <form q-object="result" q-event="submit" q-src="<?php echo H(URI::url('!technical_service/record')) ?>"
+        autocomplete="off" method="post" id="<?php echo H($form_id) ?>">
+        <?php echo V('form_error', ['form' => $form]); ?>
+        <input name="apply_record_id" type="hidden" value="<?php echo H($record->id) ?>" />
+        <table class="form" width="100%">
+            <tr>
+                <td class="label left top nowrap blue" colspan="2">
+                    <h1><?php echo I18N::HT('eq_sample', '关联送样记录'); ?></h1>
+                </td>
+            </tr>
+            <input type="hidden" name="connect_type" value="eq_sample" />
+            <input name="from" type="hidden" value="eq_sample" />
+            <tr>
+                <td class="label left top nowrap" colspan="2">
+                    <select
+                        data-src="<?php echo H(URI::url('!technical_service/autocomplete/samples.' . $record->id)) ?>"
+                        class="js-example-basic-multiple_sample no_dropdown" name="connect_samples[]"
+                        multiple="multiple" style="width: 100%">
+                        <?php foreach($connects['connect_samples'] as $rid => $tx):?>
+                        <option value="<?= $rid?>" selected><?= $tx?></option>
+                        <?php endforeach;?>
+                    </select>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="label left top nowrap blue" colspan="2">
+                    <h1><span class="red float_left rmargin_1">*</span><?php echo I18N::HT('eq_sample', '样品数量'); ?></h1>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="label left nowrap" colspan="2">
+                    <input type="number"
+                        value="<?= $form['success_samples'] ?? $record->success_samples ?: $record->apply->samples ?: 1 ?>"
+                        name="success_samples" class="text number" />
+                </td>
+            </tr>
+
+            <tr>
+                <td class="label left top nowrap blue" colspan="2">
+                    <h1><?php echo I18N::HT('eq_sample', '检测结果'); ?></h1>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="label left nowrap" colspan="2">
+                    <textarea class="text"
+                        style="word-break: break-word;white-space: normal;line-height: normal;height: 60px;width: 100%;"
+                        cols="4" rows="20" name="result"><?= $form['result'] ?? H($record->result) ?></textarea>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="label left top nowrap blue" colspan="2">
+                    <h1><?php echo I18N::HT('eq_sample', '上传附件'); ?></h1>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="label left nowrap" colspan="2">
+                    <?php
+                    if (Module::is_installed('nfs') && L('ME')->is_allowed_to('上传文件', $record, ['type' => 'attachments'])) {
+                        echo V('record/edit/attachments', ['record' => $record]);
+                    }
+                    ?>
+                </td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td>
+                    <div class="button_container">
+                        <div class="float_right">
+                            <input type="button" name="cancel" id="cancel" class="font-button-default sm"
+                                value="<?php echo H(I18N::T('labs', '取消')) ?>" />
+                            <input type="submit" name="submit" class="font-button-save"
+                                value="<?php echo H(I18N::T('labs', '保存')) ?>" />
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<script type="text/javascript">
+var select_params = {
+    closeOnSelect: false,
+    multiple: true, //多选
+    ajax: {
+        dataType: 'json',
+        data: function(params) {
+            return {
+                s: params.term, // 搜索框内输入的内容，传递到Java后端的parameter为username
+                st: params.page, // 第几页，分页哦
+            };
+        },
+        // 分页
+        processResults: function(data, params) {
+            params.page = params.page || 1;
+            return {
+                results: data, // 后台返回的数据集
+                pagination: {
+                    more: (params.page * 5) < data[0].total_count //auto接口需要返回total_count
+                }
+            };
+        },
+        cache: false
+    },
+    escapeMarkup: function(markup) {
+        return markup;
+    },
+    templateResult: function(repo) { // 显示的结果集格式，这里需要自己写css样式，可参照demo
+        // 正在检索
+        if (repo.loading) {
+            return repo.text;
+        }
+        var markup = repo.text || repo.html;
+        return markup;
+    },
+    templateSelection: function(repo) {
+        return repo.text;
+    } // 列表中选择某一项后显示到文本框的内容
+};
+jQuery(function($) {
+    var record_params = select_params;
+    var samples_params = select_params;
+    record_params['ajax']['url'] = $(".js-example-basic-multiple_record").data('src');
+    $('.js-example-basic-multiple_record').select2(record_params);
+    samples_params['ajax']['url'] = $(".js-example-basic-multiple_sample").data('src');
+    $('.js-example-basic-multiple_sample').select2(samples_params);
+});
+</script>

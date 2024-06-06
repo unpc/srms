@@ -1,0 +1,33 @@
+<div class="img_icon icon-radius">
+    <?= $equipment->icon('104'); ?>
+    <div style='position: absolute;top: 0px;left: 80px;'>
+        <?= V('equipments:equipment/control_status', ['equipment'=>$equipment]); ?>
+    </div>
+    <div class="icon_cover" style=''>
+        <?= I18N::T('equipments', '+') ?>
+    </div>
+</div>
+<script>
+$(function() {
+    var icon_cover = $('#<?= $id ?>').find('.icon_cover')
+    $('#<?= $id ?>')
+        .find('.img_icon').hover(function() {
+            icon_cover.show();
+        }, function() {
+            icon_cover.hide();
+        })
+
+    icon_cover.bind('click', function(e) {
+        Q.trigger({
+            object: 'photo',
+            event: 'click',
+            global: false,
+            data: {
+                id: '<?= $equipment->id ?>'
+            },
+            success: function(d) {}
+        });
+        return false;
+    })
+})
+</script>

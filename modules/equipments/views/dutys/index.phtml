@@ -1,0 +1,101 @@
+<?php
+$me = L('ME');
+$panel_buttons = $links;
+?>
+<?php echo $pagination; ?>
+<?php
+
+$table = Widget::factory('table');
+
+$table->name = 'equipments_charges';
+
+$field = [];
+
+$field += [
+    'date' => [
+        'title' => I18N::T('equipments', '时间'),
+        'invisible' => TRUE,
+        'filter' => [
+            'form' => V('equipments:dutys_table/filters/date', [
+                'dtstart' => $form['dtstart'],
+                'dtend' => $form['dtend'],
+                'form' => $form,
+            ]),
+        ],
+        'input_type' => 'date',
+        'nowrap' => TRUE
+    ],
+    'user_name' => [
+        'title' => '值班老师',
+        'nowrap' => TRUE,
+        'filter'=> [
+            'form' => V('equipments:dutys_table/filters/user_name', ['user_name'=>$form['user_name']]),
+            'value' => $form['user_name'] ? H($form['user_name']) : NULL
+        ],
+    ],
+    'used_dur' => [
+        'title' => I18N::T('equipments', '使用机时(H)'),
+        'nowrap' => TRUE,
+        'weight' => 20
+    ],
+    'sample_dur' => [
+        'title' => I18N::T('equipments', '送样机时(H)'),
+        'nowrap' => TRUE,
+        'weight' => 20
+    ],
+    'record_counts' => [
+        'title' => I18N::T('equipments', '使用样品数(个)'),
+        'nowrap' => TRUE,
+        'weight' => 20
+    ],
+    'sample_counts' => [
+        'title' => I18N::T('equipments', '送样样品数(个)'),
+        'nowrap' => TRUE,
+        'weight' => 20
+    ],
+    'amount' => [
+        'title' => I18N::T('equipments', '收费金额(元)'),
+        'nowrap' => TRUE,
+        'weight' => 20
+    ],
+    'service_users' => [
+        'title' => I18N::T('equipments', '服务用户数(个)'),
+        'nowrap' => TRUE,
+        'weight' => 20
+    ],
+    'service_labs' => [
+        'title' => I18N::T('equipments', '服务课题组数(个)'),
+        'nowrap' => TRUE,
+        'weight' => 20
+    ],
+];
+$columns = new ArrayObject($field);
+
+$table->add_columns((array)$columns);
+$table->empty_message = I18N::T('equipments', '无符合条件的收费记录');
+
+foreach ($dutys as $duty) {
+    $row = [
+        'user_name' => V('equipments:dutys_table/data/user', ['obj' => $obj, 'duty' => $duty]),
+        'used_dur' => V('equipments:dutys_table/data/used_dur', ['obj' => $obj, 'duty' => $duty]),
+        'sample_dur' => V('equipments:dutys_table/data/sample_dur', ['obj' => $obj, 'duty' => $duty]),
+        'record_counts' => V('equipments:dutys_table/data/record_counts', ['obj' => $obj, 'duty' => $duty]),
+        'sample_counts' => V('equipments:dutys_table/data/sample_counts', ['obj' => $obj, 'duty' => $duty]),
+        'amount' => V('equipments:dutys_table/data/amount', ['obj' => $obj, 'duty' => $duty]),
+        'service_users' => V('equipments:dutys_table/data/service_users', ['obj' => $obj, 'duty' => $duty]),
+        'service_labs' => V('equipments:dutys_table/data/service_labs', ['obj' => $obj, 'duty' => $duty]),
+    ];
+    $row = new ArrayIterator($row);
+    $table->add_row($row);
+}
+$param = [
+    'top_input_arr' => ['user_name','date'],
+    'columns'       => $columns,
+    'panel_buttons' => $panel_buttons,
+    'extra_view'    => '<div class="adj statistics middle">'. $extra_title. $pagination.'</div>'
+];
+echo V('application:search_box', $param);
+
+echo $table;
+echo $pagination;
+

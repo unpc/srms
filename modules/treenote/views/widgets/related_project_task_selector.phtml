@@ -1,0 +1,20 @@
+<?php
+if ($this->task->id) {
+	$task = $this->task;
+	$project = $task->project;
+}
+else if ($this->project->id) {
+	$project = $this->project;
+}
+
+$projects = Q("tn_project");
+if ($projects->total_count() > 0) {
+	echo Form::dropdown($this->project_name ? : 'project', [''=>T('--')] + $projects->to_assoc('id', 'title'), $project->id,
+		'id="' . $project_select_id . '" class="middle view object:project_select event:change src:' .
+		URI::url('!treenote/index') . ' static:project_select_id='.$project_select_id.'&task_uniqid=' . $this->task_uniqid .
+		(isset($task) ? "&task=$task->id" : '') . '&task_name=' . $this->task_name .
+		'"');
+}
+else {
+	echo I18N::T('treenote', '尚无项目');
+}

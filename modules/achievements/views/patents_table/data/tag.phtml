@@ -1,0 +1,5 @@
+<?php 
+	$root = Tag_Model::root('achievements_patent');
+	$tags = (array) Q("$patent tag_achievements_patent[root=$root]")->to_assoc('name','name');			
+	echo implode(',',$tags);			
+?>	

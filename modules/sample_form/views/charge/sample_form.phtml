@@ -1,0 +1,52 @@
+<?php
+    $template = Config::get('eq_charge.template')['element_count'];
+
+    $charge_title = $template['title'];
+
+	$disabled = L('ME')->is_allowed_to('修改计费设置', $equipment) ? '' : 'disabled="disabled"';
+?>
+<div class="interval_30">&#160;</div>
+<form method="POST" autocomplete="off" action="<?php echo H(URI::url() ) ?>">
+    <div class="form padding_1">
+        <table class="form flexible">
+            <tbody>
+            <tr>
+                <td class="top lpadding_30">
+                    <h2 class="section_title"><?php echo I18N::T('eq_charge', '计费参数设置')?> (<?php echo $charge_title?>)</h2>
+                    <div class="interval_30">&#160;</div>
+                <div class="lmaigin_1e5">
+                    <table class="form">
+                        <tbody>
+                            <?php if (!count($elements)): ?>
+                            <tr>
+                                <td class="left nowrap top"><?= I18N::T('sample_form', '请到检测设置中添加元素'); ?></td>
+                            </tr>
+                            <?php else: ?>
+                                <?php foreach ($elements as $id => $element): ?>
+                                <tr>
+                                    <td class="right nowrap rpadding_label"><?= $element->name; ?></td>
+                                    <td class="">
+                                        <input name="<?= 'price['.$id.']'?>" class="text currency" size="10" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?= H($element->price) ?>" <?= $disabled?>/>
+                                    </td>
+                                </tr>
+                                    <tr>
+                                        <td colspan="2"><div class="interval_20">&#160;</div></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                        <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="interval_60"></div>
+    <?php if (!$disabled): ?>
+        <div class="form float_right">
+            <input type="reset" name="cancel" class="font-button-default rmargin_16" value="<?php echo H(T('取消')) ?>" />
+            <input type="submit" name="submit" class="font-button-save" value="<?php echo H(T('保存修改')) ?>" />
+        </div>
+    <?php endif;?>
+</form>

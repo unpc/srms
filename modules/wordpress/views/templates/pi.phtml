@@ -1,0 +1,10 @@
+<div class="person">
+  <div class="icon"><img src="<?php echo H($user['wp_icon'] ? : $default_icon ) ?>"/></div>
+  <div class="info">
+	<div><span class="name"><?php echo Utils::mkanchor($user['guid'], $user['name']) ?></span></div>
+	<div><?php if(isset($user['ename'])): ?><span class="ename"><?php echo $user['ename'] ?></span>, <?php endif;?><span class="degree"><?php echo $user['degree'] ?></span></div>
+	<div><span class="label">Email</span>: <span class="email"><?php echo $user['email'] ?></span></div>
+	<div><span class="label">Phone</span>: <span class="phone"><?php echo $user['phone'] ?></span></div>
+	<div><span class="label">Time</span>: <span class="time"><?php echo Person_Page::generate_duration($user['dfrom'], $user['dto']) ?></span></div>
+  </div>
+</div>

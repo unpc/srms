@@ -1,0 +1,57 @@
+<?php $uniqid = 'lamda_'.uniqid(); ?>
+<a class="<?php echo $this->button_class ?: 'find_button'?>  middle" onclick="<?php echo H($uniqid)?>.apply(this); return false;" >&#160;</a>
+<script type="text/javascript">
+<?php echo H($uniqid)?> = function() {
+	var uniqid = 'browse_' + Q.uniqid();
+	var $button = $(this);
+	var $div = $('<div id="' + uniqid + '" class="browse_view hidden <?php echo $view_class?>"></div>');
+	var object = "<?php echo H($qobject ?: 'browse_button' ) ?>";
+	$div.appendTo('body');
+	Q.trigger({
+		object: object,
+		event:'click',
+		data:{
+			rel:uniqid
+		},
+		url:'<?php echo $this->url?>',
+		complete:function(){
+
+			$('#'+uniqid+' .browse_token').click(function(){
+				var $el = $(this);
+				/*
+					TODO 该处不适合用classAttr来进行取值，因为值有可能为带空格的代码
+                 */
+				var item = {
+					text: $el.attr('token_text')
+				};
+				var alt = $el.attr('token_alt');
+				if (alt) {
+					item.alt = alt;
+				}
+				item.uniqid = uniqid;
+				<?php echo $this->token_callback;?>(item,$button);				//回调函数,在widget外处理事件
+			});
+		
+			var offset = $button.offset();
+
+			$div
+			.css({
+				position: 'absolute',
+				left: offset.left - $div.width() + $button.outerWidth(),
+				top: offset.top + $button.outerHeight()
+			})
+			.show()
+			.bind('click', function(){
+				return false;
+			});
+			
+            $(document).one('click',function(){ 
+                $div.remove();
+			});
+		}
+	});
+	
+	
+	
+}
+</script>

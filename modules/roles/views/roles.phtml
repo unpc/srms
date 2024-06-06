@@ -1,0 +1,176 @@
+<style>
+    .roles_list {
+        width: 15.8rem;
+        float: left;
+        margin-right: .1rem;
+        display: table;
+        min-height: 10rem;
+        border-right: 1px solid #F0F0F0;
+    }
+
+    .roles_perms {
+        width: 897px;
+        float: right;
+        margin-left: 10px;
+    }
+
+    .active {
+        background: rgba(43, 160, 127, 0.08);
+    }
+
+    .role_title_d_2 {
+        float: right;
+        width: 4.5rem;
+        color: var(--basiccolor);
+        font-size: 1px;
+        /*background: blue;*/
+    }
+
+    .role_title_d_1 {
+        height: 2rem;
+        font-size: 16px;
+        font-family: PingFangSC-Medium, PingFang SC;
+        font-weight: 500;
+        color: #333333;
+        line-height: 2rem;
+        margin-bottom: 1rem;
+        /*background: yellow;*/
+    }
+
+    .role_title_hover {
+        width: 15.8rem;
+        font-size: 14px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #333333;
+        line-height: 26px;
+    }
+
+    .role_title_hover:hover {
+        width: 15.6rem;
+        background: rgba(43, 160, 127, 0.08);
+        border-right: 0.2rem solid var(--basiccolor);
+        color: var(--basiccolor);
+    }
+
+    a.icon-trash:hover {
+        background: none;
+    }
+
+    .perm_module_title {
+        height: 40px;
+        line-height: 40px;
+        padding-left: 16px;
+        font-size: 14px;
+        border: 1px solid #F0F0F0;
+        margin-top: 10px;
+    }
+
+    .perm_submodule_title {
+        height: 40px;
+        line-height: 40px;
+        padding-left: 16px;
+        font-size: 14px;
+        border: 1px solid #F0F0F0;
+        border-top: none;
+        border-bottom: none;
+    }
+
+    .perm_submodule_title span {
+        border-left: 2px solid var(--basiccolor);
+        margin-right: 9px;
+    }
+
+    .perms_has_sub {
+        /*border: 1px solid lightgrey;*/
+    }
+
+    .perm_submodule_list {
+        padding: 8px 0;
+        width: 900px;
+        display: flex;
+        border: 1px solid #F0F0F0;
+        border-top: none;
+        padding-bottom: .2rem;
+        /*margin-top: -1rem;*/
+    }
+
+    .perm_submodule_list ul {
+        margin-bottom: 8px;
+    }
+
+    .perm_submodule_list ul li {
+        width: 31%;
+        float: left;
+        margin-left: 16px;
+        margin-bottom: 5px;
+        height: 20px;
+        font-size: 14px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #333333;
+        line-height: 20px;
+    }
+</style>
+<div style="display: table">
+    <div class="roles_list">
+        <?php $uniqid = 'role_' . uniqid(); ?>
+        <div id="<?php echo $uniqid; ?>">
+            <div class="role_container role_root_container">
+                <div class="role_title_d_1">
+                    <span style="width: 64px;"><strong><?= I18N::T('roles', '角色名称') ?></strong></span>
+                    <span class="role_title_d_2">+
+                        <a style="color: var(--basiccolor);cursor: pointer;font-size: 14px" q-object="add_role" q-event="click"
+                           q-src="<?= H(URI::url('!roles/index')) ?>"><?= I18N::T('roles', '添加角色') ?></a>
+                    </span>
+                </div>
+                <?php echo V('role_list', ['roles' => $roles]) ?>
+            </div>
+        </div>
+    </div>
+    <div class="roles_perms" id="<?= $container_id ?>">
+        <?= V('perm', ['role' => O('role')]); ?>
+    </div>
+</div>
+<script type="text/javascript">
+    jQuery(function ($) {
+        Q.role_sortable("<?php echo H($uniqid) ?>", "<?php echo H(JS::escape(URI::url(''))) ?>");
+
+        $(".role_title_d").bind('click', function (e) {
+            var $item = $(this);
+            Q.trigger({
+                object: 'role_select',
+                event: 'click',
+                data: {
+                    rid: $(this).parent().parent().data('rid'),
+                    container_id: '<?php echo $container_id;?>'
+                },
+                url: '<?php echo URI::url('!roles/index')?>'
+            });
+            $('div.role_item_list').removeClass('active');
+            $item.parent().parent().addClass('active');
+            return false;
+        }).bind('dblclick', function () {
+            Q.trigger({
+                object: 'edit_role',
+                event: 'click',
+                data: {
+                    rid: $(this).data('rid'),
+                },
+                url: '<?php echo URI::url('!roles/index')?>'
+            });
+            return false;
+        });
+
+        $('.icon-trash').unbind('click');
+
+        let lid = '<?= $_REQUEST['rid']?>';
+        if (lid){
+            $(".role_title_d[data-rid=<?= $_REQUEST['rid'] ?>]").trigger('click');
+        }else{
+            $(".role_title_d").eq(0).trigger('click');
+        }
+
+
+    });
+</script>

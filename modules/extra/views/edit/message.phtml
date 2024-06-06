@@ -1,0 +1,25 @@
+<?php $message_id = 'message_id_'. uniqid()?>
+<?php if( $type && $message ):?>
+<div role="alert" class="message message_<?=$type?>" style="z-index: 2000;display:none">
+    <i class="message_icon icon_<?=$type?>"></i>
+    <p class="message_content"><?php echo  $message; ?>
+  </p>
+</div>
+<?php else: ?>
+<div class="message message_success" id="<?php echo H($message_id) ?>"><p><?php echo $message;?></p></div>
+<?php endif;?>
+<script type="text/javascript">
+
+
+$(document).ready(function() {
+    $message = $("#<?php echo $message_id;?>");
+    $message.hide(0);
+    $message.slideDown('normal');
+
+    setTimeout(function(){
+        $message.slideUp('normal', function() {
+            $(this).remove();
+        })
+    }, 2000)
+});
+</script>

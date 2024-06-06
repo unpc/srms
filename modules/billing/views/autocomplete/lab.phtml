@@ -1,0 +1,15 @@
+<?php /* BUG #1052::财务明细页面中，实验室搜索和其他不同，可能导致由于实验室过多，无法选定需要搜索的实验室(kai.wu@2011.08.22) */ ?>
+<table class="mini_form">
+	<tr>
+		<td class="top">
+			<span class="name"><?php echo H($lab->name); ?></span>
+			<br />
+			<?php $status_tags = (string) $lab->status_tags(); ?>
+			<?php if ($status_tags): ?>
+			<div class="clearfix">
+				<?php echo $status_tags ?>
+			</div>
+			<?php endif;?>
+		</td>
+	</tr>
+</table>

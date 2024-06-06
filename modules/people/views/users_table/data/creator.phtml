@@ -1,0 +1,6 @@
+<?php
+if ($user->creator->id): ?>
+<a href="<?php echo H($user->creator->url()) ?>"><?php echo H($user->creator->name) ?></a>
+<?php else:
+	echo '--';
+endif;

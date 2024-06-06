@@ -1,0 +1,16 @@
+<table class="form">
+<tr>
+	<td class="left nowrap middle">
+		<span class="required">*</span><input style="min-width:100px;width:100px !important;" name="export_item_name[<?php echo $flexform_index ?>]" class="text" placeholder='<?php echo I18N::T('eq_charge','导出项名称')?>'/> = <span class="required">*</span>
+		<?php
+            foreach ($types as &$type){
+                $type = I18N::T('eq_charge',$type);
+            }
+            echo Form::dropdown('searchtype['.$flexform_index.']', $types, EQ_Charge_Search::SEARCH_CASH, 'class="middle width_60"');
+			$options = EQ_Charge_Search::$search_option;
+			echo Form::dropdown('searchoption['.$flexform_index.']', $options, EQ_Charge_Search::SEARCH_NONE, 'class="middle width_60"');
+		?>
+		<input style="min-width:60px;width:60px !important;" name="export_item_value[<?php echo $flexform_index ?>]" class="text number"/>
+	</td>
+</tr>
+</table>

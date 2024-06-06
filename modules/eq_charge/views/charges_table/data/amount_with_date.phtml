@@ -1,0 +1,23 @@
+<div class="description">
+<?php echo Date::format($c->ctime, 'Y/m/d H:i'); ?>
+</div>
+<?php
+if (L('ME')->is_allowed_to('查看估计收费', $c->equipment)):
+	// 如果有权限，既显示估计收费，又显示实际收费
+	if ($c->custom):
+		// 如果有估计收费
+		// 输出估计收费 & 实际收费
+	?>
+		<?php echo I18N::T('eq_charge', '估计收费 %fee', ['%fee' => Number::currency($c->auto_amount)]); ?>
+		<br/>
+		<?php echo I18N::T('eq_charge', '实际收费 %fee', ['%fee' => '<strong  class="blue">' . Number::currency($c->amount) . '</strong>']); ?>
+	<?php
+	else:
+		// 输出实际收费
+		echo $c->amount ? '<strong class="blue">'.Number::currency($c->amount).'</strong>' : '&#160;';
+	endif;
+else:
+	// 没权限只输出实际收费
+	echo $c->amount ? '<strong  class="blue">'.Number::currency($c->amount).'</strong>' : '&#160;';
+endif;
+?>

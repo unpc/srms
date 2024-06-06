@@ -1,0 +1,7 @@
+<?php 
+$name = $account->lab->name;
+if (in_array(L('ME')->token, Config::get('lab.admin'))) {
+    $name .= " ({$account->id})";
+}
+?>
+<a href="<?php echo $account->lab->url('billing_account'); ?>"><?php echo H($name); ?></a>

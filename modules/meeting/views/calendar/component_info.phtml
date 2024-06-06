@@ -1,0 +1,11 @@
+<tr>
+	<td></td>
+	<td>
+		<div class="hr_1">&#160;</div>
+		<p><?php echo I18N::T('meeting', '开始时间'); ?>: <?php echo Date::format($component->dtstart); ?></p>
+		<p><?php echo I18N::T('meeting', '结束时间'); ?>: <?php echo Date::format($component->dtend); ?></p>
+		<?php if ($component->description) : ?>
+		<p><?php echo I18N::T('meeting', '备注'); ?>: <?php echo H($component->description); ?></p>
+		<?php endif; ?>
+	</td>
+</tr>

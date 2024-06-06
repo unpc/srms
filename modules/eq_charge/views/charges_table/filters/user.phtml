@@ -1,0 +1,7 @@
+<?php 
+echo Widget::factory('user_selector', 
+[
+	'name'=>'user', 
+	'user'=>$user,
+	'autocomplete' => URI::url('!eq_charge/autocomplete/user'),
+]); 

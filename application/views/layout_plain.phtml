@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C/DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="renderer" content="webkit" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1" />
+<title>
+	<?php echo $title ? T(Config::get('page.title_pattern'), ['%title'=>$title]) : Config::get('page.title_default');
+ ?>
+</title>
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta name="viewport" content="user-scalable=no, width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
+<base href="<?php echo H(Config::get('system.base_url') ) ?>" />
+<link rel="apple-touch-icon" href="<?php echo H(URI::url('public', ['f'=>'images/icon_touch.png']) ) ?>" />
+<?php echo $this->controller->load_css(); ?>
+<?php echo $this->controller->load_js(TRUE); ?>
+</head>
+<body>
+	<div id="body">
+		<?php echo $this->body ?>
+	</div>
+	<?php echo $this->controller->load_js(FALSE); ?>
+</body>
+</html>

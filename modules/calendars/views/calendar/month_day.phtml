@@ -1,0 +1,24 @@
+<div class="day_content">
+<?php
+
+$has_more = FALSE;
+foreach ($components as $component) {
+	if ($component->dtend < $component->dtstart) continue;
+	$reserv = O('eq_reserv', ['component' => $component]);
+	$equipment = $component->calendar->parent;
+	if ( $equipment->control_mode && $reserv->id && $reserv->dtend <= Date::time() && $reserv->status == EQ_Reserv_Model::PENDING) {
+		$record = Q("eq_record[reserv={$reserv}][dtend>0]:limit(1)")->current();
+		$reserv->status = $reserv->get_status(TRUE, $record);
+	}
+	if($component->type == '3') $color = 1;
+	$data = [
+		'color' => $color?:$reserv->status,
+		'calendar' => $calendar,
+		'day' => $day,
+	];
+	echo $component->render('calendars:calendar/month_component_content', TRUE, $data);
+	unset($color);
+}
+
+?>
+</div>

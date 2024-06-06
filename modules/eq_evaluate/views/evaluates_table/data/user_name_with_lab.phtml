@@ -1,0 +1,12 @@
+<?php 
+$user = $evaluate->user;
+if (!$GLOBALS['preload']['people.multi_lab']) {
+	$lab = Q("$user lab")->current();
+}
+?>
+<div><?php $user->render(); ?></div>
+<?php if ($lab->id): ?>
+<div>
+    <a class="description" href="<?php echo H($lab->url()) ?>"><?php echo H($lab->name)?></a>
+</div>
+<?php endif;?>

@@ -1,0 +1,18 @@
+<span class="authors">
+	<?php 
+		$ac_authors = Q("ac_author[achievement={$achievement}]:sort(position A)");
+		$me = L('ME');
+		$authors = [];
+		foreach ($ac_authors as $ac_author) {
+			if ($ac_author->user->id) {
+				$class = $ac_author->user->id == $me->id ? 'same_author' : '';
+				$authors[] = URI::anchor($ac_author->user->url(), H($ac_author->name), ' class="'.$class.'"');
+			} else {
+				$authors[] = H($ac_author->name);
+			}
+		}
+		$links = empty($authors) ? '' : implode(', ',$authors);
+		echo $links;
+	?>
+	.
+</span>

@@ -1,0 +1,5 @@
+<?php $extra_id = 'sample_extra_'.$sample->id;?>
+<a id="<?php echo H($extra_id) ?>"  href="#" class="extra_links icon-drop_down02 icon-lg"><?php echo I18N::T('eq_sample', ''); ?></a>
+<div class="<?php echo $extra_id?> sample_dropdown hidden">
+    <?php echo Widget::factory('application:links', ['links' => $extra_links, 'separator'=>'']); ?>
+</div>

@@ -1,0 +1,531 @@
+.equipment_list .equipment {
+    border-bottom: 1px solid #eee;
+}
+
+.equipment_detail .icon {
+    /* float: left; */
+}
+
+.equipment_detail {
+
+    span {
+        /*color: #666666;*/
+    }
+    ul.follow {
+        .down {
+            color: #666666;
+            .unit {
+                color: #666666;
+            }
+        }
+    }
+
+    div.clearfix {
+        margin-top: 10px;
+    }
+
+    .interval {
+        .icon {
+            border: 1px solid #EDEFF2;
+            border-radius: 3px;
+            height: 102px;
+            width: 102px;
+        }
+    }
+
+    .right {
+        color: var(--basiccolor);
+    }
+
+    .right_icons {
+        height: 192px;
+        position: relative;
+
+        .qrcode_default {
+            border-style: solid;
+            border-width: 0 0 100px 100px;
+            border-color: transparent transparent blue transparent;
+            width: 0;
+            height: 0;
+        }
+
+    }
+
+    table {
+        width: 100%;
+    }
+
+    td.top {
+        padding: 0;
+    }
+
+    td.interval {
+        padding: 0 30px 0 0;
+    }
+
+    h2 {
+        padding-top: 6px;
+        a {
+            color: #333333;
+            font-size: 18px;
+        }
+    }
+
+    p {
+        color: #999;
+        height: 18px;
+        padding-bottom: 9px;
+
+        a {
+            color: #666;
+            &.blue{
+                color:var(--basiccolor)
+            }
+        }
+
+        span.left {
+            display: block;
+            float: left;
+            width: 60px;
+        }
+
+        span.adjust_font {
+            color: #666;
+        }
+    }
+    .equipment-status-inservice {
+        display: inline-block;
+        border: 1px solid #c3f5b4;
+        border-radius: 5px;
+        padding: 0 5px;
+        color: #8ce670;
+        background-color: #f0fded;
+        span, small {
+            color: #8ce670;
+        }
+    }
+    .equipment-qrcode-export {
+        width: 70px;
+        height: 70px;
+        display: none;
+        position: absolute;
+        background-color: #333;
+        color: #FFF;
+        right: 0px;
+        top: 0px;
+        line-height: 70px;
+        text-align: center;
+        opacity: 0.8;
+        span {
+            display: block;
+        }
+    }
+
+}
+
+.equipment_detail .information {
+    margin-left: 72px;
+}
+
+.equipment_buttons {
+    text-align: center;
+    height: 36px;
+    margin: 12px 24px 12px 30px;
+
+    .inline_block {
+        position: absolute;
+        right: 31px;
+        top: 1px;
+        /* background-color: #FEFFFF; */
+
+        span.control_status {
+            border-radius: 0px;
+            background-position: center;
+        }
+    }
+
+}
+
+.list {
+    position: relative;
+}
+
+.image_display {
+    float: left;
+    height: 140px;
+    margin-left: 10px;
+    margin-top: 10px;
+    overflow: hidden;
+    text-align: center;
+    width: 130px;
+    border: 1px solid #e0e0e0;
+    padding-top: 20px;
+
+    li.icon {
+        position: relative;
+        height: 64px;
+        margin-bottom: 4px;
+        padding-top: 10px;
+    }
+
+    .status_tags {
+        position: absolute;
+        right: 10px;
+        top: 0;
+        z-index: 100;
+    }
+
+    .control_status_box {
+        position: absolute;
+        left: 10px;
+        top: 0;
+        z-index: 100;
+        background-color: #fff;
+        border: 2px solid #ccc;
+        padding: 2px;
+        border-radius: 5px;
+    }
+
+    img.icon {
+        display: block;
+        margin: 0 auto;
+    }
+
+}
+
+ul.nolist {
+    list-style-image: none;
+    list-style-position: outside;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+ul.nolist li {
+    margin-left: 0;
+}
+
+span.control_status {
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+    background-repeat: no-repeat;
+}
+
+span.power_on {
+    background-image: url("images/icons/power_on.png");
+    _background-image: url("images/icons/power_on.gif");
+}
+
+span.power_off {
+    background-image: url("images/icons/power_off.png");
+    _background-image: url("images/icons/power_off.gif");
+}
+
+span.computer_on {
+    background-image: url("images/icons/computer_on.png");
+    _background-image: url("images/icons/computer_on.gif");
+}
+
+span.computer_off {
+    background-image: url("images/icons/computer_off.png");
+    _background-image: url("images/icons/computer_off.gif");
+}
+
+span.bluetooth_on {
+	background-image: url(images/icons/bluetooth_on.png);
+	_background-image: url(images/icons/bluetooth_on.gif);
+}
+
+span.bluetooth_off {
+	background-image: url(images/icons/bluetooth_off.png);
+	_background-image: url(images/icons/bluetooth_off.gif);
+}
+
+span.power_on_disconnected {
+    background-image: url("images/icons/power_on_dis.png");
+    _background-image: url("images/icons/power_on_dis.gif");
+}
+
+span.power_off_disconnected {
+    background-image: url("images/icons/power_off_dis.png");
+    _background-image: url("images/icons/power_off_dis.gif");
+}
+
+span.computer_on_disconnected {
+    background-image: url("images/icons/computer_on_dis.png");
+    _background-image: url("images/icons/computer_on_dis.gif");
+}
+
+span.computer_off_disconnected {
+    background-image: url("images/icons/computer_off_dis.png");
+    _background-image: url("images/icons/computer_off_dis.gif");
+}
+
+span.bluetooth_on_disconnected {
+	background-image: url(images/icons/power_on_dis.png);
+	_background-image: url(images/icons/power_on_dis.gif);
+}
+
+span.bluetooth_off_disconnected {
+	background-image: url(images/icons/power_off_dis.png);
+	_background-image: url(images/icons/power_off_dis.gif);
+}
+
+div.asc {
+    width: 16px;
+    height: 16px;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    background-image: url("images/icons/asc.png");
+}
+
+div.desc {
+    width: 16px;
+    height: 16px;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    background-image: url("images/icons/desc.png");
+}
+
+.eq_count {
+    color: #333;
+    margin-top: 4px;
+}
+
+span.eq_number {
+    color: var(--basiccolor);
+}
+
+table.grid th div.sortable {
+    position: relative;
+}
+
+tr.eq_record ul.notes li {
+    list-style: none;
+    margin-left: 0;
+    cursor: default;
+}
+
+div.group_training {
+    color: #F6B439;
+    vertical-align: middle;
+    line-height: 24px;
+}
+
+div.is_agent {
+    vertical-align: middle;
+    background: url("images/icons/agent.gif") center center no-repeat;
+}
+
+.access_code_expired {
+    color: #666;
+    font-weight: normal;
+    text-decoration: line-through;
+}
+
+#table_equipment_records {
+    margin-left: 0;
+
+    .status_icon {
+        display: inline-block;
+        overflow: hidden;
+        width: 16px;
+        height: 16px;
+        background-repeat: no-repeat;
+        background-position: center center;
+
+        &.status_locked {
+            background-image: url("!equipments/images/status_locked.gif");
+        }
+
+        &.status_normal {
+            background-image: url("!equipments/images/status_normal.gif");
+        }
+    }
+    td {
+        padding: 8px 12px;
+    }
+}
+
+.equipments_info_style {
+    padding: 20px 0;
+    margin-right: 24px;
+    border-bottom: 1px solid #EDEFF2;
+
+    td.top, td.tight {
+        width: 80px;
+        padding: 0;
+    }
+
+    .current_user {
+        h3 {
+            line-height: 1;
+            padding-bottom: 4px;
+        }
+
+        p {
+            margin-top: 16px;
+            line-height: 1;
+        }
+
+    }
+
+    .status_tag {
+        margin-left: 0;
+    }
+
+    ul li {
+        margin: 0;
+        float: left;
+        /* width: 373px; */
+
+        /* span {
+            display: block;
+        } */
+
+        h5 {
+            color: #666;
+            font-weight: 400;
+        }
+
+        span.left {
+            float: left;
+            width: 100px;
+            white-space: nowrap;
+            color: #333;
+            text-align: right;
+            padding-right: 10px;
+        }
+
+        span.left:after {
+            content:":";
+        }
+
+        span.right {
+            float: left;
+            color: #333;
+            width: 164px;
+            text-align: left;
+        }
+
+    }
+
+    .lmargin_2 span {
+        display: inline;
+        color: #666;
+    }
+
+}
+
+.dashboard-info td:nth-child(odd) {
+    text-align: right;
+}
+
+.dashboard-info .value {
+    font-weight: 600;
+    color: #333 !important;
+}
+
+.equipments_info_style:last-child {
+    border: none;
+}
+
+.equipment_info_form {
+    .status_tag_label {
+        display: block;
+    }
+
+    tr {
+
+        td {
+            &.value {
+                width: 300px;
+            }
+
+            &.tight,&.top {
+                line-height: 1;
+                 width: 80px;
+            }
+        }
+
+    }
+    &.bubble{
+        margin-top: 20px;
+
+        tr {
+
+            td {
+                padding-bottom:16px;
+                padding-right:0px;
+                &.value {
+                 /*   width: 257px;*/
+                    line-height: 28px;
+                }
+
+                &.tight,
+                &.top {
+                    line-height: 1;
+                     width: 80px;
+                }
+            }
+
+        }
+    }
+
+    .status_tag {
+        display: inline-block;
+        border-radius: 2px;
+        color: #666;
+        vertical-align: middle;
+        text-decoration: none;
+        text-align: right;
+        font-size: 14px;
+        font-weight: normal;
+        text-transform: capitalize;
+    }
+}
+
+/*table.form td {*/
+    /*padding: 0;*/
+/*}*/
+
+table.create_user {
+    td.content_wrap {
+        white-space: normal;
+        word-wrap: break-word;
+        *width: 320px;
+        /*ie6 中td的content_wrap会撑开td，而不会换行*/
+        word-break: normal;
+    }
+}
+
+.triple {
+    overflow: hidden;
+    li {
+        float: left;
+        display: inline;
+        width: 33%;
+        height: 20px;
+        margin-bottom:10px;
+    }
+}
+
+
+
+.record_count {
+    line-height: 24px;
+    margin-right: 10px;
+}
+
+img.icon_equipment {
+    /* border: 1px solid #DDD; */
+}
+
+.dis_del{
+	display: none!important;
+}
+
+input.text.wide {
+    width: 380px;
+}

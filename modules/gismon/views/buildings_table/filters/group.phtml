@@ -1,0 +1,11 @@
+<div class="gray_tag_container middle">
+<?php
+echo Widget::factory('application:tag_selector', [
+	'tag' => $this->tag,
+	'root' => $this->root,
+	'name' => $this->name,
+	'ajax' => TRUE,
+	'field_title' => $this->field_title,
+]);
+?>
+</div>

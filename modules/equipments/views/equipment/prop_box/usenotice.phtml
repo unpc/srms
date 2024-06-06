@@ -1,0 +1,40 @@
+<style>
+    strong > a {
+        color: var(--basiccolor);
+    }
+</style>
+<input type="hidden" id="prop_box_close_equal_know" value="usenotice_read" />
+<div class="padding_1">
+    <h3 class="center"><?= T('温馨提示') ?></h3>
+    <div class="interval_12"></div>
+    <div class="lmargin_2 left">
+        <strong>
+            <?php echo H($me->name) . T('老师，您好'); ?>
+            <br>
+            <br>
+            <?php 
+                foreach ($message as $value) {
+                    echo $value . '<br>'; 
+                }
+            ?>
+            <br>
+            <?php echo H('请合理安排使用时间.') ?>
+        </strong>
+    </div>
+    <div class="interval_12"></div>
+    <div class="right">
+        <a class="blue usenotice_read"><?= T('我知道了') ?></a>
+    </div>
+</div>
+<script>
+jQuery(function($) {
+    $('.usenotice_read').on('click', function() {
+        Q.trigger({
+            object: 'usenotice',
+            event: 'read',
+            url: '<?= H(URI::url('!equipments/usenotice')); ?>',
+            global: false
+        });
+    })
+})
+</script>

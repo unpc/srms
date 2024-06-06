@@ -1,0 +1,129 @@
+<div class="order_track">
+<h2><?php echo I18N::HT('orders', '跟踪信息') ?></h2>
+<div class="hr_1">&#160;</div>
+<?php
+
+$list = [];
+
+if ($order->requester->id) {
+	$list[] = [
+		'format' => '由 %user 于 %date 申购',
+		'class' => 'new',
+		'args' => [
+			'%user' => $order->requester->render(NULL, TRUE),
+			'%date' => '<em>'.H(Date::format($order->request_date)).'</em>',
+		],
+		'note' => $order->request_note,
+		'time' => $order->request_date,
+		'index' => 0,
+	];
+}
+if ($order->approver->id) {
+	$list[] = [
+		'format' => '由 %user 于 %date 确认',
+		'class' => 'ok',
+		'args' => [
+			'%user' => $order->approver->render(NULL, TRUE),
+			'%date' => '<em>'.H(Date::format($order->approve_date)).'</em>',
+		],
+		'note' => $order->approve_note,
+		'time' => $order->approve_date,
+		'index' => 1,
+	];
+}
+if ($order->purchaser->id) {
+	$list[] = [
+		'format' => '由 %user 于 %date 订购',
+		'class' => 'ok',
+		'args' => [
+			'%user' => $order->purchaser->render(NULL, TRUE),
+			'%date' => '<em>'.H(Date::format($order->purchase_date)).'</em>',
+		],
+		'note' => $order->purchase_note,
+		'time' => $order->purchase_date,
+		'index' => 2,
+	];
+}
+if ($order->receiver->id) {
+	$list[] = [
+		'format' => '由 %user 于 %date 收货',
+		'class' => 'ok',
+		'args' => [
+			'%user' => $order->receiver->render(NULL, TRUE),
+			'%date' => '<em>'.H(Date::format($order->receive_date)).'</em>',
+		],
+		'note' => $order->receive_note,
+		'time' => $order->receive_date,
+		'index' => 3,
+	];
+}
+if ($order->canceler->id) {
+	
+	$list[] = [
+		'format' => '由 %user 于 %date 取消',
+		'class' => 'canceled',
+		'args' => [
+			'%user' => $order->canceler->render(NULL, TRUE),
+			'%date' => '<em>'.H(Date::format($order->cancel_date)).'</em>',
+		],
+		'note' => $order->cancel_note,
+		'time' => $order->cancel_date,
+		'index' => 4,
+	];
+}
+
+$expense = $order->expense;
+if ($expense->id) {
+	$list[] = [
+		'format' => '由 %user 于 %date 关联经费 %grant',
+		'class' => 'ok',
+		'args' => [
+			'%user' => $expense->user->render(NULL, TRUE),
+			'%date' => '<em>'.H(Date::format($expense->ctime)).'</em>',
+			'%grant' => URI::anchor($expense->grant->url('summary', ['portion'=>$expense->portion]), H($expense->grant->project).': '.$expense->path(' » ')),
+		],
+		'note' => $expense->note,
+		'time' => $expense->ctime,
+		'index' => 5,
+	];
+}
+
+usort($list, function($a, $b) {
+	if ($a['time'] != $b['time']) return $a['time'] - $b['time'];
+	return $a['index'] - $b['index'];
+});
+
+$stock = O('stock', ['order'=>$order]);
+if ($stock->id && $stock->creator->id) {
+	$list[] = [
+		'format' => '由 %user 于 %date 加为存货',
+		'class' => 'ok',
+		'args' => [
+			'%user' => $stock->creator->render(NULL, TRUE),
+			'%date' => '<em>'.H(Date::format($stock->ctime)).'</em>',
+		],
+		'time' => $stock->ctime,
+	];
+}
+
+echo '<ol class="lpadding_3">';
+$count = count($list); $i = 0;
+foreach ($list as $item) {
+	$i++;
+	$class = $item['class'];
+	if ($i < $count) {
+		$class .= ' '.$class.'_arrow';
+	}
+
+	echo '<li class="'.$class.'">';
+	echo '<h4>'.I18N::T('orders', $item['format'], $item['args']).'</h4>';
+	if ($item['note']) {
+		echo '<div class="description">'.H($item['note'], TRUE).'</div>';
+	}
+	echo '</li>';
+}
+
+echo '</ol>';
+
+?>
+</div>

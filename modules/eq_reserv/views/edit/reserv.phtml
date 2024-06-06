@@ -1,0 +1,132 @@
+<?php
+$default_add_reserv_earliest_limit = Lab::get('equipment.add_reserv_earliest_limit', NULL, '@');
+$default_add_reserv_latest_limit = Lab::get('equipment.add_reserv_latest_limit', NULL, '@');
+$default_modify_reserv_latest_limit = Lab::get('equipment.modify_reserv_latest_limit', NULL, '@');
+$default_delete_reserv_latest_limit = Lab::get('equipment.delete_reserv_latest_limit', NULL, '@');
+
+list($default_add_reserv_earliest_time, $default_add_reserv_earliest_format) = Date::format_interval($default_add_reserv_earliest_limit, 'ihd');
+
+list($default_add_reserv_latest_time, $default_add_reserv_latest_format) =  Date::format_interval($default_add_reserv_latest_limit, 'ihd');
+
+list($default_modify_reserv_latest_time, $default_modify_reserv_latest_format) =  Date::format_interval($default_modify_reserv_latest_limit, 'ihd');
+list($default_delete_reserv_latest_time, $default_delete_reserv_latest_format) =  Date::format_interval($default_delete_reserv_latest_limit, 'ihd');
+
+if ($equipment->accept_merge_reserv) list($merge_reserv_interval, $foobar) = Date::format_interval($equipment->merge_reserv_interval, 'i');
+
+$me = L('ME');
+$disabled = $me->is_allowed_to('修改预约设置', $equipment) ? '' : ' disabled="disabled"';
+?>
+<form class="edit eq_reserv_edit_reserv  rmargin_100" autocomplete="off" method="post"
+ action="<?php echo H(URI::url() ) ?>">
+<div class="form">
+<?php  //echo V('form_error', ['form'=>$form]); ?>
+<table class="form">
+	<tbody>
+	<tr>
+		<td class="top icon"  width="130">
+			<?php echo $equipment->icon('104'); ?>
+		</td>
+		<td class="top">
+			<?php if(L('ME')->is_allowed_to('锁定预约', $equipment)) :?>
+				<h2 class="section_title">
+                    <span class="border"></span>
+                    <span class="black_title"><?php echo I18N::T('eq_reserv', '锁定预约')?></span>
+                </h2>
+                <div class="interval_12"></div>
+				<div class="lmaigin_1e5">
+					<?php echo Form::checkbox('reserv_lock',  $equipment->reserv_lock, I18N::T('eq_reserv', '锁定仪器负责人对该仪器的预约设置'), 'class="middle checkbox"', 'class="middle"');?>
+				</div>
+                <div class="interval_24"></div>
+			<?php endif;?>
+			<h2 class="section_title">
+                <span class="border"></span>
+                <span class="black_title"><?php echo I18N::HT('eq_reserv', '使用要求'); ?></span>
+            </h2>
+            <div class="interval_12"></div>
+            <div  class="lmaigin_1e5">
+                <div>
+                    <?php echo Form::checkbox('accept_reserv', $equipment->accept_reserv, I18N::HT('eq_reserv', '需要预约'), 'class="middle checkbox monitor"' . $disabled, 'class="middle"'); ?>
+                </div>
+                <?php echo Event::trigger('eq_reserv.requirement.extra.view', $equipment, $disabled) ?>
+            </div>
+            
+            <div class="interval_24"></div>
+            <div class="hidden toggle:accept_reserv show_on:on">
+            <?php $reserv_types = Config::get('eq_reserv.types');?>
+
+            <?php
+            // 如果只有一种模式
+            if (count($reserv_types) > 1) :?>
+            <h4><?php echo I18N::HT('eq_reserv', '预约类型');?></h4>
+            <div class="padding_2">
+            <?php $views = [];?>
+            <?php foreach($reserv_types as $name => $conf) :?>
+                <span class="padding_1">
+                <?php
+                    echo Form::radio('reserv_type', $name, $form['reserv_type'] ? : ($equipment->reserv_type ? : 'time') == $name, I18N::T($conf['i18n'], $conf['title']), 'class="monitor middle"');
+
+                    $views[$name] = V($conf['view'], $this->vars + [
+                        'equipment'=> $equipment,
+                        'form'=> $form
+                    ]);
+                ?>
+                </span>
+            <?php endforeach;?>
+            </div>
+            <?php endif;?>
+            </div>
+
+
+            <div class="reserv_rules">
+                <?php if (count((array) $views)) :
+                    foreach($views as $name => $view) :?>
+                        <div class="hidden toggle:reserv_type show_on:<?php echo $name;?>">
+                            <?php echo $view;?>
+                        </div>
+                    <?php endforeach;?>
+                <?php else :?>
+                    <?php echo Event::trigger('eq_reserv.requirement.extra.view_new',$equipment, $disabled);?>
+                    <?php echo V('eq_reserv:edit/reserv_time', $this->vars + [
+                            'equipment'=> $equipment,
+                            'merge_reserv_interval' => $merge_reserv_interval,
+                            'default_add_reserv_earliest_time' => $default_add_reserv_earliest_time,
+                            'default_add_reserv_latest_time' => $default_add_reserv_latest_time,
+                            'default_modify_reserv_latest_time' => $default_modify_reserv_latest_time,
+                            'default_delete_reserv_latest_time' => $default_delete_reserv_latest_time,
+                            'disabled' => $disabled
+                        ]);
+                    ;?>
+                <?php endif;?>
+
+                <?php $submit_id = 'submit_'. uniqid();?>
+
+                <?php if(!$disabled):?>
+                    <div class="form float_right">
+                        <input id="<?php echo H($submit_id) ?>"  type="submit" name="submit" class="font-button-save prevent_default" value="<?php echo H(T('保存修改')) ?>" />
+                    </div>
+                <?php endif;?>
+            </div>
+
+            </td>
+        </tr>
+    </tbody>
+</table>
+</form>
+<div class="interval_60"></div>
+
+<?php if (count($reserv_types) > 1) :?>
+<script type="text/javascript">
+$(document).ready(function() {
+
+    $('#<?php echo $submit_id?>').bind('click', function() {
+        var origin_type = '<?php echo $equipment->reserv_type ? : 'time';?>';
+
+        if (origin_type != $(this).parents('form').find('[name=reserv_type]:checked').val()) {
+            if (! confirm('<?php echo I18N::T('eq_reserv', '由于您修改了预约方式, 未到期的预约将会被清除, 历史预约记录将会隐藏. 您确定进行更新吗?')?>')) {
+                return false;
+            }
+        }
+    });
+});
+</script>
+<?php endif; ?>

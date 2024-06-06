@@ -1,0 +1,6 @@
+<?php
+	$div_uniqid = 'div_refresh_'.uniqid();
+	$form_token = Session::temp_token('note',3600);
+	/*临时用某成员的附件空间来取代，之后用note对象来重新生成该附件view*/
+?>
+<div class="lpadding_3" id="<?php echo H($div_uniqid) ?>" src="<?php echo H(URI::url('!nfs/nfs/index.tn_note'.'.'.$note->id.'.attachments',['uniqid'=>$div_uniqid, 'form_token'=>$form_token])) ?>" style="min-height:100px; height:auto !important; height:100px; overflow:visible;">&#160;</div>

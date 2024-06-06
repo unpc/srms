@@ -1,0 +1,41 @@
+<table>
+	<tbody>
+<?php 
+	$datas = array_intersect_key((array)json_decode($update->new_data, TRUE), (array) $properties);
+	foreach((array)$datas as $key=>$data):
+		if (!$data)
+			continue;
+	?>
+		<tr>
+			<td class="left top nowrap">
+				<strong class="description"><?php echo I18N::HT('eq_reserv', $properties[$key]);?></strong>
+			</td>
+			<td class="left top content_wrap lpadding_2">
+				<?php 
+						$arr = [
+							'add_reserv_earliest_limit',
+							'add_reserv_latest_limit' ,
+							'modify_reserv_latest_limit',
+							'delete_reserv_latest_limit'
+						];
+						
+						if (in_array($key, $arr)) {
+							if ($data == '系统默认') {
+								echo H($data);
+							}
+							else {
+								list($time, $format) = Date::format_interval($data, 'hid');
+								echo H($time).' '.Date::unit($format);
+							}
+
+						}
+						else {
+					 		echo H(I18N::HT('eq_reserv', $data), TRUE);
+					 	}
+						
+				 ?>		
+			</td>
+		</tr>
+	<?php endforeach;?>
+	</tbody>
+</table>

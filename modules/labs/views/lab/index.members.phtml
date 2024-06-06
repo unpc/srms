@@ -1,0 +1,37 @@
+<div class="pages"><?= $pagination ?></div>
+<?php
+
+$table = Widget::factory('table', ['extra_class'=>'user_grid']);
+
+$table->name = 'labs_users';
+$table->add_columns($field);
+$table->sort_asc = $sort_asc;
+$table->sort_by  = $sort_by;
+
+$table->empty_message = I18N::T('labs', '无符合条件的成员');
+$me = L('ME');
+if (count($users) > 0 ) {
+    foreach ($users as $user) {
+        $links = $user->links();
+        if ($me->id != $user->id) {
+            $links = $me->follow_links($user) + $links;
+        }
+        $links = $links + $lab->member_links($user);
+        $table->add_row([
+            /* 'avatar'=>[
+                'view'=>$user->icon('32', 'style="display:block"'),
+                'extra'=>'align="left"'
+            ], */
+            'name'=>V('labs:users_table/data/name', ['user'=>$user]),
+            'contact_info'=>V('labs:users_table/data/contact_info', ['user'=>$user]),
+            'date'=>V('labs:users_table/data/date', ['user'=>$user]),
+            'address'=>V('labs:users_table/data/address', ['user'=>$user]),
+            'rest'=>Widget::factory('application:links', ['links' => $links,'extra'=>'align="left"'])
+        ]);
+    }
+}
+
+echo $table;
+?>
+
+<div class="pages"><?= $pagination ?></div>

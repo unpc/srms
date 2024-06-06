@@ -1,0 +1,41 @@
+<table style="width: 93%;margin-top: 1rem;">
+    <tbody>
+        <tr>
+            <td style="width: 5rem;text-align: right;padding-right: 2rem"><?= I18N::T('technical_service', '项目标题') ?></td>
+            <td>
+                <?php
+                echo Widget::factory('technical_service:equipment_project_selector', [
+                    'name' => "project_id[$flexform_index]",
+                    'selected_project' => $form['project_id'] ?: $project_id,
+                    'all_projects' => TRUE,
+                    'flexform_index' => $flexform_index,
+                    'extra' => "data-findex='$flexform_index' style='width:97%'",
+                ]);
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="interval_12"></td>
+        </tr>
+        <tr id="tr_<?= $flexform_index ?>">
+            <td style="width: 5rem;text-align: right;padding-right: 2rem"><?= I18N::T('technical_service', '服务仪器') ?></td>
+            <td>
+                <select data-findex="<?= $flexform_index ?>" class="js-example-basic-multiple no_dropdown" name="eqs[<?= $flexform_index ?>][]" multiple="multiple" style="width: 100%">
+                    <?php
+                    $isform = $form[$flexform_index]['eqs'] ? 1 : 0;
+                    $default = $form[$flexform_index]['eqs'] ?? $eqs;
+                    $formatDefault = [];
+                    if(is_array($default) && !empty($default)):
+                    foreach ($default as $i => $v) :
+                    ?>
+                        <option value="<?= $i ?>" selected><?= $v ?></option>
+                    <?php endforeach; ?>
+                    <?php endif; ?>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td class="interval_24"></td>
+        </tr>
+    </tbody>
+</table>

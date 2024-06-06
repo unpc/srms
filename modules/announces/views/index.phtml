@@ -1,0 +1,105 @@
+<?php
+$uniqid = uniqid();
+$select_all_id = 'select_all_' . $uniqid;
+$batch_form_id = 'batch_form_' . $uniqid;
+$delete_selected = 'delete_selected_' . $uniqid;
+$form_token = 'form_token_' . $uniqid;
+?>
+<?php
+$table = Widget::factory('table');
+$table->name = "announces";
+$table->add_columns([
+	/*'@'=>[
+		'align' => 'center',
+	],*/
+	'check' => [
+        'align' => 'left'
+    ],
+	'name'=>[
+		'title'=>I18N::T('announces', '标题'),
+		'nowrap'=>FALSE,
+		'filter' => [
+			'form' => V('announces:search_filter/index', ['name'=>$form['query']]),
+			'value' => $form['query'] ? H($form['query']) : NULL,
+            'field'=>'query'
+        ]
+	],
+	'sender'=>[
+		'title'=>I18N::T('announces', '发布人'),
+        'nowrap'=>TRUE,
+        'align'=>'left',
+	],
+	'ctime'=>[
+		'title'=>I18N::T('announces', '发布时间'),
+		'nowrap'=>TRUE,
+	],
+]);
+
+if($form['query']) {
+	$table->empty_message = I18N::T('announces', '没有符合条件的公告');
+}
+else {
+	$table->empty_message = I18N::T('announces', '暂无公告');
+}
+
+
+foreach ($user_announces as $user_announce) {
+
+	$announce = $user_announce->announce;
+	$tr_class = $user_announce->is_read ? 'announce_read':'announce_unread';
+	if($announce->id){
+		$table->add_row([
+			'check' => V('announces:announces_table/data/select', ['announce'=>$user_announce, 'select_all_id'=>$select_all_id]),
+			'name'=>V('announces:announces_table/data/name', ['announce'=>$announce]),
+			'sender'=>V('announces:announces_table/data/sender', ['announce'=>$announce]),
+			'ctime'=>Date::format($announce->ctime, 'Y/m/d H:i'),
+			'#extra_class'=>$tr_class
+		]);
+	}
+
+
+}
+?>
+<?php
+$param = [
+    'top_input_arr' => ['name'],
+    'columns'       => (array)$table->columns,
+];
+echo V('application:search_box', $param);
+?>
+<div class="clearfix">
+	<form method="post" action="<?php echo H(URI::url('!announces/index/batch_action') ) ?>" id="<?php echo H($batch_form_id ) ?>">
+		<div class="float_left" style="color: #4D4D4D">
+			<?php
+			echo Form::checkbox('', FALSE, I18N::T('announces', '全选'), 'id="'.$select_all_id.'" class="checkbox middle rmargin_10 lmargin_10" style="vertical-align: -2px;"',
+                '');
+			foreach ($user_announces as $user_announce) echo Form::checkbox('select['.$user_announce->id.']', FALSE, NULL, 'class="hidden checkbox" value="'.$user_announce->id.'"'); ?>
+            <?php echo I18N::T('messages', '标记为')?>
+            <input name="mark_read" type="submit" class="lmargin_10 font-button-default font-button-color-green"  value="<?php echo I18N::T('announces', '已读'); ?>" />
+            &#160;
+            <input name="mark_unread" type="submit" class="lmargin_10 font-button-default font-button-color-grey" value="<?php echo I18N::T('announces', '未读'); ?>" />
+        </div>
+	</form>
+</div>
+<div class="interval_16"></div>
+<?php
+echo $table;
+
+echo JS::load('announces:index_operate', ['select_all_id'=>$select_all_id, 'batch_form_id' => $batch_form_id]);
+?>
+
+<div class="pages"><?= $pagination ?></div>
+
+<script>
+jQuery(function($){
+    Q.trigger({
+        object: 'announce',
+        event: 'view',
+        global: false
+    });
+
+    $(Dialog).bind('before_close',function(){
+        return false;
+    });
+})
+</script>

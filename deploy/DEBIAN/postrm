@@ -1,0 +1,34 @@
+#!/bin/bash
+#===============================================================================
+#
+#        FILE: postrm
+#       USAGE: ---
+# DESCRIPTION: postrm script for lims2
+#              1. 普通更新时只删除缓存
+#              2. 当人为在dpkg命令后加入purge参数时会删除所有配置文件及缓存
+#        BUGS: ---
+#       NOTES:
+#      AUTHOR: xiaopei.li
+#     COMPANY: GENEEGROUP
+#     VERSION: v1.0
+#     CREATED: 2013-04-11
+#    REVISION: ---
+#
+#===============================================================================
+
+#-------------------------------------------------------------------------------
+#   purge 肯定不会是在 upgrade 中, 所以可以在 postrm
+#   中进一步清理目录(xiaopei.li@2011-12-18)
+#   参考了 lighttpd 的打包脚本
+#-------------------------------------------------------------------------------
+if [[ "$1" = "purge" ]]; then
+    rm -rf /usr/share/lims2 \
+        /var/lib/lims2 \
+        /var/cache/lims2 \
+        /etc/lims2
+fi
+
+# nfs is left
+# 若要删除 nfs, 需在 prerm 中 config 读取 nfs 路径
+
+exit 0

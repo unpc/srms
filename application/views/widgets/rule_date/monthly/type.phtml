@@ -1,0 +1,9 @@
+<div>
+<table class="form"><tr>
+<?php $static = H(['monthly_uniqid'=>$monthly_uniqid, 'flexform_index'=>$flexform_index]); ?>
+<td class="left nowrap middle" width="126"><?php echo I18N::T('application','指定'); ?></td>
+<td class="left nowrap middle">
+	<?php echo Form::dropdown('monthly_type['.$flexform_index.']', I18N::T('application', TM_RRule::$monthly_types), $monthly_type ,'class="middle view event:change object:monthly_type static:'.$static.' src:'.URI::url('rrule').'"','class="middle"');
+?></td>
+</tr></table>
+</div>

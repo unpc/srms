@@ -1,0 +1,168 @@
+<?php
+if (isset($specific_add_earliest_limit)) list($specific_add_earliest_time, $specific_add_earliest_format) = Date::format_interval($specific_add_earliest_limit, 'hid');
+if (isset($specific_add_latest_limit)) list($specific_add_latest_time, $specific_add_latest_format) = Date::format_interval($specific_add_latest_limit, 'hid');
+if (isset($specific_modify_latest_limit)) list($specific_modify_latest_time, $specific_modify_latest_format) = Date::format_interval($specific_modify_latest_limit, 'hid');
+if (isset($specific_delete_latest_limit)) list($specific_delete_latest_time, $specific_delete_latest_format) = Date::format_interval($specific_delete_latest_limit, 'hid');
+
+$system_default_add_earliest_limit = Lab::get('equipment.add_reserv_earliest_limit');
+$system_default_add_latest_limit = Lab::get('equipment.add_reserv_latest_limit');
+$system_default_modify_latest_limit = Lab::get('equipment.modify_reserv_latest_limit');
+$system_default_delete_latest_limit = Lab::get('equipment.delete_reserv_latest_limit');
+
+list($system_default_add_earliest_time, $system_default_add_earliest_format) = Date::format_interval($system_default_add_earliest_limit, 'ihd');
+list($system_default_add_latest_time, $system_default_add_latest_format) = Date::format_interval($system_default_add_latest_limit, 'ihd');
+list($system_default_modify_latest_time, $system_default_modify_latest_format) = Date::format_interval($system_default_modify_latest_limit, 'ihd');
+list($system_default_delete_latest_time, $system_default_delete_latest_format) = Date::format_interval($system_default_delete_latest_limit, 'ihd');
+
+?>
+<table class="form">
+	<tbody>
+		<tr>
+			<td class="left nowrap middle label">
+				<?php echo I18N::T('eq_reserv', '用户标签')?>
+            </td>
+        </tr>
+        <tr class="interval_6"></tr>
+        <tr>
+            <td>
+				<?php echo Widget::factory('equipments:tag_selector', [
+	   					'autocomplete'=> URI::url('autocomplete/object_tags.equipment.'.$equipment->id),
+	   					'name'=>'special_tags['.$flexform_index.']',
+	   					'value'=>($error ? $form['special_tags['.$flexform_index.']'] : @json_encode($tags)),
+		   			]);
+		   		?>
+			</td>
+		</tr>
+        <tr class="interval_20"></tr>
+		<tr>
+			<td class="left nowrap middle label"><?php echo I18N::T('eq_reserv', '添加预约最早可提前')?></td>
+        </tr>
+        <tr class="interval_6"></tr>
+        <tr>
+			<td class="nowrap middle">
+				<?php
+					echo Form::radio('specific_add_earliest_limit['.$flexform_index.']', 'customize',
+						is_null($specific_add_earliest_limit) ?
+							'default' : 'customize',
+							'','class="middle monitor"');
+				?>
+				<span class="middle toggle_status:specific_add_earliest_limit[<?= $flexform_index ?>] enable_on:customize" style="padding-left: 8px">
+				<input class="text number middle set_time_value" name="specific_add_earliest_time[<?= $flexform_index?>]" style="width: 104px"
+				value="<?php
+					echo isset($specific_add_earliest_time) ?  $specific_add_earliest_time : (isset($add_reserv_earliest_time) ? $add_reserv_earliest_time : $system_default_add_earliest_time)?>" />&#160;
+				<?php
+					echo Form::dropdown('specific_add_earliest_format['.$flexform_index.']', Date::units('ihd'),
+						$specific_add_earliest_format
+						? : $add_reserv_earliest_format ? : $system_default_add_earliest_format ? : Config::get('eq_reserv.default_add_limit_format', 'd'),
+						'class="middle set_time_format"');
+						?>
+				</span>
+                <div class="interval_6"></div>
+                <?php
+					echo Form::radio('specific_add_earliest_limit['.$flexform_index.']', 'default',
+						is_null($specific_add_earliest_limit) ?
+							'default' : 'customize',
+							I18N::T('eq_reserv', '系统默认值'),
+							'class="monitor"','class="middle" style="padding-left: 8px"');
+				?>
+
+			</td>
+		</tr>
+        <tr class="interval_20"></tr>
+		<tr>
+			<td class="left nowrap middle label"><?php echo I18N::T('eq_reserv', '添加预约最晚可提前')?></td>
+        </tr>
+        <tr class="interval_6"></tr>
+        <tr>
+			<td class="nowrap middle">
+				<?php
+					echo Form::radio('specific_add_latest_limit['.$flexform_index.']', 'customize',
+						is_null($specific_add_latest_limit) ?
+							'default' : 'customize',
+							'','class="middle monitor"');
+				?>
+				<span class="middle toggle_status:specific_add_latest_limit[<?= $flexform_index ?>] enable_on:customize" style="padding-left: 8px">
+				<input class="text number middle set_time_value" name="specific_add_latest_time[<?= $flexform_index ?>] " style="width: 104px" value="<?php echo H(isset($specific_add_latest_time) ?  $specific_add_latest_time : (isset($add_reserv_latest_time) ? $add_reserv_latest_time : $system_default_add_latest_time) ) ?>" />&#160;
+				<?php
+					echo Form::dropdown('specific_add_latest_format['.$flexform_index.']', Date::units('ihd'),
+						$specific_add_latest_format
+						? : $add_reserv_latest_format? : $system_default_add_latest_format ? : Config::get('eq_reserv.default_add_limit_format', 'd'),
+						'class="middle set_time_format"');
+				?>
+				</span>
+                <div class="interval_6"></div>
+				<?php
+					echo Form::radio('specific_add_latest_limit['.$flexform_index.']', 'default',
+						is_null($specific_add_latest_limit) ?
+							'default' : 'customize',I18N::T('eq_reserv', '系统默认值'),
+							'class="monitor"','class="middle" style="padding-left: 8px"');
+				?>
+			</td>
+		</tr>
+        <tr class="interval_20"></tr>
+		<tr>
+			<td class="left nowrap middle label"><?php echo I18N::T('eq_reserv', '修改预约最晚可提前')?></td>
+        </tr>
+        <tr class="interval_6"></tr>
+        <tr>
+			<td class="nowrap middle">
+				<?php
+					echo Form::radio('specific_modify_latest_limit['.$flexform_index.']', 'customize',
+						is_null($specific_modify_latest_limit) ?
+							'default' : 'customize',
+							'','class="middle monitor"');
+				?>
+				<span class="middle toggle_status:specific_modify_latest_limit[<?= $flexform_index ?>] enable_on:customize" style="padding-left: 8px">
+				<input class="text number middle set_time_value" name="specific_modify_latest_time[<?= $flexform_index ?>]" style="width: 104px" value="<?php echo H(isset($specific_modify_latest_time) ?  $specific_modify_latest_time : (isset($modify_reserv_latest_time) ? $modify_reserv_latest_time :$system_default_modify_latest_time)) ?>" />&#160;
+				<?php
+					echo Form::dropdown('specific_modify_latest_format['.$flexform_index.']', Date::units('ihd'),
+						$specific_modify_latest_format
+						? : $modify_reserv_latest_format ? : $system_default_modify_latest_format ? : Config::get('eq_reserv.default_modify_reserv_limit_format', 'd'),
+						'class="middle set_time_format"');
+				?>
+				</span>
+                <div class="interval_6"></div>
+				<?php
+					echo Form::radio('specific_modify_latest_limit['.$flexform_index.']', 'default',
+						is_null($specific_modify_latest_limit) ?
+							'default' : 'customize',I18N::T('eq_reserv', '系统默认值'),
+							'class="monitor"','class="middle" style="padding-left:8px"');
+				?>
+			</td>
+        </tr>
+
+        <tr class="interval_20"></tr>
+        <tr>
+            <td class="left nowrap middle label"><?php echo I18N::T('eq_reserv', '删除预约最晚可提前')?></td>
+        </tr>
+        <tr class="interval_6"></tr>
+        <tr>
+            <td class="nowrap middle">
+                <?php
+                echo Form::radio('specific_delete_latest_limit['.$flexform_index.']', 'customize',
+                    is_null($specific_delete_latest_limit) ?
+                        'default' : 'customize',
+                    '','class="middle monitor"');
+                ?>
+                <span class="middle toggle_status:specific_delete_latest_limit[<?= $flexform_index ?>] enable_on:customize" style="padding-left: 8px">
+				<input class="text number middle set_time_value" name="specific_delete_latest_time[<?= $flexform_index ?>]" style="width: 104px" value="<?php echo H(isset($specific_delete_latest_time) ?  $specific_delete_latest_time : (isset($modify_delete_latest_time) ? $modify_delete_latest_time :$system_default_delete_latest_time)) ?>" />&#160;
+				<?php
+                echo Form::dropdown('specific_delete_latest_format['.$flexform_index.']', Date::units('ihd'),
+                    $specific_delete_latest_format
+                        ? : $delete_reserv_latest_format ? : $system_default_delete_latest_format ? : Config::get('eq_reserv.default_delete_reserv_limit_format', 'd'),
+                    'class="middle set_time_format"');
+                ?>
+				</span>
+                <div class="interval_6"></div>
+                <?php
+                echo Form::radio('specific_delete_latest_limit['.$flexform_index.']', 'default',
+                    is_null($specific_delete_latest_limit) ?
+                        'default' : 'customize',I18N::T('eq_reserv', '系统默认值'),
+                    'class="monitor"','class="middle" style="padding-left:8px"');
+                ?>
+            </td>
+        </tr>
+
+        <tr><td class="interval_24"></td></tr>
+	</tbody>
+</table>

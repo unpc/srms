@@ -1,0 +1,29 @@
+<?php
+	if (count($equipments) > 0) {
+		foreach($equipments as $equipment){
+			$existing_data[] = ['equipment' => $equipment];
+		}
+	}
+?>
+
+<div class="hr_1">&#160;</div>
+<form action="<?php echo H(URI::url()) ?>" method="post">
+    <?php echo V('form_error', ['form' => $form]); ?>
+
+	<div class="form padding_2">
+	<?php
+		echo Widget::factory('flexform', [
+			'template_data' => ['disabled' => TRUE],
+			'existing_data' => $existing_data,
+            'item_view' => 'exhibition:item',
+            'extra_vars'=> [
+                'form_name' => 'forecast',
+            ],
+		]);
+	?>
+	</div>
+
+	<div class="form padding_2">
+		<input name="submit" type="submit" class="button button_save" value="<?php echo I18N::T('exhibition', '保存'); ?>" />
+	</div>
+</form>

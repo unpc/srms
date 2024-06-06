@@ -1,0 +1,29 @@
+<?php $has_updates = count($updates);?>
+<?php echo CSS::load_async("update:update"); ?>
+<?php
+   	if ($has_updates):?>
+	<div class="clearfix">
+		<div class="float_right">
+		<a class="font-button-save" id="delete_updates"><?= I18N::T('update', '清除全部'); ?></a>
+  		</div>
+	</div>
+<div class="interval_24"></div>
+<div class="update_list clearfix">
+	<?php echo V('update:desktop/list', ['updates'=>$updates, 'next_start'=>$next_start, 'time'=>strtotime("+1 day"), 'model_name'=>$model_name]) ?>
+</div>
+<?php else: ?>
+    <div class="no_updates"><?php echo I18N::T('update', '暂无系统更新')?></div>
+<?php endif;?>
+
+<script>
+jQuery(function($){
+	$("#delete_updates").bind('click', function(){
+		Q.trigger({
+			object : 'updates',
+			event : 'delete',
+			data : { tab : '<?php echo $model_name; ?>' },
+			url : '<?php echo URI::url("!update/update")?>'
+		});
+	});
+});
+</script>

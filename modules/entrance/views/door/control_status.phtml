@@ -1,0 +1,9 @@
+<?php 
+if($door->is_open) {
+	$control_class = 'door_open';
+}
+else {
+	$control_class = 'door_locked';
+}
+?>
+<span style="margin-top: 3px" class="lmargin_2 control_status middle <?php echo $control_class ?>"></span>

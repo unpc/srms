@@ -1,0 +1,15 @@
+<?php 
+if ($record->id) : 
+if (!is_object($sample)) $sample = O('eq_sample', $sample);
+
+$uniqid = 'eqsam_'.uniqid();
+$size = $this->size ?: '';
+$autocomplete = $this->autocomplete ?: URI::url('!eq_sample/autocomplete/approved_sample.' . $record->equipment->id);
+$name = $this->name ?: 'sample_id';
+?>
+<input id="<?php echo $uniqid ?>_sample" name="<?php echo H($name) ?>" type="hidden" value="<?php echo H($sample->id) ?>" />
+<input id="<?php echo $uniqid ?>_sample_name" 
+    class="text middle select_on_focus autocomplete:<?php echo H($autocomplete) ?> autocomplete_alt:#<?php echo $uniqid?>_sample tooltip:<?php echo I18N::T('equipments', '请输入关键字并选择')?>" 
+    size="<?php echo H($size) ?>" 
+    value="<?php echo $sample->id ? I18N::T('eq_sample', '%sample_id %user(%num) %time', ['%sample_id' => Number::fill(H($sample->id), 6), '%user' => $sample->sender->name, '%time' => Date::format($sample->dtsubmit, 'Y/m/d H:i'), '%num' => $sample->count]) : '' ?>" />
+<?php endif; ?>

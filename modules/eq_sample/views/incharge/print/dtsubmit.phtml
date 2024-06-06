@@ -1,0 +1,5 @@
+<?php if ($sample->dtsubmit) :?>
+<?php echo Date::format($sample->dtsubmit, 'Y/m/d H:i:s');?>
+<?php else: ?>
+<?php echo I18N::T('eq_sample', '未设送样时间')?>
+<?php endif;?>

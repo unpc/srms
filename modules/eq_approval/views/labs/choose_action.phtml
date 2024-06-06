@@ -1,0 +1,33 @@
+<div class="padding_1">
+<form class="prevent_default choose_batch_action" method="post" autocomplete="off">
+	<div class="padding_1 nowrap middle">
+		<h4><span class="description middle"><?= I18N::T('eq_approval', '请您批处理所选出的数据') ?></span></h4>
+	</div>
+	<div class="padding_1 nowrap middle">
+		<span type="submit" class="pass_action" name="pass">&#160;</span>
+		&#160;&#160;&#160;&#160;&#160;&#160;
+		<span type="submit" class="reject_action" name="reject">&#160;</span>
+	</div>
+	<script>
+	jQuery(function($){
+		var $form = $('.choose_batch_action')
+			, $span = $('span[type]', $form)
+		$span.bind('click', function(e){
+			var me = $(this)
+				, type = me.attr('name')
+			Q.trigger({
+				url: '<?= URI::url("!eq_approval/voucher")?>'
+				, object: 'voucher_batch'
+				, event: 'submit'
+				, data: {
+					ids: '<?= $ids ?>'
+					, submit: type
+				}
+			})
+			e.preventDefault()
+			return false
+		})
+	})
+	</script>
+</from>
+</div>

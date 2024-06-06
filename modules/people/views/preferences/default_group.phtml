@@ -1,0 +1,30 @@
+<div class="form margin-left-half">
+	<form method="post" class="edit" autocomplete="off" action="<?php echo H(URI::url()) ?>">
+	<table class="form" width="100%">
+		<tbody>
+            <tr>
+                <h2 class="section_title"><?php echo I18N::T('people', '组织机构')?></h2>
+                <div class="interval_16"></div>
+            </tr>
+			<tr>
+				<td class="middle" width="300"><div class="gray_tag_container margin-left-1">
+				        <?php
+				        echo Widget::factory('application:tag_selector', [
+				        	'tag'=>$default_group,
+				        	'root'=>$group_root,
+				        	'name'=>'group_id',
+				        	'ajax'=>true,
+				        ]);
+				        ?>
+				 </div></td>
+			</tr>
+			<tr>
+                <td>
+                    <div class="interval_36"></div>
+					<input type="submit" name="submit" class="font-button-save" value="<?php echo H(I18N::T('people', '保存修改')) ?>" />
+                </td>
+			</tr>
+		</tbody>
+	</table>
+	</form>
+</div>

@@ -1,0 +1,103 @@
+<div class="hr_1">&#160;</div>
+<?php echo $secondary_tabs; ?>
+<div class="hr_1">&#160;</div>
+<?php if (count($panel_buttons)) :?>
+	<div class="panel padding_1 clearfix">
+		<?php echo Widget::factory('application:links', ['links'=>$panel_buttons, 'separator'=>'&#160;']);?>
+	</div>
+<?php endif;?>
+<?php echo $pagination; ?>
+<?php
+$table = Widget::factory('table', ['extra_class'=>'user_grid']);
+$table->name = 'people_staffs';
+$table->add_columns([
+	'@'=>NULL,
+	'ref_no'=>[
+		'title'=>I18N::T('staff', '工号'),
+		'nowrap'=>TRUE
+	],
+	'name'=>[
+		'title'=>I18N::T('staff', '姓名'),
+		'nowrap'=>TRUE
+	],
+	'gender'=>[
+		'title'=>I18N::T('staff', '性别'),
+		'nowrap'=>TRUE
+	],
+	'age'=>[
+		'title'=>I18N::T('staff', '年龄'),
+		'nowrap'=>TRUE
+	],
+	'birthplace'=>[
+		'title'=>I18N::T('staff', '籍贯'),
+		'nowrap'=>TRUE
+	],
+	'IDnumber'=>[
+		'title'=>I18N::T('staff', '身份证号'),
+		'nowrap'=>TRUE
+	],
+	'phone'=>[
+		'title'=>I18N::T('staff', '联系电话'),
+		'nowrap'=>TRUE
+	],
+	'role'=>[
+		'title'=>I18N::T('staff', '角色'),
+		'nowrap'=>TRUE
+	],
+	'group'=>[
+		'title'=>I18N::T('staff', '部门'),
+		'filter' => [
+			'form' => V('people:users_table/filters/group', [
+                'name'=>'group_id', 
+                'tag'=>$group,
+				'root'=>$group_root,
+			]),
+			'value' => $group->id ? H($group->name): NULL
+		],
+		'nowrap'=>TRUE
+	],
+	'position'=>[
+		'title'=>I18N::T('staff', '职位'),
+		'filter' => [
+			'form' => V('staff:staffs_table/filter/position', [
+				'form'=>$form
+			]),
+			'value' => $form['position'] ? I18N::T('staff',  $positions[ $form['position'] ]):NULL 
+		],
+		'nowrap'=>TRUE
+	],
+	'rest'=>[
+		'align'=>'right',
+		'nowrap'=>TRUE
+	]
+]);
+
+$table->empty_message = I18N::T('staf', '无符合条件的成员');
+
+foreach ($staffs as $key => $staff) {
+	$links = $staff->links('view');
+	$table->add_row([
+		'@'=>[
+			'view'=>$staff->user->icon('32', 'style="display:block"'),
+			'extra'=>'style="padding:4px" align="right"'
+		],
+		'ref_no' => $staff->user->ref_no?H($staff->user->ref_no):'--',
+		'name' => V('staff:staffs_table/data/name', ['staff'=>$staff]),
+		'gender' => I18N::T('staff', User_Model::$genders[$staff->user->gender] ),
+		'age' => V('staff:staffs_table/data/age', ['staff'=>$staff]),
+		'birthplace' => H($staff->birthplace),
+		'IDnumber' => H($staff->IDnumber),
+		'education' => I18N::T('staff', $staff->get_education()),
+		'school' => H($staff->school),
+		'professional' => H($staff->professional),
+		'position' => V('staff:staffs_table/data/position', ['staff'=>$staff]),
+		'phone' => V('people:users_table/data/phone', ['user'=>$staff->user]),
+		'group' => V('application:tag/path', ['tag'=>$staff->user->group, 'url_template'=>URI::url('!staff/list', 'group_id=%tag_id')]),
+		'role' => I18N::T('staff', Staff_Model::$roles[ $staff->role ] ),
+		'contract_time' => V('staff:staffs_table/data/contract_time', ['staff'=>$staff]),
+		'effective_time' => V('staff:staffs_table/data/effective_time', ['staff'=>$staff]),
+		'rest'=>Widget::factory('application:links', ['links' => $links])
+	]);
+}
+echo $table;
+

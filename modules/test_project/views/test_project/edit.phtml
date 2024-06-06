@@ -1,0 +1,40 @@
+<?php
+foreach ($test_projects as $test_project) {
+    $existing_data[] = ['result' => $test_project];
+}
+?>
+<form class="" action="<?= H(URI::url()) ?>" method="POST">
+    <table class="form flexible">
+        <tbody>
+        <tr>
+            <td class="top icon" width="130px">
+                <?php echo $equipment->icon('104'); ?>
+            </td>
+            <td>
+                <div class="top flexible">
+                    <?php echo V('form_error', ['form' => $form]); ?>
+                    <?php
+                        echo Widget::factory('test_project:flexform', [
+                            'title' => I18N::T('test_project', '测试项目'),
+                            'template_data' => ['disabled' => TRUE],
+                            'existing_data' => $existing_data,
+                            'item_view' => 'test_project:test_project/item',
+                            'equipment' => $equipment,
+                            'extra_vars'=> [
+                                'form' => $form,
+                                'test_project_cats' => $test_project_cats,
+                            ],
+                        ]);
+                    ?>
+                
+                    <div class="form float_right">
+                        <div class="form">
+                            <input type="submit" name="submit" class="font-button-save" value="<?php echo H(I18N::T('test_project', '保存修改')) ?>" />
+                        </div>
+                    <div>
+                    <div class="interval_60"></div>
+                <div>
+            </td>
+        </tbody>
+    </table>
+</form>

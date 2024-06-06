@@ -1,0 +1,7 @@
+<div class="user_card clearfix" style="margin: 16px">
+	<div class="icon float_left"><a href="<?php echo H($object->url() ) ?>"><?php echo $object->icon('43.5') ?></a></div>
+	<div class="information">
+		<span class="name"><a class="user" href="<?php echo H($object->url() ) ?>" title="<?php echo H($object->name) ?>"><?php echo H($object->name) ?></a></span>
+        <span class="user-home"><a style="margin-top: 10px" class="fa icon-home" href="<?php echo H(URI::url('!people/dashboard')) ?>">&nbsp;<?php echo HT('个人主页')?></a></span>
+	</div>
+</div>

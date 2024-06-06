@@ -1,0 +1,4 @@
+<?php
+$status_list = Event::trigger('sample.status');
+echo $sample->status ? I18N::T('eq_sample', $status_list[$sample->status]) : NULL;
+?>

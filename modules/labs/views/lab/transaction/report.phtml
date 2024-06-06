@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C/DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <meta name="renderer" content="webkit" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1" />
+	<title><?php echo I18N::T('eq_charge', '收支报表打印'); ?></title>
+	<base href="<?php echo H(Config::get('system.base_url') ) ?>" />
+	<link type="text/css" rel="stylesheet" href="<?php echo H(URI::url('css', ['f'=>'core button'])) ?>" />
+	<style>
+		a{
+			color:#333333;
+			text-decoration:none
+		}
+		table.report {
+			
+			font-size: 14px;
+		}
+		thead , tbody{
+			border-bottom:2px solid #000;
+		}
+		
+		thead#stat{
+			font-size: 10px;
+		}
+		
+		table.report caption {
+			font-size: 150%;
+			margin-bottom: 10px;
+		}
+		/*
+		table.report thead td{
+			border-bottom: 1px solid #000;
+			font-weight: bold;
+		}
+		*/
+		table.report tbody td {
+			vertical-align: top;
+			border-bottom: 1px dotted #CCC;
+		}
+		table.report .referred_transaction {
+			background-color: #eee;
+			border:1px dotted #CCC;
+		}
+		
+	</style>
+	<style media="print">
+		.buttons{
+			display:none;
+		}
+	</style>
+</head>
+
+<body>
+	
+	<div class="padding_4">
+		<div class="margin_1 right buttons">
+			<?php $csv_path = URI::url('!labs/transaction/report_csv/index.'.$lab->id); ?>
+			<a href="<?php echo $csv_path; ?>" class="button button_save"><?php echo I18N::T('labs', '导出CSV'); ?></a>
+			<input class="button button_print " type="button" value="<?php echo I18N::T('labs', "打印"); ?>"  onclick="window.print(); return false;"/>
+			
+		</div>
+		<table class="report" cellpadding="5" cellspacing="5" style="border-collapse:collapse;">
+		<caption><?php echo I18N::T('eq_charge', '收支报表打印'); ?></caption>
+		<thead id="stat">
+			<tr>
+			<td colspan=7>
+			<?php echo I18N::T('labs', '实验室名称:'); ?>&#160;
+			<?php echo $lab->name; ?>
+			&#160;&#160;&#160;&#160;
+			<?php echo I18N::T('labs', '时间范围:'); ?>&#160;
+			<?php echo date('Y/m/d',$dtstart); ?>～<?php echo date('Y/m/d',$dtend); ?>
+			</td>
+			</tr>
+			
+		</thead>
+		<thead>
+			<tr>
+			<td class="left nowrap"><?php echo I18N::T('labs', '编号'); ?></td>
+			<td class="left nowrap"><?php echo I18N::T('labs', '日期'); ?></td>
+			<td class="right nowrap"><?php echo I18N::T('labs', '存款'); ?></td>
+			<td class="right nowrap"><?php echo I18N::T('labs', '支出'); ?></td>
+			<td class="right nowrap"><?php echo I18N::T('labs', '余额'); ?></td>
+			<td class="left nowrap flexible"><?php echo I18N::T('labs', '说明'); ?></td>
+			</tr>
+		</thead>
+		<tbody>
+			
+			<?php foreach($transactions as $transaction): ?>
+			<tr>
+			<td><?php echo Number::fill($transaction->id,6); ?></td>
+			<td class="left nowrap"><?php echo Date::format($transaction->ctime); ?></td>
+			<td class="right nowrap"><?php echo $transaction->income ? Number::currency($transaction->income) : '&#160;'; ?></td>
+			<td class="right nowrap"><?php echo $transaction->income ? '&#160;' : Number::currency($transaction->outcome); ?></td>
+			<td class="right nowrap"><?php echo Number::currency($transaction->balance); ?></td>
+			<td class="left nowrap description">
+				<?php echo (string) new Markup($transaction->description); ?>
+				<?php $reference = $transaction->reference; if($reference->id): ?>
+					
+					<div class="hr_1">&#160;</div>
+					<div class="referred_transaction padding_1">
+						<div><?php echo I18N::T('labs', '该记录产生自');?>: </div>
+						<small><?php echo '#'.Number::fill($reference->id, 6);?></small>
+						<?php echo Date::format($reference->ctime); ?>
+						<br />
+						<?php echo '<span class="label">'.I18N::T('labs', '说明').'</span>: '.( $reference->description ? H((string) $reference->description()): I18N::T('labs', '无')); ?>
+					</div>
+				<?php endif; ?>
+				<?php
+					$references = Q("transaction[reference={$transaction}]");
+					if($references->total_count()):
+				?>
+					<div class="hr_1">&#160;</div>
+					<div class="referred_transaction padding_1">
+					<?php echo I18N::T('labs', '该记录的后续记录');?>:
+					<ul>
+					<?php
+						foreach($references as $reference):
+					?>
+						<li>
+							<small><?php echo '#'.Number::fill($reference->id, 6);?></small>
+							<?php echo Date::format($reference->ctime); ?>
+							<br />
+							<?php echo '<span class="label">'.I18N::T('labs', '说明').'</span>: '.( $reference->description ? (string) new Markup($reference->description) : I18N::T('labs', '无')); ?>
+						</li>
+					<?php
+						endforeach;
+					?>
+					</ul>
+					</div>
+				<?php endif; ?>
+			</td>
+			</tr>
+			<?php endforeach; ?>
+			<tr>
+			<td colspan=2 class="right nowrap"><?php echo I18N::T('labs', '总计：'); ?></td>
+			<td class="right nowrap"><?php echo Number::currency($stat['income_sum']); ?></td>
+			<td class="right nowrap"><?php echo Number::currency($stat['outcome_sum']); ?></td>
+			<td class="right nowrap"><?php echo Number::currency($stat['balance']); ?></td>
+			<td>&#160;</td>
+			</tr>
+		</tbody>
+		</table>
+	</div>
+</body>
+</html>

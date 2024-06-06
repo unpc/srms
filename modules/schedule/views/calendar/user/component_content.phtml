@@ -1,0 +1,10 @@
+<?php 
+	echo JS::load_async('preview');
+    echo CSS::load_async('preview');
+    echo CSS::load_async('schedule:topic_color');
+?>
+<div q-static="<?php echo H(['component_id' => $component->id]);  ?>" q-preview="<?php echo URI::url('!schedule/index');  ?>">
+	<?php if ( $component->name ) : ?>
+	<p> <?php echo H($component->name); ?> </p>
+	<?php endif; ?>
+</div>

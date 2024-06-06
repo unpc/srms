@@ -1,0 +1,5 @@
+<?php if($calendar->allows['url']): ?>
+	<td class="label right nowrap"><?php echo $properties['label'] ?>
+	<input name="<?php echo H($name) ?>" type="text" size="40" class="text" value="<?php echo $component->url ?: $properties['default_value']; ?>" /></td>
+<?php endif; ?>
+

@@ -1,0 +1,67 @@
+<table class="form" device-id="<?php echo H($device->id) ?>">
+<tbody>
+<tr>
+	<td class="top icon tight">
+		<?php echo $object->icon('64'); ?>
+	</td>
+	<?php
+	$me = L('ME');
+	$is_admin = $me->is_allowed_to('修改', $object); ?>
+	<td class="lpadding_2 top">
+		<h2><a href="<?php echo H($object->url() ) ?>"><?php echo H($object->name); ?></a></h2>
+		<div class="description">(<?php echo I18N::T('equipments', EQ_Status_Model::$status[$object->status]); ?>)</div>
+		<?php if($object->status != EQ_Status_Model::NO_LONGER_IN_SERVICE): ?>
+			<p><?php echo I18N::T('equipments', '联系人')?>: 
+			<?php echo V('equipments:equipments_table/data/contacts', ['equipment'=>$object]); ?>
+			</p>
+			<?php if ($object->require_training && !$is_admin) : ?>
+			<p><?php echo V('training/status', ['equipment'=>$object]); ?></p>
+			<?php endif; ?>
+		<?php endif; ?>
+	</td>
+</tr>
+<tr>
+	<td colspan="2" class="top">
+		<?php if ($object->group->id): ?>	
+		<div class="interval_20">&#160;</div>
+			<?php echo V('application:tag/path', ['tag'=>$object->group, 'tag_root'=>$object->group->root, 'url_template'=>URI::url('!equipments/index','group_id=%tag_id')]) ?>
+		<?php endif ?>
+		<?php if($object->status != EQ_Status_Model::NO_LONGER_IN_SERVICE): ?>
+		<div class="interval_20">&#160;</div>
+		<?php echo V('equipment/control', ['equipment'=>$object]); ?>
+		<?php endif ?>
+		<?php $current_user = $object->current_user();  if($current_user->id) : ?>
+		<div class="interval_20">&#160;</div>
+		<p class="form_paragraph">
+			<?php $user_link = URI::anchor($current_user->url(), H($current_user->name), 'class="blue"'); ?>
+			<?php echo I18N::T('gismon', '%user正在使用中...', ['%user'=>$user_link]); ?>
+		</p>			
+		<?php endif; ?>
+		<div class="interval_20">&#160;</div>
+		<?php if($is_admin && $object->status != EQ_Status_Model::NO_LONGER_IN_SERVICE): ?>
+			<a class="button button_edit" title="<?php echo I18N::T('equipments', '修改')?>" href="<?php echo H($object->url(NULL, NULL, NULL, 'edit') ) ?>"></a>
+		<?php endif; ?>
+		<?php echo Widget::factory('application:links', ['links' => $me->follow_links($object, 'view'), 'separator'=>'']) ?>
+		&#160;&#160;
+		<?php if ($me->is_allowed_to('修改', 'gis_device')) : ?>
+            <?php if(Module::is_installed('db_sync') && !DB_SYNC::is_master()):?>
+			<a class="button button_delete" href="
+            <?php echo
+            Event::trigger('db_sync.transfer_to_master_url', '!gismon/building/index.'.$device->building->id, ['q_params'=>[
+                'q-object' => 'remove_device',
+                'q-event' => 'click',
+                'q-static'=> ['model' => 'equipment', 'id' => $object->id],
+                'q-src' => Event::trigger('db_sync.transfer_to_master_url', '!gismon/building/index.'.$device->building->id, '', true),
+            ]])
+            ?>
+            " >
+            <?php echo I18N::T('gismon', '从此层删除')?></a>
+            <?php else:?>
+            <a class="button button_delete" href="#" q-event="click" q-object="remove_device" q-static="<?php echo H(['model' => 'equipment', 'id' => $object->id]); ?>"><?php echo I18N::T('gismon', '从此层删除')?></a>
+            <?php endif; ?>
+		<?php endif; ?>
+		<div class="interval_20">&#160;</div>
+	</td>
+</tr>
+</tbody>
+</table>

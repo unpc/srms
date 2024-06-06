@@ -1,0 +1,18 @@
+<?php
+    echo JS::load_async('preview');
+    echo CSS::load_async('preview');
+	$now = time();
+	$dtstart = Input::form('st') ?: $now;
+	$date=getdate($dtstart);
+	$dtstart = mktime(0,0,0,$date['mon'], $date['mday'], $date['year']);
+	$dtend = $dtstart + 604800;
+	$browser_id = 'browser_' . uniqid();
+    $form_token = Session::temp_token();
+?>
+<script type="text/javascript">
+Q.Calendar = Q.Calendar || {};
+Q.Calendar.left_nav_area = <?php echo JS::quote((string) V("eq_reserv:calendar/left_nav", ["calendar"=> $calendar])) ?>;
+</script>
+<div id="<?php echo H($browser_id) ?>" src="<?php echo H($calendar->url('list', ['browser_id'=>$browser_id, 'st'=>$dtstart, 'ed'=>$dtend,
+    'calendar_id'=>$calendar->id, 'form_token' => $form_token]) ) ?>" style="position: relative;"></div>
+

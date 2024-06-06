@@ -1,0 +1,13 @@
+<?php
+	// 因为使用流媒体播放，不使用定时截图机制，所以在查看历史记录时才去调用 vidmon-server 获取历史记录截图
+	// 由于 NVR 型号的限制，部分型号不支持历史记录截图，所以此块改进先注释掉
+	/*
+	if ($vidcam->type == Vidcam_Model::TYPE_STREAM) {
+		Vidmon::history_capture($vidcam->id, $vdata->ctime);
+	*/
+
+	$capture_file = vidmon::video_alarm_thumbnail_file($vidcam, $vdata->ctime);
+    
+    $full_path = Cache::cache_file($capture_file);
+?>
+<img class="data:<?php echo $vdata->id?> vidcam_img" src="<?php echo H($full_path) ?>" />

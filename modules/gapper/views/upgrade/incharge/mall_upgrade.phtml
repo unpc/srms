@@ -1,0 +1,62 @@
+<?php
+
+	$form_errors = $form->errors;
+?>
+<div class="gapper_upgrade">
+<div class="process">
+	<div>
+		<div class="proce proce_ed proce_first float_left">&#160;</div>
+		<div class="node node_ing float_left">&#160;</div>
+		<div class="proce proce_will proce_normal float_left">&#160;</div>
+		<div class="node node_will float_left">&#160;</div>
+		<div class="proce proce_will proce_normal float_left">&#160;</div>
+		<div class="node node_will float_left">&#160;</div>
+		<div class="proce proce_will proce_normal float_left">&#160;</div>
+		<div class="node node_will float_left">&#160;</div>
+		<div class="proce proce_will proce_last float_left">&#160;</div>
+	</div>
+	<div class="clearfix"></div>
+	<div class="announce">
+		<div class="float_left center announce-slim"><b><?= I18N::T('gapper','关联商城')?></b></div>
+		<div class="float_left center announce-fat text-grey"><?= I18N::T('gapper','负责人开通')?></div>
+		<div class="float_left center announce-slim text-grey"><?= I18N::T('gapper','分组设置')?></div>
+		<div class="float_left center announce-fat text-grey"><?= I18N::T('gapper','完成')?></div>
+	</div>
+</div>
+<div class="clearfix"></div>
+<div class="float_left gapper_img">
+	<div style="margin:40px">
+		<img src="!gapper/images/mall.png">
+	</div>
+</div>
+<div class="gapper_content">
+	<p class="title"><?= I18N::T('gapper','绑定商城')?></p>
+	<p class="notes"><?= I18N::T('gapper','首先您需要先绑定商城账户')?></p>
+
+	<p class="step_title"><?= I18N::T('gapper','STEP 1')?></p>
+
+	<p class="step_notes">
+	<?php
+	$mall_sites = Config::get('mall.sites');
+	foreach ($mall_sites as $source => $config) {?>
+
+	<a q-static="source=<?= $source?>" q-src="<?= URI::url('mall')?>" q-event="click" q-object="download"><?= I18N::T('gapper','下载%source_name授权文件', ['%source_name'=>$config['label']])?></a>&#160;&#160;
+	<?php }?>
+	</p>
+
+	<p class="step_title"><?= I18N::T('gapper','STEP 2')?></p>
+	<p class="step_notes"><?= I18N::T('gapper','请跳转到对应商城进行绑定:')?>
+		<?php foreach ($mall_sites as $source => $config) {?>
+		<a target="_blank" href="<?= $config['url']?>"><?= $config['label']?></a>&#160;
+		<?php }?>
+	</p>
+
+	<p class="step_title"><?= I18N::T('gapper','STEP 3')?></p>
+	<p class="step_notes"><?= I18N::T('gapper','绑定完成后点击"下一步"')?></p>
+	<div style="margin:40px">
+		<div style="margin: 20px 80px;">
+			<a href="<?= URI::url('!gapper/upgrade')?>" class="upgrade_button" /><?php echo I18N::T('gapper','下一步') ?></a>
+		</div>
+	</div>
+</div>
+</div>

@@ -1,0 +1,21 @@
+<?php 
+	$params = Config::get('system.controller_params');
+	$user = O('user', $params[0]);	
+?>
+<div class="description">
+	<p>您正在查看 <?= H($user->name) ?> 的详细信息。</p>
+	<p>您可以关注此用户。</p>
+	<p>
+		<span class="tip_star">*</span>
+		<span class="tip_content">您可以修改或删除此用户信息。</span>
+	</p>
+	<p>
+		<span class="tip_star">*</span>
+		<span class="tip_content">您可以查看此用户的个人关注、仪器预约记录、仪器使用记录、个人日程安排和工作任务情况。</span>
+	</p>
+	<p>
+		<span class="tip_star">*</span>
+		<span class="tip_content">管理员权限。</span>
+	</p>
+	<br />
+</div>

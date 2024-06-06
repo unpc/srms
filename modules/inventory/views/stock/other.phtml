@@ -1,0 +1,24 @@
+<h2><?php echo I18N::HT('inventory', '内容') ?></h2>
+<div class="lpadding_3 rte_container">
+	<?php echo $stock->content?:I18N::T('inventory','暂无'); ?>
+</div>
+<div class="hr_3">&#160;</div>
+<h2><?php echo I18N::HT('inventory', '附件') ?></h2>
+<div class="text_like" style="display:block">
+<?php 
+echo V('nfs:nfs_lite/view', ['object'=>$stock, 'path_type'=>'attachments']);
+?>
+</div>
+<div class="hr_3">&#160;</div>
+
+<?php echo $secondarys_tabs; ?>
+<div class="hr_1">&nbsp;</div>
+<div class="panel padding_1">
+<?php
+	$me = L('ME');
+	echo Widget::factory('application:links', ['links' => $stock->links('record'), 'separator'=>' ']);
+?>
+</div>
+<div>
+    <?php echo V('inventory:use/lite', ['stock'=>$stock]); ?>
+</div>

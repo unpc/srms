@@ -1,0 +1,11 @@
+<?php 
+	$charge = O('eq_charge', ['source'=>$sample]);
+	if ($charge->amount): 
+?>
+	<?php echo Number::currency($charge->amount) ?>
+<?php else: ?>
+	<span class="description">--</span>
+<?php 
+endif;
+echo Event::trigger('extra_charge_description', $charge);
+?>

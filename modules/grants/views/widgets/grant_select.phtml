@@ -1,0 +1,33 @@
+<?php
+// 接口：
+// 接收 $this->portion      经费分配
+if ($portion->id) {
+	$grant = $portion->grant;
+}
+
+$grant_name = $this->grant_name ?: 'grant';
+$portion_name = $this->portion_name ?: 'grant_portion';
+$no_balance = !!$this->no_balance;
+
+$grants = Q('grant');
+$new_grants = [];
+foreach($grants->to_assoc('id', 'project') as $key=>$value) {
+    $new_grants[$key] = H($value);
+}
+
+if (count($grants) > 0) {
+	if (!$portion_uniqid) $portion_uniqid = 'portion_'.uniqid();
+	echo Form::dropdown($grant_name,
+		[''=>I18N::T('grants', '--')] + $new_grants,
+		$grant->id ?: '', 'title="'.I18N::T('grants','经费').'" class="middle" q-object="grant_select" q-event="change"'
+	   	.' q-src="'. URI::url('!grants/index').'"'
+		.' q-static="grant_name='.$grant_name.'&portion_uniqid='.$portion_uniqid.'&portion_name='.$portion_name.'&no_balance='.$no_balance.'"'
+	);
+	echo ' <span class="'.$portion_uniqid.' nowrap">';
+	echo Widget::factory('grants:portion_select', ['grant'=>$grant, 'portion'=> $portion, 'portion_name'=>$portion_name, 'no_balance'=>$no_balance]);
+	echo '</span>';
+}
+else {
+	echo '<div class="description">' . I18N::T('grants', '实验室尚未添加经费') . '</div>';
+}
+?>

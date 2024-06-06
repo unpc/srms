@@ -1,0 +1,73 @@
+<div class="hr_1">&#160;</div>
+
+<div class="panel padding_1 clearfix">
+	<div class="float_left">
+		<a href="<?php echo URI::url('!labnotes/note/add'); ?>" class="button button_add"><?php echo I18N::T('labnotes', '添加')?></a>
+	</div>
+</div>
+<?php echo $pagination; ?>
+<?php
+	/*
+		NO. TASK#251 (Cheng.Liu@2010.11.18)
+		labnotes note_list转换成 table widget
+	*/
+	$table = Widget::factory('table');
+	$table->name = 'labnotes_note_list';
+	$table->add_columns([
+		'@'=>NULL,
+		'title'=>[
+			'title'=>I18N::T('labnotes', '标题'),
+			'filter'=>[
+				'form'=>V('labnotes:notes_table/filters/title', ['title'=>$form['title']]),
+				'value'=>$form['title'] ? H($form['title']) :NULL
+			],
+			'nowrap'=>TRUE
+		],
+		'content'=>[
+			'title'=>I18N::T('labnotes', '内容'),
+			'filter'=>[
+				'form'=>V('labnotes:notes_table/filters/content', ['content'=>$form['content']]),
+				'value'=>$form['content'] ? H($form['content']) :NULL
+			],
+			'nowrap'=>TRUE,
+		],
+		'date'=>[
+			'title'=>I18N::T('labnotes', '创建时间'),
+			'nowrap'=>TRUE
+		],
+		'rest'=>[
+			'nowrap'=>TRUE,
+			'align'=>'right'
+		]
+	]);
+
+	$table->empty_message = I18N::T('labnotes', '没有符合条件的记录');
+
+	if (count($notes)>0) {
+		foreach ($notes as $note) {
+			$links = $note->links($note);
+			foreach($links as & $link) {
+				if ($link['type'] == 'lock' || $link['type'] == 'unlock') {
+					$link['url'] = NULL;
+					$link['extra'] = 'class="blue view object:lock_note event:click static:'.HT(['id'=>$note->id]).'  src:'.URI::url('!labnotes/note').'"';
+					unset($link['type']);
+				}
+				else {
+					unset($link['type']);
+				}
+			}
+			$table->add_row([
+				'@'=>[
+					'view' => $note->icon('32', 'style="display:block"'),
+					'extra' => 'style="padding:4px" align="right"',
+				],
+				'title'=>V('labnotes:notes_table/data/title', ['object'=>$note]),
+				'content'=>HT($note->content),
+				'date'=> '<span class="description small">'.Date::format($note->ctime).'</span>',
+				'rest'=>Widget::factory('application:links', ['links' => $links])
+			]);
+		}
+	}
+
+	echo $table;
+?>

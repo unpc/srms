@@ -1,0 +1,3 @@
+<?php $sample = $component->sample;?>
+<div class="preview" q-preview="<?php echo URI::url('!eq_sample/index'); ?>" q-static="<?php echo H(['sid' => $sample->id]); ?>"><?php echo I18N::T('eq_sample', '送样编号
+[%id]', ['%id'=>Number::fill($sample->id)])?></div>

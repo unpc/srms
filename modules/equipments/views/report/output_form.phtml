@@ -1,0 +1,34 @@
+<div class="form ">
+    <?php if ($type == 'csv'): ?>
+	<form method="POST" q-object="export" q-src="<?= URI::url('!equipments/export') ?>" q-static="<?php echo H(['form_token'=>$form_token, 'type' => $type])?>" q-event="submit" autocomplete="off" class="prevent_default">
+    <?php else: ?>
+	<form action="<?php echo H(URI::url('!equipments/export', ['type'=>$type, 'form_token'=>$form_token])) ?>" target="<?= $type == 'csv' ? '_self' : '_blank';?>" class="prevent_default" method="post">
+    <?php endif; ?>
+		<ul class=" ep_triple">
+			<?php
+            $nonecolumns = Event::trigger('eq_record.extra.display_none', $form_token);
+            foreach ($columns as $p => $p_name) :?>
+			<?php if ($p < 0): ?>
+			<div class="clear">&#160;</div>
+			<h4><?php echo I18N::HT('equipments', $p_name) ?></h4>
+			<?php  else:?>
+				<li class="nowrap">
+                    <?php
+                    $display = in_array($p, $nonecolumns)?FALSE:TRUE;
+                    ?>
+
+                    <?php echo Form::checkbox("columns[{$p}]", $display, I18N::T('equipments', $p_name), 'class="middle monitor checkbox"', 'class="middle"');?>
+				</li>
+			<?php endif; ?>
+			<?php endforeach;?>
+		</ul>
+		<input name="eid" value="<?= $eid ?>" class="hidden" />
+		<span class="lpadding_2 red"><?php echo $description?></span>
+		<div class="button_container">
+		<div class="float_right">
+		<input name="cancel" id="cancel" type='reset' class="font-button-default sm rmargin_2e4" value="<?php echo I18N::HT('equipments', '取消');?>" />
+		<input name="submit" type='submit' class="font-button-save sm" value="<?php echo I18N::HT('equipments', '提交');?>" />
+		</div>
+		
+	</form>
+</div>

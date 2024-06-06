@@ -1,0 +1,70 @@
+<div class="form">
+    <table class="form" width="100%">
+        <tr>
+            <td class="left top icon" style="width: 100px;">
+                <div class="short_container">
+                    <div class="img_icon" style="position: relative;">
+                        <?php echo $user->icon('104', 'class="icon_none_border"');?>
+                    </div>
+                </div>
+            </td>
+            <td class="lpadding_30">
+                <form class="edit" autocomplete="off" method="post" action="<?php echo H(URI::url() ) ?>">
+                    <?php
+                    echo V('form_error', ['form'=>$form]);
+                    $no_error = ($form->no_error!==FALSE);
+                    ?>
+                    <div class="interval_12"></div>
+                    <table width="100%">
+                        <tbody>
+                        <tr>
+                            <td class="left nowrap middle" style="width:120px">
+                                <?php echo I18N::T('eq_reserv', '预约迟到总次数')?><br>
+                                <?php echo V('form_filter', ['error'=>$form->errors['eq_late_count'][0]]); ?>
+                            </td>
+                            <td class="middle"><input name="eq_late_count" class="text" size="25" value="<?php echo H($no_error?(int)$user_v->eq_late_count:$form['eq_late_count']) ?>" />&nbsp;&nbsp;<?php echo I18N::T('eq_reserv', '次')?></td>
+                        </tr>
+                        <tr><td colspan="2"><div class="interval_20"></div> </td></tr>
+                        <tr>
+                            <td class="left nowrap middle">
+                                <?php echo I18N::T('eq_reserv', '预约早退总次数')?><br>
+                                <?php echo V('form_filter', ['error'=>$form->errors['eq_leave_early_count'][0]]); ?>
+                            </td>
+                            <td class="middle"><input name="eq_leave_early_count" class="text" size="25" value="<?php echo H($no_error?(int)$user_v->eq_leave_early_count:$form['eq_leave_early_count']) ?>" />&nbsp;&nbsp;<?php echo I18N::T('eq_reserv', '次')?></td>
+                        </tr>
+                        <tr><td colspan="2"><div class="interval_20"></div> </td></tr>
+                        <tr>
+                            <td class="left nowrap middle">
+                                <?php echo I18N::T('eq_reserv', '超时使用总次数')?><br>
+                                <?php echo V('form_filter', ['error'=>$form->errors['eq_overtime_count'][0]]); ?>
+                            </td>
+                            <td class="middle"><input name="eq_overtime_count" class="text" size="25" value="<?php echo H($no_error?(int)$user_v->eq_overtime_count:$form['eq_overtime_count']) ?>" />&nbsp;&nbsp;<?php echo I18N::T('eq_reserv', '次')?></td>
+                        </tr>
+                        <tr><td colspan="2"><div class="interval_20"></div> </td></tr>
+                        <tr>
+                            <td class="left nowrap middle">
+                                <?php echo I18N::T('eq_reserv', '用户爽约总次数')?><br>
+                                <?php echo V('form_filter', ['error'=>$form->errors['eq_miss_count'][0]]); ?>
+                            </td>
+                            <td class="middle"><input name="eq_miss_count" class="text" size="25" value="<?php echo H($no_error?(int)$user_v->eq_miss_count:$form['eq_miss_count']) ?>" />&nbsp;&nbsp;<?php echo I18N::T('eq_reserv', '次')?></td>
+                        </tr>
+                        <tr><td colspan="2"><div class="interval_20"></div> </td></tr>
+                        <tr>
+                            <td class="left nowrap middle">
+                                <?php echo I18N::T('eq_reserv', '违规行为总次数')?><br>
+                                <?php echo V('form_filter', ['error'=>$form->errors['eq_violate_count'][0]]); ?>
+                            </td>
+                            <td class="middle"><input name="eq_violate_count" class="text" size="25" value="<?php echo H($no_error?(int)$user_v->eq_violate_count:$form['eq_violate_count']) ?>" />&nbsp;&nbsp;<?php echo I18N::T('eq_reserv', '次')?></td>
+                        </tr>
+                        <tr><td><div class="interval_60"></div> </td></tr>
+                        </tbody>
+                    </table>
+                    <div class="float_right">
+                        <input type="submit" name="submit" class="font-button-save" value="<?php echo H(T('保存修改')) ?>" />
+                    </div>
+                </form>
+            </td>
+        </tr>
+    </table>
+
+</div>

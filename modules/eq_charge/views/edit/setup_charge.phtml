@@ -1,0 +1,37 @@
+<?php echo CSS::load_async('equipments:relate_list');?>
+
+<div class="form">
+    <table class="form" width="100%">
+        <tbody>
+        <tr>
+            <td class="top icon left" width="130">
+                <div><?php echo $equipment->icon('104'); ?></div>
+            </td>
+            <td class="top">
+                <h2 class="section_title">
+                    <span class="border"></span>
+                    <span class="black_title">计费设置</span>
+                </h2>
+                <div class='interval_30'>&nbsp</div>
+                <div class="lmaigin_1e5">
+                    <div class="relate_list">
+
+                        <!--左边-->
+                        <div class="relate_left ">
+                            <div class="equipment_charge">
+                                <?php echo $this->third_tabs; ?>
+                            </div>
+                        </div>
+
+
+                        <!---右边-->
+                        <div class="relate_right  bpadding_5">
+                            <?php echo $this->third_tabs->content; ?>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

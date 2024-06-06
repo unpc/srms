@@ -1,0 +1,104 @@
+<div class="hr_1">&#160;</div>
+<div class="panel clearfix">
+    <div class="float_left padding_1 nowrap" style="line-height:24px">
+        <?php if (count($buttons)) : ?>
+        <span>
+        <?= Widget::factory('application:links', ['links' => $buttons, 'separator' => '&#160;']);?>
+        </span>
+        <?php endif; ?>
+    </div>
+</div>
+<?php
+echo $pagination;
+echo CSS::load_async('equipments:common');
+
+$table = Widget::factory('table');
+
+$table->name = 'pf_equipments';
+
+$table->add_columns([
+    '@'=>NULL,
+    'eq_name'=>[
+        'title'=>I18N::T('equipments', '仪器名称'),
+        'filter'=> [
+			'form' => V('equipments:equipments_table/filters/name', ['name'=>'eq_name', 'value'=>$form['eq_name']]),
+			'value' => $form['eq_name'] ? H($form['eq_name']) : NULL
+		],
+        'align'=>'left',
+        'nowrap'=>TRUE,
+    ],
+    'control'=>[
+        'title'=>I18N::T('equipments', '控制'),
+        'filter'=> [
+			'form' => V('equipments:equipments_table/filters/control', [
+				'mode_name'=>'control_mode', 'mode_value'=>$form['control_mode'],
+				'status_name'=>'control_status', 'status_value'=>$form['control_status'],
+			]),
+			'value' => V('equipments:equipments_table/filters/control.value', [
+				'mode'=>$form['control_mode'],
+				'status'=>$form['control_status'],
+			]),
+			'field' => 'control_mode,control_status'
+		],
+        'align'=>'center',
+        'nowrap'=>TRUE,
+    ],
+    'current_user' => [
+        'title'=> I18N::T('equipments', '当前使用者'),
+        'align'=>'center',
+        'nowrap'=>TRUE,
+    ],
+    'location'=>[
+        'title'=>I18N::T('equipments', '放置地点'),
+        'filter'=> [
+			'form' => V('equipments:equipments_table/filters/location', [
+				'location_name'=>'location', 'location_value'=>$form['location'],
+				'location2_name'=>'location2', 'location2_value'=>$form['location2'],
+			]),
+			'value' => V('equipments:equipments_table/filters/location.value', [
+				'location' => H($form['location']),
+				'location2' => H($form['location2']),
+			]),
+			'field' => 'location,location2'
+		],
+        'align'=>'left',
+        'nowrap'=>TRUE,
+    ],
+    'eq_contact'=>[
+        'title'=> I18N::T('equipments', '联系人'),
+        'align'=>'left',
+        'nowrap'=>TRUE,
+        'extra_class'=>'filter_right',
+    ],
+    'rest'=>[
+        'align'=>'right',
+        'nowrap'=>TRUE,
+    ],
+]);
+
+$table->empty_message = I18N::T('equipments', '无符合条件的仪器');
+
+foreach ($equipments as $equipment) {
+    $links['delete'] = [
+        'text' => I18N::HT('equipments', '删除'),
+        'url' => '#',
+        'extra' => 'class="blue" q-object="equ_delete" q-event="click" q-static="'.H(['pf_id' => $pf->id, 'equ_id' => $equipment->id]).'"',
+    ];
+    $row = [
+        '@' => [
+            'view' => $equipment->icon('32', 'style="display:block"'),
+            'extra' => 'style="padding:4px" align="right"',
+        ],
+        'eq_name' => V('equipments:equipments_table/data/name', ['equipment' => $equipment]),
+        'control' => V('equipments:equipments_table/data/control', ['equipment' => $equipment]),
+        'current_user' => V('equipments:equipments_table/data/current_user', ['equipment' => $equipment]),
+        'location' => V('equipments:equipments_table/data/location', ['equipment' => $equipment]),
+        'eq_contact' => V('equipments:equipments_table/data/contacts', ['equipment' => $equipment]),
+        'rest' => Widget::factory('application:links', ['links' => $links]),
+    ];
+    $table->add_row($row);
+}
+
+echo $table;
+echo $pagination;
+?>

@@ -1,0 +1,287 @@
+<style>
+    .tag_selector {
+        min-width: 400px;
+    }
+    .dropdown_container {
+        min-width: 378px;
+    }
+</style>
+<div class="interval_30"></div>
+<div class="form">
+<table class="form">
+	<tbody>
+	<tr>
+		<td class="top icon">
+			<?php echo V('people:profile/short_info', ['user'=>$user]); ?>
+            <div class="interval_12"></div>
+            <div class="short_info short_container">
+                <a class="font-button-delete" confirm="<?php echo H(I18N::T('people', '您确定删除头像吗?')) ?>" href="<?php echo H(URI::url('!people/profile/delete_photo.'.$user->id)) ?>"><?php echo I18N::T('people', '删除头像')?></a>
+            </div>
+		</td>
+		<td class="top info lpadding_30">
+			<form class="edit" method="post" autocomplete="off" action="<?php echo H(URI::url() ) ?>">
+                <div class="float_right">
+                    <input type="submit" name="submit" class="font-button-save middle rmargin_16  float_right" value="<?php echo H(I18N::T('people', '保存修改')) ?>" />
+                </div>
+                <div class="interval_60"></div>
+			<?php
+				$form_no_error = ($form->no_error!==FALSE);
+				echo V('form_error', ['form'=>$form]);
+
+				$requires = Lab_Model::edit_require_fields();
+				
+				$data = Event::trigger("user_signup_requires", $requires, $user);
+				$requires = is_null($data) ? $requires : $data;
+				
+				$_requires = function($key) use ($requires) {
+                    echo $requires[$key] ? '<span class="required">*</span>' : '<span class="lpadding_18"></span>';
+				}
+			?>
+			<?php
+				$form_token = 'people.edit_info'. uniqid();
+				$_SESSION['people.edit_info'] = $form_token;
+			?>
+			<input type="hidden" name="token" value="<?= $form_token?>">
+                <div class="interval_12"></div>
+			<table class="form">
+				<tbody>
+                <tr>
+                    <td colspan="4">
+                        <h2 class="section_title">
+                            <span class="border"></span>
+                            <span class="black_title"><?php echo I18N::T('people', '个人信息') ?></span>
+                            <span class="float_right" style="font-size: 14px;font-weight: normal;color: #F5222D;"><span class="required">*</span>必填</span>
+                        </h2>
+                    </td>
+                </tr>
+                <tr><td colspan="4"><div class="interval_16"></div> </td></tr>
+                <tr>
+                    <td class="padding_2  rpadding_4" colspan="2">
+                        <div class="bpadding_2">
+                            <span class="rpadding_1"><?php echo I18N::T('people', '姓名')?></span><?php echo $_requires('name')?>
+                        </div>
+                        <div>
+                            <?php echo H($user->name) ?>
+                        </div>
+                    </td>
+                    <td  class="padding_2  lpadding_4" colspan="2">
+                        <div class="bpadding_2">
+                            <span class="rpadding_1"><?php echo I18N::T('people', '性别')?></span><?php echo $_requires('gender')?>
+                            <br>
+                            <?php echo V('form_filter',['error'=>$form->errors['lab_contact'][0]]);?>
+                        </div>
+                        <div>
+                            <?php echo Form::dropdown('gender', I18N::T('people', User_Model::$genders), $form_no_error ? ($user->gender >= 0 ? $user->gender : -1) : $form['gender'], 'class="dropdown"'); ?>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="padding_2  rpadding_4" colspan="2">
+                        <div class="bpadding_2">
+                            <span class="rpadding_1"><?php echo I18N::T('people', '人员类型')?></span><?php echo $_requires('member_type')?>
+                            <br>
+                            <?php echo V('form_filter',['error'=>$form->errors['member_type'][0]])?>
+                        </div>
+                        <?php
+                        $curr_type = $user->member_type;
+                        foreach(User_Model::get_members() as $key => $value){
+                            if (isset($value[$curr_type])) {
+                                $members_type = $value;
+                                break;
+                            }
+                        }
+                        ?>
+                        <div>
+                            <?php echo Form::dropdown('member_type', ['-1'=>'--'] + I18N::T('people', (array)$members_type),
+                                $form_no_error ? ($user->member_type >= 0 ? $user->member_type : -1) : $form['member_type'], 'class="dropdown"'); ?>
+                        </div>
+                    </td>
+                    <?php if ($GLOBALS['preload']['tag.group_limit'] >= 0):  ?>
+                        <td  class="padding_2  lpadding_4" colspan="2">
+                            <div class="bpadding_2">
+                                <span class="rpadding_1"><?php echo I18N::T('people', '组织机构')?></span><?php echo $_requires('group_id')?>
+                                <br>
+                                <?php echo V('form_filter',['error'=>$form->errors['lab_contact'][0]]);?>
+                            </div>
+                            <div>
+                                <div class="gray_tag_container">
+                                    <?php
+                                    if ($user->group->root->id != $user->group->id)
+                                        echo V('application:tag/path', ['tag'=>$user->group, 'url_template'=>URI::url('!people/list', 'group_id=%tag_id')]);
+                                    else
+                                        echo '--';
+                                    ?>
+                                </div>
+                            </div>
+                        </td>
+                    <?php endif;?>
+                </tr>
+
+					<?php if ( Config::get('people.show_ref_no', true) ) : ?>
+                        <tr>
+                            <td class="padding_2  rpadding_4" colspan="2">
+                                <div class="bpadding_2">
+                                    <span class="rpadding_1"><?php echo I18N::T('people', '学号/工号')?></span><?php echo $_requires('ref_no')?>
+                                </div>
+                                <div>
+                                    <input placeholder="请输入学号/工号" name="ref_no" class="text" size="54" value="<?php echo H($form_no_error?$user->ref_no:$form['ref_no'])?>" />
+                                </div>
+                            </td>
+                        </tr>
+					<?php endif; ?>
+					<?php if (true || Config::get('people.show_mentor_name', FALSE)) : ?>
+                        <tr>
+                            <td class="padding_2" colspan="2">
+                                <div class="bpadding_2">
+                                    <span class="rpadding_1"><?php echo I18N::T('people', '导师姓名');  ?></span><?php echo $_requires('mentor_name')?>
+                                </div>
+                                <div>
+                                    <input placeholder="导师姓名" name="mentor_name" size="54" class="text" value="<?php echo H( $form_no_error ? $user->mentor_name : $form['mentor_name']); ?>" />
+                                </div>
+                            </td>
+                        </tr>
+					<?php endif; ?>
+                <tr>
+                    <td class="padding_2  rpadding_4" colspan="2">
+                        <div class="bpadding_2">
+                            <span class="rpadding_1"><?php echo I18N::T('people', '专业')?></span><?php echo $_requires('major')?>
+                        </div>
+                        <div>
+                            <input placeholder="请输入专业" name="major" class="text" size="54" value="<?php echo H($form_no_error?$user->major:$form['major'])?>" />
+                        </div>
+                    </td>
+                    <td  class="padding_2  lpadding_4" colspan="2">
+                        <div class="bpadding_2">
+                            <span class="rpadding_1"><?php echo I18N::T('people', '单位名称')?></span><?php echo $_requires('organization')?>
+                        </div>
+                        <div>
+                            <input placeholder="请输入单位名称" name="organization" class="text"  size="54" value="<?php echo H($form_no_error?$user->organization:$form['organization'])?>" />
+                        </div>
+                    </td>
+                </tr>
+                    <?php if (Module::is_installed('equipments')) :?>
+                        <?php $default_lab = Equipments::default_lab();?>
+                        <?php if (Q("$user $default_lab")->total_count()) :?>
+                        <?php echo Event::trigger('equipments.record.edit_user_view', $user, $form);?>
+                        <tr>
+                            <td class="label middle right nowrap rpadding_label">
+								<span class="lpadding_18"><?php echo I18N::T('people', '税务登记号')?></span>
+                            </td>
+                            <td class="top">
+                                <input name="tax_no" class="text" size="40" value="<?php echo H($form_no_error ? $user->tax_no : $form['tax_no']);?>" />
+                                <?php if (Config::get('people.temp_user.tax_no.required', FALSE)) :?>
+                                    <?php echo V('form_require');?>
+                                <?php endif;?>
+                            </td>
+						</tr>
+						<tr><td colspan="5"><div class="interval_20"></div> </td></tr>
+						<?php else :?>
+							<?php $is_auth = Event::trigger('extra.is_auth', $user);
+								if ($is_auth == 'outsider') :
+							?>
+                                    <?= V('labs:signup/signup_extra_field', ['form' => $form, 'user' => $user, 'form_no_error' => $form_no_error, 'type' => 'profile']);?>
+							<?php endif;?>
+                        <?php endif;?>
+                    <?php endif;?>
+					<?php /*
+					<tr>
+						<td class="label right nowrap"><?php echo I18N::T('people', '所属系所')?></td>
+						<td class="label"><?php echo $user->department ?></td>
+					</tr>
+						  */ ?>
+                    <?php if ( Config::get('people.edit_info_show_signup_extra_field', false) ) : ?>
+                        <?= V('labs:signup/signup_extra_field', ['form' => $form, 'user' => $user, 'form_no_error' => $form_no_error]);?>
+                    <?php endif;?>
+					<?php if ($GLOBALS['preload']['people.enable_member_date']): ?>
+                        <tr>
+                            <td class="padding_2" colspan="2">
+                                <div class="bpadding_2">
+                                    <span class="rpadding_1"><?php echo I18N::T('people', '所在时间')?></span>
+                                </div>
+                                <div>
+                                    <span class="date"><?php echo Date::fuzzy_range($user->dfrom, $user->dto) ?></span>
+                                </div>
+                            </td>
+                        </tr>
+					<?php endif; ?>
+                <tr><td colspan="4"><div class="interval_16"></div> </td></tr>
+                <tr>
+                    <td>
+                        <h2 class="section_title">
+                            <span class="border"></span>
+                            <span class="black_title"><?php echo I18N::T('people', '联系方式') ?></span>
+                        </h2>
+                    </td>
+                </tr>
+                <tr><td colspan="4"><div class="interval_16"></div> </td></tr>
+                <tr>
+                    <td class="padding_2  rpadding_4" colspan="2">
+                        <div class="bpadding_2">
+                            <span class="rpadding_1"><?php echo I18N::T('people', '电子邮箱')?></span>
+                            <?php echo $_requires('email')?>
+                            <br>
+                            <?php echo V('form_filter',['error'=>$form->errors['email'][0]])?>
+                        </div>
+                        <div>
+                            <?php if ($yiqikong_lab_name = Config::get('people.yiqikong_lab_name')
+                                && Q("$user lab[name={$yiqikong_lab_name}]")->total_count()): ?>
+                                <input placeholder="请输入电子邮箱" name="email" class="text" size="40" value="<?php echo H($user->email)?>" disabled="disabled" /><?php echo $_requires('email')?>
+                            <?php else : ?>
+                                <input placeholder="请输入电子邮箱" name="email" class="text"  size="54" value="<?php echo H($form_no_error?$user->email:$form['email'])?>"  /><?php echo $_requires('email')?>
+                            <?php endif; ?>
+                        </div>
+                    </td>
+                    <td  class="padding_2 lpadding_4" colspan="2">
+                        <div class="bpadding_2">
+                            <span class="rpadding_1"><?php echo I18N::T('people', '联系电话')?></span>
+                            <?php echo $_requires('phone')?>
+                            <br>
+                            <?php echo V('form_filter',['error'=>$form->errors['phone'][0]])?>
+                        </div>
+                        <div>
+                            <input placeholder="请输入联系电话" name="phone" class="text"  size="54" value="<?php echo H($form_no_error?$user->phone:$form['phone'])?>" />
+                        </div>
+                    </td>
+                </tr>
+					<?php if (true || Config::get('people.show_personal_phone', FALSE)) : ?>
+                        <tr>
+                            <td class="padding_2" colspan="2">
+                                <div class="bpadding_2">
+                                    <span class="rpadding_1"><?php echo I18N::T('people', '个人手机'); ?></span>
+                                    <?php echo $_requires('personal_phone')?>
+                                </div>
+                                <div>
+                                    <input placeholder="请输入个人手机" name="personal_phone" class="text"  size="54" value="<?php echo H($form_no_error ? $user->personal_phone : $form['personal_phone']); ?>" />
+                                </div>
+                            </td>
+                        </tr>
+					<?php endif; ?>
+                <tr>
+                    <td class="padding_2  rpadding_4" colspan="2">
+                        <div class="bpadding_2">
+                            <span class="rpadding_1"><?php echo I18N::T('people', '地址')?></span>
+                            <?php echo $_requires('address')?>
+                        </div>
+                        <div>
+                            <input placeholder="请输入地址" name="address" class="text"  size="54" value="<?php echo H($form_no_error?$user->address:$form['address'])?>" />
+                        </div>
+                    </td>
+                </tr>
+
+					<tr>
+						<td><div class="interval_60"></div> </td>
+					</tr>
+                <tr>
+                    <td  colspan="4">
+                        <input type="submit" name="submit" class="font-button-save middle float_right" value="<?php echo H(I18N::T('people', '保存修改')) ?>" />
+                    </td>
+                </tr>
+				</tbody>
+			</table>
+			</form>
+		</td>
+	</tr>
+	</tbody>
+</table>
+</div>

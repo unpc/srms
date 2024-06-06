@@ -1,0 +1,69 @@
+<?php
+$me = L('ME');
+$dtstart = time();
+$dtnext = $dtstart + 604800;
+$type = Cal_Component_Model::TYPE_VEVENT;
+$components = Q("calendar[parent_name=equipment] cal_component[type=$type][organizer=$user][dtstart~dtend={$dtstart}|dtstart~dtend={$dtnext}|dtstart={$dtstart}~{$dtnext}]:sort(dtstart)");
+echo CSS::load_async('equipments:common');
+?>
+    <script>
+        Q.globals.cal_week_rel = 'edit_week';
+        Q.globals.mode = 'list';
+    </script>
+
+
+<?php if ($components->total_count() > 0): ?>
+    <?php echo CSS::load_async('calendars:common'); ?>
+    <?php
+        $me = L('ME');
+        $table = Widget::factory('table');
+        $table->name = 'eq_reserv';
+    $columns = [
+        'ref_no'=> [
+            'title' => I18N::T('eq_reserv', '编号'),
+            'align' => 'left',
+            'nowrap' => TRUE
+        ],
+        'equipment'=> [
+            'title' => I18N::T('eq_reserv', '仪器名称'),
+            'align' => 'left',
+            'nowrap' => TRUE
+        ],
+        'location'=> [
+            'title' => I18N::T('eq_reserv', '放置地点'),
+            'align' => 'left',
+            'nowrap' => TRUE
+        ],
+        'date'=> [
+            'title' => I18N::T('eq_reserv', '预约时间'),
+            'align' => 'left',
+            'nowrap' => TRUE
+        ],
+        'rest'=>[
+            'title' => I18N::T('eq_reserv', '操作'),
+            'align'=>'left',
+            'nowrap'=>TRUE,
+        ]
+    ];
+
+    $table->add_columns($columns);
+
+    foreach($components as $component) {
+        $eq_reserv = O('eq_reserv', ['component'=> $component]);
+        $add_row_arr = [
+            'ref_no'       => "<span class='font-basic'>".(Number::fill($eq_reserv->id, 6)?:'--')."</span>",
+            'equipment' => '<a class="eq_name"  href="' . $eq_reserv->equipment->url() . '">' . $eq_reserv->equipment->name . '</a>',
+            'date'      => date('Y-m-d H:i:s', $eq_reserv->dtstart) . ' - ' . date('H:i:s', $eq_reserv->dtend),
+            'location' => V('equipments:equipments_table/data/location', ['equipment'=>$eq_reserv->equipment]),
+            'rest'      => Widget::factory('application:links', ['links' => $eq_reserv->links()]),
+        ];
+        $row = new ArrayIterator($add_row_arr);
+        $table->add_row($row);
+    }
+    echo $table;
+    ?>
+<?php elseif ($user->id == $me->id) : ?>
+    <h3 class="description"><?php echo I18N::T('eq_reserv', '您没有仪器预约记录, 可%clickhere选择您需要预约的仪器', ['%clickhere'=>URI::anchor('!equipments', I18N::T('eq_reserv', '点击这里'), 'class="blue"')]) ?></h3>
+<?php else: ?>
+    <h3 class="padding_2 description"><?php echo I18N::T('eq_reserv', '%user没有仪器预约记录', ['%user'=>$user->name]); ?></h3>
+<?php endif;

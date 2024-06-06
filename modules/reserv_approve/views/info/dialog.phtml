@@ -1,0 +1,47 @@
+<div class="padding_2">
+    <?= V('reserv_approve:info/data/reserv', ['reserv'=>$reserv])?>
+    <table>
+        <tr>
+            <td class="label left top nowrap" colspan="2"><h1 class="bpadding_1"><?php echo I18N::HT('reserv_approve', '审核详情');?></h1></td>
+        </tr>
+        <?php if ($approves) foreach($approves as $approve) :?>
+        <tr>
+            <td class="label left nowrap">
+                <div class="lpadding_4"?>
+                    <?= H(T(date('Y-m-d H:i:s', $approve->ctime)))?>
+                    &nbsp;
+                    <?= Reserv_Approve_Help::get_info_str($approve)?>
+                    &nbsp;
+                    <?= H(T($approve->description))?>
+                </div>
+            </td>
+        </tr>
+        <?php endforeach;?>
+        <tr>
+            <td colspan="2" class="label left top nowrap">
+                <div class="lpadding_3 padding_2">
+                <?php 
+                $me = L('ME');
+                if(!$reserv->approver_change && (($approve->status == Reserv_Approve_Model::STATUS_INIT && $me->is_allowed_to('PI审核', $approve))
+                    || ($approve->status == Reserv_Approve_Model::STATUS_PI_APPROVE && $me->is_allowed_to('机主审核', $approve))
+                )): ?>
+                    <a q-object="approve" 
+                        q-event="click" 
+                        q-src="<?= H(URI::url('!reserv_approve/index'))?>" 
+                        q-static="<?= H(['approve_id'=>$approve->id])?>" 
+                        class="button button_tick middle">
+                        <?php echo I18N::HT('reserv_approve', '通过');?>
+                    </a>
+                    <a q-object="reject" 
+                        q-event="click" 
+                        q-src="<?= H(URI::url('!reserv_approve/index'))?>" 
+                        q-static="<?= H(['approve_id'=>$approve->id])?>" 
+                        class="button button_delete middle">
+                        <?php echo I18N::HT('reserv_approve', '驳回');?>
+                    </a>
+                <?php endif;?>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>

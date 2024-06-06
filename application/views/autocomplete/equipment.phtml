@@ -1,0 +1,16 @@
+<table class="mini_form">
+	<tr>
+		<td class="top icon" style="padding:4px;"><?php echo $equipment->icon('32') ?></td>
+		<td class="middle">
+			<span class="name"><?php echo H($equipment->name);?></span>
+			<?php if ($equipment->status != EQ_Status_Model::NO_LONGER_IN_SERVICE): ?>
+				<?php $status_tags = (string) $equipment->status_tags(); ?>
+				<?php if ($status_tags): ?>
+				<div class="clearfix">
+					<?php echo $status_tags ?>
+				</div>
+				<?php endif; ?>
+			<?php endif; ?>
+		</td>
+	</tr>
+</table>

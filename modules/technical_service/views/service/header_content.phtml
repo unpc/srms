@@ -1,0 +1,113 @@
+<style>
+    .equipment_detail span{
+        color:#666;
+    }
+    .color999{
+        color:#999 !important;
+    }
+    ul.follow {
+        color: #333;
+        text-align: center;
+}
+ul.follow li {
+    margin: 0px;
+    float: left;
+    padding: 0 40px;
+    border-right: 1px solid #EDEFF2;
+}
+ul.follow .up .num {
+    font-size: 30px;
+    color: var(--basiccolor);
+}
+</style>
+<?php
+$control_uniqid = 'control_id_' . uniqid();
+?>
+<div class="equipment_detail clearfix header_content_padding" id="<?php echo $control_uniqid; ?>">
+    <table class="form flexible">
+        <tbody>
+            <tr>
+                <td class="top icon interval" rowspan="2" style="position: relative;">
+                    <?= V('service/view/icon', ['service' => $service, 'id' => $control_uniqid]); ?>
+                    <div class="clearfix"></div>
+                </td>
+
+                <td class="top nowrap info flexible lpadding_30" rowspan="2">
+                    <h2>
+                        <a href="<?php echo H($service->url('view')) ?>" style="padding-right: 30px;">
+                            <?php echo H($service->name . ' ' . $service->en_name); ?>
+                        </a>
+                    </h2>
+                    <div style="height: 20px;"></div>
+                    <p>
+                        <span style="display: inline-block; width: 50%;" class="rpadding_1">
+                            <span class="rpadding_1 color999"><?php echo I18N::T('technical_service', '负责人') ?>:</span>
+                            <?php echo V('technical_service:service_table/data/incharges', ['service' => $service, 'not_lab' => 1]); ?>
+                        </span>
+                        <span style="display: inline-block; width: 50%;">
+                            <span class="rpadding_1 color999"><?php echo I18N::T('technical_service', '组织机构') ?>:</span>
+                            <?php echo $service->group->name ?>
+                        </span>
+                    </p>
+                    <p>
+                        <span style="display: inline-block; width: 50%;" class="rpadding_1">
+                            <span class="rpadding_1 color999"><?php echo I18N::T('equipments', '联系电话') ?>: </span>
+                            <?php echo H($service->phones); ?>
+                        </span>
+                        <span style="display: inline-block; width: 50%;">
+                            <span class="rpadding_1 color999"><?php echo I18N::T('technical_service', '收费平台') ?>:</span>
+                            <?php echo $service->billing_department->name ?>
+                        </span>
+                    </p>
+                    <p>
+                        <span style="display: inline-block; width: 50%;" class="rpadding_1">
+                            <span class="rpadding_1 color999"><?php echo I18N::T('equipments', '联系邮箱') ?>: </span>
+                            <?php echo H($service->emails); ?>
+                        </span>
+                    </p>
+                    <p>
+                        <span style="display: inline-block; width: 50%;" class="rpadding_1">
+                            <span class="rpadding_1 color999"><?php echo I18N::T('equipments', '服务类别') ?>: </span>
+                            <?= $service->service_type->name ?>
+                        </span>
+                    </p>
+                    <div class="clearfix" style="margin-top: 10px;margin-left: -2.3rem;">
+                        <ul class="follow" style="display: flex;">
+                            <li>
+                                <div class="up">
+                                    <span class="num"><?= $service->intervals?></span>
+                                </div>
+                                <div class="down" style="color: #666666;">
+                                    <?php echo I18N::HT('equipments', '服务周期|:follow'); ?>
+                                    <span class="unit"><?php echo I18N::HT('equipments', '('.Date::units('hd')[$service->intervals_format].')|:follow')?></span>
+                                </div>
+                            </li>
+                            <li style="border-right:none;">
+                            <?php
+                            $status = Service_Apply_Model::STATUS_DONE;
+                            $service_count = Q("service_apply[status={$status}][service={$service}]")->total_count() ?>
+                                <div class="up">
+                                    <span class="num"><?= $service_count?></span>
+                                </div>
+                                <div class="down" style="color: #666666;">
+                                    <?php echo I18N::HT('equipments', '累计服务|:follow'); ?>
+                                    <span class="unit"><?php echo I18N::HT('equipments', '(次)|:follow')?></span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </td>
+                <td class="top right">
+                    <?php
+                $links = $service->links('view');
+                ?>
+                    <div class="float_right" style="width: 600px">
+                        <?php
+                    echo Widget::factory('application:links', ['links' => $links, 'separator' => ' ']) ?>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="clear"></div>
+</div>

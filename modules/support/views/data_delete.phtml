@@ -1,0 +1,61 @@
+<?php echo V('form_error', ['form' => $form]); ?>
+<div class="form margin-left-half">
+  <div class="item">
+    <form method="POST" q-object="delete_equipment" q-event="submit" 
+    q-src="<?= URI::url('!support/data') ?>">
+      <div style="padding-bottom: 5px;">
+          <h2 class="section_title"><?php echo I18N::T('support', '仪器'); ?></h2>
+      </div>
+      <hr />
+      <div style="padding: 5px 0;" class="margin-left-1">
+        <?= I18N::T('support', '请输入仪器ID: ') ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input name="id" class="text number" value="">
+			  <input type="submit" name="submit" class="font-button-save" type="button"
+        value="<?= I18N::HT('support', '匹配')?>"/>
+      </div>
+    </form>
+  </div>
+  <?php if (!Module::is_installed('uno')): ?>
+  <div class="item">
+    <form method="POST" q-object="delete_user" q-event="submit" 
+    q-src="<?= URI::url('!support/data') ?>">
+      <div style="padding-bottom: 5px;">
+          <h2 class="section_title"><?php echo I18N::T('support', '人员'); ?></h2>
+      </div>
+      <hr />
+      <div style="padding: 5px 0;" class="margin-left-1">
+        <?= I18N::T('support', '请输入用户ID: ') ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input name="id" class="text number" value="">
+        <input type="submit" name="submit" class="font-button-save" type="button"
+        value="<?= I18N::HT('support', '匹配')?>"/>
+      </div>
+    </form>
+  </div>
+  <div class="item">
+    <form method="POST" q-object="delete_lab" q-event="submit" 
+    q-src="<?= URI::url('!support/data') ?>">
+      <div style="padding-bottom: 5px;">
+        <h2 class="section_title"><?php echo I18N::T('support', '课题组'); ?></h2>
+      </div>
+      <hr />
+      <div style="padding: 5px 0;" class="margin-left-1">
+        <?= I18N::T('support', '请输入课题组ID: ') ?>&nbsp;&nbsp;&nbsp;&nbsp;<input name="id" class="text number" value="">
+        <input type="submit" name="submit" class="font-button-save" type="button"
+        value="<?= I18N::HT('support', '匹配')?>"/>
+      </div>
+    </form>
+  </div>
+  <?php endif; ?>
+  <div class="item">
+    <form method="POST" q-object="delete_account" q-event="submit" 
+    q-src="<?= URI::url('!support/data') ?>">
+      <div style="padding-bottom: 5px;">
+        <h2 class="section_title"><?php echo I18N::T('support', '财务账号'); ?></h2>
+      </div>
+      <hr />
+      <div style="padding: 5px 0;" class="margin-left-1">
+        <?= I18N::T('support', '请输入财务账号ID: ') ?> <input name="id" class="text number" value="">
+        <input type="submit" name="submit" class="font-button-save" type="button"
+        value="<?= I18N::HT('support', '匹配')?>"/>
+      </div>
+    </form>
+  </div>
+</div>

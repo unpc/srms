@@ -1,0 +1,7 @@
+<?php
+echo Widget::factory('billing:lab_selector', [
+						 'autocomplete'=>URI::url('!billing/autocomplete/transaction_lab.'.$department->id),
+						 'name'=>'lab_id',
+						 'lab'=> $lab_id ? O('lab', $lab_id) : NULL,
+						 ]);
+?>

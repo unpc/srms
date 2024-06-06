@@ -1,0 +1,26 @@
+<?php
+
+$first_note = Q("$task tn_note:sort(ctime A):limit(1)")->current();
+
+$per_page = 3;
+
+echo '<div class="quick_notes">';
+$notes = Q("$task tn_note:sort(mtime D)")->limit($per_page);
+
+$count = $notes->total_count();
+if ($count > $per_page) {
+	echo V('treenote:note/quick_note_more', ['task'=>$task, 'more'=>$count - $per_page]);
+}
+
+$me = L('ME');
+foreach ($notes as $note) {
+	$output =  V('treenote:note/quick_note', ['task'=>$task, 'note'=>$note]) . $output;
+}
+
+echo $output;
+
+if ($me->is_allowed_to('添加记录', $task)) {
+	echo V('treenote:note/quick_add_note', ['task'=>$task]);
+}
+
+echo '</div>';

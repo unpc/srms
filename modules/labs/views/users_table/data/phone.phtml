@@ -1,0 +1,8 @@
+<?php
+$me = L('ME');
+if ($me->is_allowed_to('查看联系方式', $user)):
+?>
+<span class="phone"><?php echo H($user->phone); ?></span>
+<?php else: ?>
+<?php echo I18N::T('labs', '您没有权限查看');?>
+<?php endif;?>

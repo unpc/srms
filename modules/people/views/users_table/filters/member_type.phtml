@@ -1,0 +1,16 @@
+<?php 
+/**
+ * 这里加层div， 不然展示行内元素会导致浏览器强制加空格
+ */
+?>
+<div style="height: 30px;">
+    <?php
+        echo Widget::factory('application:tag_selector', [
+            'tag' => $form['member_type'] ? O('tag', $form['member_type']): Tag_Model::root('member_type'),
+            'root' => Tag_Model::root('member_type'),
+            'name' => 'member_type',
+            'ajax'=>TRUE,
+            'i18n'=> 'people',
+        ]);
+    ?>
+</div>

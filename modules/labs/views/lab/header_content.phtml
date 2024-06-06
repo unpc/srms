@@ -1,0 +1,39 @@
+<div class="equipment_detail clearfix header_content_padding" id="<?php echo $control_uniqid; ?>">
+    <table class="form flexible">
+        <tr>
+            <td class="top icon rpadding_3">
+                <?php echo $lab->icon('104') ?>
+            </td>
+
+            <?php /* 实验室主页的备注信息换行显示(kai.wu@2011.09.06) */ ?>
+            <td class="top flexible">
+                <h2 class="tpadding_6"><?php $lab->render(); ?></h2>
+                <div class="interval_6"></div>
+                <span class="description">
+		<?php echo I18N::T('labs', '负责人') ?>:
+		<?php $lab->owner->render() ?>
+		</span>
+                <div class="interval_2"></div>
+                <?php if ($lab->description): ?>
+                    <p class="description" style="width: 48rem">
+                        <?php echo H(i18n::T('labs',$lab->description)); ?>
+                    </p>
+                    <div class="interval_6"></div>
+                <?php endif; ?>
+                <?php echo V('application:tag/path', ['tag' => $lab->group, 'url_template' => URI::url('!labs/list', 'group_id=%tag_id')]); ?>
+                <?php echo (string)Event::trigger('labs.lab.info', L('ME'), $lab); ?>
+
+            </td>
+            <td class="right top nowrap">
+                <div class="float_right" style="width: 300px">
+                    <?php echo Widget::factory('application:links', ['links' => $lab->links('view'), 'separator' => ' ']); ?>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="interval_12"></div>
+            </td>
+        </tr>
+    </table>
+</div>

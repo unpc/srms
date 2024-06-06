@@ -1,0 +1,37 @@
+<?php
+$me = L('ME');
+$role_list = $me->get_switch_role();
+$arr = [1, 2, 3, 4];
+shuffle($arr);
+$role_img_list = [];
+$data = [];
+foreach ($role_list as $role => $value) {
+    $role_img_list[$role] = $arr[count($role_img_list)%4];
+    $data[] = [
+        'role' => $role, 'role_img_list' => $arr[count($role_img_list)%4]
+    ];
+}
+$data = array_chunk($data,5,true);
+
+$view = 'people:switchrole/carousel_block_item';
+?>
+<form method="post" q-object="switch_role" q-event="submit" q-src="<?php echo H(URI::url() ) ?>" autocomplete="off">
+    <input style="display: none" id="user_select_role"  name="user_select_role" value="" />
+    <input style="display: none" id="submit" type="submit" name="submit"/>
+</form>
+<div style="margin-bottom: 40px;">
+<?php foreach ($data as $items) { ?>
+    <div style="white-space: nowrap;">
+        <?php foreach ($items as $item) { ?>
+            <?php echo V($view, $item);?>
+        <?php }?>
+    </div>
+<?php }?>
+</div>
+<script>
+    function RoleClick(data) {
+        document.getElementById('user_select_role').value = data;
+        document.getElementById("submit").click();
+    }
+</script>
+

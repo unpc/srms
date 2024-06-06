@@ -1,0 +1,41 @@
+<?php echo CSS::load_async('eq_reserv:common');?>
+<div class="form ">
+    <?php if ($type == 'csv'): ?>
+        <form id="reserv_form" method="POST" q-object="reserv_export" q-src="<?= URI::url('!eq_reserv/index') ?>" q-static="<?php echo H(['form_token'=>$form_token, 'type' => $type])?>" q-event="submit" autocomplete="off" class="prevent_default">
+    <?php else: ?>
+        <form method="post" action="<?php echo H(URI::url('!eq_reserv/export', ['form_token'=> $form_token, 'type'=>$type])) ?>" target="<?=$type == 'csv' ? '_self' : '_blank'?>" class="prevent_default">
+    <?php endif; ?>
+        <?php echo Form::hidden('dtstart', $dtstart);?>
+        <?php echo Form::hidden('dtend', $dtend);?>
+        <?php echo Form::hidden('calendar_id', $calendar_id);?>
+        <ul class="ep_triple">
+            <?php foreach(Config::get('calendar.export_columns.eq_reserv') as $key => $value) : ?>
+                <?php if ($key < 0) :?>
+                    <div class="clear">&#160;</div>
+                    <h4><?php echo I18N::HT('eq_reserv', $value)?></h4>
+                <?php else: ?>
+                    <li class="nowrap"><?php echo Form::checkbox("columns[{$key}]", TRUE, I18N::T('eq_reserv', $value), 'class="middle checkbox"')?></li>
+                <?php endif;?>
+            <?php endforeach;?>
+            <?php foreach(Event::trigger('calendar.extra.export_columns', [], $form_token) as $key => $value) : ?>
+                <?php if ($key < 0) :?>
+                    <div class="clear">&#160;</div>
+                    <h4><?php echo I18N::HT('eq_reserv', $value)?></h4>
+                <?php else: ?>
+                    <li class="nowrap">
+                        <?php
+                        $checked = Event::trigger('calendar.extra.export_columns.checked', $key);
+                        echo Form::checkbox("columns[{$key}]", $checked, I18N::T('eq_reserv', $value), 'class="middle checkbox"')
+                        ?>
+                    </li>
+                <?php endif;?>
+            <?php endforeach;?>
+        </ul>
+        <div class="button_container">
+        <div class="float_right">
+        <input name="cancel" id="cancel" type='reset' class="font-button-default sm rmargin_2e4" value="<?php echo I18N::HT('eq_reserv', '取消');?>" />
+        <input name="submit" type='submit' class="font-button-save sm" value="<?php echo I18N::HT('eq_reserv', '提交');?>" />
+        </div>
+        </div>
+    </form>
+</div>

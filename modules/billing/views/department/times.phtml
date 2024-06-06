@@ -1,0 +1,52 @@
+<?php 
+$PREFIX = "times[$flexform_index]"; 
+$form = $form[$flexform_index];
+?>
+<table class="form">
+<tbody>
+    <tr>
+        <td class="label middle nowrap pad rpadding_1">
+            <?php echo I18N::T('labs', '描述'); ?>
+        </td>
+        <td class="middle nowrap" style="padding-bottom: 10px">
+            <input type="textarea" class="text" 
+                value="<?php echo H($form['description'] ? : $description);?>" 
+                name="<?php echo $PREFIX?>[description]"/>
+        </td>
+    <tr>
+    <tr>
+        <td class="label middle nowrap rpadding_1">
+            <?php echo I18N::T('labs', '结算周期'); ?>
+        </td>
+        <td class="middle nowrap" style="padding-bottom: 10px">
+            <input class="text date" date_format="MM-dd" date_type="date"
+                value="<?php echo $form['date1'] ? : strtotime('1970-' . $date1); ?>" 
+                name="<?php echo $PREFIX?>[date1]" />
+            <span class="middle description"> - </span>
+            <input class="text date" date_format="MM-dd" date_type="date"
+                value="<?php echo $form['date2'] ? : strtotime('1970-' . $date2); ?>" 
+                name="<?php echo $PREFIX?>[date2]" />
+        </td>
+    <tr>
+    <tr>
+        <td class="label middle nowrap rpadding_1">
+            <?php echo I18N::T('labs', '发送时间'); ?>
+        </td>
+        <td class="middle nowrap" style="padding-bottom: 10px">
+            <input class="text date" date_format="MM-dd" date_type="date"
+                value="<?php echo $form['date'] ? : strtotime('1970-' . $date); ?>" 
+                name="<?php echo $PREFIX?>[date]" />
+        </td>
+    <tr>
+    <tr>
+        <td class="label middle nowrap">
+            <?php echo I18N::T('labs', '回复邮箱'); ?>
+        </td>
+        <td class="middle nowrap">
+            <input type="textarea" class="text" size="40"
+                value="<?php echo H($form['from'] ? : $from);?>" 
+                name="<?php echo $PREFIX?>[from]"/>
+        </td>
+    <tr>
+</tbody>
+</table>

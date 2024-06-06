@@ -1,0 +1,9 @@
+<div style="margin-left:20px; margin-right:20px;">
+<?php if ($resume->sex): ?>
+<a class="search_link" href="<?php echo URI::url('', ['sex'=>$resume->sex]); ?>">
+	<?php echo H(Resume::$sex[$resume->sex]); ?>
+</a>
+<?php else: ?>
+<?php echo '--'; ?>
+<?php endif; ?>
+<div>

@@ -1,0 +1,21 @@
+<div class="form padding_1">
+    <form method="post" class="blue view object:material_unit event:submit">
+        <?php if (is_object($form)) echo V('application:form_error', ['form'=>$form]); ?>
+        <input name="equipment_id" value="<?php echo H($equipment->id) ?>" class="hidden" />
+        <table class="form">
+            <tbody>
+            <tr>
+                <td class="right nowrap middle"><?php echo I18N::T('billing', '计量单位')?></td>
+                <td class="top"><input name="name" id="material_unit" class="text" size="20" value="<?php echo $form['name'] ?:'' ?>" /></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="submit" class="font-button-save float_right" value="<?php echo H(I18N::T('material', '添加')) ?>" />
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+

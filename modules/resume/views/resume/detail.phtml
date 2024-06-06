@@ -1,0 +1,103 @@
+<div class="hr_1">&#160;</div>
+<div>
+  <div class="photo"></div>
+  <table class="form" style="margin: 15px 0px 30px 0px;">
+	<tbody>
+	  <tr>
+		<td class="nowrap top">
+		  <span class="status_tag status_tag_label"><?php echo I18N::T('resume', '姓名'); ?></span>
+		</td>
+		<td />
+		<td style="width: 150px"><?php echo $resume->uname ? H($resume->uname) : I18N::T('resume', '--'); ?></td>
+		<td class="nowrap top">
+		  <span class="status_tag status_tag_label"><?php echo I18N::T('resume', '学历'); ?></span>
+		</td>
+		<td />
+		<td><?php echo $resume->education ? H(Resume::$education[$resume->education]) : I18N::T('resume', '--'); ?></td>
+	  </tr>
+	  <tr>
+		<td class="nowrap top">
+		  <span class="status_tag status_tag_label"><?php echo I18N::T('resume', '联系方式'); ?></span>
+		</td>
+		<td />
+		<td><?php echo $resume->phone ? H($resume->phone) : I18N::T('resume', '--'); ?></td>
+		<td class="nowrap top">
+		  <span class="status_tag status_tag_label"><?php echo I18N::T('resume', '学校'); ?></span>
+		</td>
+		<td />
+		<td><?php echo $resume->school ? H($resume->school) : I18N::T('resume', '--'); ?></td>
+	  </tr>
+	  <tr>
+		<td class="nowrap top">
+		  <span class="status_tag status_tag_label"><?php echo I18N::T('resume', '性别'); ?></span>
+		</td>
+		<td />
+		<td><?php echo $resume->sex ? H(Resume::$sex[$resume->sex]): I18N::T('resume', '--'); ?></td>
+	  </tr>
+	  <tr>
+		<td class="nowrap top">
+		  <span class="status_tag status_tag_label"><?php echo I18N::T('resume', '出生日期'); ?></span>
+		</td>
+		<td />
+		  <td><?php echo $resume->birthday ? Date::format($resume->birthday, T('Y/m/d')) : I18N::T('resume', '--'); ?></td>
+	  </tr>
+	  <tr>
+		<td class="nowrap top">
+		  <span class="status_tag status_tag_label"><?php echo I18N::T('resume', '目前所在地'); ?></span>
+		</td>
+		<td />
+		<td><?php echo $resume->current_location ? H($resume->current_location) : I18N::T('resume', '--'); ?></td>
+	  </tr>
+	</tbody>
+  </table>
+</div>
+<div>
+  <table class="form" width="600px;">
+	<tbody>
+	  <tr>
+		<td class="nowrap top"><span class="status_tag status_tag_label"><?php echo I18N::T('resume', '教育经历'); ?></span></td>
+		<td />
+		<td width="570px;"><?php echo $resume->education_background ? nl2br(H($resume->education_background)) : I18N::T('resume', '--'); ?></td>
+	  </tr>
+	  <tr>
+		<td class="nowrap top"><span class="status_tag status_tag_label"><?php echo I18N::T('resume', '工作经验'); ?></span></td>
+		<td />
+		<td><?php echo $resume->experience ? nl2br(H($resume->experience)) : I18N::T('resume', '--'); ?></td>
+	  </tr>
+	  <tr>
+		<td class="nowrap top"><span class="status_tag status_tag_label"><?php echo I18N::T('resume', '附件'); ?></span></td>
+		<td />
+		<td><div>
+			<?php if ($files): ?>
+			<table class="form">
+			  <tbody>
+				<?php foreach ($files as $file): ?>
+				<tr>
+				  <?php $links = $resume->links('file'); ?>
+				  <td class="top nowrap" style="width:254px"><a href="<?php echo $links['download_file']['url'] . '?name=' . H($file); ?>"><?php echo $file; ?></a></td>
+				  <td /><td /><td />
+				  <!--<?php foreach ($links as $link): ?>
+					  <td><a <?php echo $link['extra']; ?> href="<?php echo $link['url'] . '?name=' . H($file); ?>"><?php echo $link['text']; ?></a></td>
+					  <?php endforeach; ?>-->
+				</tr>
+				<?php endforeach; ?>
+			  </tbody>
+			</table>
+			<?php endif; ?>
+		</div></td>
+	  </tr>
+	</tbody>
+  </table>
+</div>
+<div class="hr_1">&nbsp;</div>
+<div class="hr_1">&nbsp;</div>
+<?php if( count($links = $resume->links()) ) { ?>
+	<div style="background-color:#EEE; padding:5px;">
+	<?php  echo Widget::factory('application:links', ['links'=>$links,'separator'=>'&nbsp;'] ); ?>
+	</div>
+<?php } ?>
+<div class="hr_1">&nbsp;</div>
+<div class="hr_1">&nbsp;</div>
+<div class="hr_1">&nbsp;</div>
+<?php echo $secondary_tabs; ?>
+<?php echo $secondary_tabs->content; ?>

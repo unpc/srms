@@ -1,0 +1,56 @@
+<?php if (count($tabs) > 0): echo CSS::load_async('calendars:tabs'); ?>
+<div class="tabs_container_wrapper fourth_tabs<?php echo $class?' '.$class:''?>">
+	<div class="tabs_container"<?php echo $form['hidden_tabs']? ' style="display:none"':'' ?>>
+		<span class="tabs">
+			<span class="tabs_body">
+				<span class="tabs_content">
+					<span class="calendar_content">
+					<?php
+						$calendar_content = Event::trigger('calendar.calendar_left_content.get', $calendar);
+						if ( $calendar_content )  echo $calendar_content;
+					?>
+					</span>
+					<div class="float_right" style="line-height: 20px;padding-top: 4px;">
+
+
+					<?php foreach($tabs as $tab):
+							if (isset($tab['*'])) {
+								$links = [];
+								foreach ($tab['*'] as $t) {
+									$links[]= URI::anchor($t['url'], $t['title'], 'class="middle"');
+								}
+								$content = implode(' <span class="separator middle">►</span> ', $links);
+							}
+							?>
+							<?php if(!isset($tab['*'])) { ?>
+								<a href="<?php echo H($tab['url'] ) ?>" class="middle">
+							<?php } ?>
+									<span class="tab_wrapper">
+										<span class="tab<?php echo $tab['active']?' active_tab':''?>">
+											<?php if(!isset($tab['*'])) {echo $tab['title'];} else {echo $content;} ?>
+										</span>
+									<?php
+									if($tab['number']):
+										if ($tab['number'] > 99) {
+											$tab['number'] = '...';
+											$len = 2;
+										}
+										else {
+											$len = strlen($tab['number']);
+										}
+									?>
+										<span class="tab_superscript num_notif num_notif_<?php echo $len;?>">
+											<?php echo $tab['number'] ?>
+										</span>
+									<?php endif; ?>
+									<!-- </span> -->
+								<?php if(!isset($tab['*'])) { echo "</a>"; } ?>
+					<?php endforeach; ?>
+									
+					</div>
+				</span>
+			</span>
+		</span>
+	</div>
+</div>
+<?php endif; ?>

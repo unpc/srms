@@ -1,0 +1,95 @@
+<?php $me = L('ME'); ?>
+<div class="padding_1 clearfix">
+	<div class="float_right">
+		<?php echo Widget::factory('application:comments', ['object'=>$task, 'arrow'=>'left']); ?>
+	</div>
+	<h2>
+		<?php echo V('treenote:task/table/data/status', ['task'=>$task]); ?>
+		<?php echo H($task->title); ?>
+	</h2>	
+	<div class="hr_1">&#160;</div>
+	<table class="form">
+		<tr>
+			<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::HT('treenote', '所属项目')?></span></td>
+			<td class="nowrap">
+				<a href="<?php echo H($task->project->url()) ?>"><?php echo H($task->project->title) ?></a>
+			</td>
+		</tr>
+		<tr>
+			<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::HT('treenote', '负责人|:task')?></span></td>
+			<td class="nowrap">
+				<?php $task->user->render() ?>
+			</td>
+		</tr>
+		<tr>
+			<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::HT('treenote', '优先级')?></span></td>
+			<td class="nowrap">
+				<?php echo V('treenote:task/table/data/priority', ['task'=>$task]); ?>
+			</td>
+		</tr>
+		<tr>
+			<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::HT('treenote', '截止日期')?></span></td>
+			<td class="nowrap">
+				<?php echo Date::format($task->deadline, T('Y/m/d')) ?>
+			</td>
+		</tr>
+		<?php if ($task->expected_time): ?>
+		<tr>
+			<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::HT('treenote', '预计耗时'); ?></span></td>
+			<td class="nowrap">
+				<strong><big><?php echo round($task->expected_time / 3600, 1); ?></big></strong> hr
+			</td>
+		</tr>
+		<?php endif; ?>
+		<?php	
+		$progress = $task->progress();
+		if ($progress['all'] > 0):
+		$percent = round(100 * $progress['complete'] / $progress['all']);
+		?>
+		<tr>
+			<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::HT('treenote', '完成度')?></span></td>
+			<td class="nowrap">
+					<strong><big><?php echo H($percent.'%'); ?></big></strong>
+					<span> ( <?php echo $progress['complete'] . ' / ' . $progress['all'];?> )</span>
+			</td>
+		</tr>
+		<?php endif; ?>
+		<?php if ($task->description): ?>
+		<tr>
+			<td class="nowrap tight top"><span class="status_tag status_tag_label"><?php echo I18N::HT('treenote', '说明')?></span></td>
+			<td class="top">
+				<?php echo H($task->description, TRUE) ?>
+				<div class="hr_1">&#160;</div>
+				<?php echo V('nfs:nfs_lite/downloads', ['object'=>$task, 'path_type'=>'attachments']); ?>
+			</td>
+		</tr>
+		<?php endif; ?>
+	</table>
+
+	<div class="hr_2">&#160;</div>
+	<?php echo Widget::factory('application:links', ['links' => $task->links('view'), 'separator' => ' ']);?>
+	<div class="hr_2">&#160;</div>
+	<?php
+		$tn_lockers = Q("tn_locker[task={$task}]");
+		foreach ($tn_lockers as $tn_locker) : ?>
+	<div>
+	<?php 
+			echo I18N::T('treenote', '%user 于 %date 锁定了该任务', [
+			'%user' => URI::anchor($tn_locker->user->url(), H($tn_locker->user->name),
+			'class="blue label"'),
+			'%date' => '<strong>' . Date::fuzzy($tn_locker->ctime, TRUE) . '</strong>',
+			]);
+			echo "&#160";
+			if ($tn_locker->user->id == $me->id && $me->is_allowed_to('解锁', $task)) : ?>
+				<a class="blue" q-object="task_unlock" q-event="click" q-static="<?php echo H(['id' => $task->id, 'type' => $task->name(),'locker_id'=>$me->id]) ?>"  q-src="<?php echo H(URI::url('!treenote/index') ) ?>"> <?php echo I18N::T('treenote', '解锁') ?></a>
+			<?php endif; ?>
+	</div>
+	<?php 
+		endforeach;
+	?>
+
+</div>
+<div class="hr_1">&#160;</div>
+<?php 
+echo $secondary_tabs;
+echo $secondary_tabs->content; 

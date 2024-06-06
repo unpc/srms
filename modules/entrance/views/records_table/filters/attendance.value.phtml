@@ -1,0 +1,10 @@
+<?php
+switch ($form['attendance']) {
+case DC_Record_Model::FILTER_EARLIEST :
+	echo I18N::T('entrance', '每日最早记录');
+	break;
+case DC_Record_Model::FILTER_LATEST :
+	echo I18N::T('entrance', '每日最晚记录');
+	break;
+default:
+}

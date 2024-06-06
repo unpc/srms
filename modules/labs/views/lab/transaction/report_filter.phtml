@@ -1,0 +1,28 @@
+<form autocomplete="off" class="view object:report static:lab_id=<?php echo $lab_id?> padding_2">
+	<div>
+		<h4><?php echo I18N::T('labs', '选择日期'); ?></h4>
+		<table class="form"><tbody>
+		<tr>
+			<td class="nowrap"><?php echo Form::radio('select_date_mode',0,0,T('某日收支'),'class="middle"','class="middle"'); ?></td>
+			<td class="nowrap"><input name="date_day" class="text date" q-date_format="<?php echo HT('$year/$month/$day')?>"/></td>
+		</tr>
+		<tr>
+			<td class="nowrap"><?php echo Form::radio('select_date_mode',1,0,T('整月收支'),'class="middle"','class="middle"'); ?></td>
+			<td class="nowrap"><input name="date_month" class="text date" q-date_format="<?php echo HT('$year/$month')?>"/></td>
+		</tr>
+		<tr>
+			<td class="nowrap"><?php echo Form::radio('select_date_mode',2,0,T('自定义范围'),'class="middle"','class="middle"'); ?></td>
+			<td class="nowrap">
+			<input name="date_start" class="text date" q-date_format="<?php echo HT('$year/$month/$day')?>"/>
+			~
+			<input name="date_end" class="text date" q-date_format="<?php echo HT('$year/$month/$day')?>"/>
+			</td>
+		</tr>
+		</tbody></table>
+	</div>
+	<div class="hr_1">&#160;</div>
+	<div class="buttons">
+		<input name="export_report" value="<?php echo I18N::T('labs', '导出CSV'); ?>" type="submit" class="button button_save"/>
+		<input name="print_report" value="<?php echo I18N::T('labs', '打印'); ?>" type="submit" class="button_print button"/>
+	</div>
+</form>

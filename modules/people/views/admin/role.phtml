@@ -1,0 +1,50 @@
+<style>
+    table.form td.label {
+        padding-left: 1rem;
+    }
+</style>
+<?php
+    $default_roles = Config::get('roles.default_roles');
+    $roles = L('ROLES');
+?>
+<div class="interval_6"></div>
+<div class="form margin-left-half" style="margin-bottom: 20rem;">
+    <?php if (count($roles) > count($default_roles)) :?>
+    <form method="post" autocomplete="off" class="edit">
+        <table class="form">
+            <?php echo V('form_error', ['form'=>$form]);?>
+            <thead>
+                <tr>
+                    <th colspan="2" class="label nowrap top" height="46"><h2 class="section_title"><?php echo I18N::T('people', '角色权限隐私设置'); ?></h2></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                foreach($roles as $role) :
+                //获取所有非系统默认的角色
+                    if (!array_key_exists($role->id, $default_roles)) :
+                ?>
+                        <tr>
+                            <td class="label left nowrap middle" width="126"><?php echo I18N::HT('people', $role->name) ?></td>
+                            <td class="label left nowrap middle">
+                                <?php
+                                    $privacy = Role_Model::$privacy;
+                                    echo Form::dropdown("role_privacy[$role->id]", I18N::T('people', $privacy), (int)$role->privacy);
+                                ?>
+                            </td>
+                        </tr>
+                        <tr><td colspan="2"><div class="interval_20"></div></td></tr>
+                <?php
+                    endif;
+                endforeach;
+                ?>
+                <tr><td colspan="2"><div class="interval_40"></div></td></tr>
+            </tbody>
+        </table>
+        <input type="submit" name="submit" class="font-button-save" style="float: right" value="<?php echo I18N::T('people', '保存修改'); ?>" />
+    </form>
+    <?php else:?>
+        <?php echo CSS::load_async('people:common');?>
+        <div class="no_roles center"><?php echo I18N::T('people', '暂无可设定角色!')?></div>
+    <?php endif;?>
+</div>

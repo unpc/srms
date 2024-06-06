@@ -1,0 +1,35 @@
+<?php $me = L('ME');?>
+
+<?php
+
+$table = Widget::factory('table');
+
+$table->name     = 'credit_list';
+$table->sort_asc = $sort_asc;
+$table->sort_by  = $sort_by;
+
+$table->add_columns((array) $columns);
+
+$table->empty_message = I18N::T('credit', '找不到相关的信用记录！');
+
+if ($credits->total_count()) {
+    foreach ($credits as $credit) {
+        $links = $credit->links();
+        $table->add_row([
+            /* '@'      => [
+            'view'  => URI::anchor($ban->user->url(), $ban->user->icon('32', 'style="display:block"')),
+            'extra' => 'style="padding:4px;min-width:44px;*width:44px;" align="right"',
+            ], */
+            'name'         => V('credit:credit_table/data/name', ['credit' => $credit]),
+            'lab'          => V('credit:credit_table/data/lab', ['credit' => $credit]),
+            'group'        => V('credit:credit_table/data/group', ['credit' => $credit]),
+            'level'        => V('credit:credit_table/data/level', ['credit' => $credit]),
+            'credit_score' => V('credit:credit_table/data/credit_score', ['credit' => $credit]),
+            'rest'         => Widget::factory('application:links', ['links' => $links]),
+        ]);
+    }
+}
+
+?>
+<?php echo $table;?>
+<div class="pages"><?php echo $pagination; ?></div>

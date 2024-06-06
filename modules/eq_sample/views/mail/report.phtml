@@ -1,0 +1,145 @@
+<style type="text/css">
+ul{
+	margin:0px;
+	list-style:none;
+	font-size:14px;
+}
+
+.top_text {
+	font-size:14px;
+	margin-left:42px;
+	padding:4px;
+}
+
+li {
+	padding: 4px;
+}
+</style>
+<div class="hr_1">&#160;</div>
+<p style="font-size:18px"><b><?= I18N::T('eq_sample','您好!')?></b></p>
+
+<div>
+	<?php if($receiver != $sample->sender->email):?>
+	<div class="top_text"><?= I18N::T('eq_sample','%name 的送样已经检测完成, 报告如下:', ['%name'=>$sample->sender->name])?></div>
+	<?php else:?>
+	<div class="top_text"><?= I18N::T('eq_sample','您的 %sample 已经检测完成, 报告如下:', ['%sample'=>URI::anchor($sample->equipment->url('sample'), I18N::T('eq_sample', '送样'))])?></div>
+	<?php endif;?>
+	<div style="height:30px">&#160;</div>
+	
+	<?php 
+
+	$categories = $extra->get_categories();
+
+	foreach ($categories as $category) :?>
+	<?php
+		$fields = [];
+		$field_value = [];
+		$fields = $extra->get_fields($category);
+		$values = $extra_value->values;
+
+		foreach ($fields as $uniqid => $field) :
+			if($field['adopted']){
+				$value = $sample->$uniqid;
+			}
+			else{
+				$value = $values[$uniqid];
+			}
+
+			switch ($field[type]) {
+				case Extra_Model::TYPE_CHECKBOX:
+					$value = array_filter((array)$value, function($v){return ($v == 'on');});
+	    			$value = join(',', array_keys($value));
+					break;
+				case Extra_Model::TYPE_SELECT:
+					$value = $value != -1 ? $value : '--';
+					break;
+				case Extra_Model::TYPE_RANGE:
+					if (is_array($value)) {
+						$value = $value[0] . ' - ' . $value[1]; 
+					}
+					break;
+				default:
+					break;
+			}
+	    	
+		    $field_value[] = [
+		        'title'=>$field['title'],
+		        'value'=>$value
+		    ];
+		    ?>
+		<?php endforeach;?>
+	
+
+		<?php if(count($field_value)):?>
+	    <p style="font-size:18px"><b><?= $category;?></b></p>
+	    <div style="height:4px"></div>
+		<ul>
+	        <?php foreach ($field_value as $fv):?>
+			<li><?= $fv['title'];?>: <?= $fv['value'];?></li>
+	        <?php endforeach?>
+		</ul>
+		<div style="height:10px"></div>
+	    <?php endif;?>
+    <?php endforeach;?>
+
+
+	<p style="font-size:18px"><b><?php echo I18N::T('eq_sample', '时间设定')?>:</b></p>
+	<div style="height:4px"></div>
+	<ul>
+		<li><?= I18N::T('eq_sample', '送样时间')?>: <?= Date::format($sample->dtsubmit, 'Y/m/d H:i:s')?></li>
+		<?php if($sample->dtstart || $sample->dtend):?>
+		<li><?= I18N::T('eq_sample', '测样时间')?>: <?= Date::format($sample->dtstart, 'Y/m/d H:i:s')?> - <?= Date::format($sample->dtend, 'Y/m/d H:i:s')?></li>
+		<?php else : ?>
+		<li><?= I18N::T('eq_sample', '测样时间')?>: <?= I18N::T('eq_sample', '未设定'); ?></li>
+		<?php endif;?>
+		<li><?= I18N::T('eq_sample', '取样时间')?>: <?= $sample->dtpickup ? Date::format($sample->dtpickup, 'Y/m/d H:i:s') : I18N::T('eq_sample', '未设定');?></li>
+	</ul>
+	<div style="height:10px"></div>
+
+	<p style="font-size:18px"><b><?php echo I18N::T('eq_sample', '送样状态:') ?></b></p>
+	<div style="height:4px"></div>
+	<ul>
+		<li><?= I18N::T('eq_sample','状态');?>: <?= I18N::T('eq_sample', Event::trigger('sample.status')[EQ_Sample_Model::STATUS_TESTED]);?></li>
+		<li><?= I18N::T('eq_sample', '测样成功数')?>: <?= $sample->success_samples?></li>
+	</ul>
+	<div style="height:10px"></div>
+	
+	<?php 
+	$views = Event::trigger('eq_sample.mail.content', $sample);
+	echo join('', $views);
+	?>
+
+	<?php if($smaple->note):?>
+	<p style="font-size:18px"><b><?php echo I18N::T('eq_sample', '备注:') ?></b></p>
+	<div style="height:4px"></div>
+	<ul>
+		<li><?= $sample->note?></li>
+	</ul>
+	<div style="height:10px"></div>
+	<?php endif;?>
+
+</div>
+
+<div class="hr_1">&#160;</div>
+<div align='left' style="font-size:14px;">
+	<div style="padding:5px;">
+		<b>※ <?= I18N::T('eq_sample', '如果您希望了解更多信息, 请登录管理系统')?>: <?= Config::get('system.base_url')?></b>
+	</div>
+	<br>
+	<div style="padding:5px">
+		<b><?= I18N::T('eq_sample', '祝您工作顺利, 心情愉快!')?></b>
+	</div>
+	<br>
+	<div style="padding:5px">
+		<b><?= I18N::T('eq_sample', '基理科技')?></b>
+	</div>
+	<div style="padding:5px">
+		<b>T: <?= Config::get('system.customer_service_tel_text'); ?>（<?= Config::get('system.customer_service_tel'); ?>）</b>
+	</div>
+	<div style="padding:5px">
+		<b>W: <a href='www.geneegroup.com'>www.geneegroup.com</a></b>
+	</div>
+	<div style="padding:5px">
+		<b>LabScout LIMS: Research Gets Easier!</b>
+	</div>
+</div>

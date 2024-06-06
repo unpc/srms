@@ -1,0 +1,85 @@
+<?php
+    $me = L('ME');
+    $no_error = ($form->no_error!==FALSE);
+    $require = (string) V('form_require', ['extra_class' => 'top']);
+    $disabled = $me->is_allowed_to('锁定基本', $equipment) ? '' : ($equipment->info_lock ? 'disabled' : '');
+?>
+<?php
+if($add):
+    ?>
+<tr>
+    <td class="label left nowrap middle">
+    <?php echo I18N::T('equipments', '国家科技部共享')?>
+    <span style="padding-left:17px">
+    <?php if ($disabled): ?>
+            <div style="padding-top: 3px;">
+            <?= $equipment->nrii_share ? '是' : '否'; ?>
+            </div>
+        <?php else: ?>
+            <?php
+            echo Form::radio(
+                'nrii_share', 
+                1, 
+                $no_error ? $equipment->nrii_share : $form['share'], 
+                I18N::T('equipments', '是'), 
+                ' class="middle radio"', 
+                'class="middle rpadding_15"'
+            );
+        ?>
+        
+        <?php
+            echo Form::radio(
+                'nrii_share', 
+                0, 
+                $no_error ? $equipment->nrii_share : $form['share'], 
+                I18N::T('equipments', '否'), 
+                ' class="middle radio"', 
+                'class="middle"'
+            ); 
+        ?>
+        <!-- <?php if ($equipment->nrii_share): ?>
+            <a href="<?= URI::url('!nrii/equipment/index.'.$equipment->id)?>" class="blue middle button button_edit"><?= T('更新科技部对接信息')?></a>
+        <?php endif; ?> -->
+        <?php endif; ?>
+    </span>
+        
+    </td>
+</tr>
+<?php else:?>
+    <tr>
+    <td class="label left nowrap middle lpadding_18"><?php echo I18N::T('equipments', '国家科技部共享')?></td>
+    <td class="top middle">
+        <?php if ($disabled): ?>
+            <div style="padding-top: 3px;">
+            <?= $equipment->nrii_share ? '是' : '否'; ?>
+            </div>
+        <?php else: ?>
+            <?php
+            echo Form::radio(
+                'nrii_share', 
+                1, 
+                $no_error ? $equipment->nrii_share : $form['share'], 
+                I18N::T('equipments', '是'), 
+                ' class="middle radio"', 
+                'class="middle rmargin_152"'
+            );
+        ?>
+        
+        <?php
+            echo Form::radio(
+                'nrii_share', 
+                0, 
+                $no_error ? $equipment->nrii_share : $form['share'], 
+                I18N::T('equipments', '否'), 
+                ' class="middle radio"', 
+                'class="middle"'
+            ); 
+        ?>
+        <!-- <?php if ($equipment->nrii_share): ?>
+            <a href="<?= URI::url('!nrii/equipment/index.'.$equipment->id)?>" class="blue middle button button_edit"><?= T('更新科技部对接信息')?></a>
+        <?php endif; ?> -->
+        <?php endif; ?>
+    </td>
+</tr>
+
+<?php endif;?>

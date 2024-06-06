@@ -1,0 +1,5 @@
+<?php 
+	$interview_place_set[0] = '--';
+	$interview_place_set += (array)Resume::$interview_place;	
+?>
+<?php echo Form::dropdown('interview_place', $interview_place_set, H($this->interview_place) ?: 0, ' class="drop middle"'); ?>

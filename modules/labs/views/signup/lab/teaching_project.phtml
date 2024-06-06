@@ -1,0 +1,75 @@
+<?php 
+//$type = $type===Lab_Project_Model::TYPE_EDUCATION ? $type : $project['type'];
+//$type = $type===Lab_Project_Model::TYPE_RESEARCH ? $type : '0';
+//$PREFIX = "project[$type][1]";
+$type = $type===Lab_Project_Model::TYPE_EDUCATION ? $type : $project['type'];
+$PREFIX = "project[$type][$flexform_index]";
+?>
+<table class="form float_right">
+<tbody>
+	<tr>
+        <td class="middle nowrap"><?php //echo I18N::T('labs', '教学类项目'); ?></td>
+        <td class="sinuptit_table_interval"></td>
+<!--		<td class="label middle nowrap">-->
+<!--			--><?php //echo I18N::T('labs', '名称'); ?>
+<!--		</td>-->
+		<td class="middle nowrap">
+			<input placeholder="请输入项目名称" type="text" class="text sinup_min"
+				value="<?php echo H($form['project'][$type][1]['name']) ?: $project['name'];?>"
+				name="<?php echo $PREFIX ?>[name]"
+			/><?php echo $require?>
+		</td>
+        <td class="sinuplab_table_interval"></td>
+<!--        <td class="label middle nowrap">-->
+<!--            --><?php //echo I18N::T('labs', '人数'); ?>
+<!--        </td>-->
+        <td class="middle nowrap">
+            <input placeholder="请输入项目人数" type="text" class="text sinup_min"
+                   value="<?php echo H($form['project'][$type][1]['student_count']) ?: $project['student_count'];?>"
+                   name="<?php echo $PREFIX?>[student_count]"/>
+        </td>
+	</tr>
+    <tr><td><div class="interval_8"></div> </td></tr>
+    <tr>
+<!--        <td class="label middle nowrap">-->
+<!--            --><?php //echo I18N::T('labs', '教材'); ?>
+<!--        </td>-->
+        <td colspan="2"></td>
+        <td class="middle nowrap">
+            <?php $book_type = $form['project'][$type][1]['book_type'] ?: $project['book_type'];?>
+
+            <?php echo Form::radio("{$PREFIX}[book_type]", 1, $book_type,
+                I18N::T('labs','自编'), ' class="middle radio"', 'class="middle"'); ?>
+            <?php echo Form::radio("{$PREFIX}[book_type]", 0, $book_type,
+                I18N::T('labs','购买'), ' class="middle radio"', 'class="middle"'); ?>
+
+        </td>
+        <td class="sinuplab_table_interval"></td>
+        <td class="middle nowrap">
+<!--            hint:--><?php //echo I18N::T('labs','教材名称');?>
+            <input placeholder="请输入教材名称" type="text sinup_min" class="text sinup_min"
+                   value="<?php echo H($form['project'][$type][1]['textbook']) ?: $project['textbook'];?>"
+                   name="<?php echo $PREFIX?>[textbook]"/>
+        </td>
+    </tr>
+    <tr><td><div class="interval_8"></div> </td></tr>
+	<tr>
+<!--		<td class="label middle nowrap">-->
+<!--			--><?php //echo I18N::T('labs', '时间'); ?>
+<!--		</td>-->
+        <td colspan="2"></td>
+		<td class="middle nowrap">
+			<input placeholder="请输入开始时间" class="text sinup_min date" date_type="month"
+				value="<?php echo H($form['project'][$type][1]['dtstart']);?>"
+				name="<?php echo $PREFIX?>[dtstart]" />
+        </td>
+        <td class="sinuplab_table_interval"></td>
+        <td>
+			<input placeholder="请输入结束时间" date_type="month" class="text sinup_min date"
+				value="<?php echo H($form['project'][$type][1]['dtend']);?>"
+				name="<?php echo $PREFIX?>[dtend]" />
+		</td>
+	</tr>
+    <tr><td><div class="interval_15"></div> </td></tr>
+</tbody>
+</table>

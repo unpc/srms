@@ -1,0 +1,6 @@
+<?php $me = L('ME'); ?>
+<?php if ($me->is_allowed_to('列表全部仪器使用评价', 'equipment')) : ?>
+<a href="<?= URI::url('!equipments/extra/comment.all'); ?>" class="blue">
+    <?= I18N::T('eq_comment', '全部仪器的使用评价'); ?>
+</a>
+<?php endif; ?>

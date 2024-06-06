@@ -1,0 +1,5 @@
+<?php
+    $form['ctime_dtstart'] = $form['ctime_dtstart'] ? date('Y-m-d', $form['ctime_dtstart']) : '';
+    $form['ctime_dtend'] = $form['ctime_dtend'] ? date('Y-m-d', $form['ctime_dtend']) : '';
+ ?>
+<input id="ctime_dtstart" name="ctime_dtstart" date_type="date" class="text date small_search_text" value="<?php echo H($form['ctime_dtstart']) ?>" /><span class="middle description date_interval">-</span><input id="ctime_dtend" name="ctime_dtend" date_type="date" class="text date small_search_text" value="<?php echo H($form['ctime_dtend'] ) ?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/>

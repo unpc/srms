@@ -1,0 +1,137 @@
+<div class="hr_1">&#160;</div>
+<?php
+	$me = L('ME');
+	if (!isset($task) && !isset($project)) {
+		$can_add_task = $me->is_allowed_to('添加', 'tn_task') ? TRUE : FALSE;
+	}
+	else {
+		$can_add_task = ( $me->is_allowed_to('添加任务', $task) || $me->is_allowed_to('添加任务', $project) ) ? TRUE : FALSE;
+	}
+?>
+<div class="panel padding_1 clearfix">
+	<?php if ($can_add_task): ?>
+		<div class="float_left">
+			<a class="button button_add" q-object="new_task" q-event="click" q-src="<?php echo H(URI::url('!treenote/task')) ?>" q-static="<?php echo H(['user'=>$default_user->id, 'parent_task'=>$task->id, 'project'=>$project->id])?>"><?php echo I18N::HT('treenote', '添加任务') ?></a>
+		</div>
+	<?php endif; ?>
+	<div class="float_right">
+		<form q-object="locate_task" q-event="submit" q-src="<?php echo H(URI::url('!treenote/task')) ?>">
+			<input type="text" class="text" name="task" q-hint="<?php echo I18N::HT('treenote', '任务编号...') ?>"/>
+			<input type="submit" class="hidden" name="submit" />
+		</form>
+	</div>
+</div>
+<div class="light_panel padding_1">
+<?php foreach(TN_Task_Model::$status_options as $status => $option): ?>
+<a class="job_status job_status_<?php echo $status; ?>" href="<?php echo URI::url('', 'status='.$status); ?>">
+	<?php echo I18N::HT('treenote', $option); ?>
+</a>
+<?php endforeach; ?>
+</div>
+<?php echo $pagination; ?>
+<?php
+
+$table = Widget::factory('table');
+
+$table->name = 'treenote_tasks';
+
+if($form['dtstart_check'] && $form['dtend_check']) {
+	$form['date'] = H(date('Y/m/d',$form['dtstart'])).'~'.H(date('Y/m/d',$form['dtend']));
+}
+elseif($form['dtstart_check']) {
+	$form['date'] = H(date('Y/m/d',$form['dtstart'])).'~'.I18N::T('treenote','最末');
+}
+elseif($form['dtend_check']) {
+	$form['date'] = I18N::T('treenote','最初').'~'.H(date('Y/m/d',$form['dtend']));
+}
+
+$table->add_columns([
+	'@'=>[
+		'nowrap' => TRUE,
+		'align' => 'center top',
+	],
+	'@status' => [
+		'title' => '&#160;',
+		'nowrap' => TRUE,
+		'extra_class'=>'tight',
+		'align'=>'center top',
+		],
+    'content'=> [
+        'title'=>I18N::T('treenote', '内容'),
+        'nowrap'=>TRUE,
+        'invisible'=>TRUE,
+		'filter'=>[
+			'form' => V('treenote:task/table/filters/content', ['content'=>$form['content']]),
+			'value' => isset($form['content']) ? H($form['content']) : NULL,
+		    ],
+    ],
+	'task'=>[
+		'title'=>I18N::T('treenote', '任务'),
+		'align'=>'left top',
+	],
+	'status'=>[
+		'title'=>I18N::T('treenote', '状态'),
+		'filter'=>[
+			'form' => V('treenote:task/table/filters/status', ['status'=>$form['status']]),
+			'value' => isset($form['status']) ? I18N::T('treenote', Tn_Task_Model::$status_options[$form['status']]) : NULL,
+			],
+		'invisible'=>TRUE
+	],
+	'priority'=>[
+		'title'=>I18N::T('treenote', '优先级'),
+		'filter'=>[
+			'form' => V('treenote:task/table/filters/priority', ['priority'=>$form['priority']]),
+			'value' => $form['priority'] ? I18N::T('treenote', Tn_Task_Model::$priority_labels[$form['priority']]) : NULL,
+			],
+		'invisible'=>TRUE
+	],
+	'deadline'=>[
+		'title'=>I18N::T('treenote', '截止日期'),
+		'filter' => [
+			'form' => V('treenote:general/table/filters/date', [
+							'dtstart_check'=>$form['dtstart_check'],
+							'dtstart'=>$form['dtstart'],
+							'dtend_check'=>$form['dtend_check'],
+							'dtend'=>$form['dtend']
+							]),
+			'value' => $form['date'] ? H($form['date']) : NULL,
+            'field' => 'dtstart_check,dtend_check,dtstart,dtend'
+			],
+		'nowrap'=>TRUE,
+	],
+]);
+
+$table->empty_message = I18N::T('treenote', '无相关任务');
+
+$time = 0;
+$d = getdate();
+$now = mktime(23,59,59,$d['mon'],$d['mday'],$d['year']);
+
+$me = L('ME');
+
+foreach ($tasks as $task) {
+
+	if (!$me->is_allowed_to('列表', $task)) continue;
+
+	if ($task->deadline > $now) {
+		if ($time === 0 || $task->deadline > $time) {
+			$d = getdate($task->deadline);
+			$time = mktime(23,59,59, $d['mon'], $d['mday'], $d['year']);
+			$table->add_row([
+				'#special_view'=>V('treenote:task/table/data/date_separator', ['task'=>$task]),
+				'#extra_class'=>'date_header',
+			]);
+		}
+	}
+
+	$table->add_row(
+		[
+			'@'=> V('treenote:task/table/data/priority_block', ['task' => $task]),
+			'@status' => V('treenote:task/table/data/status', ['task'=>$task]),
+			'task' => V('treenote:task/table/data/task', ['task' => $task]),
+			'deadline'=> V('treenote:task/table/data/deadline', ['task' => $task]),
+		]
+	);
+}
+
+echo $table;

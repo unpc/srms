@@ -1,0 +1,22 @@
+<div class="hr_1">&#160;</div>
+<div class="treenote_project_tasks">
+<?php if (isset($project) && L('ME')->is_allowed_to('添加', 'tn_task') && (!$project->is_locked)):?>
+<div class="panel padding_1 clearfix">
+	<a class="prevent_default button button_add" href="<?php echo H(isset($project) ? $project->url(NULL, NULL, NULL, 'add_task') : URI::url('!treenote/task/add')) ?>"><?php echo I18N::HT('treenote', '添加任务')?></a>
+		&#160;&#160;
+</div>
+<?php endif;?>
+<?php
+$tasks = Q("tn_task[project=$project][parent_task_id=0][is_complete=0]:sort(deadline A, priority A)");
+if ($tasks->total_count() > 0) :
+?>
+<div class="task_list">
+<?php
+	foreach ($tasks as $t) { echo V('treenote:task/project_task', ['task'=>$t]); }
+?>
+</div>
+<?php
+endif;
+?>
+</div>
+<div class="hr_2">&#160;</div>

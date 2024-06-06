@@ -1,0 +1,34 @@
+<?php $me = L('ME');?>
+
+<div class="equipments_info_style">
+<div class="clearfix">
+    <?php echo CSS::load_async("entrance:common");?>
+    <h2 class="section_title">
+        <span class="border"></span>
+        <span class="black_title"><?php echo I18N::T('iot_gdoor', '关联门牌') ?></span>
+    </h2>
+	<div class="interval_30"></div>
+	<div>
+        <table class="form">
+            <?php foreach ($doors as $door): ?>
+            <tr>
+                <td class="nowrap">
+                    <span class="control_status middle door_locked"></span>
+                </td>
+                <td class="top nowrap">
+                    <strong>
+                    <?php $doorInfo = Remote_Door::getDoorInfo($door->gdoor_id)?>
+                    <?php if (L('ME')->access('查看门牌模块')) : ?>
+                    <a href="<?php echo H(Config::get('layout.sidebar.menu')['iot_gdoor']['list']['url']) ?>">
+                        <?php echo H($doorInfo['name']); ?><small>(<?php echo H($doorInfo['room']['fullName'])?>)</small>
+                    </a>
+                    <?php else :?>
+                        <?php echo H($doorInfo['name']); ?><small>(<?php echo H($doorInfo['room']['fullName'])?>)</small>
+                    <?php endif;?>
+                    <strong>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </table>
+    </div>
+</div>

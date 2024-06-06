@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C/DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+        <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1" />
+		<title><?= I18N::T('charge_confirm', '打印转账单')?></title>
+		<base href="<?= H(Config::get('system.base_url') ) ?>" />
+		<link type="text/css" rel="stylesheet" href="<?= H(URI::url('css', ['f'=>'core'])) ?>" />
+		<style>
+            h3 {
+                text-align: center;
+                font-size: 24px;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            table, table tr th, table tr td {
+                border:1px solid #000;
+                text-align: center;
+                height: 35px;
+            }
+		</style>
+		<style media="print">
+			.buttons{
+				display:none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="buttons">
+            <a href="#" onclick="window.print(); return false;" class="lpadding_2"><?= I18N::T('charge_confirm', '打印'); ?></a>
+			<a href="#" onclick="window.close(); return false;" class="lpadding_2"><?= I18N::T('charge_confirm', '关闭'); ?></a>
+		</div>
+        <div style="page-break-after: always;">
+            <h3><?= T(东北大学仪器设备共享服务转账单（计财处留存）)?></h3>
+            <div>
+                <?= V('charge_confirm:print_item', ['charge' => $charge])?>
+            </div>
+        </div>
+        <div style="page-break-after: always;">
+            <h3><?= T(东北大学仪器设备共享服务转账单（机组留存）)?></h3>
+            <div>
+                <?= V('charge_confirm:print_item', ['charge' => $charge])?>
+            </div>
+        </div>
+        <div style="page-break-after: always;">
+            <h3><?= T(东北大学仪器设备共享服务转账单（资产处留存）)?></h3>
+            <div>
+                <?= V('charge_confirm:print_item', ['charge' => $charge])?>
+            </div>
+        </div>
+	</body>
+</html>

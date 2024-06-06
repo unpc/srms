@@ -1,0 +1,18 @@
+<tr class="hidden toggle:require_training show_on:on">
+    <td>
+        <table>
+            <tr>
+                <td><?php echo I18N::T('equipments', '培训通过后')?></td>
+                <td><?php echo V('equipments:training/expire_time', ['equipment' => $equipment]);?></td>
+                <td><?php echo I18N::T('equipments', '未使用仪器, 授权过期');?></td>
+            </tr>
+            <tr>
+                <td>&#160;</td>
+                <td colspan="2">
+                    <p class="description red"><?php echo I18N::T('equipments', '* 1个月按30天计算')?></p>
+                    <p class="description red"><?php echo I18N::T('equipments', '* 设置为0, 则不限制培训过期时间');?></p>
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>

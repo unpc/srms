@@ -1,0 +1,18 @@
+<div class="item icon_item <?php echo $class?>">
+	<?php $tooltip = I18N::HT($item['i18n'], $item['title']);?>
+	<div class="item_content" q-tooltip="<?php echo H($tooltip) ?>" q-tooltip_offsetY="8" q-tooltip_class="sidebar_tooltip">
+		<a href="<?php echo H(URI::url($item['url']) ) ?>" class="icon center clearfix">
+			<div class="icon_mask">&#160;</div>
+			<img width="48px" height="48px" src="<?php echo H($item['icon'] ) ?>" class="icon pngfix"/>
+		<?php 
+		if ($item['notif_callback']) :
+			$number = call_user_func($item['notif_callback'], $item);
+			if ($number): $len = strlen($number); ?>
+		<span class="num_notif num_notif_<?php echo $len;?> middle"><?php echo $number; ?></span>
+		<?php endif;
+		endif;
+		?>
+		</a>
+		<a class="title" href="<?php echo H(URI::url($item['url']) ) ?>"><?php echo I18N::HT($item['i18n'], $item['title']) ?></a>
+	</div>
+</div>

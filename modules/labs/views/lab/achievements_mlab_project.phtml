@@ -1,0 +1,27 @@
+<?php
+$me       = L('ME');
+$proj_uid = 'container_' . uniqid();
+$eq_uid   = 'container_' . uniqid();
+$require  = (string) V('form_require');
+?>
+
+<div class="form padding_2">
+<tr><td><div class="interval_20"></div></td></tr>
+  <!-- <table class="form message_form" style="margin: 0 auto;"> -->
+  <!-- <tbody> -->
+    <tr id="<?php echo $proj_uid; ?>">
+      <td></td>
+      <td class="middle"><span class="description"><?php echo I18N::T('labs', '* 你可以关联此成果到某一课题组项目，但你尚未选择课题组') ?></span></td>
+    </tr>
+    <tr id="<?php echo $eq_uid; ?>">
+    </tr>
+  <!-- </tbody> -->
+  <!-- </table> -->
+</div>
+<?php echo JS::load('labs:achievements_mlab_project', [
+    'proj_uid'    => $proj_uid,
+    'eq_uid'      => $eq_uid,
+    'object_name' => $object->name(),
+    'object_id'   => $object->id,
+    'url'         => URI::url('!achievements/projects'),
+]); ?>

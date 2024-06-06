@@ -1,0 +1,301 @@
+<?php echo CSS::load_async('people:common');?>
+
+<form class="input-text-width-240" method="post" q-object="add_user_record" q-event="submit" q-src="<?php echo H(URI::url() ) ?>" autocomplete="off">
+<?php echo V('form_error', ['form'=>$form]);?>
+<?php
+    $i = 0;
+	$requires = Lab_Model::add_require_fields();
+	$data = Event::trigger("user_signup_requires", $requires, 'new_user');
+	$requires = is_null($data) ? $requires : $data;
+	$_requires = function($key) use ($requires) {
+		echo $requires[$key] ? (string) V('form_require') : '';
+	}
+?>
+    <div class="stepCont stepCont3">
+        <!-- 菜单导航显示-->
+        <div class='ystep-container ystep-lg ystep-blue'></div>
+        <!-- 分页容器-->
+        <div class="pageCont" data-ignore-ajax-check="true">
+            <div id="page1" class="stepPage">
+                <table class="form flexible">
+                    <tr class="begin">
+                        <td class="label left top nowrap blue"><h1><?php echo I18N::T('people', '登录信息') ?></h1></td>
+                        <td class="right description middle red">*&nbsp;必填</td>
+                    </tr>
+                    <tr>
+                        <td class="label left nowrap">
+                            <?php echo $_requires('token')?><?php echo I18N::T('people', '登录帐号')?>
+                            <?php echo V('form_filter', ['error'=>$form->errors['token'][0]]);?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="middle" colspan="2">
+                            <input placeholder="请输入登录帐号" name="token" class="text" value="<?php echo H($form['token']) ?>" />
+                            <div style="display: inline-block;width: 26px;text-align: center">
+                            @
+                            </div>
+                            <?php
+                            echo Widget::factory('people:backend_selector', [
+                                'select'=> $form['backend'] ? : Config::get('auth.default_backend'),
+                                'extra_class' => 'monitor'
+                            ]);
+                            ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="middle description" colspan="2" style="color: #F5222D;padding-top: 15px!important;">
+                            <?php
+                            $message = Config::get('auth.enable_cn_token') ?
+                                Config::get('people.signup.label.cn') : Config::get('people.signup.label.en'); ?>
+                            <?php echo I18N::T('people', $message);?>
+                        </td>
+                    </tr>
+                    <?php echo V('people:profile/add_pwd', ['form'=>$form, 'name'=>'backend']);?>
+                    <?php
+                        $members_type = [];
+                        foreach(User_Model::get_members() as $key => $value){
+                            $members_type[I18N::T('people', $key)] = $value;
+                        }
+                    ?>
+                </table>
+            </div>
+            <div id="page2" class="stepPage">
+                <table class="form flexible">
+                    <tr class="begin">
+                        <td class="blue">
+                            <h1><?php echo I18N::T('people', '个人信息') ?></h1>
+                        </td>
+                        <td class="right description middle red" style="padding-right:20px;">*&nbsp;必填</td>
+                    </tr>
+                    <tr>
+                        <td class="label nowrap">
+                            <?php echo $_requires('name')?><?php echo I18N::HT('people', '姓名')?>
+                            <?php echo V('form_filter', ['error'=>$form->errors['name'][0]]);?>
+                        </td>
+                        <td class="label nowrap"><?php echo $_requires('gender')?><?php echo I18N::HT('people', '性别')?></td>
+
+                    </tr>
+                    <tr>
+                        <td class="middle"><input placeholder="请输入姓名" name="name" class="text" value="<?php echo H($form['name']) ?>" /></td>
+                        <td class="middle"><?php echo Form::dropdown('gender', I18N::T('people', User_Model::$genders), isset($form['gender']) ? $form['gender'] : -1 , 'class="dropdown"'); ?></td>
+                    </tr>
+                    <tr>
+                        <td class="label nowrap">
+                            <?php echo $_requires('member_type')?><?php echo I18N::HT('people', '人员类型')?>
+                            <?php echo V('form_filter', ['error'=>$form->errors['member_type'][0]]);?>
+                        </td>
+                        <?php
+                        $me = L('ME');
+                        if ($GLOBALS['preload']['tag.group_limit'] >= 0 && $me->is_allowed_to('修改组织机构', 'user')): ?>
+                        <td class="label nowrap"><?php echo $_requires('group_id')?><?php echo I18N::T('people', '组织机构')?></td>
+                    <?php endif;?>
+                    </tr>
+                    <tr>
+                        <td class="middle"><?php echo Form::dropdown('member_type', ['-1'=>'--'] + I18N::T('people', $members_type), isset($form['member_type']) ?  $form['member_type'] : -1, 'class="dropdown"'); ?></td>
+                        <?php
+                        $me = L('ME');
+                        if ($GLOBALS['preload']['tag.group_limit'] >= 0 && $me->is_allowed_to('修改组织机构', 'user')): ?>
+                        <td class="middle"><div class="gray_tag_container">
+                                <?php
+                                if (!$me->is_allowed_to('修改组织机构', 'user', ['@ignore'=>'修改下属机构成员'])) {
+                                    $group_root = $me->group;
+                                }
+                                echo Widget::factory('application:tag_selector', [
+                                    'tag'=>$group,
+                                    'root'=>$group_root,
+                                    'name'=>'group_id',
+                                    'ajax'=>true,
+                                ]);
+                                ?>
+                            </div></td>
+                        <?php endif;?>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="label top nowrap">
+                            <span class="rpadding_3 top"><?php echo I18N::HT('people', '权限角色')?></span>
+                            <div style="display: inline-block; width: 470px; white-space: normal;">
+                                <?php foreach($roles as $role): ?>
+                                <span>
+               
+                                <?php echo Form::checkbox("roles[{$role->id}]", !!(empty($form['roles'][$role->id]) || $form['roles'][$role->id]=='null'?false:true), I18N::HT('roles', $role->name),'class="middle checkbox" '. $disable,
+                                    'class="middle nowrap inline_block" style="width: 130px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"');?>
+					            </span>
+                                <?php endforeach; ?>
+                            </div>
+
+                        </td>
+                    </tr>
+                    <tr>
+<!--                        --><?php //if ( Config::get('people.show_ref_no', true) ) : ?>
+                        <td class="label nowrap"><?php echo $_requires('ref_no')?><?php echo I18N::HT('people', '学号/工号')?></td>
+                        <td class="label nowrap"><?php echo $_requires('major')?><?php echo I18N::HT('people', '专业')?></td>
+<!--                        --><?php //endif; ?>
+
+                    </tr>
+                    <tr>
+<!--                        --><?php //if ( Config::get('people.show_ref_no', true) ) : ?>
+                        <td class="middle"><input placeholder="请输入学号/工号" name="ref_no" class="text" value="<?php echo H($form['ref_no']) ?>" /></td>
+<!--                        --><?php //endif; ?>
+                        <td class="middle"><input placeholder="请输入专业" name="major" class="text" value="<?php echo H($form['major']) ?>" /></td>
+                    </tr>
+
+                    <tr>
+                        <td class="label nowrap"><?php echo $_requires('organization')?><?php echo I18N::HT('people', '单位名称')?></td>
+                        <?php if (Module::is_installed('labs')) :?>
+                            <td class="label nowrap">
+                                <?php echo $_requires('lab')?><?php echo I18N::T('people', '实验室')?>
+                                <?php echo V('form_filter', ['error'=>$form->errors['lab'][0]]);?>
+                            </td>
+                        <?php endif;?>
+
+                    </tr>
+                    <tr>
+                        <td class="middle"><input placeholder="请输入单位名称" name="organization" class="text" value="<?php echo H($form['organization'])?>" /></td>
+                    <?php if (Module::is_installed('labs')) :?>
+                        <td class="middle">
+                            <?php
+                            echo Widget::factory('labs:lab_selector', [
+                                'name' => 'lab',
+                                'selected_lab' => O('lab', $form['lab']),
+                            ]);
+                            ?>
+                        </td>
+                    <?php endif;?>
+                    </tr>
+                    <?php if ( Config::get('people.show_mentor_name', false) ) : ?>
+                        <tr>
+                            <td class="label right nowrap"><?php echo $_requires('mentor_name')?><?php echo I18N::T('people', '导师姓名');  ?></td>
+                            <td class="middle"><input placeholder="请输入导师姓名" name="mentor_name" class="text" value="<?php echo H($form['mentor_name']); ?>" /></td>
+                        </tr>
+                    <?php endif; ?>
+
+                    <?php if ($GLOBALS['preload']['people.enable_member_date']) : ?>
+                        <tr>
+                            <td class="label nowrap"><?php echo $_requires('time');?><?php echo I18N::T('people', '所在时间')?></td>
+                        </tr>
+                        <tr>
+                            <td class="middle">
+<!--                                --><?php //echo Form::checkbox('has_dfrom', $form['has_dfrom'], NULL, 'class="middle monitor"'); ?>
+                                <input placeholder="请输入开始时间" id="dfrom" name="dfrom" class="text toggle_status:has_dfrom enable_on:on small_search_text middle" value="<?php echo H($form['dfrom'])?>" />
+                            </td>
+                            <td  class="middle">
+<!--                                --><?php //echo Form::checkbox('has_dto', $form['has_dto'], NULL, 'class="middle monitor"'); ?>
+                                <input placeholder="请输入结束时间" id="dto" name="dto" class="text toggle_status:has_dto enable_on:on small_search_text middle" value="<?php echo H($form['dto']);?>" />
+                            </td>
+                        </tr>
+                    <?php endif;?>
+                    <tr>
+                </table>
+            </div>
+            <div id="page3" class="stepPage">
+                <table class="form flexible">
+                    <tr>
+                        <td class="blue">
+                            <h1><?php echo I18N::T('people', '联系方式') ?></h1>
+                        </td>
+                        <td class="right description middle red">*&nbsp;必填</td>
+                    </tr>
+                    <tr>
+                        <td class="label nowrap">
+                            <?php echo $_requires('email')?><?php echo I18N::HT('people', '电子邮箱')?>
+                            <?php echo V('form_filter', ['error'=>$form->errors['email'][0]]);?>
+                        </td>
+                        <td class="label nowrap middle">
+                            <?php echo $_requires('phone')?><?php echo I18N::T('people', '联系电话')?>
+                            <?php echo V('form_filter', ['error'=>$form->errors['phone'][0]]);?>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td class="middle"><input placeholder="请输入电子邮箱" name="email" class="text" value="<?php echo H($form['email']) ?>" /></td>
+                        <td class="middle"><input placeholder="请输入联系电话" name="phone" class="text"  value="<?php echo H($form['phone'])?>" /></td>
+                    </tr>
+                    <tr>
+                        <td class="label nowrap middle"><?php echo $_requires('address')?><?php echo I18N::T('people', '地址')?></td>
+                    </tr>
+                    <tr>
+                        <td class="middle"><input placeholder="请输入地址" name="address" class="text" value="<?php echo H($form['address']) ?>" /></td>
+                    </tr>
+                    <?php if ( Config::get('people.show_personal_phone', false) ) : ?>
+                        <tr>
+                            <td class="label nowrap middle"><?php echo $_requires('personal_phone')?><?php echo I18N::T('people', '个人手机'); ?></td>
+                        </tr>
+                        <tr>
+                            <td class="middle"><input placeholder="请输入个人手机" name="personal_phone" class="text" value="<?php echo H($form['personal_phone']); ?>" /></td>
+                        </tr>
+                    <?php endif; ?>
+                    <?php if ($me->is_allowed_to('激活', 'user')) :?>
+                        <tr>
+                            <td class="label nowrap">
+                                <?php echo I18N::T('people', '立即激活')?>
+                                <span class="lpadding_4">
+                                    <?php echo Form::radio('activate', 1, $form['activate'], I18N::T('people', '是'), ' class="middle radio"', 'class="middle rpadding_3"'); ?>
+                                    <?php echo Form::radio('activate', 0, $form['activate'], I18N::T('people', '否'), ' class="middle radio"', 'class="middle rpadding_3"'); ?>
+                                </span>
+                            </td>
+                        </tr>
+                    <?php elseif (Q('user[atime>0]')->total_count() >= $GLOBALS['preload']['lab.max_active_members']): ?>
+                        <tr>
+                            <td class="label nowrap">
+                                <?php echo I18N::T('people', '立即激活')?>
+                                <?php echo Form::radio('activate', 1, $form['activate'], I18N::T('people', '是'), ' class="middle radio" disabled', 'class="middle rpadding_3"'); ?>
+                                <?php echo Form::radio('activate', 0, $form['activate'], I18N::T('people', '否'), ' class="middle radio" disabled', 'class="middle rpadding_3"'); ?>
+                                <span class="red lpadding_1">*<?php echo I18N::T('people', '激活用户数量已达上限')?></span>
+                            </td>
+                        </tr>
+                    <?php endif;?>
+                    <?php if(L('ME')->access('管理所有内容')): ?>
+                        <tr>
+                            <td class="label nowrap">
+                                <?php echo I18N::T('people', '不可删除')?>
+                                <span class="lpadding_4">
+                                    <?php echo Form::radio('undeletable', 1, $form['undeletable'], I18N::T('people', '是'), ' class="middle radio"', 'class="middle rpadding_3"'); ?>
+                                    <?php echo Form::radio('undeletable', 0, $form['undeletable'], I18N::T('people', '否'), ' class="middle radio"', 'class="middle rpadding_3"'); ?>
+                                </span>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                    <?php if ($me->is_allowed_to('隐藏', 'user')): ?>
+                        <tr>
+                            <td class="label middle nowrap">
+                                <?php echo I18N::T('people', '是否隐藏')?>
+                                <span class="lpadding_4">
+                                    <?php echo Form::radio('hidden', 1, $form['hidden'], I18N::T('people', '是'), ' class="middle radio"', 'class="middle rpadding_3"'); ?>
+                                    <?php echo Form::radio('hidden', 0, $form['hidden'], I18N::T('people', '否'), ' class="middle radio"', 'class="middle rpadding_3"'); ?>
+                                </span>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                    <tr>
+                        <td colspan="2">
+                            <div class="button_container">
+                                <div class="float_right">
+                                    <input type="submit" name="submit" class="font-button-save sm" value="<?php echo H(I18N::T('people', '添加')) ?>" />
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    var step3=new SetStep({
+        content:'.stepCont3',
+        Btn_num:true,
+        clickAble:true
+    })
+
+    laydate.render({
+        elem: '#dfrom',
+        type:'datetime'
+    });
+
+    laydate.render({
+        elem: '#dto',
+        type:'datetime'
+    });
+</script>
+

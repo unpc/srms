@@ -1,0 +1,106 @@
+<?php $require = trim((string) V('form_require')); ?>
+<div class="form">
+<table class="form" width="100%">
+	<tbody>
+	<tr>
+		<td class="top icon left" width="130">
+			<div class="icon-radius"><?php echo $equipment->icon('104'); ?></div>
+		</td>
+		<td class="top">
+			<form method="post" action="<?php echo H(URI::url() ) ?>" autocomplete="off" class="edit">
+			<?php echo V('form_error', ['form'=>$form]); ?>
+			<h2 class="section_title">
+                <span class="border"></span>
+                <span class="black_title"><?php echo I18N::T('equipments', '状态'); ?></span>
+            </h2>
+            <div class="interval_30"></div>
+			<div class="lmaigin_1e5">
+				<?php
+				/*
+				guoping.zhang2011.01.27
+				报废仪器权限设置
+				*/
+				$me = L('ME');
+				if ($me->is_allowed_to('报废仪器', $equipment)) {
+					$eq_status = EQ_Status_Model::$status;
+				}else{
+					$eq_status = EQ_Status_Model::$normal_status;
+				}
+
+                $status = 0;
+                foreach ($eq_status as $k => $v) {
+                    $checked = $form['status'] == $k ? $k : null;
+                    echo '<span class="inline_block width_128">';
+                    echo Form::radio('status', $status++, $checked,
+                    I18N::T('equipments', $v), ' class="radio middle"', 'class="middle"');
+                    echo '</span>';
+                }
+
+				// echo Form::dropdown('status', I18N::T('equipments', $eq_status), $form['status'],'class="monitor dropdown"');
+				?>
+			</div>
+			<div class="interval_30"></div>
+			<div>
+				<h2 class="section_title">
+                    <span class="border"></span>
+                    <span class="black_title"><?php echo I18N::T('equipments', '描述'); ?> <span class="float_right red" style="font-size: 14px;font-weight: normal;"><span class="required">*</span>必填</span>
+                </h2>
+                <div class="interval_30"></div>
+				<div class="lmaigin_1e5">
+					<textarea class="text autogrow autoselect" name="description" placeholder="请输入描述信息"><?php
+						echo H($form['description']);
+					?></textarea>
+					<br>
+					<?php echo V('form_filter',['error'=>$form->errors['description'][0]])?>
+				</div>
+			</div>
+			<div class="interval_60"></div>
+			<div class="float_right">
+                <input type="reset" class="font-button-default rmargin_16" value="<?php echo H(T('取消')) ?>" /><input type="submit" name="submit" confirm="<?php echo I18N::T('equipments', '你确定要更新吗？请谨慎操作!'); ?>" class="font-button-save" value="<?php echo H(T('保存修改')) ?>" />
+			</div>
+			</form>
+			<?php
+			echo JS::load('equipments:equipment_edit.status', [
+				'no_longer_in_service'=>EQ_Status_Model::NO_LONGER_IN_SERVICE,
+				'confirm_scrap'=>I18N::T('equipments', '您确定要报废该设备？设备一旦报废将不能恢复，并且，当前时间之后的仪器预约记录将被删除!请您谨慎操作!'),
+				'confirm_update'=>I18N::T('equipments', '你确定要更新吗？请谨慎操作!')
+			]);
+			?>
+		</td>
+	</tr>
+	</tbody>
+</table>
+</div>
+<div class="interval_60"></div>
+<?php if ($statuses->total_count() > 0): ?>
+<?php
+
+	$table = Widget::factory('table');
+	$table->name = 'equipments_edit_status';
+	$table->add_columns([
+		'status'=>[
+			'title'=>I18N::T('equipments', '状态'),
+			'nowrap'=>TRUE
+		],
+		'date'=>[
+			'title'=>I18N::T('equipments', '时间'),
+			'nowrap'=>TRUE
+		],
+		'description'=>[
+			'title'=>I18N::T('equipments', '备注'),
+//			'nowrap'=>TRUE,
+            'noLast' => TRUE,
+		]
+	]);
+
+	foreach ($statuses as $status) {
+	    $table->add_row([
+	    	'status'=>I18N::T('equipments', EQ_Status_Model::$status[$status->status]),
+	    	'date'=>V('equipments:statuses_table/data/date', ['object'=>$status]),
+	    	'description'=>H($status->description, TRUE)
+	    ]);
+	}
+
+	echo $table;
+?>
+<?php endif; ?>

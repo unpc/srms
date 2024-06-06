@@ -1,0 +1,5 @@
+<?php if ($voucher->type == EQ_Voucher_Model::RESERV): ?>
+	<span><?= sprintf('%.2f', $voucher->used_time / 60) ?><?= I18N::T('eq_approval', '小时') ?></span>
+<?php else: ?>
+	<span>--</span>
+<?php endif; ?>

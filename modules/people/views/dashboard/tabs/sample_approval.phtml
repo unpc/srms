@@ -1,0 +1,209 @@
+<?php
+echo JS::load('eq_sample:dropdown_links');
+echo CSS::load_async('eq_sample:common');
+?>
+<?php
+$uniqid = uniqid();
+$select_all_id = 'select_all_' . $uniqid;
+$batch_form_id = 'batch_form_' . $uniqid;
+$delete_selected = 'delete_selected_' . $uniqid;
+$form_token = 'form_token_' . $uniqid;
+$me    = L('ME');
+$table = Widget::factory('table');
+$table->name = 'eq_sample_approval';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+$field = [
+    'checkbox' => [
+        'type' => 'checkbox',
+        'id' => $select_all_id,
+        'align' => 'center'
+    ],
+    'lab_group'=>[
+        'title'=>I18N::T('eq_sample', '实验室组织机构'),
+        'invisible'=>TRUE,
+        'weight' => 10,
+    ],
+    'equipment_group'=>[
+        'title'=>I18N::T('eq_sample', '仪器组织机构'),
+        'invisible'=>TRUE,
+        'weight' => 15,
+    ],
+    'equipment_type'=>[
+        'title'=>I18N::T('eq_sample', '仪器分类'),
+        'invisible'=>TRUE,
+        'weight' => 16,
+    ],
+    'serial_number' => [
+        'title' => I18N::T('eq_sample', '编号'),
+        'align' => 'left',
+        'sortable'=>TRUE,
+        'weight' => 20,
+        'nowrap' => TRUE
+    ],
+    'equipment' => [
+        'title' => I18N::T('eq_sample', '仪器'),
+        'align' => 'left',
+        'sortable'=>TRUE,
+        'filter' => [
+            'form' => V('eq_sample:samples_table/filters/equipment', array('equipment' => $form['equipment'])),
+            'value' => $form['equipment'] ? : NULL
+        ],
+        'weight' => 21,
+        'nowrap' => TRUE
+    ],
+    'sender' => [
+        'title' => I18N::T('eq_sample', '申请人'),
+        'align' => 'left',
+        'sortable'=>TRUE,
+        'filter' => [
+            'form' => V('eq_sample:samples_table/filters/sender', ['sender' => $form['sender']]),
+            'value' => $form['sender'] ? H($form['sender']) : NULL
+        ],
+        'weight' => 30,
+        'nowrap' => TRUE
+    ],
+    'lab_name' => [
+        'title' => I18N::T('eq_sample', '课题组'),
+        'invisible' => TRUE,
+        'nowrap' => TRUE,
+        'weight' => 35,
+    ],
+    'count' => [
+        'title' => I18N::T('eq_sample', '样品数'),
+        'align' => 'right',
+        'sortable' => TRUE,
+        'weight' => 40,
+        'nowrap' => TRUE
+    ],
+    'dtctime' => [
+        'title' => I18N::T('eq_sample', '送样申请时间'),
+        'align' => 'left',
+        'sortable' => TRUE,
+        'input_type' => 'date',
+        'filter' => [
+            'form'  => V('eq_sample:samples_table/filters/date', [
+                'name_prefix'   => 'dtctime_',
+                'dtstart_check' => $form['dtctime_dtstart_check'],
+                'dtstart'       => $form['dtctime_dtstart'],
+                'dtend_check'   => $form['dtctime_dtend_check'],
+                'dtend'         => $form['dtctime_dtend'],
+            ]),
+            'field' => 'dtctime_dtstart_check,dtctime_dtstart,dtctime_dtend_check,dtctime_dtend',
+        ],
+        'weight' => 50,
+        'nowrap' => TRUE,
+    ],
+    'dtsubmit' => [
+        'title' => I18N::T('eq_sample', '送样时间'),
+        'align' => 'left',
+        'sortable' => TRUE,
+        'input_type' => 'date',
+        'filter' => [
+            'form'  => V('eq_sample:samples_table/filters/date', [
+                'name_prefix'   => 'dtsubmit_',
+                'dtstart_check' => $form['dtsubmit_dtstart_check'],
+                'dtstart'       => $form['dtsubmit_dtstart'],
+                'dtend_check'   => $form['dtsubmit_dtend_check'],
+                'dtend'         => $form['dtsubmit_dtend'],
+            ]),
+            'field' => 'dtsubmit_dtstart_check,dtsubmit_dtstart,dtsubmit_dtend_check,dtsubmit_dtend',
+        ],
+        'weight' => 50,
+        'nowrap' => TRUE,
+    ],
+    'description' => [
+        'title' => I18N::T('eq_sample', '描述'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+        'weight' => 100,
+    ],
+    'rest' => [
+        'title' => I18N::T('eq_sample', '操作'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+        'weight' => 110,
+    ],
+];
+
+$columns = new ArrayObject($field);
+
+$table->add_columns((array)$columns);
+$table->empty_message = I18N::T('eq_sample', '没有送样信息');
+
+if (!$no_search_box) {
+    $param = [
+        'panel_buttons' => $panel_buttons,
+        'top_input_arr'=> ['serial_number', 'sender'],
+        'columns'=> $table->columns,
+    ];
+    echo V('application:search_box', $param);
+}
+
+if (count($samples)) {
+    $sort_by_time = in_array($sort_by, ['dtsubmit', 'dtrial', 'dtpickup']); // 或按时间排序
+
+    if ($sort_asc) {
+        $flag_time = -1;
+    }
+    else {
+        $flag_time = 2147483647;
+    }
+
+    foreach ($samples as $sample) {
+        $links = $sample->links('dashboard');
+
+        $key = 'sample_incharge_' . $sample->id;
+
+        $row = [
+            'checkbox'    => V('eq_sample:samples_table/data/selector', ['sample' => $sample, 'select_all_id' => $select_all_id]),
+            'serial_number' => V('eq_sample:samples_table/data/serial_number', ['sample' => $sample]),
+            'equipment' => V('eq_sample:samples_table/data/equipment', ['equipment' => $sample->equipment]),
+            'sender' => V('eq_sample:samples_table/data/sender', ['sample' => $sample]),
+            'count' => V('eq_sample:samples_table/data/count', ['sample' => $sample]),
+            'dtsubmit' => V('eq_sample:samples_table/data/dtsubmit', ['sample' => $sample]),
+            'dtctime' => V('eq_sample:samples_table/data/ctime', ['sample'=>$sample]),
+            //'dtrial' => V('eq_sample:samples_table/data/dtrial', array('sample' => $sample)),
+            'status' => V('eq_sample:samples_table/data/status', ['sample' => $sample, '_type'=> 'incharge']),
+            'fee' => V('eq_sample:samples_table/data/fee', ['sample' => $sample]),
+            'description' => V('eq_sample:samples_table/data/description', ['sample' => $sample]),
+            'rest' =>  Widget::factory('application:links', ['links' => $links]),
+        ];
+
+        $row = new ArrayIterator($row);
+        $table->add_row_withkey($row, $key);
+    }
+}
+
+$param = [
+    'top_input_arr' => ['equipment', 'sender', 'dtctime', 'dtsubmit'],
+    'columns'       => (array)$table->columns,
+];
+
+echo V('application:search_box', $param);
+?>
+
+<form 
+    q-object="batch_edit_sample"
+    q-event="submit"
+    q-src="<?= H(URI::url("!eq_sample/approval")); ?>"
+    id="<?= H($batch_form_id) ?>"
+    method="post"
+    autocomplete="off"
+>
+<div class="panel clearfix">
+    <div class="float_right">
+        <input class="font-button-save" type="submit" name="approval" value="<?= I18N::T('eq_sample', '批量审批') ?>">
+    </div>
+</div>
+<div class="interval_16"></div>
+<?php echo $table;?>
+</form>
+
+<div style="text-align: right"><?php echo $pagination; ?></div>
+<div class="interval_10"></div>
+
+<?php
+echo JS::load('people:index_operate', ['select_all_id'=>$select_all_id, 'batch_form_id' => $batch_form_id]);
+?>

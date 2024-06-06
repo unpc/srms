@@ -1,0 +1,87 @@
+<div class="interval_12"></div>
+<div class="form"><form class="edit" method="post" action="" autocomplete="off">
+<?php
+$error = FALSE;
+if($form['type']==$type){
+	$error = ($form->no_error===FALSE);
+	if($error) echo V('form_error', ['form'=>$form]);
+}
+//需要定义$module_name;
+?>
+	<table class="form margin-left-1" width="100%">
+		<tr>
+            <?php if (!empty($icon)): ?>
+            <td rowspan="13" class="left top icon tight" style="padding-right: 30px;">
+    			<?php echo $icon; ?>
+    		</td>
+            <?php endif; ?>
+            <td>
+                <div class="interval_12"></div>
+                <h2 class="section_title">
+                    <?php echo I18N::T('messages', '消息标题'); ?>
+                    <span class="red_tip" style="font-weight: normal;"><span class="required">*</span><span class="red"><?php echo I18N::T('messages', '此项是').I18N::T($module_name, $description); ?></span><span>
+                </h2>
+            </td>
+        </tr>
+        <tr><td><div class="interval_30"></div></td></tr>
+		<tr>
+			<td><input type="text" name="title" size="40" class="text margin-left-1" value="<?php echo H($error ? $form['title'] : I18N::T($module_name, $title)) ; ?>" /></td>
+		</tr>
+        <tr><td><div class="interval_40"></div></td></tr>
+        <tr>
+            <td>
+                <h2 class="section_title"><?php echo I18N::T('messages', '消息内容'); ?></h2>
+            </td>
+        </tr>
+        <tr><td><div class="interval_30"></div></td></tr>
+		<tr>
+			<td><textarea name="body" cols="80" class="autogrow text margin-left-1"><?php echo H($error ? $form['body'] : I18N::T($module_name, $body)) ; ?></textarea></td>
+		</tr>
+        <tr><td><div class="interval_12"></div></td></tr>
+		<tr>
+            <td>
+        <?php
+            $handles = Config::get('notification.handlers');
+            if(is_array($send_by)) foreach($send_by as $k=>$v){
+				if (!$v[0]) continue;
+                $i18n_name = $handles[$k]['module_name'] ?: $module_name;
+				echo Form::checkbox('send_by_'.$k, ($error ? $form['send_by_'.$k] : $v[1]), I18N::T($i18n_name, $v[0]), 'class="middle checkbox margin-left-1"', 'class="middle rmargin_40"');
+            }
+		?>
+		</td></tr>
+        <tr><td><div class="interval_40"></div></td></tr>
+		<tr>
+            <td class="description">
+			<p style="padding-bottom: 5px;"><span class="required red margin-left-1">*</span><span class="red"><strong><?php echo HT('消息内容中的变量名请勿修改!')?></strong></span></p>
+		    <?php
+		        $descriptions = $strtr;
+		        if(is_array($descriptions)):
+		    ?>
+		    	<ul>
+		    <?php
+					foreach($descriptions as $k=>$v):
+		    ?>
+		    		<li class="margin-left-1" style="color: #333;margin-top: 12px;"><?php echo $k; ?>: <?php echo I18N::T($module_name, $v); ?></li>
+		    <?php
+		        	endforeach;
+		    ?>
+		    	</li></ul>
+		    <?php
+		        endif;
+		    ?>
+		</td></tr>
+
+        <tr><td><div class="interval_40"></div></td></tr>
+		<tr>
+            <td height="100" class="top">
+			<input type="hidden" name="type" value="<?php echo $type; ?>" />
+            <div>
+                <input type="submit" name="submit" class="font-button-save float_right" value="<?php echo HT('保存修改'); ?>" />
+                <input type="reset" name="cancel" class="font-button-default float_right rmargin_16" value="取消">
+                <button style="font-size: 14px;line-height: 30px;" type="submit" name="restore" class="icon-refresh font-button-default float_right rmargin_16" value="1"><div class="float_right" style="padding-left: 8px;font-size: 14px;"><?php echo HT('恢复为默认设置'); ?></div></button>
+
+            </div>
+		    </td>
+        </tr>
+	</table>
+</form></div>

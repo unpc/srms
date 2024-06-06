@@ -1,0 +1,99 @@
+<?php
+    $me = L('ME');
+    $show_privacy = $me->is_allowed_to('查看联系方式', $user);
+?>
+
+<h2>
+    <a href="<?php echo H($user->url()) ?>"><?php echo H($user->name) ?></a>
+	<?php if($me->is_allowed_to('查看登录账号', $user) && $user->token):
+		list($token, $backend) = explode('|', $user->token); ?>
+		<small class="normal" style="color: #666;"> (<?php echo $token; ?>) </small>
+        <div class="interval_12"></div>
+    <?php endif; ?>
+
+<?php if (Module::is_installed('labs')):?>
+    <?php
+        $lab_url = [];
+        $labs = Q("$user lab");
+        foreach ($labs as $lab) {
+            $str = '<a class="blue normal" href="'.H($lab->url()).'">'.H($lab->name).'</a>';
+            $labs->total_count() > count($lab_url) + 1 && count($lab_url) % 4 != 3 && $str .= ',';
+            count($lab_url) % 4 == 0 && $str = '<small style="display: block;">' . $str . '</small>';
+            $lab_url[] = $str;
+        }
+    ?>
+    <?= implode(' ', $lab_url) ?>
+<?php endif; ?>
+</h2>
+
+<div class="interval_6"></div>
+<?php if (!People::perm_in_uno()):?>
+<p class="people_info">
+    <?php
+    $roles = L('ROLES');
+	$user_roles = $user->roles();
+	if (count($user_roles) > 0) {
+		foreach ($user_roles as $rid) {
+			if ($roles[$rid]) {
+				$role = $roles[$rid];
+                // 当当前user为me说明在查看自己，可直接显示自己的所有的角色
+                if (($me->id == $user->id) || $role->id < 0 || $me->is_allowed_to('查看', $role)) {
+				    $roles_arr[] = I18N::T('people', $role->name);
+                }
+			}
+		}
+		if (Config::get('people.profile.info.show.roletyle') && count((array)$roles_arr)) echo "<span>".I18N::T('people', '角色类型').": </span>";
+		echo implode(', ', (array)$roles_arr);
+	}
+    ?>
+</p>
+
+
+    <p class="people_info">
+        <span><?php echo I18N::T('people', '人员类型') ?>:</span>
+    <?php
+        $curr_type = $user->member_type;
+        $members = User_Model::get_members();
+        foreach ($members as $key => $value) {
+            foreach ($value as $k => $v) {
+                if ($k == $curr_type) {
+                    $user_role = $key;
+                    $user_member = $v;
+                    break;
+                }
+            }
+        }
+        echo I18N::T('people', $user_role) . ' - ' . I18N::T('people', $user_member) ? :'--';
+    ?>
+    </p>
+<?php endif;?>
+
+<?php if($user->email && $show_privacy): ?>
+    <!-- <span class="email"><?php echo URI::mailto($user->email) ?></span> -->
+    <p class="people_info"><i class="icon icon-mail" style="vertical-align: middle; font-size: 110%;"></i>&nbsp;<?= URI::mailto($user->email) ?></p>
+<?php endif; ?>
+<?php if ($GLOBALS['preload']['people.enable_member_date']): ?>
+    <p class="people_info"><?php echo Date::fuzzy_date_format($user->dfrom, $user->dto, 'Y/m/d') ?></p>
+<?php endif; ?>
+
+
+<?php
+//没有地方(add/edit)设置institude属性，暂时注释掉 （xiaopei.li@2010.11.15)
+//echo I18N::T('people', '学校');
+//echo H($user->institute); ?>
+<?php if ($GLOBALS['preload']['tag.group_limit'] >= 0 && $user->group->id): ?>
+    <p class="people_info"><?php echo I18N::T('people', '组织机构')?>: <?php echo V('application:tag/path', ['tag'=>$user->group, 'url_template'=>URI::url('!people/list', 'group_id=%tag_id')]); ?></p>
+<?php endif ?>
+
+<?php if ($user->organization) :?>
+    <p class="people_info"><?php echo I18N::T('people', '单位名称'); ?>: <?php echo H($user->organization);?></p>
+<?php endif;?>
+
+<?php if ($show_privacy) :?>
+   <p class="people_info"><?php echo I18N::T('people', '联系电话'); ?>: <?php echo H($user->phone); ?></p>
+<?php echo Event::trigger('show_user_other_privacy', $user); ?>
+<?php endif;?>
+
+<div class="interval_6"></div>
+
+<?php echo V('people:profile/brief', ['user' => $user, 'stat' => $stat]);?>

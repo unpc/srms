@@ -1,0 +1,54 @@
+<?php
+	$auth_backends = Config::get('auth.backends');
+	$is_hide = FALSE;
+	if (count($auth_backends) > 1) {
+		$hidden = [];
+		foreach ($auth_backends as $key => $backend) {
+			if ($backend['readonly']) {
+				$hidden[] = $key;
+			}
+		}
+		if (count($hidden)) $class = "toggle:".$this->name.' hide_on:'.join(' hide_on:', $hidden);
+	}
+	else {
+		$default_backend = $this->default_backend ?: Config::get('auth.default_backend');
+		if ($auth_backends[$default_backend]['readonly']) {
+			$is_hide = TRUE;
+		}
+	}
+
+	$rs = Lab_Model::add_require_fields();
+?>
+
+<?php if (!$is_hide): ?>
+<tbody class="<?php echo H($class) ?>">
+<tr>
+    <td class="label nowrap">
+        <?php echo $rs['passwd'] ? (string) V('form_require') : ''; ?>
+        <?php echo I18N::T('people', '密码')?><br>
+        <?php echo V('form_filter', ['error'=>$form->errors['password'][0]]);?>
+    </td>
+    <td class="label nowrap">
+        <?php echo $rs['confirm_passwd'] ? (string) V('form_require') : ''; ?>
+        <?php echo I18N::T('people', '确认密码')?><br>
+        <?php echo V('form_filter', ['error'=>$form->errors['confirm_password'][0]]);?>
+    </td>
+</tr>
+<tr>
+	<td class="middle">
+		<input placeholder="请输入密码" name="password" type="password" class="text" />
+	</td>
+    <td class="middle">
+        <input placeholder="请输入确认密码" name="confirm_password" type="password" class="text" />
+    </td>
+</tr>
+<tr class="description red">
+	<td><?= H(I18N::T('people','8-24个字符，必须包含数字和大小写字母')) ?></td>
+</tr>
+<?php if (!Config::get('people.link_gapper_system')) {?>
+<tr>
+	<td><?php echo Form::checkbox('must_change_password', !!(empty($form['must_change_password']) || $form['must_change_password']=='null'?false:true), I18N::T('people', '第一次登录时修改密码'),'class="middle checkbox"','class="middle"'); ?></td>
+</tr>
+<?php }?>
+</tbody>
+<?php endif; ?>

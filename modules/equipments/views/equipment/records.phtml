@@ -1,0 +1,60 @@
+<!--equipment使用记录-->
+<?php
+$me = L('ME');
+$enable_list_eq_records = $me->is_allowed_to('列表仪器使用记录', $equipment);
+$enable_add_eq_records = $me->is_allowed_to('添加仪器使用记录', $equipment);
+$archive_list_id = 'equipment_archive_list_'. uniqid();
+$record_list_id = 'equipment_records_list_'. uniqid();
+$archive_button_id = 'equipment_arvhice_button_'. uniqid();
+
+echo CSS::load_async('equipments:archive'); ?>
+<!--归档列表-->
+<!--<div class="interval_24"></div>
+<div style="display: flex;margin-bottom: 16px">
+
+<?php
+/*if ($enable_list_eq_records) {
+    echo V('equipments:archive_panel',['enable_add_eq_records'=>$enable_add_eq_records,
+ 'form'=>$form,'archive'=>$archive,'equipment'=>$equipment]);
+}
+*/?>
+
+<?php /*if ($enable_list_eq_records || $enable_add_eq_records) :*/?>
+
+<div class="interval_24"></div>
+
+<div style="width: 50%" class="panel records_panel clearfix">
+    <?php /*if ($enable_add_eq_records && count($panels) > 0) :*/?>
+    <div class="float_right middle archive_button" style="margin-right: 16px">
+        <a href="<?php /*URI::url();*/?>" class="font-button-default archive_all" q-object="archive_selected" q-event="click" q-static="<?php /*echo H([
+            'form_token' =>$form['form_token'],
+            'archive_id'=>$archive->id,
+            'eid'=>$equipment->id
+        ])*/?>"><?php /*echo I18N::T('equipments', '归档')*/?></a>
+    </div>
+    <?php /*endif;*/?>
+</div>
+
+<?php /*endif;*/?>
+</div>-->
+
+<div id="<?php echo H($record_list_id) ?>">
+    <?php echo V('equipments:record/list', [
+        'form' =>$form,
+        'equipment'=>$equipment,
+        'pagination'=>$pagination,
+        'records'=>$records,
+        'panel_buttons'=>$panel_buttons,
+        'columns'=>$columns,
+    ])?>
+</div>
+<!--<script>
+function getIds(){
+    var ids = [];
+    $('input[name="select[]"]:checked')
+        .map(function(){
+            ids.push($(this).val());
+        });
+    $('input[name="ids"]').val(ids);
+}
+</script>-->

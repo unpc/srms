@@ -1,0 +1,27 @@
+<div class="clearfix" style="padding: 10px;">
+<table class="form">
+<tr>
+	<td class="top icon rpadding_12"><?php echo $lab->icon('64') ?></td>
+	<td class="top nowrap">
+		<h2><?php $lab->render(); ?></h2>
+		<span class="description">
+		<?php echo I18N::T('labs', '负责人') ?>: 
+		<?php $lab->owner->render() ?>
+		</span>
+		<p class="description">
+			<?php echo H($lab->description); ?>
+		</p>
+		<div class="interval_12"></div>
+		<p class="description">
+		<?php 
+			$root = Tag_Model::root('lab');
+        	$tags = Q("$lab tag[root=$root]")->to_assoc('id', 'name');
+		    echo implode(' <span class="separator">/</span> ', $tags);
+		?>
+		</p>
+		<div class="interval_12"></div>
+		<?php echo (string)Event::trigger('labs.lab.info', L('ME'), $lab); ?>
+	</td>
+</tr>
+</table>
+</div>

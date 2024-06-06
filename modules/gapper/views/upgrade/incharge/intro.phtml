@@ -1,0 +1,52 @@
+<div class="gapper_content">
+	<?php if(count($app)) {?>
+		<div class="float_left gapper_img">
+            <?php if ($app['icon_url']): ?>
+            	<div class="app_img">
+	                <img src="<?php echo H($app['icon_url'] ) ?>">
+	            </div>
+            <?php else: ?>
+            <div class="gapper_icon">
+                <div class="icon_text">
+                    <p class="icon_font"><b><?php echo $app['title'] ?></b></p>
+                </div>
+            </div>
+            <?php endif; ?>
+		</div>
+		<p class="intro_title">
+			<?php echo $app['title'] ?>
+		</p>
+		<div class="hr_1"></div>
+		<p class="intro">
+			<?php echo $app['intro']; ?>
+		</p>
+		<hr style="margin:30px 120px;width:80%">
+	<?php }else{?>
+	<div class="float_left gapper_img">
+		<div>
+			<img src="!gapper/images/gapper.png">
+		</div>
+	</div>
+	<?php }?>
+	<div class="description">
+		<div>
+			<?php echo I18N::T('gapper','为了使用系统内的Gapper应用(边栏菜单中存在"G"标志的应用)'); ?>
+		</div>
+		<div>
+			<?php echo I18N::T('gapper','您所在的买方账户需要首先升级成为Gapper分组.'); ?>
+		</div>
+		<div>
+			<?php echo I18N::T('gapper','升级完Gapper分组的同时,'); ?>
+		</div>
+		<div>
+			<?php echo I18N::T('gapper','您的账户也将完全升级为Gapper用户.'); ?>
+		</div>
+		<div class="hr_2"></div>
+		<a class="blue faq" target="_blank" href="<?= URI::url('!gapper/help') ?>"><?php echo I18N::T('gapper', '什么是Gapper?');?></a>
+		<div class="action">
+			<a href="<?php echo H(URI::url('!gapper/upgrade') ) ?>" type="submit" class="upgrade" name="upgrade" ><?php echo I18N::T('gapper','升级账户') ?></a>
+			&#160;&#160;
+			<a type="submit" class="cancel" name="cancel" href="<?php echo H($cancel_url ) ?>" ><?php echo I18N::T('gapper','暂不升级') ?></a>
+		</div>
+	</div>
+</div>

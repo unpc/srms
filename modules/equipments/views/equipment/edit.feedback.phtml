@@ -1,0 +1,212 @@
+<?php 
+$me = L('ME');
+$equipment = $record->equipment; 
+$must_connect_project = Config::get('eq_record.must_connect_lab_project');
+$must_samples = Config::get('eq_record.must_samples');
+$tip = Config::get('eq_evaluate')['rate.tip'];
+$default = Config::get('eq_evaluate')['default.rate'];
+$require = V('form_require');
+$me = L('ME');
+if (Config::get('eq_record.duty_teacher') && $equipment->require_dteacher):
+	$incharges = [0 => '--'] + Q("$equipment user.incharge")->to_assoc('id', 'name');
+endif;
+?>
+<?php echo V('form_error', ['form'=>$form]); ?>
+<div class="form padding_1">
+<table class="form">
+	<tbody>
+	<tr>
+		<td class="top icon">
+			<img src="<?php echo H($equipment->icon_url('64')) ?>" />
+		</td>
+		<td class="top">
+            <h3><?php echo I18N::HT('equipments', '%equipment的使用反馈', ['%equipment'=>H($equipment->name)]) ?></h3>
+            <div class="interval_12"></div>
+			<form class="view object:feedback" autocomplete="off">
+			<?php echo Form::hidden('rel', $rel); ?>
+			<?php echo Form::hidden('record_id', $record->id); ?>
+			<table class="form">
+                <tbody>
+                    <tr>
+                        <td class="middle right label nowrap">
+                        <?php echo I18N::T('equipments', '仪器状态')?>
+                        </td>
+                        <td class="middle label nowrap">
+                            <?php echo Form::radio('record_status', EQ_Record_Model::FEEDBACK_NORMAL, $form['record_status'] ? : $record->status == EQ_Record_Model::FEEDBACK_NORMAL, I18N::T('equipments', '运行正常'), 'class="radio middle"', 'class="middle"'); ?>
+                            <div class="indent_unit"></div>
+                            <?php echo Form::radio('record_status', EQ_Record_Model::FEEDBACK_PROBLEM, $form['record_status'] ? : $record->status == EQ_Record_Model::FEEDBACK_PROBLEM, I18N::T('equipments', '运行故障'), 'class="radio middle"', 'class="middle"'); ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="middle right label nowrap">
+                        </td>
+                        <td class="middle label nowrap">
+                            <div class="interval_6"></div>
+                            <p>
+                                <textarea placeholder="请填写仪器使用评价" style="line-height: normal" name="feedback" class="text autogrow" cols="42" rows="3"><?php echo isset($form['feedback']) ? $form['feedback'] :$record->feedback; ?></textarea>
+                            </p>
+                        </td>
+                    </tr>
+                    <?php if (Config::get('equipment.feedback_show_samples', 0)): ?>
+                    <tr>
+                        <td class="middle  label nowrap"><?php echo I18N::T('equipments', '样品数'); ?></td>
+                        <td class="middle label nowrap">
+                            <div class="interval_6"></div>
+                                <?php if (!$record->cannot_lock_samples() && !$record->samples_lock&&Config::get('eq_record.must_samples')) : ?>
+                                    <input type="text" name="samples"  size="10" style="border-color:black;border-width:1px;border-color:rgba(0,0,0,0.15);border-radius: 3px;box-shadow:none;padding:5px 10px;"/>
+                                    &nbsp;
+                                <?php elseif(!$record->cannot_lock_samples() && !$record->samples_lock) :?>
+                                    <input name="samples" class="text number" size="10" value="<?php echo isset($form['samples']) ? $form['samples'] : ($record->samples ? : ($must_samples ? '' : $record->samples)); ?>" />
+                                    &nbsp;
+                                <?php else:?>
+                                    <span class="text"><?php echo $record->samples;?></span>
+                                <?php endif;?>
+                        </td>
+                    </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+
+			<?php if ($me->is_allowed_to('评价机主', $record)): ?>
+				<?= V('eq_comment:comment/add.incharge', ['object' => $record, 'form' => $form]); ?>
+			<?php endif;?>
+
+			<?php if (class_exists('Lab_Project_Model')):?>
+            <?php
+
+            $types = [];
+            $labs = Q("{$record->user} lab");
+            foreach ($labs as $lab) {
+                $items = $lab->get_project_items($record->user);
+                if ($record->project->id && $record->project->lab->id == $lab->id) {
+                    $items[I18N::T('labs', Lab_Project_Model::$types[$record->project->type])][$record->project->id] = $record->project->name;
+                }
+                $types[] = [
+                    'id' => $lab->id . '_lab_id',
+                    'name' => $lab->name,
+                    'items' => $items
+                ];
+            }
+                $project = $record->project->id ? $record->project : ($record->reserv->project->id ? $record->reserv->project : O('lab_project'));
+
+                $project_type = Lab_Project_Model::$types[$project->type];
+
+                // if ($project->id && !in_array($project->id, array_keys((array)$types[$project_type]))) {
+                // 	$types[$project_type][$project->id] = $project->name;
+                // }
+
+				$select_project = isset($form['project']) ? $form['project'] : $project->id;
+
+            	$has_project = count($types);
+
+            ?>
+			<p class="padding_1 lmargin_-2">
+				<?php if ($has_project): ?>
+					<?php $multi_lab = (bool)(count($types) > 1);?>
+					<?php if ($multi_lab) {
+						echo '<h3>'.I18N::HT('equipments', '请选择此次仪器使用关联的实验室:').'</h3>';
+						echo '<div class="interval_6"></div>';
+						$lab_options = ['--'] + array_column($types, 'name', 'id');
+						$lab_select = isset($form['project_lab']) ? $form['project_lab'] : (($record->project->lab->id ? : $record->reserv->project->lab->id)  . '_lab_id');
+						echo '<span style="margin-right: 10px;">'.I18N::T('labs', '实验室').'</span>';
+						echo Form::dropdown('project_lab', $lab_options, $lab_select, 'style="min-width: 294px;" class="monitor"'); 
+                        echo '<div class="interval_24"></div>';
+					}?>
+					<?php
+					echo '<h3>'.I18N::HT('equipments', '请选择此次仪器使用关联的实验室项目').'</h3>';
+					?>
+					<div class="interval_6"></div>
+					<?php if ($multi_lab) :?>
+						<div class="toggle:project_lab show_on:0">
+						<?php echo Form::dropdown('project', ['--'], 0, 'style="min-width: 294px;" class="toggle_status:project_lab enable_on:0"'); ?>
+						</div>
+					<?php endif;
+					foreach ($types as $type) :
+						if ($multi_lab) {
+							$divClass = ' class="toggle:project_lab show_on:'.$type['id'].'"';
+							$dropClass = ' class="toggle_status:project_lab enable_on:'.$type['id'].'"';
+						}
+						$items = $type['items'];
+						$select_project = isset($form['project']) ? $form['project'] : ((int)$record->project->id ? : $record->reserv->project->id);
+						?>
+						<div <?=$divClass?> >
+						<table style="width: 370px">
+                            <tr>
+                                <td style="white-space: nowrap;"><?php if ($must_connect_project) echo $require;?><span><?= I18N::T('labs', '课题组项目')?></span></td>
+                                <td class="right"><?php echo Form::dropdown('project', [Config::get('feedback.project_default', '--')] + $items,  $select_project, 'style="min-width: 294px;"' . $dropClass); ?></td>
+                            </tr>
+                        </table>
+						</div>
+					<?php endforeach;?>
+				<?php elseif (!count($types)): ?>
+                    <?php if ($must_connect_project) :?>
+                        <?php echo Event::trigger('feedback_no_project_view')?>
+                    <?php else :?>
+				        &nbsp;<span class="description"><?php echo I18N::T('equipments', '* 你可以关联此次仪器使用到某一实验室项目，但你的实验室尚未建立项目，建立项目请联系实验室负责人'); ?></span>
+                    <?php endif;?>
+				<?php endif; ?>
+			</p>
+			<?php endif;?>
+
+			<?php if (Config::get('eq_record.duty_teacher') && $record->equipment->require_dteacher): ?>
+			<div class="interval_24"></div>
+			<div>
+				<?= (Config::get('eq_record.tag_duty_teacher'))?'':$require ?><?php echo I18N::T('equipments', '值班老师'); ?>
+				<?php echo V('form_filter',['error'=>$form->errors['duty_teacher'][0]])?>
+                <br/>
+                <?php if($select_tag_duty_teacher = Event::trigger('record.equipment.tag_duty_teacher', $record)){
+                            echo $select_tag_duty_teacher;
+                        }else{?>
+                <?php echo Form::dropdown('duty_teacher', I18N::T('equipments', $incharges), $record->duty_teacher->id ? : ($form['duty_teacher'] ? : 0), 'class=""'); ?>
+			<?php } ?>
+			</div>
+			<?php endif; ?>
+
+			<?php 
+			// 显示位置有要求，所以又在这加了一个trigger
+			echo Event::trigger('extra.feedback.fields.view', $record, $form);
+			?>
+
+            <?php 
+                // 【案例】#18058 已和产品确认，放大权限，genee可以代替用户评价机主 (因为genee可以代替用户反馈)
+            ?>
+            <?php if(($me->id == $record->user->id || $me->access('管理所有内容')) && Module::is_installed('eq_evaluate')): ?>
+
+            <div class="interval_30"></div>
+            <h3 style="padding: 3px 0;"><?= I18N::T('equipment', '机主服务的评价'); ?></h3>
+            <div class="interval_12"></div>
+
+            <p>
+                <?= I18N::T('equipments', '服务态度'); ?>
+                <span style="margin-left: -5px; display: inline-block; width: 130px; "><?php echo Widget::factory('rateit_input', ['name' => "score", 'rateit_value' => ($form['score'] || (!empty($form['score']) && $form['score'] == 0)) ? $form['score'] : ($record->evaluate->score ? : $default), 'rateit_tip' => TRUE, 'tip' => $tip]) ?></span>
+			    <span style="position: relative; bottom: 1px;"><?= Config::get('eq_evaluate')['score.require'] ? $require: ''; ?></span>
+            </p>
+            <div class="interval_12"></div>
+
+			<?php echo V('eq_evaluate:service_extra_view', ['record' => $record, 'form' => $form]);?>
+
+            <p style="padding-top: 5px;">
+                <p><?= I18N::T('equipments', '服务评价'); ?></p>
+                <div class="interval_6"></div>
+                <textarea style="line-height: normal" name="content" placeholder="请填写您的本次使用评价，您最多可以输入 240 个字" class="text autogrow" cols="" rows="3"><?= isset($form['content']) ? $form['content'] : $record->evaluate->content; ?></textarea>
+            </p>
+
+			<?php echo V('eq_evaluate:equipment_extra_view', ['record' => $record, 'form' => $form]);?>
+
+            </div>
+            <?php endif; ?>
+			<?php echo Event::trigger('feedback_extra_view', $record, $form);?>
+            <?php if ($has_project || !$must_connect_project) :?>
+            <div class="button_container">
+                <div class="float_right">
+                <input type="button" name="cancel" id="cancel" class="font-button-default  sm rmargin_2e4" value="<?php echo H(I18N::T('admin', '取消')) ?>" />
+                <input type="submit" name="submit" class="font-button-save sm" value="<?php echo H(I18N::T('admin', '确定')) ?>" />
+                </div>
+            </div>
+            <?php endif;?>
+			</form>
+		</td>
+	</tr>
+	</tbody>
+</table>
+</div>

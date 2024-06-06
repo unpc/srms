@@ -1,0 +1,8 @@
+<?php
+$me = L('ME');
+$group = $me->group;
+if ($me->is_active() && $group->id && $me->is_allowed_to('列表组织机构仪器使用记录', 'equipment')):
+?>
+	<a href="<?php echo H(URI::url('!equipments/records/index_group')) ?>" class="blue">
+        <?php echo I18N::T('equipments', '%group所有仪器的使用记录', ['%group'=>H($group->name)]);?></a>
+<?php endif;?>

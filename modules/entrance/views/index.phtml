@@ -1,0 +1,44 @@
+<?php
+/*
+NO.TASK#274(guoping.zhang@2010.11.27)
+应用权限设置新规则
+ */
+$me = L('ME');
+if($me->is_allowed_to('添加', 'door')): ?>
+    <?php if($panel_buttons): ?>
+        <?php echo V('application:panel_buttons',['panel_buttons'=>$panel_buttons]);?>
+    <?php endif; ?>
+<?php endif; ?>
+<?php echo $search_box?>
+<?php 
+
+$table = Widget::factory('table');
+
+$table->name = 'entrance_doors';
+
+$table->add_columns($columns);
+
+$table->sort_asc = $sort_asc;
+$table->sort_by  = $sort_by;
+
+
+$table->empty_message = I18N::T('entrance', '无符合条件的门禁');
+
+foreach ($doors as $door) {
+	$links = $door->links();
+    $row   = new ArrayIterator([
+        'name'     => V('entrance:doors_table/data/name', ['door' => $door]),
+        'status'   => V('entrance:doors_table/data/status', ['door' => $door]),
+        'location' => V('entrance:doors_table/data/location', ['door' => $door]),
+        'type' => V('entrance:doors_table/data/type', ['door' => $door]),
+        'incharge' => V('entrance:doors_table/data/incharge', ['door' => $door]),
+        'rest'     => Widget::factory('application:links', ['links' => $links]),
+    ]);
+    Event::trigger('extra.door.row', $row, $door);
+    $table->add_row((array) $row);
+}
+
+echo $table;
+?>
+
+<div class="pages"><?= $pagination ?></div>

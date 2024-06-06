@@ -1,0 +1,13 @@
+<div class="form padding_2">
+	<form method="post" action="<?php echo URI::url(); ?>">
+	<table class="form">
+		<tr>
+			<td>
+				<?php echo T('当系统内仪器连续使用时长超过')?><input name="time" class="text number lmargin_1" style="width: 10px" value="<?php echo H($time); ?>" />
+                <?php echo T('小时，给超时者发送超时警告');?>
+                <input type="submit" class="float_right font-button-save lmargin_2" name="submit" value="<?php echo I18N::HT('equipments', '保存') ?>" />
+            </td>
+		</tr>
+	</table>
+	</form>
+</div>

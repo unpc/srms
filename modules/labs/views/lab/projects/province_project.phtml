@@ -1,0 +1,77 @@
+<?php 
+$type = $project ? $project->type : (int) $type;
+$PREFIX = "project[$type][$flexform_index]"; 
+$form = $form[$flexform_index];
+?>
+<table class="form">
+<tbody>
+	<tr>
+		<td class="label middle nowrap">
+			<?php echo I18N::T('labs', '名称'); ?>
+		</td>
+		<td class="middle nowrap">
+			<input type="hidden" name="<?php echo $PREFIX ?>[id]" value="<?php echo H($project->id) ?>" />
+			<input type="text" class="text" 
+				value="<?php echo H($form['name'] ? : $project->name);?>" 
+				name="<?php echo $PREFIX ?>[name]"
+			/>
+		</td>
+	<tr>
+	
+	<tr>
+		<td class="label middle nowrap">
+			<?php echo I18N::T('labs', '描述'); ?>
+		</td>
+		<td class="middle nowrap">
+			<input type="textarea" class="text" 
+				value="<?php echo H($form['description'] ? : $project->description);?>" 
+				name="<?php echo $PREFIX?>[description]"/>
+		</td>
+	<tr>
+    <tr>
+        <td class="label middle nowrap">
+            <?php echo I18N::T('labs', '负责人');?>
+        </td>
+        <td class="middle nowrap">
+            <input type="text" class="text"
+                value="<?php echo H($form['incharge'] ? : $project->incharge);?>"
+                name="<?php echo $PREFIX?>[incharge]" />
+        </td>
+    </tr>
+    <tr>
+        <td class="label middle nowrap">
+            <?php echo I18N::T('labs', '类别');?>
+        </td>
+        <td class="middle nowrap">
+            <input type="text" class="text"
+                value="<?php echo H($form['ptype'] ? : $project->ptype);?>"
+                name="<?php echo $PREFIX?>[ptype]" />
+        </td>
+    </tr>
+    <tr>
+        <td class="label middle nowrap">
+            <?php echo I18N::T('labs', '经费');?>
+        </td>
+        <td class="middle nowrap">
+            <input type="text" class="text"
+                value="<?php echo H($form['grant'] ? : $project->grant);?>"
+                name="<?php echo $PREFIX?>[grant]" />
+        </td>
+    </tr>
+	<tr>
+		<td class="label middle nowrap">
+			<?php echo I18N::T('labs', '时间'); ?>
+		</td>
+		<td class="middle nowrap">
+			<input class="text date" 
+				value="<?php echo $form['dtstart'] ? : $project->dtstart; ?>" 
+				name="<?php echo $PREFIX?>[dtstart]" q-date_format="<?php echo HT('$year/$month')?>"/>
+			~
+			<input class="text date" 
+				value="<?php echo $form['dtend'] ? : $project->dtend; ?>" 
+				name="<?php echo $PREFIX?>[dtend]" q-date_format="<?php echo HT('$year/$month')?>"/>
+		</td>
+	<tr>	
+</tbody>
+</table>
+<input type="hidden" value="<?php echo $project->id; ?>"/>

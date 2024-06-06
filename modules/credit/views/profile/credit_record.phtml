@@ -1,0 +1,43 @@
+<?php $me = L('ME');?>
+<div class="pages"><?= $pagination ?></div>
+<?php
+
+$table = Widget::factory('table');
+
+$table->name     = 'credit_record';
+$table->sort_asc = $sort_asc;
+$table->sort_by  = $sort_by;
+
+if ($form['ctstart_check'] && $form['ctend_check']) {
+    $form['ctime'] = H(date('Y/m/d', $form['ctstart'])) . '~' . H(date('Y/m/d', $form['ctend']));
+} elseif ($form['ctstart_check']) {
+    $form['ctime'] = H(date('Y/m/d', $form['ctstart'])) . '~' . I18N::T('credit', '最末');
+} elseif ($form['ctend_check']) {
+    $form['ctime'] = I18N::T('credit', '最初') . '~' . H(date('Y/m/d', $form['ctend']));
+}
+
+if ($form['equipment']) {
+    $equipment = O('equipment', (int) $form['equipment']);
+}
+
+$columns = new ArrayIterator($columns);
+
+$table->add_columns((array) $columns);
+
+$table->empty_message = I18N::T('credit', '找不到相关的信用记录！');
+
+if ($credit_records->total_count()) {
+    foreach ($credit_records as $credit_record) {
+        $table->add_row([
+            'serial_number' => V('credit:profile/record_table/data/serial_number', ['id' => $credit_record->id]),
+            'ctime'     => Date('Y-m-d', $credit_record->ctime),
+            'event'     => H(in_array($credit_record->credit_rule->ref_no, [Credit_Rule_Model::CUSTOM_ADD, Credit_Rule_Model::CUSTOM_CUT]) ? $credit_record->description : $credit_record->credit_rule->name),
+            'equipment' => H($credit_record->equipment->name ?: '--'),
+            'score'     => V('credit:profile/record_table/data/score', ['credit_record' => $credit_record]),
+            'total'     => H($credit_record->total),
+        ]);
+    }
+}
+echo $table;
+?>
+<div class="pages"><?= $pagination ?></div>

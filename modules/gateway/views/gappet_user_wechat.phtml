@@ -1,0 +1,10 @@
+<?php
+$title = '绑定微信';
+$extra_class = 'button_wechat';
+$href = URI::url(Config::get('gateway.domain_url') . "uno/#/student/app-entry?entry=@entry:uno/info");
+?>
+<span>
+    <a target="_blank" href="<?= H($href);?>" class="button <?php echo $extra_class; ?>" title="<?php echo I18N::T('wechat', $title); ?>" >
+        <?php echo I18N::T('wechat', $title); ?>
+    </a>
+</span>

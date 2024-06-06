@@ -1,0 +1,10 @@
+<?php
+$label = null;
+
+$label = $order->get_label_status();
+?>
+<a href="<?php echo H(URI::url('!orders/index?status='.$label)) ?>" class="status_tag status_<?php echo Order_Model::$order_status_title[$label]?>" style="display:block">
+<?php
+	echo I18N::HT('orders', Order_Model::$order_status[$label]);
+?>
+</a>

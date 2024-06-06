@@ -1,0 +1,84 @@
+<div style="text-align:center;font-size:22px"><?php echo I18N::T('eq_sample', '仪器送样记录信息单')?></div>
+<table style="font-size:14px;padding:4px;">
+<?php $equipment = $sample->equipment;?>
+    <tbody>
+    <tr><td></td></tr>
+    <?php $print = $sample->eq_sample_view_print($sample);
+        foreach ($print as $category => $fields):?>
+    <tr>
+        <td style="width:100%;font-size:14px;border-top: 1px solid #CCC;border-bottom: 1px solid #CCC;">
+            <strong><?php echo $category;?></strong>
+        </td>
+    </tr>
+    <?php foreach ($fields as $title => $v): ?>
+    <tr>
+        <td style="width:20px"></td>
+        <td style="width:200px;font-size:14px;border-top: 1px dashed #CCC;">
+            <span><?php echo $title;?></span>
+        </td>
+        <td style="border-top: 1px dashed #CCC;border-left: 1px solid #CCC;font-size:14px;">
+            <?php echo $v?>
+        </td>
+    </tr>
+    <?php endforeach;?>
+    <?php endforeach;?>
+    
+    <?php $other_values = Event::trigger('eq_sample.view.print', $sample);?>
+    <?php foreach ($other_values as $category => $fields):?>
+    <tr>
+        <td style="width:100%;font-size:14px;border-top: 1px solid #CCC;border-bottom: 1px solid #CCC;">
+            <strong><?php echo $category;?></strong>
+        </td>
+    </tr>
+        <?php foreach ($fields as $title => $v) :?>
+        <tr>
+            <td style="width:20px"></td>
+            <td style="border-top: 1px dashed #CCC;font-size:14px;">
+                <span><?php echo $title;?></span>
+            </td>
+            <td style="border-top: 1px dashed #CCC;border-left: 1px solid #CCC;font-size:14px;">
+                <?php echo $v?>
+            </td>
+        </tr>
+        <?php endforeach;?>
+    <?php endforeach;?>
+
+    <?php $extra = Extra_Model::fetch($sample->equipment, 'eq_sample');?>
+    <?php foreach($extra->get_categories() as $category) :?>
+    <tr>
+        <td style="width:100%;font-size:14px;border-top: 1px solid #CCC;border-bottom: 1px solid #CCC;">
+            <strong><?php echo $category;?></strong>
+        </td>
+    </tr>
+        <?php foreach($extra->get_fields($category) as $uniqid=>$field) :?>
+        <tr>
+            <td style="width:20px; white-space: nowrap;"></td>
+            <td style="border-top: 1px dashed #CCC;font-size:14px;">
+                <span><?php echo $field['title'];?></span>
+            </td>
+            <td style="border-top: 1px dashed #CCC;border-left: 1px solid #CCC;font-size:14px;white-space: nowrap;">
+                <?php
+                $values = '';
+                if (!$field['adopted']) {
+                    $extra_value =  O('extra_value', ['object'=> $sample]);
+                    $values = $extra_value->values;
+                    $values =  $values[$uniqid];
+
+                    //过滤多选保存的值
+                    if($field['type'] == Extra_Model::TYPE_CHECKBOX){
+                        $values = array_filter((array)$values, function($value){return ($value == 'on');});
+                        $values = array_keys((array)$values);
+                    } 
+                    if(is_array($values)) $values =  join(',', $values);
+                    echo $values;
+                }
+                else {
+                    echo $sample->$uniqid;
+                }
+                ?>
+            </td>
+        </tr>
+        <?php endforeach;?>
+    <?php endforeach;?>
+    </tbody>
+</table>

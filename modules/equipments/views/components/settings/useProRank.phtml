@@ -1,0 +1,19 @@
+<div class="form-group">
+  <label class="col-sm-2 control-label">
+    <?= I18N::T('equipments', '展现方式') ?>
+  </label>
+  <div class="col-md-3">
+    <label class="radio-inline">
+      <input type="radio" name="type" value="bar" style="position: inherit;" 
+      <?= $query['type'] == 'bar' ? 'checked' : '' ?>>
+      <?= I18N::T('equipments', '柱状图') ?>
+    </label>
+  </div>
+  <div class="col-md-3">
+    <label class="radio-inline">
+      <input type="radio" name="type" value="line" style="position: inherit;" 
+      <?= $query['type'] == 'line' ? 'checked' : '' ?>>
+      <?= I18N::T('equipments', '折线图') ?>
+    </label>
+  </div>
+</div>

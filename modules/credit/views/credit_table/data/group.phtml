@@ -1,0 +1,8 @@
+<?php $root = Tag_Model::root('group'); ?>
+<span class="description">
+    <?php if ($credit->user->group->id): ?>
+            <a href="<?php echo URI::url('', 'group_id='.$credit->user->group->id); ?>"><?= $credit->user->group->name?></a>
+    <?php else : ?>
+        <?php echo '--'; ?>
+    <?php endif; ?>
+</span>

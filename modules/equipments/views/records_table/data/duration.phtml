@@ -1,0 +1,1 @@
+<?php echo !$record->dtend ? I18N::T('equipments', '使用中') : Date::format_duration($record->dtstart, $record->dtend, 'i');?>

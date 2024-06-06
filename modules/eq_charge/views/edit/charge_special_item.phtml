@@ -1,0 +1,43 @@
+<table class="form">
+
+<tbody>
+	<tr>
+		<td class="top right nowrap"><?php echo I18N::T('eq_charge', '用户标签')?></td>
+		<td colspan="2">
+			<?php 
+	   			echo Widget::factory('equipments:tag_selector', [
+	   					'autocomplete'=> URI::url('!equipments/autocomplete/user_tags.'.$equipment->id),  
+	   					'name'=>'special_tags[]', 
+	   					'value'=>($error ? $form['special_tags'] : @json_encode($special_tags)),
+	   			]); 
+	   		?>
+		</td>
+	</tr>
+	<tr>
+		<td class="hidden top right nowrap toggle:charge_mode show_on:<?php echo Eq_Charge::CHARGE_MODE_DURATION; ?>">
+			<?php echo I18N::T('eq_charge', '每小时需要金额')?> 
+		</td>
+		<?php 
+			/*
+				NO. BUG#233 (Cheng.Liu@2010.12.09)
+				增加个hidden，不然2个标签同时存在
+			*/
+		?>
+		<td class="hidden top right nowrap toggle:charge_mode show_on:<?php echo Eq_Charge::CHARGE_MODE_TIMES; ?>">
+			<?php echo I18N::T('eq_charge', '每一次需要金额')?> 
+		</td>		
+		<td class="hidden right nowrap middle toggle:charge_mode show_on:<?php echo EQ_Charge::CHARGE_MODE_SAMPLES; ?>">
+			<?php echo I18N::T('eq_charge', '每一样品需要金额')?>
+		</td>
+		<td>
+			<input class="text currency" name="special_unit_price[]" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo (float) $unit_price; ?>"/>
+		</td>
+	</tr>
+	<tr>
+		<td class="right nowrap middle"><?php echo I18N::T('eq_charge', '每次使用的开机费用')?></td>
+		<td >
+			<input class="text currency" name="special_minimum_fee[]" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo (float) $minimum_fee; ?>"/>
+		</td>
+	</tr>
+</tbody>
+</table>

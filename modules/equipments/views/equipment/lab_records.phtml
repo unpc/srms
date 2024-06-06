@@ -1,0 +1,43 @@
+<?php $lab = $object;?>
+<div class="pages"><?= $pagination ?></div>
+<?php
+$table = Widget::factory('table');
+
+$table->name      = 'equipment_records';
+$table->sort_flag = $sort_flag;
+$table->sort_by   = $sort_by;
+
+$columns = new ArrayObject($columns);
+Event::trigger('eq_record.list.columns', $form, $columns, 'lab_records');
+
+$table->add_columns((array) $columns);
+
+$table->empty_message = I18N::T('equipments', '无符合条件的记录');
+$table->records       = $records;
+
+if (count($records) > 0) {
+    foreach ($records as $record) {
+        $ajax_id = uniqid();
+        $links   = $record->links('index', $ajax_id);
+        $row     = [
+            'serial_number'  => V('equipments:records_table/data/serial_number', ['id' => $record->id]),
+            'lock_status' => V('equipments:records_table/data/lock_status', ['record'=>$record]),
+            'user_name'      => V('equipments:records_table/data/user_name', ['record' => $record]),
+            'equipment_name' => V('equipments:records_table/data/equipment_name', ['record' => $record]),
+            'date'           => V('equipments:records_table/data/date', ['record' => $record]),
+            'samples'        => V('equipments:records_table/data/samples', ['record' => $record]),
+            'agent'          => V('equipments:records_table/data/agent', ['record' => $record]),
+            'feedback'       => V('equipments:records_table/data/feedback', ['record' => $record]),
+            'description'    => V('equipments:records_table/data/description', ['record' => $record]),
+            'rest'           => Widget::factory('equipments:links', ['links' => $links, 'ajax_id' => $ajax_id]),
+            'charge_amount'  => V('equipments:records_table/data/charge_amount', ['record' => $record]),
+        ];
+        $row = new ArrayIterator($row);
+        Event::trigger('eq_record.list.row', $row, $record, 'lab_records');
+        $table->add_row((array) $row);
+    }
+}
+echo $table;
+?>
+
+<div class="pages"><?= $pagination ?></div>

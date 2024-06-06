@@ -1,0 +1,8 @@
+<div class="inner_message inner_message_info">
+<a href="#" style="color:#fff" class="view object:rrule event:click static:component_id=<?php echo $component->id ?> src:<?php echo URI::url('!calendars/calendar')?>">
+<?php
+	$label = $properties['label']?:I18N::T('calendars', '事件');
+	echo I18N::T('calendars', '按一定规则重复此%event', ['%event'=>$label]);
+?>
+</a>
+</div>

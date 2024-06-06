@@ -1,0 +1,29 @@
+<div class="description">
+<?php
+	$params = Config::get('system.controller_params');
+	$id = $params[0];
+	if (is_null($id)) $id = 'all';
+	$arr = ['all', 'current', 'past', 'unactivated'];
+	if(in_array($id, $arr)) {
+		switch($id) {
+		case 'all':
+			echo '<p>您可以查看所有成员的基本信息。</p>';
+			break;
+		case 'current':
+			echo '<p>您可以查看目前成员的基本信息。</p>';
+			break;
+		case 'past':
+			echo '<p>您可以查看过期成员的基本信息。</p>';
+			break;
+		}
+	}
+?>
+	<p>您可以按照组织机构、姓名、邮箱、电话、地址、实验室进行搜索。</p>
+	<p>您可以修改您的部分个人信息。</p>
+	<p>您可以关注其他用户成员，也可以对他们取消关注。</p>
+	<p>*您可以添加新用户。</p>
+	<p>您可以点击“修改”激活该用户帐号或修改用户其他信息。</p>
+	<p>*点击姓名,可以查看其关注的仪器、预约情况、仪器使用记录和仪器使用收费情况。</p>
+	<p>*管理员权限。</p>
+</div>
+

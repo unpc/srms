@@ -1,0 +1,42 @@
+<?php
+$upload_form_uniqid = 'upload_form_'.uniqid();
+$error_msg = I18N::T('nfs', '异常原因: 文件上传中止!');
+?>
+<div class="form" class="prevent_default">
+    <div class="interval_30"></div>
+	<form id="<?php echo H($upload_form_uniqid) ?>" method="post" action="<?php echo H(URI::url('!cers/index/upload')) ?>" class="nowrap">
+		<input name="Filedata" type="file" class="middle" style="outline: none;" />
+		<input name="single" type="hidden" value="1" />
+		<!-- <a name="upload" href="#" class="button button_import middle prevent_default"><?php echo I18N::HT('nfs', '上传')?></a> -->
+
+        <div class="button_container">
+            <div class="float_right">
+                <a name="upload" href="#" class="font-button-save prevent_default"><?php echo I18N::HT('nfs', '上传')?></a>
+            </div>
+        </div>
+	</form>
+</div>
+<script>
+jQuery(function($){
+	var $form = $('#<?php echo $upload_form_uniqid?>');
+	$form
+		.find('a[name=upload]')
+		.bind('click', function(){
+			$form.ajaxSubmit({
+				dataType: 'json',
+				complete: function (data) {
+				},
+				success : function(data, status, xhr) {
+					alert('上传成功');
+					Dialog.close();
+				},
+				error : function (data){
+                    console.log(data);
+					alert('上传失败');
+					Dialog.close();
+				}
+			});
+			return false;
+		});
+});
+</script>

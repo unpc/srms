@@ -1,0 +1,144 @@
+<div class="hr_1">&#160;</div>
+<?php
+$me = L("ME");
+?>
+<div class="panel padding_1 clearfix">
+	<div class="float_left">
+		<?php if ($me->is_allowed_to('添加支出', $grant)): ?>
+		<a href="#" class="button button_add view object:add_expense event:click static:<?php echo H(['id'=>$grant->id])?> src:<?php echo URI::url('!grants/grant')?>">
+			<?php echo I18N::HT('grants', '添加支出'); ?>
+		</a>
+		<?php endif; ?>
+		<a q-object="export" q-event="click" q-src="<?php echo H(URI::url('!grants/grant') ) ?>" q-static="<?php echo H(['type'=>'csv','form_token'=>$form_token,'grant_id'=>$grant->id]) ?>" class="button button_save">
+			<?php echo I18N::HT('grants', '导出CSV') ?>
+		</a>
+		<a q-object="export" q-event="click" q-src="<?php echo H(URI::url('!grants/grant') ) ?>" q-static="<?php echo H(['type'=>'print','form_token'=>$form_token,'grant_id'=>$grant->id]) ?>" class="button button_print " >
+			<?php echo I18N::HT('grants', '打印') ?>
+		</a>
+	</div>
+</div>
+<?php
+echo $pagination;
+/*
+NO. TASK#249 (Cheng.Liu@2010.11.18)
+grants模块 expense列表转换成 table widget
+*/
+$table = Widget::factory('table');
+$table->name = 'grant_expenses';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+if($form['dtstart_check'] && $form['dtend_check']) {
+	$form['date'] = H(date('Y/m/d',$form['dtstart'])).'~'.H(date('Y/m/d',$form['dtend']));
+}
+elseif($form['dtstart_check']) {
+	$form['date'] = H(date('Y/m/d',$form['dtstart'])).'~'.I18N::T('grants','最末');
+}
+elseif($form['dtend_check']) {
+	$form['date'] = I18N::T('grants','最初').'~'.H(date('Y/m/d',$form['dtend']));
+}
+
+$tag_names = [];
+if ($form['tags']) {
+	foreach ((array)@json_decode($form['tags']) as $temp_tag_id => $temp_tag_name) {
+		$tag_names[$temp_tag_id] = $temp_tag_name;
+	}
+}
+
+$grant_portion = O('grant_portion', $form['portion']);
+
+$table->add_columns([
+	'@'=>NULL,
+	'id'=>[
+		'title'=>I18N::T('grants','编号'),
+		'invisible'=>TRUE,
+		'filter'=>[
+			'value'=>$form['id'] ? Number::fill($form['id']) : NULL,
+		],
+	],
+	'@lock_status' => [
+		'nowrap'=>TRUE,
+	],
+	'ctime'=>[
+		'title'=>I18N::T('grants', '时间'),
+		'sortable'=>TRUE,
+		'filter'=>[
+			'form'=>V('grants:expenses_table/filters/date', [
+											   'dtstart_check'=>$form['dtstart_check'],
+											   'dtend_check'=>$form['dtend_check'],
+											   'dtstart'=>$form['dtstart'],
+											   'dtend'=>$form['dtend']
+											   ]),
+			'value'=>$form['date'] ? H($form['date']) : NULL,
+            'field'=>'dtstart_check,dtend_check,dtstart,dtend'
+		],
+		'nowrap'=>TRUE
+	],
+	'portion'=>[
+		'title'=>I18N::T('grants', '支出类别'),
+		'filter'=>[
+			'form'=>V('grants:expenses_table/filters/portion', [
+													'portion'=>$grant_portion,
+													'grant'=>$grant,
+													'portion_name'=>'portion',
+												]),
+			'value'=>$grant_portion->id ? V('grants:portion_name', ['portion'=>$grant_portion]) :NULL
+		],
+		'align'=>'left',
+		'nowrap'=>TRUE
+	],
+	'amount'=>[
+		'title'=>I18N::T('grants', '支出'),
+		'sortable'=>TRUE,
+		'align'=>'right',
+		'nowrap'=>TRUE
+	],
+	'summary'=>[
+		'title'=>I18N::T('grants', '说明'),
+		'filter'=>[
+			'form'=>V('grants:expenses_table/filters/summary', ['form'=>$form]),
+			'value'=>$form['summary'] ? H($form['summary']) : NULL
+		],
+		'nowrap'=>TRUE
+	],
+	'invoice'=>[
+		'title'=>I18N::T('grants', '发票号'),
+		'filter'=>[
+			'form'=>V('grants:expenses_table/filters/invoice', ['form'=>$form]),
+			'value'=>$form['invoice'] ? H($form['invoice']) : NULL
+		],
+		'align'=>'left',
+		'nowrap'=>TRUE
+	],
+	'tags' => [
+		'title' => T('标签'),
+		'filter' => [
+			'form' => V('expenses_table/filters/tag', ['tag_values' => $form['tags']]),
+			'value' => count($tag_names) ? join(', ', $tag_names) : NULL,
+			],
+		'nowrap' => TRUE
+		],
+	'rest'=>[
+		'nowrap'=>TRUE,
+		'align'=>'right',
+	],
+]);
+
+$table->empty_message = I18N::T('grants', '没有符合条件的支出');
+
+if (count($expenses) > 0) foreach ($expenses as $expense) {
+	$row = [
+		'@'=>V('grants:expenses_table/data/id', ['expense'=>$expense]),
+		'@lock_status' => V('grants:expenses_table/data/lock_status', ['expense'=>$expense]),
+		'ctime'=> '<span class="description">'.Date::format($expense->ctime).'</span>',
+		'summary'=>V('grants:expenses_table/data/summary', ['expense'=>$expense]),
+		'amount'=>H(Number::currency($expense->amount)),
+		'invoice'=>H($expense->invoice_no),
+		'portion'=>V('grants:expenses_table/data/portion', ['portion'=>$expense->portion]),
+		'tags'=>V('grants:expenses_table/data/tags', ['expense' => $expense]),
+		'rest'=>V('grants:expenses_table/data/rest', ['expense'=>$expense]),
+	];
+	$table->add_row($row);
+}
+
+echo $table;

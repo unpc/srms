@@ -1,0 +1,34 @@
+<?php
+echo CSS::load_async('equipments:common');
+echo $pagination;
+
+$sort_fields = Config::get('equipments.training.sortable_columns');
+$table = Widget::factory('table');
+
+$table->name = 'equipments';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+$table->add_columns((array) $columns);
+
+$table->empty_message = I18N::T('equipments', '无符合条件的培训 / 授权');
+
+foreach ($equipments as $equipment) {
+    $rows = [
+        '@'=> [
+            'view'=>$equipment->icon('32', 'style="display:block"'),
+            'extra'=>'style="padding:4px" align="right"',
+        ],
+		'name' => V('equipments:equipments_table/data/name', ['equipment'=>$equipment]),
+		'control' => V('equipments:equipments_table/data/control', ['equipment'=>$equipment]),
+		'location' => V('equipments:equipments_table/data/location', ['equipment'=>$equipment]),
+        'ctime'=> V('equipments:profile/training_tables/data/ctime', ['equipment'=> $equipment, 'user'=> $user]),
+		'contact' => V('equipments:equipments_table/data/contacts', ['equipment'=>$equipment]),
+    ];
+    $rows = new ArrayIterator($rows);
+    Event::trigger('training.table_list.row', $rows, $equipment);
+	$table->add_row((array) $rows);
+}
+
+echo $table;
+echo $pagination;

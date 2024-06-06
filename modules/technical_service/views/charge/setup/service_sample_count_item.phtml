@@ -1,0 +1,39 @@
+<table class="form lmaigin_1e5 tmargin_3" style="width: 80%">
+    <tbody>
+    <tr>
+        <td class="middle right nowrap rpadding_label"
+            style="width: 1rem"><?php echo I18N::T('eq_charge', '用户标签') ?><?= $index ?></td>
+        <td>
+            <?php
+            echo Widget::factory('equipments:tag_selector', [
+                'autocomplete' => URI::url('!equipments/autocomplete/user_tags.' . $equipment->id),
+                'name' => 'special_tags[' . $flexform_index . ']',
+                'value' => ($error ? $form['special_tags'] : @json_encode($special_tags)),
+            ]);
+            ?>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div class="interval_20"></div>
+        </td>
+    </tr>
+    <?php foreach ($projects as $id => $project): ?>
+        <tr>
+            <td class="right nowrap middle rpadding_label"><?php echo I18N::T('eq_charge', $project->name) ?></td>
+            <td class="">
+                <?= I18N::T('technical_service', '每一样品需要金额') ?>&nbsp;&nbsp;
+                <input name="<?= 'special_tags_price[' . $flexform_index . '][project_price_' . $id . ']' ?>" class="text currency"
+                       size="10"
+                       sign="<?php echo H(Config::get('lab.currency_sign')) ?>"
+                       value="<?= H($special_tags_price['project_price_' . $project->id]) ?>" <?= $disabled ?>/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <div class="interval_12"></div>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>

@@ -1,0 +1,9 @@
+<?php $uniqid = 'tag_'.uniqid(); ?>
+<div id="<?php echo H($uniqid) ?>" class="tag_item">
+	<?php echo V('application:admin/tags/tag_title', ['collapsed'=> $tags ? FALSE : TRUE, 'tag'=>$tag, 'uniqid'=>$uniqid, 'parent_uniqid'=>$parent_uniqid, 'title'=>$title]); ?>
+	
+	<div class="tag_container">
+	<?php echo V('admin/tags/tag_list', ['tags'=>$tags, 'parent_uniqid'=>$uniqid, 'title'=>$title]); ?>
+	</div>
+</div>
+

@@ -1,0 +1,23 @@
+
+<form method="post" autocomplete="off">
+	<div class="form margin-left-1">
+	<?php echo V('form_error', ['form'=>$form])?>
+	<div class="form">
+	<?php
+		// $data = empty($settings) ? $form : $settings;
+        $flexform = Widget::factory('flexform');
+		$flexform->title = I18N::T('eq_warning', '仪器额定机时预警设置');
+		$flexform->template_data = ['disabled'=>TRUE];
+		$flexform->existing_data = $settings;
+		$flexform->item_view = 'eq_warning:admin/specific_setting';
+		echo $flexform;
+	?>
+	</div>
+	<div class="interval_60">&nbsp</div>
+	<div class="form float_right">
+	<input type="reset" name="reset" value="<?php echo T('取消'); ?>" class="font-button-default rmargin_16" />
+	<input type="submit" name="submit" value="<?php echo T('提交'); ?>" class="font-button-save" />
+	</div>
+	<div class="interval_60">&nbsp</div>
+
+</form>

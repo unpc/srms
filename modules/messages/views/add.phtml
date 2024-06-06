@@ -1,0 +1,166 @@
+<?php
+if ($to->id) $receiver_users[$to->id] = $to->name;
+if ($to->id && !$GLOBALS['preload']['people.multi_lab']) $receiver_users[$to->id] .= '('.Q("$to lab")->current()->name.')';
+$require = (string) V('form_require');
+?>
+<div class="form">
+	<form method="post" action="">
+		<?php echo V('form_error', ['form'=>$form]);?>
+		<table class="form message_form" width="100%">
+			<tbody>
+				<tr>
+					<td class="label right nowrap top rpadding_label"><?php echo I18N::T('messages', '收件人'); ?></td>
+					<td class="top" width="100%">
+                        <div class="message_receiver">
+                            <div class="clearfix">
+                                <div class="top nowrap float_left title">
+                                    <?php echo Form::radio('receivers_type', 'all', ($form['receivers_type'] == 'all') ? TRUE : FALSE, I18N::T('messages', '所有人'), 'class="middle monitor radio"', 'class="middle"'); ?>
+                                </div>
+                            </div>
+
+                            <div class="interval_12"></div>
+
+                            <div class="clearfix">
+                                <div class="top nowrap title">
+                                    <?php echo Form::radio('receivers_type', 'group', ($form['receivers_type'] == 'group') ? TRUE : FALSE, I18N::T('messages', '组织机构'), 'class="middle monitor radio"', 'class="middle"'); ?>
+                                </div>
+
+                                <div class="top">
+                                    <div class="addressee_value toggle:receivers_type show_on:group hidden">
+                                        <div class="interval_16"></div>
+                                        <?php
+                                            if (Config::get('messages.send.by.otherway', FALSE)) {
+                                                echo Widget::factory('messages:tag_selector', [
+                                                    'value' => $form['receiver_group'],
+                                                    'autocomplete' => URI::url('!messages/autocomplete/group'),
+                                                    'name' => 'receiver_group',
+                                                    'ajax'=>TRUE
+                                                ]);
+                                            }
+                                            else {
+                                                echo Widget::factory('application:tag_selector', [
+                                                    'tag' => O('tag_group', $form['receiver_group']),
+                                                    'root' => Tag_Model::root('group'),
+                                                    'name' => 'receiver_group',
+                                                    'ajax'=>TRUE
+                                                ]);
+                                            }
+                                        ?>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="interval_12"></div>
+
+                            <div class="clearfix">
+                                <div class="top nowrap title">
+                                    <?php echo Form::radio('receivers_type', 'role', ($form['receivers_type'] == 'role') ? TRUE : FALSE, I18N::T('messages', '角色'), 'class="middle monitor radio"', 'class="middle"'); ?>
+                                </div>
+                                <div class="top">
+                                    <div class="addressee_value toggle:receivers_type show_on:role hidden">
+                                        <div class="interval_12"></div>
+                                        <?php
+                                        if (Config::get('messages.send.by.otherway', FALSE)) {
+                                            echo Widget::factory('messages:tag_selector', [
+                                                'value' => $form['receiver_role'],
+                                                'autocomplete' => URI::url('!messages/autocomplete/role'),
+                                                'name' => 'receiver_role',
+                                                'ajax'=>TRUE
+                                            ]);
+                                        }
+                                        else {
+                                            $roles = Event::trigger('people.get.roles');
+                                            $roles = array_map(function ($val) { return H($val); }, $roles);
+                                            echo Form::dropdown('receiver_role', $roles, $form['receiver_role'] ? : $roles->name, 'class="middle "', 'class="middle dropdown"');
+                                        }
+                                        ?>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <?php if (Module::is_installed('labs')) :?>
+                            <div class="interval_12"></div>
+                            <div class="clearfix">
+                                <div class="top nowrap title">
+                                    <?php echo Form::radio('receivers_type', 'lab', ($form['receivers_type'] == 'lab') ? TRUE : FALSE, I18N::T('messages', '实验室'), 'class="monitor radio"', 'class="middle"'); ?>
+                                </div>
+                                <div class="top">
+                                    <div class="addressee_value toggle:receivers_type show_on:lab hidden">
+                                        <div class="interval_16"></div>
+                                        <input name="receiver_labs" class="text token token_verify middle token_autocomplete:<?php echo H(URI::url('!messages/autocomplete/lab'))?>" value="<?php echo H($form['receiver_labs']); ?>"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php endif;?>
+
+                            <div class="interval_12"></div>
+
+                            <div class="clearfix">
+                                <div class="top nowrap title">
+                                    <?php echo Form::radio('receivers_type', 'user', ($form['receivers_type'] == 'user' || !isset($form['receivers_type'])) ? TRUE : FALSE, I18N::T('messages', '个别用户'), 'class="middle monitor radio"', 'class="middle"'); ?>
+                                </div>
+
+                                <div class="top">
+                                    <div class="interval_16"></div>
+                                    <div class="addressee_value toggle:receivers_type show_on:user hidden">
+                                        <?php
+                                        echo Widget::factory('multi_user_selector',
+                                            [
+                                            'name'=>'receiver_users',
+                                            'autocomplete'=>URI::url('autocomplete/user'),
+                                            'value'=> $receiver_users ? json_encode($receiver_users) :$form['receiver_users'],
+                                            'extra'=>'token_verify middle',
+                                            'size'=>'40'
+                                            ]);
+                                        ?>
+                                        <?php echo V('form_filter',['error'=>$form->errors['receiver_users'][0]])?>
+                                    </div>
+                                    <div class="interval_16"></div>
+                                </div>
+                            </div>
+
+
+                            <?php if (Config::get('messages.send.by.otherway', FALSE)): ?>
+                                <div class="clearfix">
+                                    <div class="top nowrap float_left" colspan="2">
+                                        <?php echo Event::trigger('message.send.way.view', L('ME'), $form); ?>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+					</td>
+				</tr>
+
+                <tr><td colspan="2"><div class="interval_16"></div></td></tr>
+
+				<tr>
+					<td class="label right nowrap top rpadding_label"><?php echo $require;?><?php echo I18N::T('messages', '标题'); ?></td>
+					<td class="label nowrap top">
+						<input name="title" class="text" value="<?php echo H($form['title'])?>" />
+                        <?php echo '<br>'.V('form_filter',['error'=>$form->errors['title'][0]])?>
+					</td>
+				</tr>
+
+                <tr><td colspan="2"><div class="interval_16"></div></td></tr>
+
+				<tr>
+					<td class="label right nowrap top rpadding_label"><?php echo $require;?><?php echo I18N::T('messages', '内容'); ?></td>
+					<td class="label top">
+						<textarea name="body" class="text autogrow"><?php echo H($form['body']);?></textarea>
+                        <?php echo '<br>'.V('form_filter',['error'=>$form->errors['body'][0]])?>
+					</td>
+				</tr>
+
+                <tr><td colspan="2"><div class="interval_16"></div></td></tr>
+
+				<tr>
+					<td></td>
+					<td class="right">
+						<input name="submit" type="submit" class="font-button-save" value="<?php echo I18N::T('messages', '发送消息'); ?>" />
+					</td>
+				</tr>
+
+			</tbody>
+		</table>
+	</form>
+</div>

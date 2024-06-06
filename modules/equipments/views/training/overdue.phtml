@@ -1,0 +1,36 @@
+<?php
+$sort_fields = Config::get('equipments.training.sortable_columns');
+echo $pagination;
+
+$lab = is_object($form['lab']) ? $form['lab'] : O('lab', $form['lab']);
+
+$table = Widget::factory('table');
+$table->name = 'equipments_overdue_training';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+$table->add_columns($field);
+
+$table->empty_message = I18N::T('equipments', '没有已过期培训 / 授权记录!');
+
+if (count($trainings) > 0) {
+    foreach($trainings as $training) {
+        $user = $training->user;
+        $table->add_row([
+            '@'=>[
+                'view' => $user->icon('32', 'style="display:block"'),
+                'extra' => 'style="padding:4px" align="right"',
+            ],
+            'approved_name' => V('equipments:users_table/data/name', ['user' => $user]),
+            'contact_info' => V('equipments:users_table/data/contact_info', [
+                'user' => $user,
+                'training' => $training
+            ]),
+            'address' => V('equipments:users_table/data/address', ['user' => $user]),
+            'atime' => $training->atime ? date('Y/m/d', $training->atime) : I18N::T('equipments', '不过期'),
+            'rest' => Widget::factory('application:links', ['links' => $training->links('overdue')]),
+        ]);
+    }
+}
+
+echo $table;
+?>

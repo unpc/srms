@@ -1,0 +1,34 @@
+<?php
+$uniqid = 'localesel_'.uniqid();
+$autocomplete = $this->$autocomplete?:URI::url('!equipments/autocomplete/rooms.');
+$name=$this->name?:'location2';
+$id=$this->id?:0;
+$value=$this->value?:''
+?>
+
+<input id="<?php echo $uniqid?>_id" value=<?php echo $id;?> name='room_id' hidden />
+<input id="<?php echo $uniqid?>_locale" name="<?php echo H($name);?>" value="<?php echo H($value); ?>"
+    type="hidden" />
+
+<input id="<?php echo $uniqid?>_locale_name" class="text middle " value="<?php echo H($value); ?>"
+ placeholder='房间'   q-tooltip="<?php echo H(I18N::T('billing', '房间号')) ?>" />
+<script>
+$(function() {
+    var autocomplete = "<?php echo $autocomplete;?>"
+
+    var $location2 = $('input[name=location2]')
+
+    $("#<?php echo $uniqid?>_locale_name").autocomplete({
+        ajax: autocomplete,
+        alt: "#<?php echo $uniqid?>_locale",
+        extra:"input[name=building_id]"
+    });
+
+    $('body').bind('update','input[name=location2]',function(){
+        $(this).val('');
+        $('#<?php echo $uniqid?>_locale_name').val('');
+        $('input[name=room_id').val('');
+    });
+
+})
+</script>

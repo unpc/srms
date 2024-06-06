@@ -1,0 +1,15 @@
+<tbody id="csv_content_<?php echo $uniqid; ?>">
+	<?php foreach($csv_rows as $ri => $row): ?>
+		<tr<?php echo $ri == 0 ? ' class="first_row"':''?>>
+		<?php for($i = 0; $i < $csv_max_cols; $i++ ): ?>
+			<td class="nowrap left"><?php echo $row[$i]; ?></td>
+		<?php endfor; ?>
+		</tr>
+	<?php endforeach; ?>
+	<tr>
+		<?php for($i = 0; $i < $csv_max_cols; $i++): ?>
+			<td class="nowrap left">...</td>
+		<?php endfor; ?>
+	</tr>
+</tbody>
+

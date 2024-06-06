@@ -1,0 +1,38 @@
+<?php
+
+$columns = equipments::get_records_fields([], []);
+Event::trigger('eq_record.list.columns', $form, $columns, 'user_records');
+
+$table       = Widget::factory('table');
+$table->name = 'record_feedback';
+$table->add_columns($columns);
+$table->empty_message = I18N::T('accounts', '当前暂无使用反馈');
+
+foreach ($records as $record) {
+    $links = $record->links('edit');
+
+    $row = [
+        'serial_number'  => V('equipments:records_table/data/serial_number', ['id' => $record->id]),
+        'equipment_name' => V('equipments:records_table/data/equipment_name', ['record' => $record]),
+        '@lock_status'   => V('equipments:records_table/data/lock_status', ['record' => $record]),
+        'date'           => V('equipments:records_table/data/date', ['record' => $record]),
+        'samples'        => V('equipments:records_table/data/samples', ['record' => $record]),
+        'agent'          => V('equipments:records_table/data/agent', ['record' => $record]),
+        'description'    => V('equipments:records_table/data/description', ['record' => $record]),
+        'rest'           => Widget::factory('application:links', ['links' => $links]),
+        'charge_amount'=>V('equipments:records_table/data/charge_amount', ['record'=>$record])
+    ];
+    $row = new ArrayIterator($row);
+
+    Event::trigger('eq_record.list.row', $row, $record, 'user_records');
+    $table->add_row((array) $row);
+}
+
+echo $table;
+
+?>
+
+<?php if ($records->total_count() > 20) : ?>
+    <div class="pages"><?= $pagination ?></div>
+<?php endif; ?>
+<div class="interval_16"></div>

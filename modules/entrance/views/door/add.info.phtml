@@ -1,0 +1,246 @@
+<?php $require = V('form_require'); ?>
+<?php $optional = V('form_optional'); ?>
+<?php
+$me = L('ME');
+$no_error = ($form->no_error !== FALSE);
+?>
+<style>
+    .door_type .dropdown_container {
+        width: 378px !important;
+    }
+</style>
+
+<div class="form">
+    <table class="form" width="100%">
+        <tbody>
+            <tr>
+                <td class="icon top icon-radius" width="130">
+                </td>
+                <td class="top">
+                    <form class="edit" method="post" autocomplete="off" action="<?php echo H(URI::url()) ?>">
+                        <div class="interval_24"></div>
+                        <?php echo V('form_error', ['form' => $form]); ?>
+                        <table class="form">
+                            <tbody>
+                                <tr>
+                                    <td colspan="4">
+                                        <h2 class="section_title">
+                                            <span class="border"></span>
+                                            <span class="black_title"><?php echo I18N::T('people', '基本信息') ?></span>
+                                            <span class="float_right" style="font-size: 14px;font-weight: normal;color: #F5222D;"><span class="required">*</span>必填</span>
+                                        </h2>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        <div class="interval_16"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="padding_2  rpadding_4" colspan="2">
+                                        <div class="bpadding_1">
+                                            <span class="rpadding_1"><?php echo I18N::T('entrance', '门禁类别') ?></span><?php echo $require; ?>
+                                            <?php echo V('form_filter', ['error' => $form->errors['type'][0]]) ?>
+                                        </div>
+                                        <div>
+                                            <?php echo Form::dropdown('type', I18N::T('entrance', Door_Model::types()), isset($form['type']) ? $form['type'] : Door_Model::type('genee'), 'class="dropdown monitor"'); ?>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="padding_2  rpadding_4" colspan="2">
+                                        <div class="bpadding_1">
+                                            <span class="rpadding_1"><?php echo I18N::T('entrance', '门禁名称') ?></span><?php echo $require; ?>
+                                            <?php echo V('form_filter', ['error' => $form->errors['name'][0]]) ?>
+                                        </div>
+                                        <div>
+                                            <input class="text" name="name" value="<?php echo H($form['name'] ?: '') ?>" size="54" />
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="padding_2  rpadding_4" colspan="2">
+                                        <div class="bpadding_1">
+                                            <span class="rpadding_1"><?php echo I18N::T('entrance', '地理位置') ?></span>
+                                            <?php
+                                                $requires = Config::get('form.entrance')['requires'];
+                                                if (in_array('location', $requires)) {
+                                                    echo $require;
+                                                }
+                                            ?>
+                                            <?php echo V('form_filter', ['error' => $form->errors['location'][0]]) ?>
+                                        </div>
+                                        <div>
+                                            <?php
+                                            echo Widget::factory('application:multi_tag_selector', [
+                                                'autocomplete' => URI::url('!equipments/autocomplete/tag_location'),
+                                                'name' => "location",
+                                                'value' => $form['location']
+                                            ]);
+                                            ?>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <?php foreach (Door_Model::types() as $typeKey => $typeName) : ?>
+                                    <?php if ($typeKey == Door_Model::type('genee')) {
+                                        continue;
+                                    } ?>
+                                <tr class="toggle:type show_on:<?= $typeKey ?> hidden">
+                                    <td class="padding_2  rpadding_4" colspan="2">
+                                        <div class="bpadding_1">
+                                            <span class="rpadding_1"><?php echo I18N::T('entrance', '选择门禁') ?></span><?php echo $require; ?>
+                                            <?php echo V('form_filter', ['error' => $form->errors['name'][0]]) ?>
+                                        </div>
+                                        <div class="bpadding_1">
+                                            <?php if ($typeKey == Door_Model::type('mp')) :?>
+                                                <input class="text" name="remote_device" value="<?php echo H($form['remote_device'] ?: '') ?>" size="54" />
+                                            <?php else:?>
+                                            <?php
+                                            echo Widget::factory('device_selector', [
+                                                'autocomplete' => URI::url('!entrance/autocomplete/devices', ['type' => Door_Model::iot_door_driver()[$typeKey]]),
+                                                'name' => 'remote_device',
+                                                'device' => $form['remote_device'] ? O('door_device', $form['remote_device']) : O('door_device'),
+                                                'size' => 54,
+                                            ]);
+                                            ?>
+                                            <?php endif;?>
+                                        </div>
+                                        <?php if ($typeKey == Door_Model::type('hikvision')) : ?>
+                                        <div class="description" style="color: #E02020">
+                                            <span class="required">*</span><?php echo I18N::T('entrance', '注：请在ISC平台内授权服务及激活门禁'); ?>
+                                        </div>
+                                        <?php endif;?>
+                                        <?php if ($typeKey == Door_Model::type('mp')) : ?>
+                                        <div class="description" style="color: #E02020">
+                                            <span class="required">*</span><?php echo I18N::T('entrance', '注：请输入网关管理-电子门牌-设备连接码: 设备ID'); ?>
+                                        </div>
+                                        <?php endif;?>
+                                        <?php if ($typeKey == Door_Model::type('mpv2')) : ?>
+                                        <div class="bpadding_1">
+                                            <span class="rpadding_1"><?php echo I18N::T('entrance', '选择门禁2') ?></span>
+                                            <?php echo V('form_filter', ['error' => $form->errors['name'][0]]) ?>
+                                        </div>
+                                        <div class="bpadding_1">
+                                            <?php
+                                            echo Widget::factory('device_selector', [
+                                                'autocomplete' => URI::url('!entrance/autocomplete/devices', ['type' => Door_Model::iot_door_driver()[$typeKey]]),
+                                                'name' => 'remote_device2',
+                                                'device' => $form['remote_device'] ? O('door_device', $form['remote_device']) : O('door_device'),
+                                                'size' => 54,
+                                            ]);
+                                            ?>
+                                        </div>
+                                        <?php endif;?>
+                                    </td>
+                                </tr>
+                                <?php endforeach ?>
+
+
+                                <tr>
+                                    <td class="padding_2" colspan="4">
+                                        <div class="bpadding_1">
+                                            <span class="rpadding_1"><?php echo I18N::T('entrance', '门禁负责人'); ?></span><?php echo $require; ?>
+                                        </div>
+                                        <div>
+                                            <?php
+                                            $users = Q("$door<incharge user");
+                                            $incharges = [];
+                                            foreach ($users as $incharge) {
+                                                $incharges[$incharge->id] = $incharge->name;
+                                                if (!$GLOBALS['preload']['people.multi_lab']) {
+                                                    $incharges[$incharge->id] .= '(' . Q("$incharge lab")->current()->name . ')';
+                                                }
+                                            }
+
+                                            echo Widget::factory(
+                                                'multi_user_selector',
+                                                [
+                                                    'name' => 'incharges',
+                                                    'autocomplete' => URI::url('autocomplete/user'),
+                                                    'value' => $no_error ? json_encode($incharges) : $form['incharges'],
+                                                    'extra' => 'token_verify'
+
+                                                ]
+                                            );
+                                            ?>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="toggle:type show_on:<?= Door_Model::type('genee') ?> hidden">
+                                    <td class="padding_2  rpadding_4" colspan="2">
+                                        <div>
+                                            <?php echo Form::checkbox('single_direction', $form['single_direction'] == "on", I18N::T('entrance', '出门需要刷卡'), 'class="monitor checkbox middle"'); ?>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="toggle:type show_on:<?= Door_Model::type('genee') ?> hidden">
+                                    <td class="padding_2  rpadding_4" colspan="2">
+                                        <div class="bpadding_1">
+                                            <span class="rpadding_1"><?php echo I18N::T('entrance', '进门地址') ?></span><?php echo $require; ?>
+                                            <?php echo V('form_filter', ['error' => $form->errors['in_addr'][0]]) ?>
+                                        </div>
+                                        <div>
+                                            <input class="text" name="in_addr" value="<?php echo H($form['in_addr'] ?: '') ?>" size="54" />
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="toggle:single_direction show_on:on">
+                                    <td class="padding_2  rpadding_4" colspan="2">
+                                        <div class="bpadding_1">
+                                            <span class="rpadding_1"><?php echo I18N::T('entrance', '出门地址') ?></span><?php echo $require; ?>
+                                            <div>
+                                                <input class="text" name="out_addr" value="<?php echo H($form['out_addr'] ?: '') ?>" size="54" />
+                                            </div>
+                                    </td>
+                                </tr>
+                                <tr class="toggle:type show_on:<?= Door_Model::type('genee') ?> hidden">
+                                    <td class="padding_2  rpadding_4" colspan="2">
+                                        <div class="bpadding_1">
+                                            <span class="rpadding_1"><?php echo I18N::T('entrance', '门锁ID') ?></span><?php echo $require; ?>
+                                            <?php echo V('form_filter', ['error' => $form->errors['lock_id'][0]]) ?>
+                                        </div>
+                                        <div>
+                                            <input class="text" name="lock_id" value="<?php echo H($form['lock_id'] ?: '') ?>" size="54" />
+                                        </div>
+                                    </td>
+                                    <td class="padding_2  lpadding_4" colspan="2">
+                                        <div class="bpadding_1">
+                                            <span class="rpadding_1"><?php echo I18N::T('entrance', '门磁ID') ?></span><?php echo $require; ?>
+                                            <?php echo V('form_filter', ['error' => $form->errors['detector_id'][0]]) ?>
+                                        </div>
+                                        <div>
+                                            <input class="text" name="detector_id" value="<?php echo H($form['detector_id'] ?: '') ?>" size="54" />
+                                        </div>
+                                    </td>
+                                    <?= Event::trigger('door[edit].view.extra', $form, $door); ?>
+                                </tr>
+                                <tr style="visibility:hidden">
+                                    <td class="padding_2  rpadding_4" colspan="2">
+                                        <div class="bpadding_1"></div>
+                                        <div><input size="54" /></div>
+                                    </td>
+                                    <td class="padding_2  lpadding_4" colspan="2">
+                                        <div class="bpadding_1"></div>
+                                        <div><input size="54" /></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="interval_60" colspan="5"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="right float_right" style="margin-right: 2rem">
+                            <tr>
+                                <td class="top right">
+                                    <input type="reset" class="font-button-default" name="submit" value="<?php echo H(T('取消')) ?>" />
+                                    <input type="submit" class="font-button-save" name="submit" value="<?php echo H(T('下一步')) ?>" />
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

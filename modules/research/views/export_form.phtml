@@ -1,0 +1,25 @@
+<div class="form padding_2">
+    <?php if ($type == 'csv'): ?>
+  <form action="#" q-object="export"
+    q-src="<?= $url ?>"
+    q-static="<?php echo H(['form_token'=>$form_token, 'type' => $type])?>"
+    target="<?=$type == 'csv' ? '_self' : '_blank'?>"
+    q-event="submit"
+    class="prevent_default" method="post"
+  >
+  <?php else: ?>
+  <form action="<?php echo H($url) ?>" target="'_blank'" class="prevent_default" method="post">
+  <?php endif; ?>
+    <ul class="equipment_triple">
+      <?php foreach ($columns as $p => $p_name) :?>
+        <li class="nowrap">
+          <?php echo Form::checkbox("columns[{$p}]", true, I18N::T('research', $p_name), 'class="middle monitor"', 'class="middle"');?>
+        </li>
+      <?php endforeach;?>
+    </ul>
+    <div class="hr_2"></div>
+    <input type="submit" name="submit" class="button button_edit" value="<?php echo H(I18N::T('research', '提交')) ?>" />
+  </form>
+</div>
+
+

@@ -1,0 +1,49 @@
+<div class="door_detail clearfix header_content_padding">
+    <table class="form flexible">
+        <tbody>
+        <tr>
+            <td class="top icon rpadding_3">
+                <?php echo $door->icon('104') ?>
+            </td>
+
+            <td class="top flexible">
+                <h2>
+                    <a href="<?php echo H($door->url() ) ?>"><?php echo H($door->name) ?></a>
+                    <?php echo $door->tag_label(); ?>
+                </h2>
+                <div class="interval_20"></div>
+                <p class="bpadding_9 door_info">
+                    <span><?php echo I18N::T('entrance', '地理位置'); ?>:
+                        <?php echo  V('entrance:doors_table/data/location', ['door' => $door]) ?>
+                    </span>
+                </p>
+                <p class="bpadding_9 door_info">
+                <span>
+                    <?php echo I18N::T('entrance', '负责人'); ?>:
+                    <?php
+                    $users = Q("$door<incharge user");
+                    if (count($users)) {
+                        foreach ($users as $user) {
+                            $arr[] = URI::anchor($user->url(), $user->name);
+                        }
+                        echo implode(', ', $arr);
+                    }
+                    else {
+                        echo '--';
+                    }
+                    ?>
+                </span>
+                </p>
+                <div class="interval_20"></div>
+                <?php echo V('door/control', ['door'=>$door]); ?>
+            </td>
+            <td class="right top nowrap">
+                <div class="float_right" style="width: 300px">
+                    <?php echo Widget::factory('application:links', ['links' => $door->links('view'), 'separator'=>' ']); ?>
+                </div>
+            </td>
+        </tr>
+        <tr><td><div class="interval_12"></div> </td></tr>
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,9 @@
+<tr>
+    <td class="label top nowrap right">
+    	<?php $no_error = (!is_object($form) || !!$form->no_error); ?>
+        <?php echo $order->get_require('vendor'); echo I18N::T('orders', '供应商') ?>
+    </td>
+    <td class="left" colspan="3">
+        <input size="60" name="vendor" class="text" <?php echo $disabled ?>  value="<?php echo H($no_error?$order->vendor:$form['vendor'])?>" />
+    </td>
+</tr>

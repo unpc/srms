@@ -1,0 +1,36 @@
+<table class="form" style="width: 50%">
+  <tr>
+    <td colspan="2">
+      <h4><?php echo I18N::T('eq_empower', '设置该时段适用用户'); ?></h4>
+    </td>
+  </tr>
+  <tr>
+    <td class="left nowrap top">
+      <?= Form::checkbox("select_user_mode_user[{$flexform_index}]", !!$controluser, 
+        I18N::T('eq_empower','个别用户'), 'class="middle monitor" disabled="disabled"', 'class="middle monitor" disabled="disabled"') ?>
+    </td>
+    <td>
+      <?= implode(',', json_decode($controluser, true) ? : []); ?>
+    </td>
+  </tr>
+  <?php if (!$GLOBALS['preload']['people.multi_lab'] && Module::is_installed('labs')): ?>
+  <tr>
+    <td class="left nowrap top">
+      <?= Form::checkbox("select_user_mode_lab[{$flexform_index}]", $controllab, 
+        I18N::T('eq_empower','课题组'),'class="middle monitor" disabled="disabled"', 'class="middle monitor" disabled="disabled"') ?>
+    </td>
+    <td>
+      <?= implode(',', json_decode($controllab, true) ? : []); ?>
+    </td>
+  </tr>
+  <?php endif ?>
+  <tr>
+    <td class="left nowrap top">
+      <?= Form::checkbox("select_user_mode_group[{$flexform_index}]", $controlgroup, 
+        I18N::T('eq_empower','组织机构'),'class="middle monitor" disabled="disabled"', 'class="middle monitor" disabled="disabled"') ?>
+    </td>
+    <td>
+      <?= implode(',', json_decode($controlgroup, true) ? : []); ?>
+    </td>
+  </tr>
+</table>

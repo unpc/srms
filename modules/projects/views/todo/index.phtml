@@ -1,0 +1,103 @@
+<div class="hr_1">&#160;</div>
+<?php echo $pagination; ?>
+<?php
+	/*
+		NO. TASK#250 (Cheng.Liu@2010.11.18)
+		projects todo列表转换table widget
+	*/
+
+	$table = Widget::factory('table');
+	$table->name = 'projects_todo';
+	$table->sort_asc = $sort_asc;
+	$table->sort_by = $sort_by;
+
+	if($form['dttime_check'] && $form['dtend_check']) {
+		$form['date'] = H(date('Y-m-d',$form['dttime'])).'~'.H(date('Y-m-d',$form['dtend']));
+	}
+	elseif($form['dttime_check']) {
+		$form['date'] = H(date('Y-m-d',$form['dttime'])).'~'.I18N::T('projects','最末');
+	}
+	elseif($form['dtend_check']) {
+		$form['date'] = I18N::T('projects','最初').'~'.H(date('Y-m-d',$form['dtend']));
+	}
+
+	$table->add_columns([
+		'@'=>NULL,
+		'name'=>[
+			'title'=>I18N::T('projects', '任务名称'),
+			'sortable'=>TRUE,
+			'filter'=>[
+				'form'=>V('projects:todo_table/filters/name', ['name'=>$form['name']]),
+				'value'=>$form['name'] ? H($form['name']) : NULL
+			],
+			'nowrap'=>TRUE
+		],
+		'status'=>[
+			'title'=>I18N::T('projects', '状态'),
+			'nowrap'=>TRUE
+		],
+		'progress'=>[
+			'title'=>I18N::T('projects', '进度'),
+			'nowrap'=>TRUE
+		],
+		'dtstart'=>[
+			'title'=>I18N::T('projects', '日期'),
+			'sortable'=>TRUE,
+			'filter'=>[
+				'form'=>V('projects:todo_table/filters/date', [
+															'dttime_check'=>$form['dttime_check'],
+															'dttime'=>$form['dttime'],
+															'dtend_check'=>$form['dtend_check'],
+															'dtend'=>$form['dtend']
+														]),
+				'value'=>$form['date'] ? H($form['date']) : NULL
+			],
+			'nowrap'=>TRUE
+		],
+		'supervisor'=>[
+			'title'=>I18N::T('projects', '负责人'),
+			'filter'=>[
+				'form'=>V('projects:todo_table/filters/supervisor', ['supervisor'=>$form['supervisor']]),
+				'value'=>$form['supervisor'] ? H($form['supervisor']) : NULL
+			],
+			'nowrap'=>TRUE
+		],
+		'worker'=>[
+			'title'=>I18N::T('projects', '执行人'),
+			'filter'=>[
+				'form'=>V('projects:todo_table/filters/worker', ['worker'=>$form['worker']]),
+				'value'=>$form['worker'] ? H($form['worker']) : NULL
+			],
+			'nowrap'=>TRUE
+		],
+		'rest'=>[
+			'nowrap'=>TRUE,
+			'align'=>'right',
+		]
+	]);
+
+	$table->empty_message = I18N::T('projects', '没有符合条件的工作列表');
+
+	if (count($tasks) > 0) {
+		foreach ($tasks as $task) {
+			$workers = Q("$task user.worker");
+			$supervisors = Q("$task user.supervisor");
+			$links = $task->links();
+		    $table->add_row([
+				'@'=>[
+					'view'=>$task->icon('32', 'style="display:block"'),
+					'extra'=>'style="padding:4px" align="right"',
+				],
+				'name'=>V('projects:todo_table/data/name', ['object'=>$task]),
+		    	'status'=>$worker->complete ? I18N::T('projects', '已完成') : I18N::T('projects', '未完成'),
+		    	'progress'=>H('进度'),
+		    	'dtstart'=>date('Y-m-d', $task->dtstart)." - ".date('Y-m-d', $task->dtend),
+		    	'supervisor'=>V('todo/attendees', ['users'=> $supervisors]),
+		    	'worker'=>V('todo/attendees', ['users'=> $workers]),
+		    	'rest'=>Widget::factory('application:links', ['links' => $links])
+		    ]);
+		}
+	}
+
+	echo $table;
+?>

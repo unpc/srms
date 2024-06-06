@@ -1,0 +1,159 @@
+<?php
+$me = L('ME');
+$multi_lab = $GLOBALS['preload']['people.multi_lab'];
+
+$panel_buttons = [];
+if ($me->is_allowed_to('添加成果', 'lab')) {
+    $panel_buttons[] = [
+                'url' => URI::url('!achievements/awards/award/add'),
+                'tip' => I18N::T('achievements', '添加'),
+                'text' => I18N::T('achievements', '添加获奖'),
+                'extra' => 'class="button button_add"'
+            ];
+
+    if ($me->is_allowed_to('查看成果', $lab->id ? $lab : O('lab', $form['lab_id'])))
+    {
+        $panel_buttons[] = [
+            'text' => I18N::T('achievements', '导出Excel'),
+            'tip' => I18N::T('achievements', '导出Excel'),
+            'extra' => 'q-static="'. H(['type' => 'csv', 'form_token' => $form_token]) .'" q-object="export" q-event="click" q-src="!achievements/awards/award" class="button button_save"'
+        ];
+    }
+
+    if ($me->is_allowed_to('导入成果', 'lab')) {
+        $panel_buttons[] = [
+            'url' => URI::url('!achievements/download.awards'),
+            'tip' => I18N::T('achievements', '下载模板'),
+            'text' => I18N::T('achievements', '下载模板'),
+            'extra' => 'class="button button_export"'
+        ];
+        $panel_buttons[] = [
+            'tip' => I18N::T('achievements', '导入数据'),
+            'text' => I18N::T('achievements', '导入数据'),
+            'extra' => 'class="button button_import middle prevent_default" onclick="return inputFile();"'
+        ];
+        echo V('upload', ['template' => 'awards']);
+    }
+
+}
+?>
+<?php
+	if($form['dtstart'] || $form['dtend']) {
+        $form['award_date'] = true;
+	}
+	$table = Widget::factory('table');
+	$table->name = 'achievements_awards';
+	$table->sort_asc = $sort_asc;
+	$table->sort_by = $sort_by;
+	$table->add_columns([
+		// '@'=>['extra_class'=>'tight'],
+		'name'=>[
+			'title'=>I18N::T('achievements', '获奖名称'),
+			'align'=>'left',
+			'filter'=>[
+				'form'=>V('achievements:awards_table/filters/name', ['name'=>H($form['name'])]),
+				'value' => $form['name'] ? H($form['name']) : NULL
+			],
+			'nowrap'=>TRUE,
+			'sortable'=>TRUE,
+		],
+		'tag'=>[
+			'title'=>I18N::T('achievements', '获奖级别'),
+			'align'=>'left',
+			'filter'=>[
+				'form'=>V('achievements:awards_table/filters/tag', [
+							'tag'=>$tag,
+							'tag_root'=>$tag_root,
+							'name'=>'tag_id',
+						]),
+                'value' => $tag->id ? H($tag->name) : NULL,
+                'field'=>'tag_id'
+			],
+			'nowrap'=>TRUE,
+			'sortable'=>TRUE,
+		],
+		'date'=>[
+			'title'=>I18N::T('achievements', '日期'),
+			'filter'=>[
+				'form'=>V('achievements:awards_table/filters/date', [
+											'dtstart' => H($form['dtstart']),
+											'dtend' => H($form['dtend']),
+											]),
+				'value' => $form['award_date']  ? H($form['award_date'] ) : NULL,
+			    'field' => 'dtstart,dtend'
+			],
+			'nowrap'=>TRUE,
+			'sortable'=>TRUE,
+		],
+		'people'=>[
+			'title'=>I18N::T('achievements', '获奖人员'),
+			'filter'=>[
+				'form'=>V('achievements:awards_table/filters/people', ['people'=>H($form['people'])]),
+				'value'=> $form['people'] ? H($form['people']) : NULL
+			],
+			'nowrap'=>TRUE,
+			'sortable'=>TRUE,
+		],
+		'description'=>[
+			'title'=>I18N::T('achievements', '备注'),
+			'nowrap'=>FALSE
+		],
+		'rest'=>[
+            'title'=>I18N::T('achievements', '操作'),
+			'align'=>'left',
+			'nowrap'=>TRUE
+		]
+	]);
+
+	if (Module::is_installed('labs') && (
+			$me->access('查看所有实验室成果')
+			|| ($multi_lab && $me->is_allowed_to('查看成果实验室', 'achievements'))
+		)) {
+		$table->add_column('lab_id', [
+			'title'=>I18N::T('achievements', '实验室'),
+			'invisible' => TRUE,
+			'suppressible' => TRUE,
+			'filter'=>[
+				'form'=>Widget::factory('labs:lab_selector', [
+						'name'=>'lab_id',
+						'selected_lab'=> $lab->id ?: $form['lab_id'],
+						'size'=>25,
+						'all_labs'=>TRUE
+					]),
+				'value' => $form['lab_id'] ? H(O('lab', $form['lab_id'])->name) : NULL,
+			],
+		]);
+	}
+
+	$table->empty_message = I18N::T('achievements', '没有符合条件的获奖');
+
+	if (count($awards) > 0) {
+		foreach ($awards as $award) {
+			$links = $award->links();
+			$table->add_row([
+				/*'@'=>[
+					'view' => $award->icon('32', 'style="display:block"'),
+					'extra' => 'style="padding:4px" align="right"',
+				],*/
+				'name'=>V('achievements:awards_table/data/name', ['award'=>$award]),
+				'tag'=>V('achievements:awards_table/data/tag', ['award'=>$award]),
+				'date'=>V('achievements:awards_table/data/date', ['award'=>$award]),
+				'people'=>V('achievements:awards_table/data/people', ['award'=>$award]),
+				'description'=>V('achievements:awards_table/data/description', ['award'=>$award]),
+				'rest'=>Widget::factory('application:links', ['links' => $links]),
+			]);
+		}
+	}
+
+    $param = [
+        'panel_buttons' => $panel_buttons,
+        'top_input_arr'=> ['name', 'people'],
+        'columns'=> (array)$table->columns,
+    ];
+    echo V('application:search_box', $param);
+
+	echo $table;
+?>
+
+<div class="interval_12"></div>
+<div class="float_right"><?php echo $pagination; ?></div>

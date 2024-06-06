@@ -1,0 +1,5 @@
+<?php
+$ue = Q("ue_training[user={$user}][equipment={$equipment}]:sort(id D)")->current();
+
+if ($ue->atime) echo Date::format($ue->atime, 'Y/m/d');
+else echo I18N::T('equipments', '不过期');

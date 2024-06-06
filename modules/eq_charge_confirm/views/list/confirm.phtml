@@ -1,0 +1,233 @@
+<?php 
+$uniqid = uniqid();
+$select_all_id = 'select_all_' . $uniqid;
+$form_id = 'form_' . $uniqid;
+$me = L('ME'); 
+echo CSS::load_async('eq_charge:common');
+?>
+<!-- <div class="hr_1">&#160;</div> -->
+<div class="panel padding_1 clearfix">
+	<form id="<?= $form_id ?>" method="post" action="<?php echo H(URI::url()) ?>">
+		<!-- <div class="float_left lpadding_1"> -->
+			<!-- <?php // echo Form::checkbox('', $_SESSION['check_all_confirm_charge'] ? : FALSE, I18N::T('eq_charge_confirm', '全选'), 'id="'.$select_all_id.'"') ?> -->
+			<!-- <input name="batch_confirm" type="submit" class="button middle button_samples_lock" value="<?php // echo I18N::T('eq_charge_confirm', '批量确认'); ?>" /> -->
+		<!-- </div> -->
+        <!-- <div class="panel clearfix"> -->
+            <!-- <span>&#160;<?php // echo Widget::factory('application:links', ['links' => $panel_buttons, 'separator' => '&#160;']);?></span> -->
+        <!-- </div> -->
+    </form>
+</div>
+<?php 
+
+$table = Widget::factory('table');
+
+$table->name = 'eq_charge_confirm';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+if ($form['dtstart'] && $form['dtend']) {
+	$form['date'] = H(date('Y/m/d',$form['dtstart'])).'~'.H(date('Y/m/d',$form['dtend']));
+}
+elseif ($form['dtstart']) {
+	$form['date'] = H(date('Y/m/d',$form['dtstart'])).'~'.I18N::T('eq_charge','最末');
+}
+elseif ($form['dtend']) {
+	$form['date'] = I18N::T('eq_charge','最初').'~'.H(date('Y/m/d',$form['dtend']));
+}
+
+$equipment = O('equipment', $form['equipment']);
+$lab = O('lab', $form['lab']);
+$columns = [
+	'select'=>[
+		'align' => 'center',
+	],
+    'id' =>  [
+        'title'=>I18N::T('eq_charge', '计费编号'),
+        'weight' => 10,
+    ],
+    'equipment' => [
+		'title' => T('仪器'),
+		'filter' => [
+			'form' => V('eq_charge:charges_table/filters/equipment', ['equipment' => $form['equipment']]),
+			'value' => $equipment->id ? H($equipment->name) : H($form['equipment'] ?: NULL)
+		],
+		'nowrap' => TRUE,
+        'weight' => 20,
+    ],
+    'lab' => [
+		'title'=>I18N::T('eq_charge', '实验室'),
+		'invisible' => TRUE,
+		'filter'=>[
+			'form'=>V('eq_charge:charges_table/filters/lab', ['lab' => $lab]),
+			'value'=> $lab->id ? H($lab->name) : H($form['lab'] ?: NULL)
+		],
+		'nowrap'=>TRUE,
+        'weight' => 30,
+    ],
+    'user' =>  [
+		'title'=>I18N::T('eq_charge', '使用者'),
+		'nowrap'=>TRUE,
+        'weight' => 40,
+	],
+	'date' => [
+		'title'=>I18N::T('eq_charge', '时间'),
+		'invisible' => TRUE,
+		'filter' => [
+			'form' => V('eq_charge:charges_table/filters/date', [
+				'dtstart'=>$form['dtstart'],
+				'dtend'=>$form['dtend']
+			]),
+			'value' => $form['date'] ? H($form['date']) : NULL,
+			'field' => 'dtstart,dtend'
+		],
+		'nowrap'=>TRUE,
+        'weight' => 50,
+	],
+	'amount'=>[
+		'title'=>I18N::T('eq_charge', '收费'),
+		'nowrap'=>TRUE,
+        'weight' => 60,
+	],
+	'type'=>[
+		'title'=>I18N::T('eq_charge', '收费类型'),
+		'nowrap' => TRUE,
+        'weight' => 80,
+	],
+	'confirm'=>[
+		'title'=>I18N::T('eq_charge', '状态'),
+		'filter'=>[
+			'form'=>V('eq_charge_confirm:charges_table/filters/confirm', ['form' => $form]),
+			'value'=> $form['confirm'] != -1 ? EQ_Charge_Confirm_Model::confirm($form['confirm']) : NULL
+		],
+		'nowrap' => TRUE,
+        'weight' => 90,
+	],
+	'summary' => [
+		'title' => I18N::T('eq_charge', '备注'),
+		'weight' => 100,
+	],
+	'rest'=> [
+		'nowrap' => TRUE,
+		'weight' => 110,
+	]
+];
+
+$columns = new ArrayObject($columns);
+
+Event::trigger('eq_charge_confirm.table_list.columns', $form, $columns, $obj);
+
+$table->add_columns((array)$columns);
+
+$table->empty_message = I18N::T('eq_charge', '无符合条件的收费记录');
+
+foreach ($charges as $c) {
+	$links = $c->links('confirm');
+
+	$row = [
+		'select'=> $no_select?'':V('eq_charge_confirm:charges_table/data/select', ['charge'=>$c, 'select_all_id'=>$select_all_id]),
+		'id' => V('eq_charge:charges_table/data/ref', ['c'=>$c]),
+		'equipment' => V('eq_charge:charges_table/data/equipment', ['obj'=>$obj, 'c'=>$c]),
+		'user' => V('eq_charge:charges_table/data/user_with_lab', ['obj'=>$obj, 'c'=>$c]),
+		'date' => V('eq_charge:charges_table/data/date', ['c'=>$c]),
+		'amount' => V('eq_charge:charges_table/data/amount_with_date', ['c'=>$c]),
+        'type' => V('eq_charge:charges_table/data/type', ['c'=>$c]),
+        'confirm' => V('eq_charge_confirm:charges_table/data/confirm', ['c' => $c]),
+		'summary' => V('eq_charge:charges_table/data/summary', ['c' => $c]),
+		'rest' => Widget::factory('application:links', ['links' => $links])
+	];
+
+	$row = new ArrayIterator($row);
+
+	Event::trigger('eq_charge_confirm.table_list.row', $row, $c, $obj);
+
+	$table->add_row($row);
+}
+
+$param = [
+    'top_input_arr' => ['equipment'],
+    'columns'       => $table->columns,
+];
+
+if (!$no_search) echo V('application:search_box', $param);
+?>
+
+<?php if(!$no_select) {?>
+    <div class="panel clearfix">
+        <form id="<?= $form_id ?>" method="post" action="<?php echo H(URI::url() ) ?>">
+            <div class="float_left">
+                <?php echo Form::checkbox('', FALSE, I18N::T('eq_charge_confirm', '全选'), 'class="lmargin_10 checkbox middle" id="'.$select_all_id.'" style="vertical-align: -2px;"', 'class="middle rmargin_16" style="color: #333;"') ?>
+                <input name="batch_confirm" type="submit" class="lmargin_10 font-button-default font-button-color-green" value="<?php echo I18N::T('eq_charge_confirm', '批量确认'); ?>" />
+            </div>
+        </form>
+    </div>
+<?php } ?>
+<div class="interval_16"></div>
+<?php echo $table; ?>
+
+<div class="pages"><?= $pagination ?></div>
+
+<script>
+jQuery(function($){
+    var select_all_id = '<?= $select_all_id?>';
+	var $selector = $('#' + select_all_id);
+	var $select_check = $('input[name="select[]"]');
+	$selector
+	.bind('click', function(){
+		if(/msie/.test(navigator.userAgent.toLowerCase())){
+			$(this).change();
+		}
+	})
+	.bind('change', function(){
+		var $el = $(this);
+		var status = '';
+		if ( $el.is(':checked') ) {
+			 status = 'checked';
+			$select_check.each(function(){ this.checked = true })
+		}
+		else {
+			status = 'unchecked';
+			$select_check.each(function(){ this.checked = false })
+        }
+		//保存全选状态
+		Q.trigger({
+            object: 'check_all',
+            event: 'click',
+            data: {status: status, page: <?=$page?>, page_number: <?=$page_number?>},
+            url: "<?= URI::url('!eq_charge_confirm/confirm'); ?>"
+        });
+
+	});
+	var ids = {};
+	var select = function(){
+        $select_check.each(function(index, element) {
+            var id = $(element).val();
+			ids[id] = element.checked ? 1 : 0;
+		})
+        Q.trigger({
+			url: '<?= URI::url("!eq_charge_confirm/confirm") ?>',
+			object: 'select',
+			event: 'submit',
+			global: false,
+			data: { ids: ids}
+		})
+    }
+	
+	$select_check.change(function(){
+		select();
+	})
+
+    $('input[name=batch_confirm]').click(function(e){
+		e.preventDefault();
+		e.stopPropagation();
+
+        Q.trigger({
+            object: 'charge_batch_confirm',
+            event: 'click',
+            data: {
+                'lab_project_type': $('input[name=lab_project_type]:checked').val(),
+            },
+            url: "<?= URI::url('!eq_charge_confirm/confirm'); ?>"
+        });
+    });
+});
+</script>

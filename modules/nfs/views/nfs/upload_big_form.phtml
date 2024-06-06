@@ -1,0 +1,296 @@
+ <style>
+  /*webuploader-组件Css*/
+  .webuploader-container {
+    position: relative;
+  }
+  .webuploader-element-invisible {
+    position: absolute !important;
+    clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+    clip: rect(1px,1px,1px,1px);
+  }
+  .webuploader-pick {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    background: #036;
+    padding: 10px 15px;
+    color: #fff;
+    text-align: center;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .webuploader-pick-hover {
+    background: #036;
+  }
+
+  .webuploader-pick-disable {
+    opacity: 0.6;
+    pointer-events:none;
+  }
+</style>
+<div class="form padding_2">
+    <div id="picker"><?php echo I18N::HT('nfs', '选择文件')?></div>
+</div>
+<div class="padding_2 file_name">
+  <p><?php echo I18N::HT('nfs', '选择文件：')?><span><?php echo I18N::HT('nfs', '-')?></span></p>
+  <div><?php echo I18N::HT('nfs', '文件大小：')?><span><?php echo I18N::HT('nfs', '-')?></span></div>
+</div>
+<div class="padding_2">
+  <div><?php echo I18N::HT('nfs', '注意事项：')?><span><?php echo '最小支持上传20M以上，最大支持上传'.Config::get('nfs.big_file_max_size')/1024/1024/1024 . 'G。'?></span></div>
+</div>
+<div class="padding_2 big_file_box" style="width: 300px;">
+  <div class="clearfixed">
+    <p style="float: left;"><?php echo I18N::HT('nfs', '上传进度')?></p>
+    <p style="float: right;" class="big_file_process_text"><?php echo I18N::HT('nfs', '%0')?></p>
+    <div style="clear:both;" class="big_file_process"></div>
+  </div>
+  <div class="big_file_loading" style="height: 12px;width: 100%;background: #ccc;">
+    <div style="height: 12px;width: 1%;background: #036;"></div>
+  </div>
+  <div class="big_file_text" style="text-align: right;">
+    <?php echo I18N::HT('nfs', '-')?>
+  </div>
+  <div class="padding_2" style="padding-left: 0;">
+    <div class="upload_btn_group" style="display: none;">
+      <a id="start"><?php echo I18N::HT('nfs', '开始')?></a>
+    </div>
+    <div class="continue_btn_group" style="display: none;">
+      <a id="continue"><?php echo I18N::HT('nfs', '继续')?></a>
+      <a id="stop"><?php echo I18N::HT('nfs', '暂停')?></a>
+      <a id="delete"><?php echo I18N::HT('nfs', '取消')?></a>
+    </div>
+  </div>
+</div>
+
+<?= JS::load('nfs:jquery-1.10.2') ?>
+<?= JS::load('nfs:webuploader') ?>
+
+<script type="text/javascript">
+jQuery(function($){
+
+  var big_file = {};
+
+  // 分片检查URL
+  big_file.check_chuck = "<?= URI::url('!nfs/nfs_big_file/check_chuck.'.$object->name().'.'.$object->id.'.'.$path_type,['path'=>$path, 'form_token'=>$form_token]) ?>";
+
+  // 上传文件URL
+  big_file.upload = "<?= URI::url('!nfs/nfs_big_file/upload.'.$object->name().'.'.$object->id.'.'.$path_type,['path'=>$path, 'form_token'=>$form_token]) ?>";
+
+  // 检查磁盘大小URL
+  big_file.check_disk = "<?= URI::url('!nfs/nfs_big_file/check_disk.'.$object->name().'.'.$object->id.'.'.$path_type,['path'=>$path, 'form_token'=>$form_token]) ?>";
+
+  // 合成文件URL
+  big_file.merge = "<?= URI::url('!nfs/nfs_big_file/merge.'.$object->name().'.'.$object->id.'.'.$path_type,['path'=>$path, 'form_token'=>$form_token]) ?>";
+
+  // 删除文件URL
+  big_file.dele = "<?= URI::url('!nfs/nfs_big_file/delete.'.$object->name().'.'.$object->id.'.'.$path_type,['path'=>$path, 'form_token'=>$form_token]) ?>";
+
+  // 插件初始化
+  var uploader = WebUploader.create({
+    swf: "!nfs/Uploader.swf",
+    server: big_file.upload,            // 服务端地址
+    pick: '#picker',                    // 指定选择文件的按钮容器
+    resize: false,
+    chunked: true,                      //开启分片上传
+    chunkSize: 1024 * 1024 * 10,        //每一片的大小
+    chunkRetry: 10,                     // 如果遇到网络错误,重新上传次数
+    threads: 3,                         // [默认值：3] 上传并发数。允许同时最大上传进程数。
+    duplicate : false,                  //是否重复上传（同时选择多个一样的文件），true可以重复上传
+    prepareNextFile: true,              //上传当前分片时预处理下一分片
+  });
+
+  // 当有文件被添加列队
+  uploader.on('fileQueued', function (file) {
+    if (file.size < 1024 * 1024 * 20) {
+      alert('文件过小,请使用正常上传功能上传文件!');
+      window.location.reload();
+    }
+    else if(file.size > "<?= Config::get('nfs.big_file_max_size')?>") {
+      alert('文件过大,上传失败!');
+      window.location.reload();
+    }
+
+    // 动态显示已添加文件
+    $('.file_name').find('span:first').html(file.name);
+    $('.file_name').find('span:last').html((file.size / 1024 / 1024).toFixed(2)+'M');
+
+    $('.upload_btn_group').hide();
+
+    // 动态显示状态
+    big_file.log("<?= I18N::HT('nfs', '正在处理文件,如果文件较大,则等待时间较长,请稍后...')?>");
+
+    // 获取文件大小
+    big_file.file_size = file.size;
+
+    // 获取文件MD5为文件唯一标识
+    uploader.md5File(file)
+
+      .then(function (fileMd5) {
+        big_file.file_md5 = fileMd5;
+        big_file.file_name = file.name;
+        big_file.file_type = file.type;
+        big_file.file_size = file.size;
+
+        big_file.log("<?= I18N::HT('nfs', '等待上传...')?>");
+
+        // 检查此文件是否有分片文件-返回已经上传的片段
+        $.post(big_file.check_chuck, { file_md5: big_file.file_md5, file_name: big_file.file_name }, 
+          function (data) {
+            big_file.checks = [];
+            data = JSON.parse(data);
+            for (var i in data) {
+              big_file.checks.push(data[i]);
+            };
+            $('.upload_btn_group').show();
+            if (big_file.checks.length > 0) {
+              big_file.progress = (big_file.checks.length / (big_file.file_size / 1024 / 1024 / 10) * 100).toFixed(2);
+
+              big_file.log('已经上传 ' + big_file.progress +'% '+ '本次上传将忽略上传过的文件.');
+              $(".big_file_loading > div").css("width",big_file.progress+"%");
+              $(".big_file_process_text").html(parseInt(big_file.progress) +"%");
+            }
+        });
+      })
+  });
+
+  // 点击上传文件
+  $("#start").click(function () {
+
+    if (big_file.checks.length > 0) {
+      if(!confirm('此文件已上传 ' + big_file.progress +"% .\n"+ '本次上传将忽略上传过的文件.'+'是否恢复该文件上传进度?')) {
+        big_file.progress = 0;
+      }
+    } else {
+      big_file.progress = 0;
+    }
+
+    $.post(big_file.check_disk, { file_size: big_file.file_size, file_type:big_file.file_type, file_md5:big_file.file_md5, file_name:big_file.file_name},
+      function (data) {
+
+        var object = JSON.parse(data);
+
+        if (object.status) {
+          $('.upload_btn_group').hide();
+          $('.continue_btn_group').show();
+          $('.dialog_close').hide();
+          $('#picker').hide();
+          $("#continue").hide();
+          uploader.upload();
+        }
+        else {
+          alert(object.msg);
+          window.location.reload();
+        }
+    });
+  });
+
+  // 每一个分片发送前执行
+  uploader.on('uploadBeforeSend', function( block, data ) {
+
+    // 绑定文件MD5
+    data.file_md5 = big_file.file_md5;
+    data.file_name = big_file.file_name;
+
+    // 跳过已上传分片
+    if ($.inArray(block.chunk.toString(), big_file.checks) >= 0) {
+      var deferred = WebUploader.Deferred(); 
+      deferred.reject();  
+      // deferred.resolve();
+      return deferred.promise();
+    }
+  });
+
+  // 文件上传过程中创建进度条实时显示。
+  uploader.on('uploadProgress', function (file, percentage) {
+    console.log(big_file.time);
+    if (parseInt(percentage * 100) > big_file.progress) {
+      $(".big_file_loading > div").css("width",parseInt(percentage * 100)+"%");
+      $(".big_file_process_text").html(parseInt(percentage * 100) +"%");
+      big_file.log("<?= I18N::HT('nfs', '正在上传...')?>");
+    } else {
+      big_file.log("<?= I18N::HT('nfs', '正在恢复...')?>");
+    }
+  });
+
+  // 上传完成后触发
+  uploader.on('uploadSuccess', function (file,response) {
+
+    big_file.log("<?= I18N::HT('nfs', '正在处理,如果文件较大,则时间较长,请稍等...')?>");
+
+    $.post(big_file.merge, { file_md5: big_file.file_md5, file_name: file.name, file_size: big_file.file_size }, 
+      function (data) {
+        var object = JSON.parse(data);
+        if (!object.status) {
+          alert(object.msg);
+        }
+        window.location.reload();
+    });
+  });
+
+  // 上传出错处理
+  uploader.on('uploadError', function (file, reason) {
+
+    // alert('上传出错,请稍后再试！' + 'code[' + reason + ']');
+    big_file.log("<?= I18N::HT('nfs', '上传出错，正在重试...')?>");
+
+    big_file.retry = setTimeout(function(){
+      uploader.retry(); // 尝试重新上传
+    },60000);
+
+    big_file.time = setTimeout(function(){
+      alert('时间过长,请稍后再试！');
+      window.location.reload();
+    },300000);
+  });
+
+  uploader.on('uploadAccept', function (object, ret){
+
+    big_file.time = setTimeout(function(){
+      return false;
+    },300000);
+
+    if (ret.status) {
+      clearTimeout(big_file.time);
+      clearTimeout(big_file.retry);
+    }
+  });
+
+  // 暂停处理
+  $("#stop").click(function(e){
+    big_file.log("<?= I18N::HT('nfs', '已暂停...')?>");
+    $("#continue").show();
+    $("#stop").hide();
+    uploader.stop(true);
+  });
+
+  // 从暂停文件继续
+  $("#continue").click(function(e){
+    $("#continue").hide();
+    $("#stop").show();
+    uploader.upload();
+  });
+
+  $("#delete").click(function(e){
+    if (confirm("<?= I18N::HT('nfs', '取消上传将会删除所有已上传文件,您确定取消上传么?')?>")) {
+      uploader.stop(true);
+
+      $.post(big_file.dele, { file_md5: big_file.file_md5, file_name: big_file.name},
+        function (data) {
+          var object = JSON.parse(data);
+          if (object.status) {
+            window.location.reload();
+          }
+          else {
+            alert(object.msg);
+            window.location.reload();
+          }
+      });
+    }
+  })
+
+  // 日志处理函数
+  big_file.log = function(log) {
+    $('.big_file_text').html(log);
+  }
+})
+</script>

@@ -1,0 +1,151 @@
+.gismon_map_container {
+	position: relative;
+	border:1px solid #666;
+	border-color: #666 #999 #ccc #999;
+}
+
+.gismon_map {
+	height: 480px;
+}
+
+.gismon_building canvas{
+	background-color: #000;
+}
+
+.geo_location {
+	color: #093;
+}
+
+.gis_equipment_container {
+	display:block;
+	min-width:480px;
+	_width:480px;
+	overflow:visible;
+}
+
+.gismon_blueprint_content {
+	background-color: #026;
+	border-top: 1px solid #333;
+	border-bottom: 1px solid #999;
+	/* box-shadow: inset 0 1px 3px rgba(0,0,0,0.8); */
+	cursor: move;
+	overflow: hidden;
+
+	img.loading {
+		background-image: url(images/loading_black.gif);
+	}
+
+	.floor {
+		position: absolute;
+		right: 20px;
+		top: 10px;
+		font-size: 64px;
+		font-weight: bold;
+		color: #fff;
+		opacity: 0.5;
+		z-index: 20;
+	}
+
+	.blueprint_device {
+		position: absolute;
+		display: block;
+		z-index: 30;
+		cursor: default;
+		text-align: center;
+		border-radius: 4px;
+		padding: 4px;
+		*padding: 0;
+
+		.blueprint_device_label {
+			color: #fff;
+			margin: 0 auto 2px;
+			/*text-shadow: 0 1px 2px black;*/
+			white-space: nowrap;
+
+			*position: absolute;
+			*top: -20px;
+		}
+
+		.blueprint_device_icon {
+			display: block;
+			margin: 0 auto;
+			*margin: 0;
+		}
+	}
+
+	.blueprint_device:hover {
+		background-color: rgba(255,255,255, 0.3);
+		z-index: 35;
+		.blueprint_device_label {
+			color: #fff;
+		}
+	}
+
+	.blueprint_device_bubble {
+		position: absolute;
+		z-index: 45;
+		background-color: #fff;
+		box-shadow: #000 0 2px 4px;
+		width: 250px;
+		height: 250px;
+		border-radius: 5px;
+	}
+
+}
+
+.gismon_blueprint_dev_info {
+	border-top: 1px solid #999;
+	border-left: 1px solid #999;
+	display: none;
+	position: absolute;
+	overflow: hidden;
+	right: 0;
+
+	img.icon {
+		box-shadow: #333 0 1px 2px;
+		border-radius: 4px;
+		border:4px solid #ccc;
+	}
+}
+
+.gismon_blueprint_toolbar {
+	background-color: #666;
+	padding: 5px;
+}
+
+/* @css-define actions: ["upstairs", "downstairs", "zoomin", "zoomout"];
+
+@css-foreach(action in actions) {
+
+	.gismon_blueprint_toolbar a.button_$action {
+		background-image: url(!gismon/images/buttons/$action.png);
+		background-repeat: no-repeat;
+		background-position: 6px center;
+	} */
+	
+}
+
+.blueprint_device_tooltip {
+	background-color: #fff;
+}
+
+.blueprint_device_tooltip .tooltip_content{
+	background-image: url(!gismon/images/tooltip/tip_bottom.png);
+}
+
+.blueprint_device_tooltip .content {
+	color: #000;
+	background-color: #fff;
+}
+
+.hidden_submit {
+	position: absolute;
+	left: -100000px;
+	top: -10000px;
+	z-index: -10;
+}
+
+.bubble_info {
+	margin-left:72px;
+	_width: 180px;
+}

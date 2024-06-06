@@ -1,0 +1,15 @@
+<div class="form padding_1">
+  <form action="<?php echo H(URI::url('!people/list', ['type'=>'print', 'form_token'=>$form_token])) ?>" target="_blank" class="prevent_default" method="post">
+	<div class="nowrap label"><?php echo I18N::T('people', '请选择要打印的列');?></div>
+	<div class="hr_2"></div>
+	<ul class="ep_triple">
+	  <?php
+	 		foreach ($properties_to_print as $p => $p_name) :?>
+	  <li class="nowrap">
+		<?php echo Form::checkbox("properties_to_print[{$p}]", TRUE, I18N::T('people', $p_name), 'class="middle monitor"', 'class="middle"');?>
+	  </li>
+	  <?php endforeach;?>
+	</ul>
+	<input type="submit" name="submit" class="button button_edit" value="<?php echo H(I18N::T('people', '提交')) ?>" />
+  </form>
+</div>

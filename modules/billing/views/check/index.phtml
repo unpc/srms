@@ -1,0 +1,89 @@
+<div class="interval_24"></div>
+<div class="form">
+	<?php if (!$can_check): ?>
+	<form autocomplete="off" class="edit" action="<?php echo H(URI::url()) ?>" method="post" enctype="multipart/form-data">
+	<table class="form flexible">
+		<tr>
+			<td colspan="2">
+			<?php
+			echo I18N::T('billing', '* 对账功能目前仅支持 CSV 格式的文件，如果您的文件不是 CSV 格式，可以用 Excel 导出成 CSV 格式'); ?>
+			<br/>
+            <div class="interval_20"></div>
+			<?php
+			echo I18N::T('billing', '* 对账文件应包括"凭证号"和"收入"两列(第一行为标题栏)');
+			?>
+			</td>
+		</tr>
+        <tr><td><div class="interval_20"></div> </td></tr>
+		<tr>
+			<td class="label"><?php echo I18N::T('billing', '文件'); ?></td>
+			<td><input name="file" type="file" class="file" /></td>
+		</tr>
+        <tr><td><div class="interval_20"></div> </td></tr>
+		<tr>
+			<td class="label"><?php echo I18N::T('billing', '时间范围'); ?></td>
+			<td>
+			&#160;<input name="dtstart" id="dtstart" date_type="date" class="text date middle" value="<?php echo H($form['dtstart']);?>" />
+			&#160;<span class="middle description">-</span>
+			&#160;<input name="dtend" id="dtend" date_type="date" class="text date middle" value="<?php echo H($form['dtend']);?>" />
+			</td>
+		</tr>
+        <tr><td><div class="interval_60"></div> </td></tr>
+		<tr>
+			<td></td>
+			<td>
+                <div class="float_right">
+                    <input type="submit" class="font-button-save" name="submit" value="<?php echo H(I18N::T('billing', '对账')) ?>"/>
+                </div>
+			</td>
+		</tr>
+	</table>
+	</form>
+	<?php else: ?>
+	<table class="form flexible">
+		<tr>
+			<td class="label">
+			<?php echo I18N::T('billing', '文件'); ?>
+			</td>
+			<td>
+			<?php echo $billing_check['oringin_file_name']; ?>
+			</td>
+		</tr>
+        <tr><td><div class="interval_20"></div> </td></tr>
+		<tr>
+			<td class="label">
+			<?php echo I18N::T('billing', '时间范围'); ?>
+			</td>
+			<td>
+			<?php echo Date::fuzzy_range($billing_check['dtstart'], $billing_check['dtend']); ?>
+			</td>
+		</tr>
+        <tr><td><div class="interval_20"></div> </td></tr>
+		<tr>
+			<td>
+			</td>
+			<td>
+			<a class="font-button-delete" q-object="reset_check" q-static="<?php echo H(['department_id' => $department->id]); ?>" q-event="click" q-src="<?php echo URI::url(); ?>"><?php echo I18N::T('billing', '重新对账'); ?></a>
+			</td>
+		</tr>
+	</table>
+	<?php endif; ?>
+</div>
+<?php
+if ($can_check):
+	$check_result_token = 'check_result_' . uniqid();
+	?>
+	<div id="<?php echo $check_result_token; ?>">
+		<script>
+		Q.trigger({
+			object: 'check_result',
+			event: 'show',
+			data: {
+				'department_id': <?php echo $department->id; ?>,
+				'uniqid': '<?php echo $check_result_token; ?>'
+			},
+			url: '<?php echo URI::url(); ?>'
+		});
+		</script>
+	</div>
+<?php endif; ?>

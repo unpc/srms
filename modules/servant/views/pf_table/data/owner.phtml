@@ -1,0 +1,8 @@
+<?php
+    $users = Q("{$pf} user.owner");
+    $owners = [];
+    foreach ($users as $user) {
+        $owners[] = '<span class="nowrap">' . URI::anchor($user->url(), H($user->name)) . '</span>';
+    }
+    echo join(', ', $owners);
+?>

@@ -1,0 +1,51 @@
+<?php
+/*
+NO.TASK#274(guoping.zhang@2010.11.27)
+应用权限设置新规则
+*/
+$object = $door->id ? $door : 'door';
+if(empty($type)): ?>
+<?php if(L('ME')->is_allowed_to('导出记录', $object)): ?>
+    <?php if($panel_buttons): ?>
+        <?php echo V('application:panel_buttons',['panel_buttons'=>$panel_buttons]);?>
+    <?php endif; ?>
+<?php endif; ?>
+<?php echo $search_box; ?>
+<?php endif; ?>
+<?php
+$table = Widget::factory('table');
+
+$table->name = 'entrance_records';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+//$table->add_column('@', ['align'=>'center']);
+$table->form = $form;
+$table->add_columns($columns);
+
+$table->empty_message = I18N::T('entrance', '无符合条件的记录');
+
+
+
+if (count($records) > 0 ) {
+	foreach ($records as $record) {
+		$table->add_row([
+//			'@'=>[
+//				'view'=>V('entrance:records_table/data/icon', ['obj'=>$door, 'record'=>$record]),
+//				'extra'=>'style="width:30px"'
+//			],
+			'name'=>V('entrance:records_table/data/name', ['obj'=>$door, 'record'=>$record]),
+			'location'=>V('entrance:records_table/data/location', ['obj'=>$door, 'record'=>$record]),
+			'user'=>V('entrance:records_table/data/user', ['record'=>$record]),
+			'time'=>V('entrance:records_table/data/date', ['record'=>$record]),
+			'direction'=>V('entrance:records_table/data/direction', ['record'=>$record]),
+			'status'=>V('entrance:records_table/data/status', ['record'=>$record]),
+			'remark'=>V('entrance:records_table/data/remark', ['record'=>$record]),
+			'rest'=>Widget::factory('application:links', ['links' => $record->links()])
+		]);
+	}
+}
+
+echo $table;
+?>
+
+<div class="pages"><?= $pagination ?></div>

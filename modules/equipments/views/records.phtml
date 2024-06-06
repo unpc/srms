@@ -1,0 +1,287 @@
+<?php
+$sort_by   = $form['sort'] ?: (Config::get('equipment.sort_reserv') ? 'reserv' : '');
+$sort_asc  = $form['sort_asc'];
+$sort_flag = $sort_asc ? 'A' : 'D';
+
+$table            = Widget::factory('table');
+$table->sort_flag = $sort_flag;
+$table->sort_by   = $sort_by;
+$table->name      = 'equipment_records';
+
+if ($form['dtstart'] || $form['dtend']) {
+    $form['date'] = true;
+}
+
+$group_root = Tag_Model::root('group');
+$group      = O('tag_group', $form['group_id']);
+if (!$group->id || $group->id == $group_root->id) {
+    $group = null;
+}
+$tag_root = Tag_Model::root('equipment');
+$tag      = O('tag_equipment', $form['tag_id']);
+if (!$tag->id || $tag->id == $tag_root->id) {
+    $tag = null;
+}
+
+// 增加下属机构范围,selector有点傻，但是时间不允许
+if ($GLOBALS['preload']['tag.group_limit'] >= 0) {
+    $table->add_column('group', [
+        'title'=>I18N::T('equipments', '仪器组织机构'),
+        'align'=>'left',
+        'suppressible' => TRUE,
+        'invisible' => TRUE,
+        'filter'=> [
+            'form' => V('equipments:equipments_table/filters/group', [
+                'name'=>'group_id', 'group'=>$group,
+                'root'=>$group_root,
+            ]),
+            'value' => V('application:tag/path', ['tag'=>$group, 'tag_root'=>$group_root, 'url_template'=>URI::url('', 'group_id=%tag_id')]),
+            'field' => 'group_id'
+        ],
+        'nowrap'=>TRUE,
+    ]);
+}
+
+$columns = [
+    'serial_number'  => [
+        'title'     => I18N::T('equipments', '编号'),
+        'invisible' => false,
+        'filter'    => [
+            'form'  => V('equipments:records_table/filters/serial_number', ['id' => $form['id']]),
+            'value' => $form['id'] ? Number::fill($form['id'], 6) : null,
+            'field' => 'id',
+        ],
+        'nowrap'    => true,
+        'weight'    => 10,
+    ],
+    '@lock_status'   => [
+        'nowrap' => true,
+        'weight' => 20,
+    ],
+    'equipment_name' => [
+        'title'  => I18N::T('equipments', '仪器'),
+        'align'  => 'left',
+        'filter' => [
+            'form'  => V('equipments:records_table/filters/equipment_name', ['equipment_name' => $form['equipment_name']]),
+            'value' => $form['equipment_name'] ? H($form['equipment_name']) : null,
+        ],
+        'nowrap' => true,
+        'weight' => 30,
+    ],
+    'equipment_ref' => [
+        'title'  => I18N::T('equipments', '仪器编号'),
+        'align'  => 'left',
+        'invisible' => true,
+        'filter' => [
+            'form'  => V('equipments:records_table/filters/equipment_ref', ['equipment_ref' => $form['equipment_ref']]),
+            'value' => $form['equipment_ref'] ? H($form['equipment_ref']) : null,
+        ],
+        'nowrap' => true,
+        'weight' => 35,
+    ],
+    'user_name'      => [
+        'title'  => I18N::T('equipments', '使用者'),
+        'filter' => [
+            'form'  => V('equipments:records_table/filters/user_name', ['user_name' => $form['user_name']]),
+            'value' => $form['user_name'] ? H($form['user_name']) : null,
+        ],
+        'nowrap' => true,
+        'weight' => 40,
+    ],
+    'lab_name'       => [
+        'title'     => I18N::T('equipments', '实验室'),
+        'invisible' => true,
+        'filter'    => [
+            'form'  => V('equipments:records_table/filters/lab_name', ['lab_name' => $form['lab_name']]),
+            'value' => $form['lab_name'] ? H($form['lab_name']) : null,
+        ],
+        'nowrap'    => true,
+        'weight'    => 55,
+    ],
+    'lab_group'      => [
+        'title'     => I18N::T('equipments', '实验室组织机构'),
+        'invisible' => true,
+        'filter'    => [
+            'form'  => V('equipments:records_table/filters/lab_group', ['lab_group' => $form['lab_group']]),
+            'value' => $form['lab_group'] ? H(O('tag', $form['lab_group'])->name) : null,
+        ],
+        'nowrap'    => true,
+        'weight'    => 50,
+    ],
+    'date'           => [
+        'title'     => I18N::T('equipments', '时间'),
+        'filter'    => [
+            'form'  => V('equipments:records_table/filters/date', [
+                'dtstart' => $form['dtstart'],
+                'dtend'   => $form['dtend'],
+            ]),
+            'value' => $form['date'] ? H($form['date']) : null,
+            'field' => 'dtstart, dtend',
+        ],
+        'invisible' => true,
+        'nowrap'    => true,
+        'weight'    => 60,
+    ],
+    'samples'        => [
+        'title'  => I18N::T('equipments', '样品数'),
+        'align'  => 'left',
+        'nowrap' => true,
+        'weight' => 70,
+    ],
+    'agent'          => [
+        'title'     => I18N::T('equipments', '代开'),
+        'align'     => 'center',
+        'invisible' => false,
+        'nowrap'    => true,
+        'weight'    => 90,
+    ],
+    'description'    => [
+        'title'     => I18N::T('equipments', '备注'),
+        'invisible' => false,
+        'nowrap'    => true,
+        'weight'    => 100,
+    ],
+    'eq_charge'      => [
+        'title'     => I18N::T('equipments', '收费'),
+        'align'     => 'left',
+        'invisible' => true,
+        'nowrap'    => true,
+        'weight'    => 105,
+    ],
+    'feedback'       => [
+        'title'     => I18N::T('equipments', '反馈'),
+        'align'     => 'left',
+        'invisible' => true,
+        'nowrap'    => true,
+        'weight'    => 120,
+    ],
+    'tag'            => [
+        'title'     => I18N::T('equipments', '仪器分类'),
+        'invisible' => true,
+        'filter'    => [
+            'form'  => V('equipments:general_table/filters/tag', [
+                'name' => 'tag_id', 'tag' => $tag,
+                'root' => $tag_root,
+            ]),
+            'value' => $tag->id ? H($tag->name) : null,
+            'field' => 'tag_id',
+        ],
+        'nowrap'    => true,
+        'weight'    => 130,
+    ],
+    'rest'           => [
+        'title'     => I18N::T('equipments', '操作'),
+        'align'     => 'left',
+        'nowrap'    => true,
+        'invisible' => false,
+        'weight'    => 150,
+    ],
+    'lock_status'    => [
+        'title'     => I18N::T('equipments', '锁定状态'),
+        'invisible' => true,
+        'filter'    => [
+            'form'  => V('equipments:records_table/filters/lock_status', ['lock_status' => $form['lock_status']]),
+            'value' => isset($form['lock_status']) ? ($form['lock_status'] ? I18N::HT('equipments', '已锁定') : I18N::HT('equipments', '未锁定')) : null,
+        ],
+        'weight'    => 140,
+    ]
+];
+
+if (!Module::is_installed('labs')) {
+    unset($columns['lab_group']);
+}
+
+if (Config::get('eq_record.duty_teacher') && $record->equipment->require_dteacher) {
+    $columns['duty_teacher'] = [
+        'title'  => I18N::T('equipments', '值班老师'),
+        'filter' => [
+            'form'  => V('equipments:records_table/filters/duty_teacher', ['duty_teacher' => $form['duty_teacher']]),
+            'value' => $form['duty_teacher'] ? O('user', H($form['duty_teacher']))->name : null,
+            'field' => 'duty_teacher',
+        ],
+        'nowrap' => true,
+        'weight' => 115,
+    ];
+}
+
+if (Module::is_installed('eq_charge')) {
+    $columns['charge_amount'] = [
+        'title'=>I18N::T('equipments', '收费金额'),
+        'align'=>'center',
+        'nowrap'=>TRUE,
+        'weight'=>95
+    ];
+}
+
+$columns = new ArrayObject($columns);
+
+// 新增eq_record.list.columns第四个参数，声明处于哪个页面
+$current_page = $tabs->seleted;
+Event::trigger('eq_record.list.columns', $form, $columns, $current_page);
+
+$table->add_columns((array) $columns);
+
+if (!$hide_group_select) {
+    $table->add_columns([
+        'group' => [
+            'title'     => I18N::T('equipments', '仪器组织机构'),
+            'invisible' => true,
+            'filter'    => [
+                'form'  => V('equipments:general_table//filters/group', [
+                    'name'  => 'group_id',
+                    'group' => $group,
+                    'root'  => $group_root,
+                ]),
+                'value' => $group->id?V('application:tag/path', ['tag' => $group, 'tag_root' => $group_root, 'url_template' => URI::url('', 'group_id=%tag_id')]):"",
+                'field' => 'group_id',
+            ],
+            'nowrap'    => true,
+            'weight'    => 80,
+        ],
+    ]);
+}
+$table->empty_message = I18N::T('equipments', '无符合条件的记录');
+$table->records       = $records;
+
+if (count($records) > 0) {
+    foreach ($records as $record) {
+        $ajax_id = uniqid();
+        $links   = $record->links('index', $ajax_id);
+
+        $row = [
+            'serial_number'  => V('equipments:records_table/data/serial_number', ['id' => $record->id]),
+            '@lock_status'   => V('equipments:records_table/data/lock_status', ['record' => $record]),
+            'equipment_name' => V('equipments:records_table/data/equipment_name', ['record' => $record]),
+            'user_name'      => V('equipments:records_table/data/user_name_with_lab', ['record' => $record]),
+            'date'           => V('equipments:records_table/data/date', ['record' => $record]),
+            'samples'        => V('equipments:records_table/data/samples', ['record' => $record]),
+            'agent'          => V('equipments:records_table/data/agent', ['record' => $record]),
+            'description'    => V('equipments:records_table/data/description', ['record' => $record]),
+            'eq_charge'      => V('eq_charge:record.notes', ['record' => $record]),
+            'feedback'       => V('equipments:records_table/data/feedback', ['record' => $record]),
+            'rest'           => V('equipments:records_table/data/rest', ['links' => $links, 'ajax_id' => $ajax_id]),
+            'charge_amount' => V('equipments:records_table/data/charge_amount', ['record'=>$record])
+        ];
+
+        if (Config::get('eq_record.duty_teacher') && $record->equipment->require_dteacher) {
+            $row['duty_teacher'] = V('equipments:records_table/data/duty_teacher', ['record' => $record]);
+        }
+
+        $row = new ArrayIterator($row);
+
+        Event::trigger('eq_record.list.row', $row, $record, $current_page);
+        $table->add_row((array) $row);
+    }
+}
+$extra_title = I18N::T('equipments', '共有 %total_count 条使用记录',
+    ['%total_count' => '<span class="eq_number">' . intval($total_count) . '</span>']);
+$param = [
+    'top_input_arr' => ['serial_number', 'user_name', 'equipment_ref'],
+    'columns'       => $table->columns,
+    'panel_buttons' => $panel_buttons,
+    'extra_view'    => '<div class="adj statistics middle">'. $extra_title. $pagination.'</div>'
+];
+echo V('application:search_box', $param);
+?>
+<?php echo $table; ?>
+<div class="pages"><?= $pagination ?></div>

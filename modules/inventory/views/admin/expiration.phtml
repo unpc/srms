@@ -1,0 +1,56 @@
+<?php echo CSS::load_async('inventory:admin');
+$no_error= ($form->no_error!==FALSE);
+$defaut_notice_days = Lab::get('stock.default.expire_notice_days', 7);
+$lang =  L('ME')->locale == 'en_US' ? 'en_US_placeholder' : '';
+ ?>
+<div class="form">
+	<form method="post" class="edit">
+		<div>
+			<?php echo V('form_error', ['form' => $form]);?>
+		</div>
+		<div>
+			<span style="width: 126px; text-align: left" class="label placeholder <?php echo $lang; ?>"><?php echo I18N::T('inventory', '默认提前'); ?></span>
+			<span><input type="text" class="text right number" name="defaut_notice_days" class="text right" value="<?php echo $no_error ?  $defaut_notice_days : $form['defaut_notice_days']; ?>" q-number_default_value="<?php echo $defaut_notice_days; ?>" />&nbsp;  <?php echo I18N::T('inventory', '天提醒过期'); ?></span>
+		</div>
+        <div>
+            <span style="width: 126px; text-align: left" class="placeholder <?php echo $lang; ?>">&#160;</span>
+            <span class="description">
+                * <?=I18N::T('inventory', '存货过期之前, 提前多少天提醒'); ?>
+            </span>
+        </div>
+        <div class="interval_20"></div>
+
+
+        <div>
+	        <span style="width: 126px; text-align: left;" class="label placeholder top <?php echo $lang; ?>"><?php echo I18N::T('inventory', '默认通知'); ?></span>
+
+		        <span class="inline_block" style="width: 300px;">
+		        <?php
+				$inform_people = Lab::get('stock.default.expire_inform_people');
+				
+		        echo Widget::factory('multi_user_selector', [
+		        		'name' => 'inform_people',
+			        	'autocomplete' => URI::url('!inventory/autocomplete/user'),
+			        	'value' => $no_error ? @json_encode($inform_people, true) : $form['inform_people'] ,
+			        	'size' => 60,
+			        	'extra' => 'token_verify',
+		        ]);
+		         ?>
+
+	        </span>
+        </div>
+        <div>
+            <span style="width: 126px; text-align: left" class="placeholder <?php echo $lang; ?>">&#160;</span>
+            <span class="description">
+               * <?=I18N::T('inventory', '提醒时, 向这些用户发送消息和邮件'); ?>
+            </span>
+        </div>
+        <div class="interval_60"></div>
+        <div class="float_right">
+            <span class="placeholder <?php echo $lang; ?>">&#160;</span>
+	        <span><input type="reset" value="<?php echo I18N::T('inventory', '取消'); ?>" class="font-button-default rmargin_16" /></span>
+	        <span><input type="submit" name="submit" value="<?php echo I18N::T('inventory', '保存'); ?>" class="font-button-save" /></span>
+        </div>
+        <div class="interval_30"></div>
+	</form>
+</div>

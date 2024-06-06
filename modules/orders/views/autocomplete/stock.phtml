@@ -1,0 +1,9 @@
+<div class="nowrap tpadding_1 bpadding_1">
+	<strong><?php echo $stock->product_name; ?></strong>
+	<span class="red">
+	<?php 
+		$type = $stock->is_collection ? I18N::T('orders', '存货集合') : I18N::T('orders', '普通存货');
+		echo '('.$type.')';
+	?>
+	</span>
+</div>

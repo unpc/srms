@@ -1,0 +1,25 @@
+<?php
+$uid = 'preview_container_' . uniqid();
+?>
+<div class="hr_1">&#160;</div>
+<form class="form view" q-object="edit_form" q-static="container_id=<?php echo $uid?>" autocomplete="off">
+	<input name="path" value="<?php echo H($wiki->path) ?>" type="hidden" />
+	<div class="panel padding_1">
+		<?php if ($wiki->exists()): ?>
+		<div class="float_right">
+		<a class="font-button-delete middle" confirm="<?php echo H(I18N::T('help', '您确定吗?')) ?>" href="<?php echo H($wiki->url(NULL, 'delete')) ?>" ><?php echo I18N::T('help', '删除')?></a>
+		</div>
+		<?php endif; ?>
+
+		<input class="button button_save middle" name="submit" type="submit" value="<?php echo H(I18N::T('help', '保存')) ?>" />
+		<input class="button button_view middle" name="preview" type="submit" value="<?php echo H(I18N::T('help', '预览')) ?>" />
+		<input class="button button_attach middle" name="attach" type="submit" value="<?php echo H(I18N::T('help', '附件')) ?>" />
+	</div>
+	<div class="form padding_2">
+	<?php $_SESSION['current_wiki_textarea'] = $textarea_id = uniqid(); ?>
+	<input name="textarea_id" value="<?php echo H($textarea_id) ?>" type="hidden" />
+	<textarea id="<?php echo H($textarea_id) ?>" name="content" rows="20" class="wiki_textarea flexible autogrow tab_ok autogrow rte-zone" ><?php echo H($wiki->content)?></textarea>
+	</div>
+</form>
+<div class="hr_1">&#160;</div>
+<div id="<?php echo $uid; ?>"></div>

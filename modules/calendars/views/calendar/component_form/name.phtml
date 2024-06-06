@@ -1,0 +1,9 @@
+<td class="label left nowrap">
+	<div class='title'>
+	<?php echo $properties['label'] ?>
+   </div>
+	<input name="<?php echo H($name) ?>" type="text"
+	 class="text autoselect" value="<?php echo H($form->no_error ?
+	 ( $component->id ? $component->name : $properties['default_value'] ?:
+	 I18N::T('calendars', '新的事件')) : $form['name']) ?>" />
+</td>

@@ -1,0 +1,15 @@
+<form method="post" autocomplete="off" action="<?php echo H(URI::url()) ?>">
+	<?php 
+		if($search_filters):
+			foreach($search_filters as $search_filter) { echo $search_filter; } 
+	?>
+			<input type="hidden" name="submit" value="1" />
+			<?php if($this->hide_submit): ?>
+			<input type="submit" class="hidden" value="<?php echo H(T('搜索')) ?>" />
+			<?php else: ?>
+			<input type="submit" class="button button_search middle" value="<?php echo H(T('搜索')) ?>"/>
+			<?php endif; ?>
+	<?php
+		endif;
+	?>
+</form>

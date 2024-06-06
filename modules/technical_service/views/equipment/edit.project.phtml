@@ -1,0 +1,39 @@
+<div class="form clearfix">
+    <form method="POST" class="edit">
+        <table class="form flexible">
+            <tbody>
+            <tr>
+                <td class="top">
+                    <?php echo V('form_error', ['form' => $form]); ?>
+                    <h2 class="section_title">
+                        <span class="border"></span>
+                        <span class="black_title"><?php echo I18N::T('technical_service', '服务项目') ?></span>
+                        <span class="description" style="color: orange;font-size: 10px;margin-left: 1rem;">
+                           <?= I18N::T('technical_service', ' 注：请在计费设置页，设置项目的收费标准。') ?>
+                        </span>
+                        <span>
+                            <a class="font-button-save float_right autocomplete_more_confirm">确认</a>
+                        </span>
+                    </h2>
+                    <div class="interval_13"></div>
+                    <div style="margin-top: 1.2rem">
+                        <input type="text" class="text token token_verify token_more autocomplete_more_confirm"
+                               name="projects"
+                               size="45"
+                               value="<?php echo H($form['projects'] ?? $old_projects) ?>"
+                               q-token_autocomplete="<?php echo H(URI::url('!technical_service/autocomplete/projects.' . $equipment->id)) ?>"
+                        />
+                    </div>
+                    <div class="interval_24"></div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="interval_30"></div>
+        <div class="form float_right" style="padding-left: 130px">
+            <input name="submit" class="font-button-save" type="submit"
+                   value="<?php echo H(I18N::T('technical_service', '提交')) ?>"/>
+            <input type="reset" name="cancel" class="font-button-default rmargin_16" value="<?php echo H(T('取消')) ?>"/>
+        </div>
+    </form>
+</div>

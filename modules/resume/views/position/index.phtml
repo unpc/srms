@@ -1,0 +1,69 @@
+<div class="hr_1">&#160;</div>
+<?php if( count($panel_buttons) ){ ?>
+	<div class="panel padding_1 clearfix">
+		<?php echo Widget::factory('application:links', ['links'=>$panel_buttons, 'separator'=>'&#160;']);?>
+	</div>
+<?php } ?>
+<?php
+
+$table = Widget::factory('table');
+
+$table->name = 'position';
+
+$table->add_column('@', NULL);//turn on the functionality of search
+
+$table->add_columns([
+	'name' => [
+		'title' => I18N::T('resume', '职位名称'),
+		'filter' => [
+			'form' => V('resume:position_table/filter/name', ['name' => $form['name']]),
+			'value' => $form['name'] ? H($form['name']) : NULL //row upon the search results if the result is not empty
+		],
+		'sortable'=>TRUE,
+		'nowrap' => TRUE
+		],
+	'department' => [
+		'title' => I18N::T('resume', '所属部门'),
+		'filter' => [
+			'form' => V('resume:position_table/filter/department', ['department' => $form['department']]),
+			'value' => $form['department'] ? H($form['department']) : NULL //row upon the search results if the result is not empty
+			],
+		'sortable' => TRUE,
+		'nowrap' => TRUE,
+		'align' => 'center'
+		],
+	'salary' => [
+		'title' => I18N::T('resume', '薪酬范围'),
+		'filter' => [
+			'form' => V('resume:position_table/filter/salary', ['minsalary' => $form['minsalary'], 'maxsalary' => $form['maxsalary']]),
+			'value' => ($form['minsalary'] && $form['maxsalary']) ? H($form['minsalary']) . '~' . H($form['maxsalary']) : NULL //row upon the search results if the result is not empty
+			],
+		'sortable' => TRUE,
+		'nowrap' => TRUE,
+		'align' => 'center'
+		],
+		'rest'=>[
+		'align'=>'right',
+		'nowrap'=>TRUE,
+
+	],
+						]);
+
+$table->empty_message = I18N::T('resume', '当前没有职位信息');
+	
+if (count($positions))
+	foreach ($positions as $position) {
+		
+		$links = $position->links('index');
+	
+		$table->add_row([
+							'@'=>NULL,
+							'name' => V('resume:position_table/data/name', ['position' => $position]),
+							'department' => V('resume:position_table/data/department', ['position' => $position]),
+							'salary' => V('resume:position_table/data/salary', ['position' => $position]),
+							'rest' => Widget::factory('application:links', ['links' => $links])
+							]);
+	}
+echo $pagination;
+echo $table;
+?>

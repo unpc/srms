@@ -1,0 +1,98 @@
+<?php
+	$control_uniqid = 'control_id_'. uniqid();
+?>
+<div class="equipment_detail clearfix header_content_padding" id="<?php echo $control_uniqid; ?>">
+    <table class="form flexible">
+        <tbody>
+            <tr>
+                <td class="top icon" rowspan="2" style="position: relative;padding-right: 30px;width: 104px;">
+                    <?= V('equipment/view/icon', ['equipment' => $equipment, 'id' => $control_uniqid]); ?>
+                    <div class="clearfix"></div>
+                    <?php if($equipment->status != EQ_Status_Model::NO_LONGER_IN_SERVICE):?>
+                    <?php echo V('equipment/control', ['equipment'=>$equipment]); ?>
+                    <?php endif ?>
+                </td>
+
+                <?php $is_admin = L('ME')->is_allowed_to('管理培训', $equipment); ?>
+                <td class="top nowrap info" rowspan="2">
+                    <?php if (!$equipment->is_mirror): ?>
+                    <h2>
+                        <a href="<?php echo H($equipment->url() ) ?>" style="padding-right: 30px;">
+                            <?php echo H($equipment->name); ?>
+                        </a>
+                        <div class="equipment-status-inservice">
+                            <?php if ($equipment->status == 0) : ?>
+                            <span style="font-size: 12px" class="right icon-selected"></span>
+                            <?php endif; ?>
+                            <small
+                                class="<?php if ($equipment->status == 0): ?>right<?php endif; ?>"><?php echo I18N::T('equipments', EQ_Status_Model::$status[$equipment->status]); ?></small>
+                        </div>
+                    </h2>
+                    <div class="interval_12"></div>
+                    <p>
+                        <span class="adjust_font"><?php echo H($equipment->en_name);?></span>
+                    </p>
+                    <p><?php if($equipment->status != EQ_Status_Model::NO_LONGER_IN_SERVICE): ?>
+                        <span style="display: inline-block; width: 50%;"><?php echo I18N::T('equipments', '联系人')?>:
+                            <?php echo V('equipments:equipments_table/data/contacts', ['equipment'=>$equipment]);?>
+                        </span>
+                        <?php if ($equipment->phone) :?>
+                        <span class="rpadding_1"><?php echo I18N::T('equipments', '联系电话')?>:</span><span
+                            class="adjust_font"><?php echo H($equipment->phone);?></span>
+                        <?php endif;?>
+                    </p>
+                    <p>
+                        <?php if ($equipment->email) :?>
+                        <span style="display: inline-block; width: 50%;"><?php echo I18N::T('equipments', '邮箱')?>:<span
+                                class="lpadding_1"><?php echo URI::mailto($equipment->email)?></span></span>
+                        <?php endif;?>
+                        <?php if ($GLOBALS['preload']['tag.group_limit'] >= 0 && $equipment->group->id): ?>
+                        <span class="rpadding_1"><?php echo I18N::T('equipments', '所属单位')?>:</span>
+                        <?php echo V('application:tag/path', ['tag'=>$equipment->group, 'tag_root'=>$equipment->group->root, 'url_template'=>URI::url('!equipments/index','group_id=%tag_id')]) ?>
+                        <?php endif ?>
+                    </p>
+                    <?php if ($equipment->require_training && !$is_admin) : ?>
+                    <p><?php echo V('training/status', ['equipment'=>$equipment]); ?></p>
+                    <?php endif; ?>
+                    <?php endif; ?>
+                    <?php
+			// 此处视图由于会做聚合运算 影响性能 故做一部分缓存
+			$cache = Cache::factory();
+			$brief = $cache->get("equipment.brief.view.{$equipment->id}");
+			if (!$brief) {
+				$brief = (string)V('equipments:equipment/brief', ['equipment'=> $equipment]);
+				$cache->set("equipment.brief.view.{$equipment->id}", $brief, 3600);
+			}
+			echo $brief;
+		?>
+                    <?php else: ?>
+                    <?php echo V('equipments:equipment/mirror.info', ['equipment'=>$equipment])?>
+                    <?php endif;?>
+                    <div style="height: 12px;"></div>
+                </td>
+                <td class="top right equipment_info_header" style="max-width: 500px;">
+                    <style>
+                    .equipment_info_header a.button {
+                        margin: 0 5px 5px 5px;
+                    }
+                    </style>
+                    <?php
+        				$links = $equipment->links('view') + L('ME')->follow_links($equipment,'view');
+        			?>
+                    <div class="float_right">
+                        <?php
+            				echo Widget::factory('application:links', ['links' => $links, 'separator'=>' ']) ?>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="right bottom">
+                    <div class="float_right" style="position: relative;width: 100px;height: 100px;margin-bottom: 12px;">
+                        <?php echo Event::trigger('equipment.profile.extra_view', $equipment);?>
+                    </div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</div>

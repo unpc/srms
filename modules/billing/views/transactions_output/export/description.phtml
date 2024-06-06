@@ -1,0 +1,6 @@
+<?php
+$description = preg_replace('/\<[\/]?a[^\>]*\>/', '', $transaction->description());
+
+$description = preg_replace('/\<br\>-----\<br\>/', '', $description);
+
+echo $description;

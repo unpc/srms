@@ -1,0 +1,23 @@
+<?php
+  $links = OAuth_Client::get_oauth_login_links();
+  if(count($links)) :?>
+      <?php foreach ($links as $key => $opts): ?>
+          <tr>
+              <td>
+                  <span class="line bmargin_16"><?php echo H(I18N::T('people', '其他方式登录')) ?></span>
+              </td>
+          </tr>
+          <tr>
+              <td> <div class="interval_16"></div></td>
+          </tr>
+          <tr>
+              <td>
+                  <a href="<?php echo H($opts['link']) ?>" >
+                  <input type="button" class="button sso font-button-default" value="<?php echo H(I18N::T('oauth', $opts['title'])) ?>" />
+                  </a>
+              </td>
+          </tr>
+      <?php endforeach; ?>
+<?php endif;?>
+
+

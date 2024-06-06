@@ -1,0 +1,22 @@
+
+<?php if(Session::get_url_specific('view_mode') != 'grid'):?>
+<div class="description">
+	<p>This is a list of out-of-order equipment.</p>
+	<p>Click to view more details.</p>
+	<p>* Edit or delete equipment information.</p>
+	<p>* Administrators only.</p>
+</div>
+<?php else:?>
+<div class="description">
+	<p>This is a grid view of all out-of-service equipment.</p>
+	<p>Click equipment icons or names to view more information.</p>
+</div>
+<?php endif;?>
+
+
+
+
+
+
+
+

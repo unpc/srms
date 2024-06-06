@@ -1,0 +1,14 @@
+<tr class="gp_item gp_item:<?php echo $portion->id; ?> <?php echo $portion->id ? 'gp_parent:'.$portion->parent->id :''; ?> <?php echo $portion->id ? '':'hidden'?>">
+	<td class="right">
+		<input name="portion_parent[<?php echo $portion->id; ?>]" <?php echo $portion->id ? '':'disabled="disabled"'?> type="hidden" value="<?php echo $portion->parent->id; ?>" />
+		<input class="text left" <?php echo $portion->id ? '':'disabled="disabled"'?> size="<?php echo 20 - $indent * 2; ?>" name="portion_name[<?php echo $portion->id; ?>]" value="<?php echo H($portion->name); ?>" />
+	</td>
+	<td><input class="text currency" <?php echo $portion->id ? '':'disabled="disabled"'?> size="10" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" name="portion_amount[<?php echo $portion->id; ?>]" value="<?php echo $portion->amount; ?>" /></td>
+	<td><input name="portion_expense[<?php echo $portion->id; ?>]" class="text currency readonly" <?php echo $portion->id ? '':'disabled="disabled"'?> sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" readonly="readonly" size="10" value="<?php echo $portion->amount - $portion->balance; ?>" /></td>
+	<td><input name="portion_balance[<?php echo $portion->id; ?>]" class="text currency readonly" <?php echo $portion->id ? '':'disabled="disabled"'?> sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" readonly="readonly" size="10" value="<?php echo $portion->balance; ?>" /></td>
+	<td><input name="portion_avail_balance[<?php echo $portion->id; ?>]" class="text currency readonly" <?php echo $portion->id ? '':'disabled="disabled"'?> sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" readonly="readonly" size="10" value="<?php echo $portion->avail_balance; ?>" /></td>
+	<td class="nowrap">
+		<a class="button button_add gp_item_add prevent_default"><?php echo I18N::HT('grants', '添加'); ?></a>
+		<a class="font-button-delete gp_item_delete prevent_default" ><?php echo I18N::HT('grants', '删除'); ?></a>
+	</td>
+</tr>

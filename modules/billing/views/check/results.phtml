@@ -1,0 +1,118 @@
+<div class="hr_1">&#160;</div>
+<?php
+// CSV中有, DB中无的数据
+
+$errors_in_csv_table = Widget::factory('table', ['extra_class'=>'account_grid']);
+$errors_in_csv_table->name = 'errors_in_csv';
+$errors_in_csv_table->add_columns([
+	'certificate'=>[
+		'title'=>I18N::T('billing', '凭证号'),
+		'nowrap'=>TRUE,
+	],
+	'income'=>[
+		'title'=>I18N::T('billing', '收入'),
+		'nowrap'=>TRUE
+	]
+]);
+if(count($errors)>0){
+	echo "<h2 class='section_title'>" . I18N::T('billing', 'CSV文件中存在财务明细不存在的记录') . "</h2>";
+    foreach ($errors as $i => $error) {
+	if ($error['type'] == Billing_Check::ERROR_IN_CSV) {
+		$errors_in_csv_table->add_row( [
+			'certificate' => $error['certificate'],
+			'income' => $error['income']
+		]);
+
+		unset($errors[$i]);
+		}
+	}
+        echo $errors_in_csv_table;
+}else
+{
+	$CSV = TRUE;
+}
+
+?>
+
+<div class="hr_1">&#160;</div>
+<?php
+/*
+  DB中凭证号在CSV中存在, 金额也相符, 但存在多条的记录
+  DB中凭证号在CSV中存在, 但金额不符的数据
+  TODO DB中凭证号在CSV不存在的数据
+  DB中无凭证号的数据
+*/
+
+$errors_in_db_table = Widget::factory('table', ['extra_class'=>'account_grid']);
+$errors_in_db_table->name = 'errors_in_db';
+$errors_in_db_table->add_columns([
+    'id'=>[
+        'title' =>I18N::T('billing', '编号'),
+        'nowrap'=>TRUE
+    ],
+	'date'=>[
+		'title'=>I18N::T('billing', '日期'),
+		'nowrap'=>TRUE,
+	],
+	'lab_name'=>[
+		'title'=>I18N::T('billing', '实验室'),
+		'nowrap'=>TRUE,
+	],
+	'recharger_id'=>[
+		'title'=>I18N::T('billing', '充值人'),
+		'nowrap'=>TRUE,
+		'invisible'=>TRUE,
+	],
+	'income'=>[
+		'title'=>I18N::T('billing', '收入'),
+		'align'=>'right',
+		'nowrap'=>TRUE,
+	],
+	'certificate'=>[
+		'title'=>I18N::T('billing', '凭证号'),
+		'nowrap'=>TRUE,
+	],
+	'error'=>[
+		'title'=>I18N::T('billing', '错误描述'),
+		'nowrap'=>TRUE,
+	],
+	'description'=>[
+		'title'=>I18N::T('billing', '备注'),
+		'nowrap'=>TRUE,
+	],
+	'rest'=>[
+		'nowrap'=>TRUE,
+		'align'=>'right'
+	],
+]);
+
+$errors_in_db_table->empty_message = I18N::T('billing','没有符合条件的明细');
+
+if (count($errors) > 0) {
+	echo "<h2 class='section_title'>".I18N::T('billing', '财务明细中存在与CSV文件不匹配的记录')."</h2>";
+	foreach ($errors as $error) {
+		foreach ($error['warning_transactions'] as $transaction) {
+			$errors_in_db_table->add_row( [
+                'id'=>Number::fill($transaction->id, 6),
+				'certificate'=>H($transaction->certificate),
+				'date'=>H(Date::format($transaction->ctime)),
+				'lab_name'=>V('billing:transactions_table/data/lab_name', ['object'=>$transaction]),
+				'income'=>$transaction->income ? H(Number::currency($transaction->income)) : '',
+				'error'=> $error['msg'],
+				'description'=>V('billing:transactions_table/data/description', ['object'=>$transaction]),
+				'rest' => Widget::factory('application:links', ['links' => $transaction->links()])
+			]);
+		}
+	}
+	echo $errors_in_db_table;
+}else
+{
+	$DB = TRUE;
+}
+if($CSV == TRUE&&$DB == TRUE)
+{
+	echo "<h2 class='section_title'>".I18N::T('billing', '财务明细中没有发现错误明细记录')."</h2>";
+}
+
+
+?>

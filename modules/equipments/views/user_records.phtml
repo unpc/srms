@@ -1,0 +1,146 @@
+<?php //emmm先这么改吧
+if(Module::is_installed('uno')):?>
+<style>
+	#layui-laydate1{
+		top:90px !important;
+	}	
+</style>
+<?php endif;?>
+<?php 
+$uniqid = uniqid();
+$select_all_id = 'select_all_' . $uniqid;
+$batch_form_id = 'form_' . $uniqid;
+$me = L('ME'); 
+?>
+<?php echo CSS::load_async('equipments:common'); ?>
+<?php if (count($records) == 0 && !$search): ?>
+	<?php if ($user->id == L('ME')->id) : ?>
+		<h3 class="padding_2 description"><?php echo I18N::T('equipments', '您没有仪器使用记录, 可%clickhere查看您希望使用的仪器', ['%clickhere'=>URI::anchor('!equipments', I18N::HT('equipments', '点击这里'), 'class="blue"')]) ?></h3>
+	<?php else: ?>
+		<h3 class="padding_2 description"><?php echo I18N::T('equipments', '%user没有仪器使用记录', ['%user'=>H($user->name)]); ?></h3>
+	<?php endif ?>
+<?php else: ?>
+
+<div class="panel padding_1 clearfix">
+	<?php if(!Module::is_installed('eq_evaluate') && !Module::is_installed('eq_comment')):?>
+		<?php if(L('ME')->id == $user->id):?>
+			<div class="float_left lpadding_1">
+				<div style="float: left;"><input id="<?= $select_all_id?>" name="" value="全选" type="checkbox" class="checkbox" style="margin: 4px auto;"></div>
+				<a href="" q-ajax="1" q-src="<?= URI::url("!equipments/records") ?>" q-object="batch_feedback" q-event="click" class="lmargin_10 font-button-default font-button-color-green" value="<?php echo I18N::T('equipments', '批量反馈'); ?>" style="margin-right:3px;">批量反馈</a>
+			</div>
+		<?php endif;?>
+	<?php endif;?>
+	<?php if(count($panel_buttons) > 0) : ?>
+		<div class="float_left">
+		<?php
+			/*
+			NO.BUG#108（guoping.zhang@2010.11.12)
+			打印按钮和导出CSV按钮，用Widget显示
+			*/
+			echo Widget::factory('application:links', ['links'=>$panel_buttons, 'separator'=>' ']);
+		?>
+		</div>
+	<?php endif; ?>
+</div>
+
+<?php
+	$sort_by = $form['sort'] ? : (Config::get('equipment.sort_reserv') ? 'reserv' : '');
+	$sort_asc = $form['sort_asc'];
+	$sort_flag = $sort_asc ? 'A':'D';
+	$table = Widget::factory('table');
+	$table->sort_flag = $sort_flag;
+	$table->sort_by = $sort_by;
+	$table->name = 'equipment_records';
+
+    Event::trigger('eq_record.list.columns', $form, $columns, 'user_records');
+
+    $table->add_columns((array) $columns);
+
+	$table->empty_message = I18N::T('equipments', '无符合条件的记录');
+	$table->records = $records;
+
+	foreach ($records as $record) {
+		$links = $record->links('edit');
+
+		$row = [
+			'checkbox'=> V('equipments:records_table/data/select_feedback', ['record'=>$record, 'select_all_id'=>$select_all_id]),
+			'serial_number'=>V('equipments:records_table/data/serial_number', ['id'=>$record->id]),
+			'equipment_name'=>V('equipments:records_table/data/equipment_name', ['record'=>$record]),
+			'lock_status' => V('equipments:records_table/data/lock_status', ['record'=>$record]),
+			'date' => V('equipments:records_table/data/date', ['record'=>$record]),
+			'samples' => V('equipments:records_table/data/samples', ['record'=>$record]),
+			'agent' => V('equipments:records_table/data/agent', ['record'=>$record]),
+			'description' => V('equipments:records_table/data/description', ['record'=>$record]),
+			'rest' => Widget::factory('application:links', ['links' => $links]),
+			'charge_amount'=>V('equipments:records_table/data/charge_amount', ['record'=>$record])
+		];
+		if(Module::is_installed('eq_evaluate') || Module::is_installed('eq_comment')){
+            unset($row['checkbox']); 
+        }
+		$row = new ArrayIterator($row);
+
+		Event::trigger('eq_record.list.row', $row, $record, 'user_records');
+		$table->add_row((array)$row);
+	}
+
+	echo $table;
+
+?>
+
+<div class="pages"><?= $pagination ?></div>
+<?php endif; ?>
+
+<script>
+jQuery(function($){
+
+    var select_all_id = '<?= $select_all_id?>';
+	var $selector = $('#' + select_all_id);
+	var $select_check = $('input[name="select[]"]');
+
+	var ids = {};
+	var select = function(){
+        $select_check.each(function(index, element) {
+            var id = $(element).val();
+			ids[id] = element.checked ? 1 : 0;
+		})
+        Q.trigger({
+			url: '<?= URI::url("!equipments/records") ?>',
+			object: 'batch_feedback',
+			event: 'select',
+			global: false,
+			data: { ids: ids}
+		});
+    }
+	
+	$select_check.change(function(){
+		select();
+	});
+
+	$selector
+	.bind('click', function(){
+		$(this).change();
+	})
+	.bind('change', function(){
+		var $el = $(this);
+		if ($el.is(':checked')) {
+			$select_check.each(function(){ this.checked = true })
+		}
+		else {
+			$select_check.each(function(){ this.checked = false })
+		}
+		var idselect = {};
+		$select_check.each(function(index, element) {
+            var id = $(element).val();
+			idselect[id] = element.checked ? 1 : 0;
+		});
+		Q.trigger({
+			url: '<?= URI::url("!equipments/records") ?>',
+			object: 'batch_feedback',
+			event: 'select',
+			data: { ids: idselect}
+		});
+
+	});
+
+});
+</script>

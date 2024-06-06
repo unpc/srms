@@ -1,0 +1,17 @@
+<?php if($component->me_room->name) :?>
+<tr>
+	<td class="label right nowrap top"><strong class="description"><?php echo H($properties['label']) ?></strong></td>
+	<td>
+		<table class="form">
+
+			<tr>
+				<td class="top nowrap">
+				<?php
+					echo H($component->me_room->name);
+				?>
+				</td>
+			</tr>
+		</table>
+	</td>
+</tr>
+<?php endif; ?>

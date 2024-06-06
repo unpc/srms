@@ -1,0 +1,9 @@
+<?php if (Config::get('people.batch.disable.users') && ($me->access('添加/修改所有成员信息') || $me->access('管理所有内容')) && ($secondary_tabs->selected != 'unactivated')): ?>
+<style>
+    .filter_container {
+        width: 75px;
+    }
+</style>
+<div style="display: inline-block; position: relative; bottom: 14px; padding-right: 7px; padding-left: 6px;"><input name="select[]" class="<?php echo H($select_all_id) ?>" type="checkbox" value="<?php echo $user->id; ?>" style="padding:0; margin:0"/></div>
+<?php endif; ?>
+<div style="display: inline-block;<?= !Config::get('people.batch.disable.users') || (!$me->access('添加/修改所有成员信息') && !$me->access('管理所有内容')) ? ' padding-left: 7px;' : ''?>"><?= $user->icon('32', 'style="display:block"') ?></div>

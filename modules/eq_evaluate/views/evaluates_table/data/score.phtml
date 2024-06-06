@@ -1,0 +1,4 @@
+<?php $value = ($evaluate->score ? $evaluate->score - 1 : -1) ?>
+<span class="description"><?php echo $value != -1 ? H(Config::get('eq_evaluate')['rate.tip'][$value]) : '未评价' ?></span>
+
+<sapn style="color: #eec334"><?php echo str_repeat('★', ++$value) ?></sapn>

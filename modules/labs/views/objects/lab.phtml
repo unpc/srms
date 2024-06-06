@@ -1,0 +1,6 @@
+<a href="<?php echo H($object->url() ) ?>">
+  <?php
+     /* NO.BUG#154 (xiaopei.li@2010.11.12) */
+     /* !labs/lab/index中name之前未做转义输出 */
+     echo H($object->name); 
+  ?></a>

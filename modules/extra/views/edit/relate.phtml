@@ -1,0 +1,19 @@
+
+<div id="<?php echo H($relate_uniqid) ?>">
+<?php
+    if ($readonly) {
+	    echo V('extra:edit/readonly', [
+	        'category'=> $category,
+	        'extra'=> $extra,
+	        'relate_uniqid'=> $relate_uniqid,
+    	]);
+    }
+    else {
+	    echo V('extra:edit/relate_content', [
+	        'category'=> $category,
+	        'extra'=> $extra,
+	        'relate_uniqid'=> $relate_uniqid,
+	    ]);
+    }
+?>
+</div>

@@ -1,0 +1,293 @@
+<?php
+$me = L('ME');
+$no_error = ($form->no_error !== FALSE);
+$require = trim((string) V('form_require', ['extra_class' => 'top']));
+$disabled = $me->is_allowed_to('锁定基本', $equipment) ? '' : ($equipment->info_lock ? 'disabled' : '');
+if($me->is_allowed_to('共享', 'equipment')):
+?>
+
+<tr>
+    <td class="label left nowrap middle">
+        <?php echo I18N::T('equipments', 'CERS共享')?>
+        <span class="lpadding_4">
+            <?php
+            if ($disabled) {
+                ?>
+                <div style="padding-top: 3px;">
+                    <?= $equipment->share ? '是' : '否'; ?>
+                </div>
+                <?php
+            }
+            else {
+                echo Form::radio(
+                        'share',
+                        1,
+                        $no_error ? $equipment->share : $form['share'],
+                        I18N::T('equipments', '是'),
+                        ' class="radio monitor"',
+                        'class="middle rpadding_3"'
+                    ).
+                    Form::radio(
+                        'share',
+                        0,
+                        $no_error ? $equipment->share : $form['share'],
+                        I18N::T('equipments', '否'),
+                        ' class="radio monitor"',
+                        'class="middle rpadding_3"'
+                    );
+            }
+            ?>
+        </span>
+    </td>
+</tr>
+<?php else:?>
+<tr>
+    <td class="label left nowrap middle"><?php echo I18N::T('equipments', 'CERS共享')?></td>
+    <td class="middle" colspan="2">
+        <div style="padding-top: 3px;">
+            <?= $equipment->share ? '是' : '否'; ?>
+        </div>
+    </td>
+</tr>
+<?php endif;?>
+
+
+<?php if(Config::get('equipment.enable_share')):?>
+<tr>
+    <td colspan="2">
+        <div title="<?php echo I18N::T('equipments', '共享'); ?>"
+        class="<?php if (!$disabled) echo 'toggle:share show_on:1';?> <?php if (!$equipment->share) echo 'hidden'; ?>">
+        <table class="form" width="100%">
+            <tr>
+                <td class="label left nowrap top">
+                    <?= $require ?><?php echo I18N::T('cers', '主要测试和研究领域')?>
+                </td>
+            </tr>
+            <tr>
+                <td class="middle require_container" colspan="2">
+                    <?php
+                    if ($disabled) {
+                        ?>
+                        <div style="padding-top: 3px;">
+                            <?= $equipment->domain ?>
+                        </div>
+                        <?php
+                    }
+                    else {
+                        $_checkDoamin = function($name, $key) use ($equipment, $form, $no_error) {
+                            return $no_error ? in_array($name, explode(',', $equipment->domain))
+                                : $form['domain'][$key];
+                        };
+                        $domain = (array)Config::get('equipment.domain');
+                        foreach ($domain as $key => $name) :?>
+                            <div class="checkbox_list_diolog">
+                                <?= Form::checkbox("domain[{$key}]", $_checkDoamin($name, $key),
+                                    $name, 'class="monitor checkbox"', ''); ?>
+                            </div>
+                        <?php
+                        endforeach;
+                    }
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="label left nowrap top">
+                    <?= $require ?><?php echo I18N::T('cers', '参考收费标准')?>
+                </td>
+            </tr>
+            <tr>
+                <td class="top right" colspan="2"><textarea placeholder="请输入参考收费标准" class="text autogrow" style="width: 100%;"
+                                                            name="ReferChargeRule" <?= $disabled ?>><?php echo H($form['ReferChargeRule'] ? ($no_error ? $equipment->ReferChargeRule : $form['ReferChargeRule']) : $equipment->ReferChargeRule) ?></textarea></td>
+            </tr>
+
+            <tr>
+                <td class="label left nowrap top">
+                    <?= $require ?><?php echo I18N::T('cers', '开放机时安排')?>
+                </td>
+            </tr>
+            <tr>
+                <td class="top right" colspan="2"><textarea placeholder="请输入开放机时安排" class="text autogrow" style="width: 100%"
+                                                            name="OpenCalendar" <?= $disabled ?>><?php echo H($form['OpenCalendar'] ? ($no_error ? $equipment->OpenCalendar : $form['OpenCalendar']):$equipment->OpenCalendar) ?></textarea></td>
+            </tr>
+
+            <tr>
+                <td class="label left nowrap middle">
+                    <?= $require ?><?php echo I18N::T('cers', '固定资产分类编码')?>
+                </td>
+
+                <td class="label left nowrap middle">
+                    <?= $require ?><?php echo I18N::T('cers', '仪器认证情况')?>
+                </td>
+
+            </tr>
+
+            <tr>
+                <td class="top">
+                    <input placeholder="请输入固定资产分类编码" name="AssetsCode" class="text" <?= $disabled ?>
+                           value="<?php echo H($form['AssetsCode'] ? ($no_error?$equipment->AssetsCode:$form['AssetsCode']) : $equipment->AssetsCode)?>" />
+                </td>
+                <td class="top">
+                    <input placeholder="请输入仪器认证情况" name="Certification" class="text" <?= $disabled ?>
+                           value="<?php echo H($form['Certification'] ?: $equipment->Certification)?>" />
+                </td>
+            </tr>
+
+            <tr>
+                <td class="label left nowrap middle">
+                    <span ><?php echo I18N::T('cers', '仪器别名')?></span>
+                </td>
+
+
+                <td class="label left nowrap middle">
+                    <span ><?php echo I18N::T('cers', '英文名称')?></span>
+                </td>
+
+            </tr>
+            <tr>
+                <td class="top">
+                    <input placeholder="请输入仪器别名" name="Alias" class="text" <?= $disabled ?>
+                           value="<?php echo H($form['Alias'] ?: $equipment->Alias)?>" />
+                </td>
+                <td class="top">
+                    <input placeholder="请输入英文名称" name="ENGName" class="text" <?= $disabled ?>
+                           value="<?php echo H($form['ENGName'] ?: $equipment->ENGName)?>" />
+                </td>
+            </tr>
+
+            <tr>
+                <td class="label left nowrap middle">
+                    <?= $require ?><?php echo I18N::T('cers', '共享分类编码')?>
+                </td>
+                <td class="label left nowrap middle">
+                    <span><?php echo I18N::T('cers', '测试研究领域代码')?></span>
+                </td>
+
+            </tr>
+            <tr>
+                <td class="top">
+                    <input placeholder="请输入共享分类编码" name="ClassificationCode" class="text" <?= $disabled ?>
+                           value="<?php echo H($form['ClassificationCode'] ?: $equipment->ClassificationCode)?>" />
+                </td>
+                <td class="top">
+                    <input placeholder="测试研究领域代码" name="ApplicationCode" class="text" <?= $disabled ?>
+                           value="<?php echo H($equipment->ApplicationCode)?>" />
+                </td>
+            </tr>
+
+            <tr>
+                <td class="label left nowrap middle">
+                    <?= $require ?><?php echo I18N::T('cers', '生产厂商资质')?>
+                </td>
+
+
+                <td class="label left nowrap middle">
+                    <?= $require ?><?php echo I18N::T('cers', '产地国别（代码）')?>
+                </td>
+
+            </tr>
+
+            <tr>
+                <td class="top">
+                    <input placeholder="请输入生产厂商资质" name="ManuCertification" class="text" <?= $disabled ?>
+                           value="<?php echo H($no_error ? $equipment->ManuCertification : $form['ManuCertification'] )?>" />
+                </td>
+                <td class="top">
+                    <?php
+                    $codes = [0 => '--'] + (array)Config::get('equipment.manucountrycode');
+                    if ($disabled) {
+                        ?>
+                        <div style="padding-top: 3px;">
+                            <?php
+                            foreach ($codes as $code) {
+                                if (array_key_exists($equipment->ManuCountryCode, (array)$code)) {
+                                    echo $code[$equipment->ManuCountryCode];
+                                    break;
+                                }
+                            }
+                            ?>
+                        </div>
+                        <?php
+                    }
+                    else {
+                        echo Form::dropdown('ManuCountryCode', $codes, $no_error ? $equipment->ManuCountryCode : $form['ManuCountryCode'], 'class="dropdown"');
+                    }
+                    ?>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="label left nowrap middle">
+                    <span><?php echo I18N::T('cers', '外币币种')?></span>
+                </td>
+                <td class="label left nowrap middle">
+                    <span><?php echo I18N::T('cers', '外币原值')?></span>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="top">
+                    <input placeholder="请输入外币币种" name="PriceUnit" class="text" <?= $disabled ?>
+                           value="<?php echo H($form['PriceUnit'] ?: $equipment->PriceUnit)?>" />
+                </td>
+                <td class="top">
+                    <input placeholder="请输入外币原值" name="PriceOther" class="text number" <?= $disabled ?>
+                           value="<?php echo H($form['PriceOther'] ?: $equipment->PriceOther)?>" />
+                </td>
+            </tr>
+
+            <tr>
+                <td class="label left nowrap top">
+                    <?= $require ?><?php echo I18N::T('cers', '共享特色代码')?>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="top require_container" colspan="2">
+                    <?php
+                    $_CheckShareLevel = function($key) use ($equipment, $form, $no_error){
+                        if (!$equipment->id) {
+                            return FALSE;
+                        }
+                        elseif ($no_error) {
+                            return (bool)in_array($key, array_keys($equipment->ShareLevel));
+                        }
+                        else {
+                            return $form['ShareLevel'][$key];
+                        }
+                    };
+                    foreach ((array)Config::get('equipment.ShareLevel') as $key => $name) {
+                        echo "<div class='checkbox_list_diolog'>";
+                        echo Form::checkbox("ShareLevel[{$key}]", $_CheckShareLevel($key), $name,
+                            ' class="checkbox monitor" ' . $disabled , ' class="" '. $disabled );
+                        echo "</div>";
+                    }
+                    ?>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="label left nowrap middle">
+                    <span><?php echo I18N::T('cers', '知名用户')?></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="top">
+                    <input placeholder="请输入知名用户" name="ServiceUsers" class="text" <?= $disabled ?>
+                           value="<?php echo H($form['ServiceUsers'] ?: $equipment->ServiceUsers)?>" />
+                </td>
+            </tr>
+
+            <tr>
+                <td class="label left nowrap top">
+                    <span><?php echo I18N::T('cers', '备注')?></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="top right" colspan="2"><textarea placeholder="请输入备注" class="text autogrow"
+                                                            name="OtherInfo" <?= $disabled ?>><?php echo H($no_error ? $equipment->OtherInfo : $form['OtherInfo']) ?></textarea></td>
+            </tr>
+        </table>
+        </div>
+    </td>
+</tr>
+<?php endif; ?>

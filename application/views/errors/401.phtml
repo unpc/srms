@@ -1,0 +1,60 @@
+<style>
+.godashboard {
+    background-color: var(--basiccolor) !important;
+    color: #fff !important;
+    border: 1px solid #fff !important;
+}
+
+.godashboard:hover {
+    opacity: 93%;
+    filter: alpha(opacity=93%*100);
+    background-color: #FFF !important;
+    color: var(--basiccolor) !important;
+    border: 1px solid var(--basiccolor) !important;
+}
+</style>
+<script>
+jQuery(function($) {
+    var $center = $('#center');
+    var window_height = jQuery(window).height();
+    var error_height = String(window_height * 3 / 10) + 'px';
+    $center.find('.center_content').css({
+        width: '600px',
+        margin: '0 auto',
+        paddingBottom: '15em'
+    });
+});
+</script>
+<?php 
+if (!Auth::logged_in() && preg_match('/\!equipments\/equipment\/index\.[0-9]+\.(reserv|sample)/', $_SESSION['HTTP_REFERER'])) {
+?>
+<?php
+$lbg_cache = _C('images/lb2g.png') && file_exists(ROOT_PATH.PUBLIC_BASE._C('images/lbg.png'));
+$lbg_img = $lbg_cache ? _C('images/lbg.png') : ('/lims/images/bg.jpg');
+?>
+<div class="center_content login_page" style="background-image: url(<?= $lbg_img ?>) !important;">
+    <div class="center_pos"
+        style="background-color: <?= ($lbg_cache ? 'var(--loginbgcolor) / 0%' : 'var(--loginbgcolor);' ) ?>">
+        <?php echo Event::trigger('login.view') ? : V('application:login_form'); ?>
+    </div>
+</div>
+<?php } else { ?>
+<div class="error center"
+    style="flex-direction: column;display: flex;align-items:center;background:#F1F5F4;margin: auto auto; width: 400px; height: 100%; line-height: 32px;border-radius: 3px;">
+    <?php if (!Auth::logged_in()) {?>
+    <img src="images/401_locked.png" style="height: 190px;width: 190px;padding-top:190px;" alt="图片加载不正常"></img>
+    <?php } else {?>
+    <img src="images/401_locked.png" style="height: 190px;width: 190px;" alt="图片加载不正常"></img>
+    <?php }?>
+    <h1 style="font-size: 22px;"><?php echo T('您无权访问该页面') ?></h1>
+    <h1 style="color: #666666;font-size: 17px;"><?php echo T('该页面只允许有权限用户访问') ?></h1>
+    <div class="interval_20"></div>
+    <?php if (!Auth::logged_in()){?>
+    <div><a href="<?= H(URI::url('login')) ?>" q-event="click" class="button godashboard"
+            style="float: inherit; display: inline-block;"><?php echo T('去登录') ?></a></div>
+    <?php }else {?>
+    <div><a href="<?= H(URI::url('!people/dashboard')) ?>" q-event="click" class="button godashboard"
+            style="float: inherit; display: inline-block;"><?php echo T('知道了') ?></a></div>
+    <?php } ?>
+</div>
+<?php } ?>

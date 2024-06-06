@@ -1,0 +1,38 @@
+<div class="form">
+	<?php echo V('form_error', ['form'=>$form]); ?>
+	<table class="form flexible">
+		<tr>
+			<td class="top icon" style="width: 100px;">
+                <div class="short_container">
+                    <div class="img_icon" style="position: relative;">
+                        <?php echo $user->icon('104', 'class="icon_none_border"');?>
+                    </div>
+                </div>
+			</td>
+            <td class="lpadding_30">
+				<form class="edit" action="<?php echo H(URI::url()) ?>" method="post" autocomplete="off">
+                    <div class="interval_12"></div>
+                    <table>
+                        <tbody>
+                        <tr>
+                            <td>
+                                <?php
+                                echo Widget::factory('labs:lab_selector', [
+                                    'name' => 'lab',
+                                    'selected_lab' => Q("$user lab")->current(),
+                                    'size'=>40
+                                ]);
+                                ?>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="interval_60"></div>
+					<div class="float_right">
+                        <input type="submit" name="submit" class="font-button-save" value="<?php echo H(I18N::T('labs', '保存修改')) ?>"/>
+                    </div>
+				</form>
+			</td>
+		</tr>
+	</table>
+</div>

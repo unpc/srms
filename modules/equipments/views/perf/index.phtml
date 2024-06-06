@@ -1,0 +1,73 @@
+<div class="hr_1">&#160;</div>
+<div class="panel padding_1 clearfix">
+	<?php if(count($panel_buttons) > 0) : ?>
+	<div class="float_left">
+	<?php
+		echo Widget::factory('application:links', ['links'=>$panel_buttons, 'separator'=>' ']);
+	?>
+	</div>
+	<?php endif; ?>
+</div>
+<?php echo $pagination?>
+<?php
+	$table = Widget::factory('table');
+	$table->name = 'eq_perf_equipments';
+	$table->sort_asc = $sort_asc;
+	$table->sort_by = $sort_by;
+
+	$table->add_columns([
+		'img'=>NULL,
+		'name'=>[
+			'title'=>I18N::T('equipments', '仪器名称'),
+			'nowrap'=>TRUE,
+		],
+		'owner_score'=>[
+			'title'=>I18N::T('equipments', '用户评分'),
+			'align'=>'center',
+			'nowrap'=>TRUE,
+		],
+		'user_num'=>[
+			'title'=>I18N::T('equipments', '评分人数'),
+			'align'=>'center',
+			'nowrap'=>TRUE
+		],
+		'average_score'=>[
+			'title'=>I18N::T('equipments', '平均得分'),
+			'align'=>'center',
+			'nowrap'=>TRUE
+		],
+		'other_score'=>[
+			'title'=>I18N::T('equipments', '其他评分'),
+			'align'=>'center',
+			'nowrap'=>TRUE
+		],
+		'sum_score'=>[
+			'title'=> I18N::T('equipments', '总分'),
+			'align'=>'left',
+			'nowrap'=>TRUE,
+		],
+		'rest'=>[
+			'nowrap'=>TRUE,
+		]
+	]);
+
+	$table->empty_message = I18N::T('equipments', '无符合条件的仪器');
+
+	if (count($equipments)) foreach($equipments as $equipment) {
+		$table->add_row([
+			'img' => [
+				'view'=> URI::anchor($equipment->url(), $equipment->icon('32', 'style="display:block"')),
+				'extra'=>'style="padding:4px" align="right"',
+			],
+			'name' => URI::anchor($equipment->url(), H($equipment->name)),
+			'owner_score' => V('equipments:perfs_table/data/owner_score', ['perf'=>$perf, 'equipment'=>$equipment]),
+			'user_num'=>V('equipments:perfs_table/data/user_num', ['perf'=>$perf, 'equipment'=>$equipment]),
+			'average_score'=>V('equipments:perfs_table/data/average_score', ['perf'=>$perf, 'equipment'=>$equipment]),
+			'other_score'=>V('equipments:perfs_table/data/other_score', ['perf'=>$perf, 'equipment'=>$equipment]),
+			'sum_score' => V('equipments:perfs_table/data/sum_score', ['perf'=>$perf, 'equipment'=>$equipment]),
+			'rest'=>V('equipments:perfs_table/data/link', ['perf'=>$perf, 'equipment'=>$equipment]),
+		]);
+	}
+
+	echo $table;
+?>

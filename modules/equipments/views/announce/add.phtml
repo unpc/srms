@@ -1,0 +1,60 @@
+<div class="form">
+<form method="post" autocomplete="off" q-event="submit" q-object="add_announce" q-static="<?php echo H(['eid' => $eid]) ?>">
+<?php echo V('form_error', ['form' => $form]); ?>
+<?php $require = (string) V('form_require');?>
+<table class="form flexible">
+	<tbody>
+	<tr>
+		<td class="label left nowrap">
+			<div class="title">
+			    <?php echo I18N::T('equipments', '标题'); ?>
+			    <?php echo V('form_filter', ['error' => $form->errors['title'][0]]) ?>
+            </div>
+			<input style="width: 96%;" name="title" class="text" value="<?php echo H($form['title']) ?>" />
+		</td>
+	</tr>
+	<tr>
+		<td class="label left top nowrap">
+			<div class="title">
+			    <?php echo I18N::T('equipments', '内容') ?>
+			    <?php echo V('form_filter', ['error' => $form->errors['content'][0]]) ?>
+            </div>
+
+		<?php /* BUG #776::ie6 添加修改仪器公告时，textarea换行不体现(kai.wu@2011.8.1)  */?>
+
+		<textarea name="content" class="text autogrow"><?php echo H($form['content']) ?></textarea>
+		</td>
+	</tr>
+    <tr>
+        <td class="label left top nowrap">
+            <div class="title">
+                <?php echo I18N::T('equipments', '有效日期') ?>
+            </div>
+            <input name="dtstart" class="text date" date_type="date" value="<?php echo H($form['dtstart'] ?: Date::time()) ?>" />
+            -
+            <input name="dtend" class="text date" date_type="date" value="<?php echo H($form['dtend']?: Date::time()) ?>" />
+        </td>
+    </tr>
+	<?php if (false): /* 此处如不需要就暂时删除 */?>
+		<tr>
+			<td class="label left nowrap"><?php echo I18N::T('equipments', '到期时间') ?></td>
+			<td class="top nowrap">
+				<input name="atime" class="text date" date_type="date" value="<?php echo H($form['atime'] ?: Date::time()) ?>" />
+			</td>
+		</tr>
+		<?php endif;?>
+	<tr>
+		<td class="top right nowrap">
+			<?php echo Form::checkbox('stick', $form['stick'] == 'on' ? true : false, I18N::T('equipments', '置顶公告'), 'class="middle checkbox"', 'class="middle"'); ?>
+		</td>
+	</tr>
+
+</table>
+<div class="button_container">
+<div class="float_right">
+<input name="cancel" id="cancel" type='reset' class="font-button-default sm rmargin_2e4" value="<?php echo I18N::HT('equipments', '取消'); ?>" />
+<input name="submit" type='submit' class="font-button-save sm" value="<?php echo I18N::HT('equipments', '提交'); ?>" />
+</div>
+</div>
+</form>
+</div>

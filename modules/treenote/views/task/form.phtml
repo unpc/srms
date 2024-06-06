@@ -1,0 +1,115 @@
+<?php
+// 初始化变量
+$me = L('ME');
+$no_error = ($form->no_error !== FALSE);
+?>
+<div class="hr_1">&#160;</div>
+<div class="padding_2 form">
+	<form action="<?php echo H(URI::url()) ?>" method="post" autocomplete="off">
+	<?php echo V('form_error', ['form'=>$form]);?>
+		<table class="form">
+			<tbody>
+				<tr>
+					<td class="label right nowrap"><?php echo I18N::T('treenote', '名称')?></td>
+					<td><input class="text" name="title" value="<?php echo H($no_error ? $task->title : $form['title'])?>"/><?php echo $require?></td>
+				</tr>
+				<tr>
+					<td class="label right nowrap"><?php echo I18N::T('treenote', '负责人|:task')?></td>
+					<td><?php
+						$user = $no_error ? $task->user : $form['user'];
+						if (!$user->id) {
+							$user = $me;
+						}
+						echo Widget::factory('user_selector', [
+							'autocomplete'=>'',
+							'name'=>'user', 
+							'user'=> $user,
+							'size'=> 20,
+						]);
+					?></td>
+				</tr>
+				<tr>
+					<td class="label right nowrap"><?php echo I18N::T('treenote', '评审人|:task')?></td>
+					<td><?php
+						$reviewer = $no_error ? $task->reviewer : $form['reviewer'];
+						echo Widget::factory('user_selector', [
+							'autocomplete'=>'',
+							'name'=>'reviewer', 
+							'user'=> $reviewer,
+							'size'=> 20,
+						]);
+					?></td>
+				</tr>
+				<tr>
+					<td class="label right nowrap"><?php echo I18N::T('treenote', '项目')?></td>
+					<td><?php
+						$task_uniqid = 'task_' . uniqid();
+						$project_select_id = 'project_'.uniqid();
+						if ($task->parent_task->id) {
+							echo Widget::factory('treenote:related_project_task_selector',
+								[
+									'task' => $no_error ? $task->parent_task : O('tn_task', $form['parent_task']),
+									'task_uniqid' => $task_uniqid, 'task_name' => 'parent_task',
+									'project_select_id' => $project_select_id,
+								]);
+						}
+						else {
+							echo Widget::factory('treenote:related_project_task_selector',
+								[
+									'project' => $no_error ? $task->project : O('tn_project', $form['project']),
+									'task_uniqid' => $task_uniqid, 'task_name' => 'parent_task',
+									'project_select_id' => $project_select_id,
+								]);
+						}
+					?></td>
+				</tr>
+				<tr>
+					<td class="label right nowrap"><?php echo I18N::T('treenote', '父任务')?></td>
+					<td><?php
+						echo '<span id="' . $task_uniqid . '">';
+						echo Widget::factory('treenote:task_selector', [
+							'name' => 'parent_task', 
+							'task' => $no_error ? $task->parent_task : O('tn_task', $form['parent_task']), 
+							'project_select_id' => $project_select_id 
+						]);
+						echo '</span>';
+						?></td>
+				</tr>
+				<tr>
+					<td class="label right nowrap top"><?php echo I18N::T('treenote', '说明')?></td>
+					<td class="top">
+					<textarea class="text autogrow" name="description" cols="60" rows="3"><?php echo $no_error ? $task->description : $form['description']?></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td class="label right nowrap"><?php echo I18N::T('treenote', '优先级')?></td>
+					<td><?php echo Widget::factory('priority_selector', ['priority' => $no_error ? $task->priority : $form['priority']]) ?></td>
+				</tr>
+				<tr>
+					<td class="label right nowrap"><?php echo I18N::T('treenote', '截止日期')?></td>
+					<td><input class="date text" name="deadline" value="<?php echo H($no_error ? $task->deadline : $form['deadline']) ?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/></td>
+				</tr>
+				<tr>
+					<td class="right nowrap label">
+						<?php echo I18N::T('treenote', '完成状态'); ?>
+					</td>
+					<td class="left nowrap">
+						<?php echo Form::dropdown('status', TN_Task_Model::$status_options, $form['status'] ?: $task->status, ' class="drop"'); ?>
+					</td>
+				</tr>
+
+				<tr>
+					<td>&#160;</td>
+					<td class="nowrap">
+						<input class="button button_save" type="submit" name="submit" value="<?php echo H($task->id ? I18N::T('treenote', '修改') : I18N::T('treenote', '添加')) ?>" />
+						<?php if ($task->id && $me->is_allowed_to('删除', $task)): ?>
+							&#160;&#160;&#160;
+							<a class="font-button-delete" confirm="<?php echo I18N::HT('treenote', '您确定删除该任务吗?')?>" href="<?php echo H($task->url(NULL, NULL, NULL, 'delete') ) ?>"><?php echo I18N::HT('treenote', '删除')?></a>
+						<?php endif; ?>
+
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</div>

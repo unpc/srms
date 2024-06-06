@@ -1,0 +1,30 @@
+<?php
+$eqid = $sample->id ? $sample->equipment->id : ($form['equipment_id'] ?? $form['id']);
+$equipment = O('equipment', $eqid);
+if (!Config::get('sample_approval.to_equipment') || (Config::get('sample_approval.to_equipment') && $equipment->sample_approval_enable)):
+    ?>
+    <tr>
+        <td class="label left top nowrap" colspan="2">
+            <h1><?php echo I18N::HT('eq_sample', '测样要求'); ?></h1>
+        </td>
+    </tr>
+    <tr>
+        <td class="left nowrap top" colspan="2">
+            <div class="lpadding_3">
+                <?php
+                if ($sample->id) foreach (Q("sample_result[sample=$sample]") as $result) {
+                    $existing_data[] = ['result' => $result];
+                }
+                echo Widget::factory('flexform', [
+                    'template_data' => [],
+                    'existing_data' => $existing_data ?: [],
+                    'item_view' => 'eq_sample:sample_requirement',
+                    'extra_vars' => [
+                        'form' => $form,
+                    ],
+                ]);
+                ?>
+            </div>
+        </td>
+    </tr>
+<?php endif; ?>

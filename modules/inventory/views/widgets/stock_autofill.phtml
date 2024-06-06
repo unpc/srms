@@ -1,0 +1,34 @@
+<?php 
+$uniqid = 'stock_'.uniqid();
+
+$autocomplete = $this->autocomplete ?: URI::url('autocomplete/add_stock');
+
+$size = $this->size ?: 40;
+
+$this->name = $this->name ?: 'product_name';
+
+	
+$product_name = $form->no_error ? ($this->stock->id ? $this->stock->product_name : $form['product_name']) : $form['product_name'];
+
+
+?>
+<input id="<?php echo H($uniqid) ?>" name="<?php echo H($this->name);?>" 
+	class="text middle select_on_focus" 
+	q-autocomplete="<?php echo H($autocomplete) ?>" 
+	size="<?php echo H($size); ?>" value="<?php echo H($product_name) ?>"  /><?php echo $require; ?>
+<div class="description" style="margin-top:2px">* <?php echo I18N::T('inventory', '请输入关键字并选择') ;?></div>
+<script type="text/javascript">
+jQuery(function() {
+    var input_id = '<?php echo $uniqid?>';
+	var $input = $('#' + input_id);
+	$input.bind('autoactivate.autocomplete', function(e, item) {
+		var $form = $input.parents("form:first");
+		if ($form.length > 0) {
+			for (var name in item.data) {
+				$form.find('[name="' + name + '"]').val(item.data[name]).change();
+			}
+		}
+	});
+
+});
+</script>

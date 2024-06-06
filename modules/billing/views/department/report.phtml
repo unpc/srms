@@ -1,0 +1,27 @@
+<div>
+    <?= V('form_error', ['form'=>$form]); ?>
+    <?= $notification ?>
+    <div class="hr_1">&#160;</div>
+    <form action="<?php echo H(URI::url()) ?>" method="post">
+        <?= V('billing:department/auto', ['department' => $department]); ?>
+        <div class="hr_1">&#160;</div>
+        <div class="form padding_2" style="margin-bottom: 0px;">
+        <?php 
+            echo Widget::factory('flexform', [
+                'title' => I18N::T('billing', '定时发送'),
+                'template_data' => ['disabled'=>TRUE],
+                'existing_data' => $times,
+                'item_view' => 'billing:department/times',
+                'extra_vars'=> [
+                    'form'=> $form['times'],
+                ],
+            ]);
+        ?>
+        </div>
+        <div class="form padding_2">
+            <input name="submit_time" type="hidden" value="1"/>
+            <input name="submit" type="submit" style="margin-left:48px;"
+            class="button button_save font-button-save" value="<?php echo I18N::T('labs', '更新'); ?>" />
+        </div>
+    </form>
+</div>

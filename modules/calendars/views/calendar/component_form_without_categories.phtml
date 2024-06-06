@@ -1,0 +1,26 @@
+<?php
+foreach ($component_form as $name => $properties) {
+    $path = isset($properties['path']['form']) ? $properties['path']['form'] : 'calendars:calendar/component_form/';
+
+    $path_view = (string) V($path, [
+        'component'  => $component,
+        'name'       => $name,
+        'properties' => $properties,
+        'calendar'   => $calendar,
+        'files'      => $files,
+        'form'       => $form,
+    ]);
+
+    if ($path_view) {
+        echo $path_view;
+    } else {
+        echo V($path . $name, [
+            'component'  => $component,
+            'name'       => $name,
+            'properties' => $properties,
+            'calendar'   => $calendar,
+            'files'      => $files,
+            'form'       => $form,
+        ]);
+    }
+}

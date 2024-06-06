@@ -1,0 +1,4 @@
+<?php
+    $types = ['-1' => '--'] + Credit_Rule_Model::$status;
+?>
+<?php echo Form::dropdown('type', $types, isset($this->type) ? $this->type : -1, 'class="dropdown middle"'); ?>

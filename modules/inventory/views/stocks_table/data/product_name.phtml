@@ -1,0 +1,17 @@
+<div <?php echo $stock->parent->id;?>>
+	<a href="<?php echo H($stock->url()) ?>"><strong><?php echo H($stock->product_name)?></strong></a>
+	<div class="description">
+	<?php 
+	echo H($stock->manufacturer);
+	if ($stock->catalog_no) echo ' #'.H($stock->catalog_no);
+	?>
+	</div>
+<?php
+$root = Tag_Model::root('inventory'); /* TODO fix inventory tag */
+$tags = Q("$stock tag[root=$root]");
+foreach ($tags as $tag) {
+		echo '<a class="inventory_tag" href="'.URI::url('!inventory/index?tag='.$tag->id).'">'.H($tag->name).'</a> ';
+}
+?>
+</div>
+

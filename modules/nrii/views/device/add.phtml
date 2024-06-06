@@ -1,0 +1,282 @@
+<div class="hr_1">&#160;</div>
+<div class="padding_1 form">
+	<form method="post" autocomplete="off" action="<?php echo H(URI::url() ) ?>" enctype="multipart/form-data">
+	<div class="hr_2">&#160;</div>
+	<?php
+		$no_error = $form->no_error;
+		$require = V('form_require');
+		echo V('form_error', ['form'=>$form]);
+        $city = $form['province'] != -1 && !empty($form['province']) ? Nrii_Address::get_citys($form['province']) : [];
+        $area = $form['city'] != -1 && !empty($form['city']) ? Nrii_Address::get_areas($form['city']) : [];
+	?>
+	<fieldset class="bottom">
+		<legend><?= I18N::T('nrii', '基本信息') ?></legend>
+		<table class="form">
+			<tbody>
+				<tr>
+					<td class="nowrap right"><?= I18N::T('nrii', '装置名称（中文）')?></td>
+					<td><input class="text" name="cname"  size="30" value="<?= H($form['cname']) ?>" /></td>
+					<td class="nowrap right"><?= I18N::T('nrii', '英文名称') ?></td>
+					<td><input class="text" name="ename"  size="30" value="<?= H($form['ename']) ?>" /></td>
+				</tr>
+				<tr>
+					<td class="nowrap right"><?= I18N::T('nrii', '英文简称') ?></td>
+					<td><input class="text" name="ename_short"  size="30" value="<?= H($form['ename_short']) ?>" /></td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '主管部门') ?></td>
+					<td><input class="text" name="competent_dep"  size="30" value="<?= H($form['competent_dep']) ?>" /></td>
+				</tr>
+				<tr>
+					<td class="nowrap right"><?= I18N::T('nrii', '依托单位') ?></td>
+					<td><input class="text" name="sup_insname"  size="30" value="<?= H($form['sup_insname']) ?>" /></td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '建设情况')?></td>
+					<td>
+						<?= Form::dropdown('construction', [-1 => '-- 请选择 --'] + I18N::T('nrii', Nrii_Device_Model::$construction), isset($form['construction']) ? $form['construction'] : -1 , 'class="dropdown" size="30" '); ?>
+					</td>
+				</tr>
+				<tr>
+					<td class="nowrap right"><?= I18N::T('nrii', '批复部门') ?></td>
+					<td><input class="text" name="approval_dep"  size="30" value="<?= H($form['approval_dep']) ?>" /></td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '科普视频网址') ?></td>
+					<td><input class="text" name="video"  size="30" value="<?= H($form['video']) ?>" /></td>
+				</tr>
+				<tr>
+					<td class="nowrap right"><?= I18N::T('nrii', '所属单位科学内部编号') ?></td>
+					<td><input class="text" name="innerId"  size="30" value="<?= H($form['innerId']) ?>" /></td>
+					<td class="nowrap right"><?= I18N::T('nrii', '图片')?></td>
+					<td>
+                        <input name="file" type="file" class="file" />
+					</td>
+				</tr>
+				<tr>
+					<td class="nowrap right"><?= I18N::T('nrii', '建设经费（万元）')?></td>
+					<td><input name="worth" class="text number" q-number_default_value= "0.00" size="30" value="<?php echo H($form['worth']) ?>" /></td>
+					<td class="nowrap right"><?= I18N::T('nrii', '验收通过日期') ?></td>
+					<td><input class="text date" name="beginDate" value="<?= H($form['beginDate']) ?>" q-date_format="<?php echo HT('$year/$month/$day')?>" /></td>
+				</tr>
+				<tr>
+					<td class="nowrap right"><?= I18N::T('nrii', '设施类别')?></td>
+					<td>
+						<?= Form::dropdown('device_category', [-1 => '-- 请选择 --'] + I18N::T('nrii', Nrii_Device_Model::$device_category), isset($form['device_category']) ? $form['device_category'] : -1 , 'class="dropdown" size="30" '); ?>
+					</td>
+					<td class="nowrap right"><?= I18N::T('nrii', '安放地址') ?></td>
+					<td id="province">
+                        <?= Form::dropdown('province', [-1 => '- 请选择省-'] + Nrii_Address::get_provinces(), isset($form['province']) ? $form['province'] : -1 , 'class="dropdown" size="30" '); ?>
+					</td>
+				</tr>
+				<tr>
+					<td class="nowrap right"><?= I18N::T('nrii', '主要学科领域')?></td>
+                    <td class="top">
+                        <?php
+                            echo Widget::factory('nrii:muti_selector',
+                                [
+                                    'name'=>'realm',
+                                    'autocomplete'=>URI::url('!nrii/autocomplete/search.subject'),
+                                    'value' => $form['realm'],
+                                    'extra'=>'token_verify'
+                                ]);
+                        ?>
+                    </td>
+					<td class="nowrap right"></td>
+					<td id="city">
+						<?= Form::dropdown('city', [-1 => '- 请选择市-'] + $city, isset($form['city']) ? $form['city'] : -1 , 'class="dropdown" size="30" '); ?>
+					</td>
+				</tr>
+				<tr>
+					<td class="nowrap right"></td>
+                    <td class="top">
+
+                    </td>
+					<td class="nowrap right"></td>
+					<td id="area">
+						<?= Form::dropdown('area', [-1 => '- 请选择区-'] + $area, isset($form['area']) ? $form['area'] : -1 , 'class="dropdown" size="30" '); ?>
+					</td>
+				</tr>
+				<tr>
+					<td class="nowrap right"><?= I18N::T('nrii', '装置网站的网址')?></td>
+					<td>
+						<input class="text" name="url" size="30" value="<?= H($form['url']) ?>"/>
+					</td>
+					<td class="nowrap right"><?= I18N::T('nrii', '街道地址')?></td>
+					<td>
+						<input class="text" name="street" size="30" value="<?= H($form['street']) ?>"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="nowrap right"><?= I18N::T('nrii', '国外主要单位用户')?></td>
+					<td>
+						<textarea class="text autogrow" rows="3" cols="30" name="requirement"><?= H($form['requirement']) ?></textarea>
+					</td>
+					<td class="nowrap right"><?= I18N::T('nrii', '国内主要单位用户')?></td>
+					<td>
+						<textarea class="text autogrow" rows="3" cols="30" name="service_content"><?= H($form['service_content']) ?></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td class="nowrap right"><?= I18N::T('nrii', '科学技术中心')?></td>
+					<td>
+						<textarea class="text autogrow" rows="3" cols="30" name="technical"><?= H($form['technical']) ?></textarea>
+					</td>
+					<td class="nowrap right"><?= I18N::T('nrii', '主要功能及技术指标')?></td>
+					<td>
+						<textarea class="text autogrow" rows="3" cols="30" name="function"><?= H($form['function']) ?></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td class="nowrap right"><?= I18N::T('nrii', '支撑国家重大科研任务、产生经济社会效益、国际合作成果等')?></td>
+					<td>
+						<textarea class="text autogrow" rows="3" cols="30" name="achievement"><?= H($form['achievement']) ?></textarea>
+					</td>
+				</tr>
+                <?= Event::trigger('nrii.device.view.extra', $form, null); ?>
+			</tbody>
+		</table>
+	</fieldset>
+	<div class="hr_2">&#160;</div>
+	<fieldset class="bottom">
+		<legend><?= I18N::T('nrii', '填报联系人信息') ?></legend>
+		<table class="form">
+			<tbody>
+				<tr>
+					<td class="nowrap right"><?= I18N::T('nrii', '联系人')?></td>
+					<td>
+						<input class="text" name="contact" size="20" value="<?= H($form['contact']) ?>"/>
+					</td>
+					<td class="nowrap right"><?= I18N::T('nrii', '联系人电话')?></td>
+					<td>
+						<input class="text" name="phone" size="20" value="<?= H($form['phone']) ?>"/>
+					</td>
+					<td class="nowrap right"><?= I18N::T('nrii', '电子邮箱')?></td>
+					<td>
+						<input class="text" name="email" size="28" value="<?= H($form['email']) ?>"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="nowrap right"><?= I18N::T('nrii', '单位')?></td>
+					<td colspan="3">
+						<input class="text" name="fill_insname" size="51" value="<?= H($form['fill_insname']) ?>"/>
+					</td>
+					<td class="nowrap right"><?= I18N::T('nrii', '职务')?></td>
+					<td>
+						<input class="text" name="fill_position" size="28" value="<?= H($form['fill_position']) ?>"/>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</fieldset>
+	<div class="hr_2">&#160;</div>
+	<fieldset class="bottom">
+		<legend><?= I18N::T('nrii', '首席科学家信息') ?></legend>
+		<table class="form">
+			<tbody>
+				<tr>
+					<td class="nowrap right"><?= I18N::T('nrii', '姓名')?></td>
+					<td>
+						<input class="text" name="sci_contact" size="20" value="<?= H($form['sci_contact']) ?>"/>
+					</td>
+					<td class="nowrap right"><?= I18N::T('nrii', '电话')?></td>
+					<td>
+						<input class="text" name="sci_phone" size="20" value="<?= H($form['sci_phone']) ?>"/>
+					</td>
+					<td class="nowrap right"><?= I18N::T('nrii', '邮箱')?></td>
+					<td>
+						<input class="text" name="sci_email" size="28" value="<?= H($form['sci_email']) ?>"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="nowrap right"><?= I18N::T('nrii', '单位')?></td>
+						<td colspan="3">
+							<input class="text" name="sci_insname" size="51" value="<?= H($form['sci_insname']) ?>"/>
+						</td>
+					<td class="nowrap right"><?= I18N::T('nrii', '职务')?></td>
+					<td>
+						<input class="text" name="sci_position" size="28" value="<?= H($form['sci_position']) ?>"/>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</fieldset>
+	<div class="hr_2">&#160;</div>
+	<fieldset class="bottom">
+		<legend><?= I18N::T('nrii', '运行负责人信息') ?></legend>
+		<table class="form">
+			<tbody>
+				<tr>
+					<td class="nowrap right"><?= I18N::T('nrii', '姓名')?></td>
+					<td>
+						<input class="text" name="run_contact" size="20" value="<?= H($form['run_contact']) ?>"/>
+					</td>
+					<td class="nowrap right"><?= I18N::T('nrii', '电话')?></td>
+					<td>
+						<input class="text" name="run_phone" size="20" value="<?= H($form['run_phone']) ?>"/>
+					</td>
+					<td class="nowrap right"><?= I18N::T('nrii', '邮箱')?></td>
+					<td>
+						<input class="text" name="run_email" size="28" value="<?= H($form['run_email']) ?>"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="nowrap right"><?= I18N::T('nrii', '单位')?></td>
+						<td colspan="3">
+							<input class="text" name="run_insname" size="51" value="<?= H($form['run_insname']) ?>"/>
+						</td>
+					<td class="nowrap right"><?= I18N::T('nrii', '职务')?></td>
+					<td>
+						<input class="text" name="run_position" size="28" value="<?= H($form['run_position']) ?>"/>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</fieldset>
+	<div class="hr_2">&#160;</div>
+	<fieldset class="bottom">
+		<legend><?= I18N::T('nrii', '相关文件下载地址') ?></legend>
+		<table class="form">
+			<tbody>
+				<tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '布局图下载地址')?></td>
+                    <td><input class="text" name="layout_image"  size="25" value="<?= H($form['layout_image']) ?>" /></td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '关键部件图下载地址')?></td>
+                    <td><input class="text" name="key_image"  size="25" value="<?= H($form['key_image']) ?>" /></td>
+				</tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '实验操作图下载地址')?></td>
+                    <td><input class="text" name="experiment_image"  size="25" value="<?= H($form['experiment_image']) ?>" /></td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '组织管理制度下载地址')?></td>
+                    <td><input class="text" name="organization_file"  size="25" value="<?= H($form['organization_file']) ?>" /></td>
+				</tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '开放收费制度下载地址')?></td>
+                    <td><input class="text" name="open_file"  size="25" value="<?= H($form['experiment_image']) ?>" /></td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '设施申请制度下载地址')?></td>
+                    <td><input class="text" name="apply_file"  size="25" value="<?= H($form['organization_file']) ?>" /></td>
+				</tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '研究成果附件1下载地址')?></td>
+                    <td><input class="text" name="research_file_one"  size="25" value="<?= H($form['research_file_one']) ?>" /></td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '研究成果附件2下载地址')?></td>
+                    <td><input class="text" name="research_file_two"  size="25" value="<?= H($form['research_file_two']) ?>" /></td>
+				</tr>
+                <tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '研究成果附件3下载地址')?></td>
+                    <td><input class="text" name="research_file_three"  size="25" value="<?= H($form['research_file_three']) ?>" /></td>
+                    <td class="nowrap right"><?= I18N::T('nrii', '研究成果附件4下载地址')?></td>
+                    <td><input class="text" name="research_file_four"  size="25" value="<?= H($form['research_file_four']) ?>" /></td>
+				</tr>
+				<tr>
+                    <td class="nowrap right"><?= I18N::T('nrii', '研究成果附件5下载地址')?></td>
+                    <td><input class="text" name="research_file_five"  size="25" value="<?= H($form['research_file_five']) ?>" /></td>
+				</tr>
+
+			</tbody>
+		</table>
+	</fieldset>
+	<fieldset style="width:680px; border:0">
+		<table class="form" style="width:100%;">
+			<tr>
+				<td class="center"><input type="submit" name="submit" class="button button_save" value="<?php echo H(I18N::T('nrii', '添加')) ?>" /></td>
+			</tr>
+		</table>
+	</fieldset>
+	</form>
+</div>
+<?php echo JS::load('nrii:address', ['trigger_url'=>URI::url('!nrii/address')]) ?>

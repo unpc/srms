@@ -1,0 +1,51 @@
+.title{
+	width:100px;
+}
+.valid_date{
+	margin-left: 16px;
+}
+tr.announce_read td{
+	background-color: #f0f0f0;
+	color: #999;
+	font-weight: normal;
+
+	.description {
+		color: #999;
+	}
+
+	h4 a {
+		color: #999;
+		font-weight: normal;
+	}
+
+}
+
+tr.announce_unread td{
+	background-color: #fff;
+}
+
+.announce_body{
+	margin-bottom: 50px;
+}
+
+
+.announce_view{
+	width:900px;
+	min-height:400px;
+
+    .announce_title{
+        font-size: 30px;
+    }
+
+    .announce_content{
+        min-height:200px;
+    }
+    input.announce_readonly {
+	    background: #E7E7E7;
+	    background-image: url("images/buttons/edit.png");
+	    background-repeat: no-repeat;
+	    background-position: 4px center;
+	    padding-left: 22px;
+	    color: #999;
+    }
+}

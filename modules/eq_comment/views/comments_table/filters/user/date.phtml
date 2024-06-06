@@ -1,0 +1,6 @@
+<?php $name_prefix = $this->name_prefix; ?>
+<?php
+    $this->dtstart = $this->dtstart ? date('Y-m-d', $this->dtstart) : '';
+    $this->dtend = $this->dtend ? date('Y-m-d', $this->dtend) : '';
+?>
+<input id="<?php echo $name_prefix?>dtstart" name="<?php echo $name_prefix?>dtstart" autocomplete="off" date_type="date" class="text date small_search_text" value="<?php echo H($this->dtstart) ?>" /><span class="middle description date_interval">-</span><input id="<?php echo $name_prefix?>dtend" name="<?php echo $name_prefix?>dtend" autocomplete="off" date_type="date" class="text date small_search_text" value="<?php echo H($this->dtend); ?>" />

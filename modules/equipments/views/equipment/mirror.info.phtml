@@ -1,0 +1,18 @@
+<h2>
+	<a href="<?php echo H($equipment->url() ) ?>"><?php echo H($equipment->name); ?></a>
+</h2>
+<?php echo V('application:tag/path', ['tag'=>$equipment->group, 'tag_root'=>$equipment->group->root, 'url_template'=>URI::url('!equipments/index','group_id=%tag_id')]) ?>
+<div class="hr_2">&#160;</div>
+<span class="message message_normal nowrap red">
+	<?php 
+		$clickhere = URI::anchor($equipment->remote_url, I18N::T('equipments', '点击这里'), ' class="blue" target="_blank"');
+		$server_key = O('eq_remote', ['local_equipment'=>$equipment])->server_key;
+		$servers = Config::get('eq_remote.servers');
+		$title = H($servers[$server_key]['title']);
+	?>
+	<?php echo I18N::T('equipments', '该仪器来自于%title，如果希望查看或使用该仪器，请%clickhere', [
+																							'%title' => $title,
+																							'%clickhere' => $clickhere
+																						])?>
+</span>
+<div class="hr_2">&#160;</div>

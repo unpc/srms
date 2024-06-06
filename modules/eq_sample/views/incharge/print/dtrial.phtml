@@ -1,0 +1,7 @@
+<?php if ($sample->dtstart || $sample->dtend) :?>
+<?php echo Date::format($sample->dtstart, 'Y/m/d H:i:s');?>
+-
+<?php echo Date::format($sample->dtend, 'Y/m/d H:i:s');?>
+<?php else: ?>
+<?php echo I18N::T('eq_sample', '未设测样时间')?>
+<?php endif;?>

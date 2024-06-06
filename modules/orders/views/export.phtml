@@ -1,0 +1,119 @@
+<?php echo CSS::load_async('orders', 'order') ?>
+<div class="form padding_1">
+	<form action="<?php echo H(URI::url('!orders/index/export', ['type'=>$type, 'form_token'=>$form_token])) ?>" class="prevent_default" method="post">
+		<div class="hr_2"></div>
+		<div class="nowrap">
+		<?php
+		$form = $_SESSION[$form_token]['form'];
+		if ($form['product_name']) : ?>
+		<p class="padding_1">
+		<span class="export_tag"><span class="description"><?php echo I18N::T('orders','产品名称') ?></span>
+			<?php echo $form['product_name'] ?></span>
+		</p>
+		<?php endif; ?>
+		<?php if ($form['manufacturer']) : ?>
+		<p class="padding_1">
+		<span class="export_tag"><span class="description"><?php echo I18N::T('orders','供应商') ?></span>
+			<?php echo $form['manufacturer'] ?></span>
+		</p>
+		<?php endif; ?>
+		<?php if ($form['catalog_no']) : ?>
+		<p class="padding_1">
+		<span class="export_tag"><span class="description"><?php echo I18N::T('orders','目录号') ?></span>
+			<?php echo $form['catalog_no'] ?></span>
+		</p>
+		<?php endif; ?>
+		<?php if ($form['vendor']) : ?>
+		<p class="padding_1">
+		<span class="export_tag"><span class="description"><?php echo I18N::T('orders','供应商') ?></span>
+			<?php echo $form['vendor'] ?></span>
+		</p>
+		<?php endif; ?>
+		<?php
+			if ($form['requester']) :
+			$user = O('user', $form['requester']);
+		?>
+		<p class="padding_1">
+		<span class="export_tag"><span class="description"><?php echo I18N::T('orders','申购人') ?></span>
+			<?php echo $user->name ?></span>
+		</p>
+		<?php endif; ?>
+		<?php if ($form['dtstart_check'] || $form['dtend_check']): ?>
+		<p class="padding_1">
+		<span class="export_tag"><span class="description"><?php echo I18N::T('orders','申购日期') ?></span>
+			<?php if (!$form['dtend_check']): ?>
+			<?= Date::format($form['dtstart'], 'Y/m/d'). ' - '.I18N::T('orders', '最末') ?>
+			<?php elseif(!$form['dtstart_check']):?>
+			<?= I18N::T('orders', '最初').' - '.Date::format($form['dtend'], 'Y/m/d'); ?>
+			<?php else: ?>
+			<?= Date::format($form['dtstart'], 'Y/m/d').' - '.Date::format($form['dtend'], 'Y/m/d') ?>
+			<?php endif; ?>
+		</span>
+		</p class="padding_1">
+		<?php endif; ?>
+		<?php if ($form['status']) : ?>
+		<p class="padding_1">
+		<span class="export_tag"><span class="description"><?php echo I18N::T('orders','订单状态') ?></span>
+			<?php
+			foreach ($form['status'] as $key => $value) {
+				$str[] = I18N::T('orders', Order_Model::$order_status[$key]);
+			}
+			echo implode(', ', $str);
+			 ?></span>
+		</p>
+		<?php endif; ?>
+		<?php
+			$tags_arr = json_decode($form['tags'], TRUE);
+			if ($tags_arr) : ?>
+			<p class="padding_1">
+			<span class="export_tag"><span class="description"><?php echo I18N::T('orders','标签') ?></span>
+			<?php
+			echo implode(', ', $tags_arr);
+			 ?></span>
+			</p>
+		<?php endif; ?>
+		<?php if ($form['grant_check']) : ?>
+			<?php if ($form['grant_check'] == 'unlinked'): ?>
+			<p class="padding_1">
+			<span class="export_tag"><span class="description"><?php echo I18N::T('orders','未关联') ?></span>
+			</span>
+			</p>
+			<?php elseif($form['grant_check'] == 'linked' && $form['grant_select']): ?>
+			<p class="padding_1">
+				<span class="export_filter"><span class="description"><?php echo I18N::T('orders','关联经费') ?></span>
+					<?php
+                    $grant = O('grant', (int)$form['grant_select']);
+                    $protions = [];
+                    if ($form['grant_portion_select']) {
+                        $grant_portion = O('grant_portion', $form['grant_portion_select']);
+                        while($grant_portion->id) {
+                            $protions[] = $grant_portion->name;
+                            $grant_portion = $grant_portion->parent;
+                        }
+
+                    }
+                    $protions[] = $grant->source;
+                    echo join(' » ', array_reverse($protions));
+                    ?>
+				</span>
+			</p>
+			<?php endif; ?>
+
+		<?php endif; ?>
+		</div>
+		<div class="hr_2"></div>
+		<div>
+		<ul class="ep_triple">
+			<?php
+            $columns = Config::get('orders.export_columns');
+			foreach ($columns as $p => $p_name) :?>
+				<li>
+					<?php echo Form::checkbox("columns[{$p}]", TRUE, I18N::T('orders', $p_name), 'class="middle monitor"', 'class="middle"');?>
+				</li>
+			<?php endforeach;?>
+		</ul>
+		</div>
+		<div class="hr_2"></div>
+		<input type="submit" name="submit" class="button button_edit middle" value="<?php echo H(I18N::T('orders', '提交')) ?>" />
+	</form>
+</div>

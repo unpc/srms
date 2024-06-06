@@ -1,0 +1,6 @@
+<a href="<?php echo H($task->url()) ?>"><?php echo H($task->title) ?></a>
+<?php if ($task->status): ?>
+<span class="job_status job_status_<?php echo $task->status; ?>">
+	<?php echo H(TN_Task_Model::$status_short_options[$task->status]) ?>
+</span>
+<?php endif; ?>

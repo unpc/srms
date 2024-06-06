@@ -1,0 +1,10 @@
+<?php
+$root = Tag_Model::root('grant_expense');
+echo Widget::factory('application:multi_tag_selector',
+					 [
+						 'autocomplete'=> URI::url("autocomplete/tags.$root->id"),
+						 'name'=>'tags',
+						 'value'=> $tag_values,
+						 'size'=>'30',
+						 'token_tip' => I18N::T('grants', '您可选择标签')
+						 ]);

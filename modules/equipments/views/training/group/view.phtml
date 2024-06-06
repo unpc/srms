@@ -1,0 +1,38 @@
+<div class="panel clearfix">
+	<div class="group_training float_left"><?php echo I18N::T('equipments', '仅用于数据统计，不用于授权处理')?></div>
+</div>
+<?php echo $pagination; ?>
+<?php
+	$sort_fields = Config::get('equipments.ge_training.sortable_columns');
+	/*
+		NO. TASK#256 (Cheng.Liu@2010.11.19)
+		equipments approved training 转换成table widget
+	*/
+	$table = Widget::factory('table');
+	$table->name = 'equipments_group_training';
+
+	$table->sort_asc = $sort_asc;
+	$table->sort_by = $sort_by;
+    $table->add_columns($field);
+
+	$table->empty_message = I18N::T('equipments', '没有团体培训记录!');
+
+	if (count($ge_trainings) > 0) {
+		foreach($ge_trainings as $training) {
+			$table->add_row([
+				'@' => [
+					'view' => $training->user->icon('32', 'style="display:block"'),
+					'extra' => 'style="padding:4px" align="right"',
+				],
+				'user'=>V('equipments:users_table/data/name', ['user'=>$training->user]),
+				'ntotal'=>H((int)$training->ntotal),
+				'napproved'=> H((int)$training->napproved),
+				'date'=>Date::format($training->date, 'Y-m-d'),
+				'description'=>H($training->description, TRUE),
+				'rest'=>V('equipments:users_table/data/group_rest', ['training'=>$training])
+			]);
+		}
+	}
+
+	echo $table;
+?>

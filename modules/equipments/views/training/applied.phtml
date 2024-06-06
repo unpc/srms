@@ -1,0 +1,32 @@
+<?php echo $pagination; ?>
+<?php
+	$sort_fields = Config::get('equipments.training.sortable_columns');
+	$table = Widget::factory('table');
+	$table->name = 'equipments_applied_training';
+	$table->sort_asc = $sort_asc;
+	$table->sort_by = $sort_by;
+    $table->add_columns($field);
+
+	$table->empty_message = I18N::T('equipments', '没有已申请培训 / 授权记录!');
+
+	if (count($trainings) > 0) {
+		foreach($trainings as $training) {
+			$user = $training->user;
+			$row = new ArrayIterator([
+				'@'=>[
+					'view' => V('equipments:training_table/data/icon', ['training' => $training]),
+					'extra' => 'style="padding:4px" align="right"',
+				],
+				'approved_name'=>V('equipments:users_table/data/name', ['user'=>$user]),
+				'contact_info'=>V('equipments:users_table/data/contact_info', ['user'=>$user, 'training'=>$training]),
+				'ctime'=>V('equipments:training_table/data/ctime', ['training' => $training]),
+				'address'=>V('equipments:users_table/data/address', ['user'=>$user]),
+				'rest'=>Widget::factory('application:links', ['links' => $training->links('applied')]),
+			]);
+			Event::trigger('equipment_training.list.row.applied', $row, $training);
+			$table->add_row((array)$row);
+		}
+	}
+
+	echo $table;
+?>

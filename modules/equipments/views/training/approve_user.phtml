@@ -1,0 +1,31 @@
+<?php $ue = O('ue_training', $tid);?>
+
+<div class="padding_1 nowrap">
+	<form autocomplete="off" q-object="<?= $q_object ? : 'approve_user' ?>" 
+	q-event="submit" q-static="<?php echo H(['tid'=>$tid]) ?>">
+		<table class="form">
+			<tr>
+				<td class="left middle nowrap"><?php echo I18N::T('equipments', '过期时间') ?></td>
+			</tr>
+			<tr>
+				<td class="left middle">
+					<?php
+						$selected = $atime ? 1 : 0;
+						echo Form::radio('atime', 0, $selected, I18N::T('equipments', '不过期'), 'class="monitor middle radio"', 'class="middle"');
+						echo '&#160;&#160;';
+						echo Form::radio('atime', 1, $selected, NULL, 'class="monitor middle radio"', 'class="middle"'); 
+					?>
+				<span class="toggle_status:atime enable_on:1">
+					<input name="deadline" date_type="date" class="text date" value="<?php echo H($atime?:time()) ?>" />
+				</span>
+				</td>
+			</tr>
+		</table>
+		<div class="button_container">
+	  		<div class="float_right">
+			 	<?php $submit_title = $ue->status == UE_Training_Model::STATUS_APPROVED ?  '更新' : '添加';?>
+            	<input type="submit" class="font-button-save sm" value="<?php echo H(I18N::T('equipments', $submit_title) ) ?>" />
+	  		</div>
+	  	</div>
+	</form>
+</div>

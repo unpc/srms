@@ -1,0 +1,27 @@
+<li>
+  <?php
+/* authors */
+$authors_output = [];
+
+foreach ($publication['authors'] as $author) {
+	 if (array_key_exists('link', $author)) {
+		$link = '"'.$author['link'].'"';
+		$text = $author['name'];
+		$authors_output[] = "<a href=$link>$text</a>";
+	 }
+	 else {
+		$authors_output[] = $author['name'];
+	 }
+}
+
+echo join(', ', $authors_output).'. ';
+if (isset($publication['link'])) {
+	echo '<a href="'.$publication['link'].'">'.$publication['title'].'</a>'.', ';
+}
+else {
+	echo $publication['title'].', ';
+}
+echo $publication['journal'].'.';
+echo $publication['year'];
+?>
+</li>

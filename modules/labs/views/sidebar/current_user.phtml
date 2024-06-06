@@ -1,0 +1,19 @@
+<?php 
+
+$me = L('ME');
+
+if ($me->id && Q("$me lab")->total_count() == 1):
+	$lab = Q("$me lab")->current();	
+?>
+<div class="user_card clearfix">
+	<div class="icon float_left"><a href="<?php echo H($me->url() ) ?>"><?php echo $me->icon('32') ?></a></div>
+	<div class="information float_left">
+		<span class="name"><a href="<?php echo H($me->url() ) ?>"><?php echo H($me->name); ?></a></span>
+		<br/>
+		<span class="title"><a href="<?php echo H($lab->url() ) ?>"><?php echo H($lab->name); ?></a></span>
+	</div>
+</div>
+<?php
+else:
+	echo V('application:sidebar/current_user');
+endif;

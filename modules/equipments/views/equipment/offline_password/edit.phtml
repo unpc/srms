@@ -1,0 +1,19 @@
+<div class="padding_2 lpadding_3 rpadding_3">
+	<form method="post" autocomplete="off" q-event="submit" q-object="custom_offline_password" q-static="<?= H(['equipment_id'=>$equipment->id, 'uniqid'=>$uniqid])?>">
+	<?php echo V('form_error', ['form'=>$form]);?>
+	<table class="form">
+		<tr>
+			<td class="label right nowrap middle"><?= I18N::T('equipments', '离线密码')?></td>
+			<td class="label right nowrap middle"><input size="20" type="text" name="offline_password" class="text middle" value="<?= $form['offline_password'] ?: '';?>" /></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><span class="description"><?= I18N::T('equipments', '密码长度为6~24位')?></span></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><input type="submit" name="submit" class="font-button-save" value="<?= I18N::T('equipments', '保存')?>" /></td>
+		</tr>
+	</table>
+	</form>
+</div>

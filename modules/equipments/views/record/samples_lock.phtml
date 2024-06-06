@@ -1,0 +1,51 @@
+<?php
+$lock_id = 'record_lock_'. uniqid();
+?>
+<table>
+    <tr>
+        <td style="width: 100px; padding: 0px !important;" class="left nowrap">
+            <?php if ($record->id) : ?>
+                <?php if (! $record->cannot_lock_samples() && ! $record->samples_lock) :?>
+                    <input name="samples" type="text" q-number_default_value="0" style="width: 112px;" class="text right number" 
+                    value="<?= $form['samples'] ? : $record->samples; ?>" />
+                <?php else :?>
+                    <div class="text middle" style="display: inline-block; width: 120px;"><?php echo $record->samples?></div>
+                    <input type="hidden" name="samples" value="<?= $record->samples; ?>">
+                <?php endif;?>
+            <?php else : ?>
+                <input name="samples" type="text" q-number_default_value="<?php Config::get('eq_record.must_samples') ? 0 : 1 ?>" style="width: 112px;" class="text right number" value="<?php echo $form['samples'] ? : Config::get('eq_record.record_manual_default_samples'); ?>" />
+            <?php endif;?>
+            &#160;
+            <?php if($record->id && ! $record->cannot_lock_samples()) :?>
+                <?php if ($record->samples_lock) :?>
+                    <a href="#" class=" button_samples_unlock  prevent_default" id="<?php echo H($lock_id) ?>"><?php echo I18N::T('equipments', '解锁') ?></a>
+                <?php else : ?>
+                    <a href="#" class=" button_samples_lock icon-lock prevent_default" id="<?php echo H($lock_id) ?>"><?php echo I18N::T('equipments', '锁定') ?></a>
+                <?php endif;?>
+            <?php endif;?>
+        </td>
+    </tr>
+</table>
+<script type="text/javascript">
+(function($) {
+    var url = '<?php echo URI::url('!equipments/records');?>';
+    var object = '<?php echo $record->samples_lock ? 'samples_unlock' : 'samples_lock'?>';
+    $('#<?php echo $lock_id;?>').bind('click', function() {
+        Q.trigger({
+            object: object,
+            event: 'click',
+            url: url,
+            global: false,
+            data: {
+                id: '<?php echo $id?>',
+                rid: '<?php echo $record->id?>',
+                samples: $(this).parents('tr').find(':input[name=samples]').val()
+            },
+            success: function(d) {
+                $('#<?php echo $id?>').html(d.data);
+            }
+        });
+        return false;
+    });
+})(jQuery);
+</script>

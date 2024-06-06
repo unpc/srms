@@ -1,0 +1,34 @@
+<h2 class="section_title">
+		<span class="middle"><?php echo I18N::T('staff', '详细信息') ?></span>
+</h2>
+
+<div class="padding_2" style="padding-top:5px">
+<table class="form staff_info_form" style="min-width:400px">
+	<tr>
+		<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::T('staff', '工号')?></span></td> 
+		<td style="padding-right:4em"><?php echo H($user->ref_no); ?></td>
+		<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::T('staff', '学历')?></span></td> 
+		<td style="padding-right:4em"><?php echo I18N::T('staff',$staff->get_education()); ?></td>
+		<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::T('staff', '籍贯')?></span></td> 
+		<td style="padding-right:4em"><?php echo H($staff->birthplace); ?></td>
+	</tr>
+	<tr>
+		<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::T('staff', '角色')?></span></td> 
+		<td style="padding-right:4em"><?php echo I18N::T('staff', Staff_Model::$roles[ $staff->role ]); ?></td>
+		<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::T('staff', '学校')?></span></td> 
+		<td><?php echo H($staff->school); ?></td>
+		<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::T('staff', '出生日期')?></span></td> 
+		<td><?php echo $staff->birthday?Date::format($staff->birthday, 'Y/m/d'):NULL ; ?></td>
+	<tr>
+		<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::T('staff', '职位')?></span></td> 
+		<td>
+<?php
+$pos = Staff::get_positions();
+echo $pos[ $staff->position->id ];
+?>
+			</td>
+		<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::T('staff', '专业')?></span></td> 
+		<td style="padding-right:4em"><?php echo H($staff->professional); ?></td>
+	</tr>
+</table>
+</div>

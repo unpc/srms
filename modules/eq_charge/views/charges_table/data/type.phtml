@@ -1,0 +1,47 @@
+<?php
+$source = $c->source;
+if (!$source->id) {
+    echo '--';
+    return;
+}
+switch ($source->name()) {
+    case 'eq_sample':
+        echo I18N::HT('eq_charge', '送样收费');
+        if ($source->id)
+            echo '</br>送样编号 ' . URI::anchor($source->equipment->url('sample', ['id' => $source->id], NULL, 'view'), '<strong>#' . Number::fill($source->id) . '</strong>', 'class="blue prevent_default"');
+        echo '<div class="description small">';
+        echo Date::relative($source->dtstart);
+        echo '</div>';
+        break;
+    case 'eq_reserv':
+        echo I18N::HT('eq_charge', '预约收费');
+        echo '<div class="description small">';
+        echo Date::relative($source->dtstart);
+        echo ' - ';
+        echo Date::relative($source->dtend, $source->dtstart);
+        echo '</div>';
+        break;
+        break;
+    case 'sample_element':
+        echo I18N::HT('eq_charge', '检测收费');
+        echo '<div class="description small">';
+        echo Date::relative($source->ctime);
+        echo '</div>';
+        break;
+        break;
+    case 'service_apply_record':
+        echo I18N::HT('eq_charge', '服务收费');
+        if ($source->id)
+            echo '</br>服务预约编号 ' . URI::anchor($source->user->url('service_apply', ['ref_no' => $source->apply->ref_no], NULL, 'view'), '<strong>#' . Number::fill($source->id) . '</strong>', 'class="blue prevent_default"');
+        echo '</div>';
+        break;
+    default:
+        echo I18N::HT('eq_charge', '使用收费');
+        if ($source->id)
+            echo '</br>使用编号 ' . URI::anchor($source->equipment->url('records', ['id' => $source->id], NULL, 'view'), '<strong>#' . Number::fill($source->id) . '</strong>', 'class="blue prevent_default"');
+        echo '<div class="description small">';
+        echo Date::relative($source->dtstart);
+        echo ' - ';
+        echo !$source->dtend ? I18N::T('eq_charge', '使用中') : Date::relative($source->dtend, $source->dtstart);
+        echo '</div>';
+}

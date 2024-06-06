@@ -1,0 +1,25 @@
+<?php
+$lang['提前时间'] = NULL;
+$lang['刷卡进门时间提前'] = NULL;
+$lang['分钟'] = NULL;
+$lang['关联门禁'] = NULL;
+$lang['您确定要取消该门禁的关联吗？请谨慎操作！'] = NULL;
+$lang['更新'] = NULL;
+$lang['关联仪器'] = NULL;
+$lang['您确定要取消该仪器的关联吗？请谨慎操作！'] = NULL;
+$lang['更新'] = NULL;
+$lang['仪器名称'] = NULL;
+$lang['控制'] = NULL;
+$lang['当前使用者'] = NULL;
+$lang['放置地点'] = NULL;
+$lang['联系人'] = NULL;
+$lang['无关联仪器'] = NULL;
+$lang['仪器'] = NULL;
+$lang['门禁'] = NULL;
+$lang['门禁设置'] = NULL;
+$lang['请填写正整数数字！'] = NULL;
+$lang['门禁设置更新成功！'] = NULL;
+$lang['仪器设置'] = NULL;
+$lang['仪器设置更新成功！'] = NULL;
+$lang['关联仪器'] = NULL;
+$lang['实验室'] = '课题组';

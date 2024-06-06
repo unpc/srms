@@ -1,0 +1,78 @@
+<?php //添加送样: 关联项目
+if (class_exists('Lab_Project_Model')) :
+  $eq_sample_must_connect_project = Config::get('eq_sample.must_connect_lab_project');
+  if ($GLOBALS['preload']['people.multi_lab']) :
+    if ($form['user_option'] == 'new_user') {
+      $lab = Equipments::default_lab();
+      $lab_options = [$lab->id => $lab->name];
+      $lab_select = $form['project_lab'] ? $form['project_lab'] : $sample->lab->id;
+    }
+    else {
+      $sender = $form['sender'] ? O('user', $form['sender']) : $sample->sender;
+      $sender = $sender->id ? $sender : L('ME');
+      $equipment = $equipment->id ? $equipment : $sample->equipment;
+      $lab_options = $sender->get_active_labs($equipment);
+      $lab_select = $form['project_lab'] ? $form['project_lab'] : $sample->lab->id;
+      $lab = O('lab', $lab_select);
+    }
+    ?>
+<td class="label  nowrap">
+    <div class="title">
+        <?php if ($eq_sample_must_connect_project) : ?>
+        *
+        <?php endif; ?>
+        <?php echo I18N::T('labs', '实验室'); ?>
+        <?php echo V('form_filter', ['error' => $form->errors['project_lab'][0]]) ?>
+    </div>
+    <div class="middle nowrap">
+        <?php echo Form::dropdown('project_lab',
+            ['--'] + $lab_options,
+            (array_key_exists($lab_select, $lab_options) ? $lab_select : 0),
+            'style="width: 280px;"'
+          ); ?>
+    </div>
+</td>
+<?php else: ?>
+<?php
+    if ($form['user_option'] == 'new_user') {
+      $lab = Equipments::default_lab();
+    }
+    else {
+      if (!$user->id) $user = L("ME");
+      $lab = Q("$user lab")->current();
+    }
+
+  ?>
+<?php endif; ?>
+<?php
+  $project_options = [];
+  $project_filter = [];
+  if ($lab->id) {
+    $project_options = $lab->get_project_items($user);
+    array_walk_recursive($project_options, function($value, $key) use (&$project_filter) {
+      $project_filter[$key] = $value;
+    });
+    if ($sample->project->id && $sample->project->lab->id == $lab->id) {
+      $project_options[I18N::T('labs', Lab_Project_Model::$types[$sample->project->type])][$sample->project->id] = $sample->project->name;
+    }
+  }
+  $project_select = $form['project'] ? $form['project'] : $sample->project->id;
+  ?>
+<td class="label left nowrap">
+<?php if ($eq_sample_must_connect_project) : ?>
+    <span class="red float_left rmargin_1">*</span>
+<?php endif; ?>
+    <div class="title">
+        <?php echo I18N::T('eq_sample', '选择项目'); ?>
+        <?php echo V('form_filter', ['error' => $form->errors['project'][0]]) ?>
+    </div>
+    <div class="middle nowrap">
+        <?php echo Form::dropdown('project',
+          ['--'] + $project_options,
+          $project_select,
+          'style="width: 280px;"'
+        ); ?>
+    </div>
+</td>
+<!--  </tr>-->
+<?php endif; ?>

@@ -1,0 +1,41 @@
+<table class="form">
+	<tbody>
+		<tr>
+			<td class="nowrap">
+				<?php echo I18N::T('eq_reserv', '时间段')?>
+			</td>
+			<td class="nowrap">
+				<?php
+					$start = mktime($dtstart['h'], $dtstart['i'],'0');
+					$end = mktime($dtend['h'], $dtend['i'],'0');
+				?>
+				<input size="20" class="text date" date_type="time"  name="block_time[<?php echo $flexform_index?>][start]" value="<?php echo H($start) ?>" />
+				-
+				<input size="20" class="text date" date_type="time" name="block_time[<?php echo $flexform_index?>][end]" value="<?php echo H($end) ?>" />
+			</td>
+		</tr>
+        <tr><td><div class="interval_6"></div></td></tr>
+		<tr>
+			<td class="nowrap" >
+				<span class="rpadding_12"><?php echo I18N::T('eq_reserv', '时间长度对齐间距')?></span>
+			</td>
+			<td class="nowrap" >
+				<?php list($i_time, $interval_format) = Date::format_interval($interval_time, 'ih');?>
+				<input class="text number middle set_time_value" name="block_time[<?php echo $flexform_index?>][interval_time]" size="2" value="<?php echo H($i_time ) ?>" />
+				<?php echo Form::dropdown("block_time[". $flexform_index ."][interval_format]",Date::units('ih'),$interval_format,'class="middle set_time_format"');?>
+			</td>
+		</tr>
+        <tr><td><div class="interval_6"></div></td></tr>
+		<tr>
+			<td class="nowrap">
+			  	<span class="rpadding_12"><?php echo I18N::T('eq_reserv', '时间起始对齐间距')?></span>
+			</td>
+			<td class="nowrap">
+				<?php list($a_time, $align_format) = Date::format_interval($align_time, 'ih');?>
+				<input class="text number middle set_time_value" name="block_time[<?php echo $flexform_index?>][align_time]" size="2" value="<?php echo H($a_time ) ?>" />
+				<?php echo Form::dropdown("block_time[". $flexform_index ."][align_format]",Date::units('ih'),$align_format,'class="middle set_time_format"');?>
+			</td>
+		</tr>
+		<tr><td><div class="interval_24"></div></td></tr>
+	</tbody>
+</table>

@@ -1,0 +1,11 @@
+<?php 
+/*
+echo Widget::factory('user_selector', 
+		array(
+			'name'=>'operator', 
+			'autocomplete'=>URI::url('!eq_sample/autocomplete/user'), 
+			'user'=>$this->operator,
+		));
+ */
+?>
+<input class="text middle" name="operator" value="<?php echo H($this->operator); ?>"/>

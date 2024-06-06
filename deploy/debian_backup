@@ -1,0 +1,274 @@
+#!/bin/bash
+# 备份逻辑
+# - 每小时备份 1 次, 备份内容包括客户的 lab 目录(但不包括升级脚本运行前备份数据库的目录 private/backup)及数据库
+# - 每天0点删除前第二天0点外的每小时备份
+# - 每周日删除8周前除周日的每天备份
+# - 每次系统升级前应使用 -a 选项备份所有内容
+# (xiaopei.li@2012-02-17)
+
+# TODO 修改为 mac timecapsure 的备份逻辑
+
+# uncomment below to test
+# set -x
+
+# BAKLIST 是需要备份的 lab 列表, 格式为 "site_id\tlab_id"
+BAKLIST=/etc/lims2/proj_list
+sed -i '/^$/d' $BAKLIST
+
+
+# 存放备份的目录
+BAKBASE=/backups
+if [ ! -d $BAKBASE ]; then
+	mkdir -p $BAKBASE
+fi
+
+# 备份日志
+LOGFILE=$BAKBASE/backup.log
+touch $LOGFILE
+
+
+# DIRBASE 指向 sites 目录
+DIRBASE=/var/lib/lims2/sites
+
+DBUSER=genee
+DBPREFIX=lims2_
+
+TIMESTAMP=`date "+%Y/%m/%d %H:%M"`
+FILENAME_TIMESTAMP=`date "+%Y%m%d_%H%M" -d "$TIMESTAMP"`
+
+HOUR=`date "+%H" -d "$TIMESTAMP"`
+WEEKDAY=`date "+%u" -d "$TIMESTAMP"`
+
+# 删除老备份
+function delete_old_backups() {
+
+	if [ "$HOUR" = "00" ]; 	then
+		while read SITE_ID LAB_ID; do
+			echo "$TIMESTAMP 删除1天前的每小时备份..." >> $LOGFILE
+			find $BAKBASE/$SITE_ID/$LAB_ID -type f -ctime 1 ! -name "*_00*" -exec rm -rf {} \;
+			if [ "$WEEKDAY" -eq 7 ]; then
+				echo "$TIMESTAMP 8周前的备份只保留每周日的..." >> $LOGFILE
+				find $BAKBASE/$SITE_ID/$LAB_ID -type f -ctime +56 -ctime -63 -exec rm -rf {} \;
+			fi
+		done < $BAKLIST
+	fi
+}
+
+# 对各项目执行备份
+little_backup () {
+	while read SITE_ID LAB_ID; do
+	# TODO 加判断 site_id/lab_id 正确性的判断
+	# 加之前需注意backup_list中不能有空行
+		backup_user_db $SITE_ID $LAB_ID
+	done < $BAKLIST
+}
+
+backup_user_db () {
+
+	# 检查
+	if [[ $# -lt 2 ]]
+	then
+		echo params not enough for backup_user_data_and_db
+		exit 1
+	fi
+
+	if [ ! -x /usr/bin/mysqldump ]
+	then
+		echo mysqldump not excutable
+		exit 1
+	fi
+
+	# 备份
+	echo "$TIMESTAMP 开始备份 $1/$2..." >> $LOGFILE
+
+	local BAK_DIR=$BAKBASE/$1/$2
+	if [ ! -d BAK_DIR ]; then
+		mkdir -p $BAK_DIR
+	fi
+
+	local BAK_FILE=$BAK_DIR/$FILENAME_TIMESTAMP.tgz
+
+	local DBNAME=$DBPREFIX$2
+	local DB_BAK_BASE=/tmp
+	local DB_BAK=db_$2.sql
+
+	local LATEST_BAK_DIR=$DIRBASE/$1/labs/$2/private
+	local LATEST_BAK_LINK=$LATEST_BAK_DIR/latest_backup.tgz
+
+	if [ ! -d "$LATEST_BAK_DIR" ]; then
+		mkdir -p $LATEST_BAK_DIR
+		chown www-data:www-data $LATEST_BAK_DIR
+	fi
+
+	if [ -L "$LATEST_BAK_LINK" ]; then
+		rm $LATEST_BAK_LINK
+	fi
+
+	# 准备文件 -> 实际备份 -> 清理
+	mysqldump -u $DBUSER --lock-tables=FALSE --add-locks=FALSE $DBNAME > $DB_BAK_BASE/$DB_BAK && \
+	tar zcf $BAK_FILE \
+		-C $DB_BAK_BASE $DB_BAK \
+		>> $LOGFILE 2>&1 && \
+	rm $DB_BAK_BASE/$DB_BAK
+
+	ln -s $BAK_FILE $LATEST_BAK_LINK
+}
+
+backup_user_data_and_db () {
+
+	# 检查
+	if [[ $# -lt 2 ]]; then
+		echo params not enough for backup_user_data_and_db
+		exit 1
+	fi
+
+	if [ ! -x /usr/bin/mysqldump ]; then
+		echo mysqldump not excutable
+		exit 1
+	fi
+
+	# 备份
+	echo "$TIMESTAMP 开始备份 $1/$2..." >> $LOGFILE
+
+	local BAK_DIR=$BAKBASE/$1/$2
+	if [ ! -d BAK_DIR ]; then
+		mkdir -p $BAK_DIR
+	fi
+
+	local BAK_FILE=$BAK_DIR/$FILENAME_TIMESTAMP.tgz
+
+	local DBNAME=$DBPREFIX$2
+	local DB_BAK_BASE=/tmp
+	local DB_BAK=db_$2.sql
+	local DIR_BAK_BASE=$DIRBASE/$1/labs/
+	local DIR_BAK=$2
+	local UPGRADE_DB_BAK_DIR=$2/private/backup
+
+
+	local LATEST_BAK_DIR=$DIRBASE/$1/labs/$2/private
+	local LATEST_BAK_LINK=$LATEST_BAK_DIR/latest_backup.tgz
+
+	if [ ! -d "$LATEST_BAK_DIR" ]; then
+		mkdir -p $LATEST_BAK_DIR
+		chown www-data:www-data $LATEST_BAK_DIR
+	fi
+
+	if [ -L "$LATEST_BAK_LINK" ]; then
+		rm $LATEST_BAK_LINK
+	fi
+
+	# 准备文件 -> 实际备份 -> 清理
+	mysqldump -u $DBUSER --lock-tables=FALSE --add-locks=FALSE $DBNAME > $DB_BAK_BASE/$DB_BAK && \
+	tar zcf $BAK_FILE \
+		-C $DB_BAK_BASE $DB_BAK \
+		-C $DIR_BAK_BASE $DIR_BAK --exclude=$UPGRADE_DB_BAK_DIR \
+		>> $LOGFILE 2>&1 && \
+	rm $DB_BAK_BASE/$DB_BAK
+
+	ln -s $BAK_FILE $LATEST_BAK_LINK
+}
+
+# 备份版本
+big_backup () {
+
+	# 检查
+	if [ ! -x /usr/bin/mysqldump ]
+	then
+		echo mysqldump not excutable
+		exit 1
+	fi
+
+	# 备份
+	local RELEASE_BAK_PATH=$BAKBASE/all
+	if [ ! -d $RELEASE_BAK_PATH ]
+	then
+		mkdir -p $RELEASE_BAK_PATH
+	fi
+	local BAK_FILE=$RELEASE_BAK_PATH/$FILENAME_TIMESTAMP.tgz
+
+	# DB备份目录
+	local DB_BAK_BASE=/tmp
+	local DB_BAK_PATH=db
+	if [ ! -d $DB_BAK_BASE/$DB_BAK_PATH ]
+	then
+		mkdir -p $DB_BAK_BASE/$DB_BAK_PATH
+	fi
+	while read SITE_ID LAB_ID
+	do
+		DBNAME=$DBPREFIX$LAB_ID
+		echo "$TIMESTAMP 生成$DBNAME数据库备份..." >> $LOGFILE
+		mysqldump -u $DBUSER --lock-tables=FALSE --add-locks=FALSE $DBNAME > $DB_BAK_BASE/$DB_BAK_PATH/$LAB_ID.sql
+	done < $BAKLIST
+
+	# 完整备份时, 不包含:
+	#   - 日志目录(太大了)
+	#   - 升级脚本的数据库备份目录(没必要)
+	#   - vidcam captures(太大了)
+	#
+	tar zcf $BAK_FILE \
+		--exclude="/var/lib/lims2/sites/*/labs/*/logs/" \
+		--exclude="/var/lib/lims2/sites/*/labs/*/private/backup/" \
+		--exclude="/var/lib/lims2/sites/*/labs/*/private/vidcam/" \
+		/usr/share/lims2 /var/lib/lims2 /etc/lims2 \
+		-C $DB_BAK_BASE $DB_BAK_PATH \
+		>> $LOGFILE 2>&1 && \
+	rm -r $DB_BAK_BASE/$DB_BAK_PATH
+}
+
+function prepare_remote_backups() {
+
+    # 远程备份准备:
+
+    # 远程备份的内容每天准备一次, 内容为最近一次备份
+
+    # 步骤:
+    # 1. 删除前一天的内容
+    # 2. 将最近的备份作为今天的内容
+
+    if [ "$HOUR" = "00" ]
+    then
+	while read SITE_ID LAB_ID
+	do
+	    local remote_bak_dir="$BAKBASE/remote/$SITE_ID/$LAB_ID"
+		# echo $remote_bak_dir
+		if [ ! -d $remote_bak_dir ]
+		then
+			mkdir -p $remote_bak_dir
+		fi
+
+	    local local_bak_dir="$BAKBASE/$SITE_ID/$LAB_ID"
+
+	    echo "$TIMESTAMP $SITE_ID $LAB_ID 准备远程备份的内容..." >> $LOGFILE
+	    local latest_bak=`ls -t $local_bak_dir | head -n 1`
+	    cp "$local_bak_dir/$latest_bak" $remote_bak_dir
+
+	    echo "$TIMESTAMP $SITE_ID $LAB_ID 保留最近四个（每天0点的）远程备份内容..." >> $LOGFILE
+	    local remote_bak_file=`find $remote_bak_dir -type f`
+	    local except_four_latest_file=`ls $remote_bak_file | head -n -4`
+	    if [[ $except_four_latest_file ]]; then
+	        rm $except_four_latest_file
+	    fi
+	    
+	done < $BAKLIST
+    fi
+}
+
+
+# MAIN
+NO_ARGS=0
+
+if [ $# -eq "$NO_ARGS" ]
+then
+	delete_old_backups
+	little_backup
+	prepare_remote_backups
+else
+	while getopts "a" OPTION
+	do
+		case $OPTION in
+			a ) big_backup
+		esac
+	done
+fi
+
+echo "$TIMESTAMP 备份结束." >> $LOGFILE

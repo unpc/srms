@@ -1,0 +1,92 @@
+<?php
+    $add_radio = 'add_radio_'. uniqid();
+    $radios_uniqid = 'radios_'. uniqid();
+?>
+
+<div class="<?php echo $class;?> hidden" style="<?= $style?>">
+    <div id="<?php echo H($radios_uniqid) ?>">
+        <?php if (count($field['params'])) :?>
+            <?php $subprefix = 0;?>
+            <?php foreach($field['params'] as $item) : ?>
+                <?php echo V('extra:edit/item/radio_item', [
+                    'prefix'=> $prefix,
+                    'item'=> $item,
+                    'default' => $field['default_value'],
+                    'subprefix'=> $subprefix,
+                    'field'=> $field,
+                    'add_radio'=>$add_radio,
+                    'options_confirm'=>I18N::T('extra', '删除该选项, 将导致关联该字段的数据丢失, 您确定要删除吗?'),
+                ]);?>
+                <?php ++ $subprefix;?>
+            <?php endforeach;?>
+        <?php else:?>
+            <?php echo V('extra:edit/item/radio_item', ['prefix'=> $prefix,'add_radio'=>$add_radio]);?>
+        <?php endif;?>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        var radio_prefix = <?php echo $subprefix ? : 0;?>;
+        $('div#<?php echo H($radios_uniqid) ?>').on('click','.panel_add', function() {
+            ++ radio_prefix; //自加
+            Q.trigger({
+                object: 'add_radio',
+                event: 'click',
+                global: false,
+                data: {
+                    prefix: <?php echo $prefix?>,
+                    subprefix: radio_prefix,
+                },
+                url: '<?php echo URI::url();?>',
+                success: function(data) {
+                    $(data).appendTo($('#<?php echo $radios_uniqid;?>'));
+                }
+            });
+        });
+
+        // 删除
+        $(document).on('click','#<?php echo $radios_uniqid;?>  .panel_delete', function() {
+            $(this).parents('div.radio_container').remove();
+        });
+
+        // 上移
+        $(document).on('click','#<?php echo $radios_uniqid;?>  .panel_up', function() {
+            var element = $(this).parents('div.radio_container').children('input[type=text]');
+            var prefix = $(this).attr('data-prefix');
+            var subprefix = $(this).attr('data-subprefix');
+            var value = $(element).val();
+
+            if (subprefix >= 1) {
+                for(var i = subprefix * 1 - 1; i >= 0; i--) {
+                    var _selector = 'input[name="field[' + prefix + '][radio][' + i + ']"]';
+                    if ($(_selector).length > 0) {
+                        var _element = $(_selector);
+                        $(element).val(_element.val());
+                        $(_element).val(value);
+                        break;
+                    }
+                }
+            }
+        });
+
+        // 下移
+        $(document).on('click','#<?php echo $radios_uniqid;?>  .panel_down', function() {
+            var element = $(this).parents('div.radio_container').children('input[type=text]');
+            var prefix = $(this).attr('data-prefix');
+            var subprefix = $(this).attr('data-subprefix');
+            var value = $(element).val();
+            var total = $('input[type=text][name^="field[' + prefix + '][radio]"]').length;
+
+            for(var i = subprefix * 1 + 1; i < total; i++) {
+                var _selector = 'input[name="field[' + prefix + '][radio][' + i + ']"]';
+                if ($(_selector).length > 0) {
+                    var _element = $(_selector);
+                    $(element).val(_element.val());
+                    $(_element).val(value);
+                    break;
+                }
+            }
+        });
+    });
+</script>

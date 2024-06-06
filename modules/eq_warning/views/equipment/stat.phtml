@@ -1,0 +1,200 @@
+<?php
+$cache_js = Cache::cache_file(MODULE_PATH.'/eq_warning/private/js/echarts.js');
+$unit = $unit ?? 'month';
+$db = Database::factory();
+if($unit == 'month'){
+    $x_data_filed = [
+        "1" => "一月",
+        "2" => "二月",
+        "3" => "三月",
+        "4" => "四月",
+        "5" => "五月",
+        "6" => "六月",
+        "7" => "七月",
+        "8" => "八月",
+        "9" => "九月",
+        "10" => "十月",
+        "11" => "十一月",
+        "12" => "十二月"
+    ];
+    $x_data_value = [
+        'm1' => 0,
+        'm2' => 0,
+        'm3' => 0,
+        'm4' => 0,
+        'm5' => 0,
+        'm6' => 0,
+        'm7' => 0,
+        'm8' => 0,
+        'm9' => 0,
+        'm10' => 0,
+        'm11' => 0,
+        'm12' => 0,
+    ];
+    $dtstart = strtotime(date('Y-01-01'));
+    $dtend = strtotime(date('Y-12-31 23:59:59'));
+    $sql = "
+        SELECT
+            sum(dtend - dtstart) dur,
+            MONTH(FROM_UNIXTIME(dtend)) ds
+        FROM
+            eq_record
+        WHERE dtend >= {$dtstart} and dtend <= {$dtend} and dtend > dtstart AND equipment_id = {$equipment->id}
+        GROUP BY
+            MONTH(FROM_UNIXTIME(dtend))
+        ORDER BY
+            MONTH(FROM_UNIXTIME(dtend)) DESC; 
+    ";
+}
+if($unit == 'quarter'){
+    $x_data_filed = [
+        "1" => "一季度",
+        "2" => "二季度",
+        "3" => "三季度",
+        "4" => "四季度",
+    ];
+    $x_data_value = [
+        'm1' => 0,
+        'm2' => 0,
+        'm3' => 0,
+        'm4' => 0,
+    ];
+    $dtstart = strtotime(date('Y-01-01'));
+    $dtend = strtotime(date('Y-12-31 23:59:59'));
+    $sql = "
+        SELECT
+            sum(dtend - dtstart) dur,
+            QUARTER(FROM_UNIXTIME(dtend)) ds
+        FROM
+            eq_record
+        WHERE dtend >= {$dtstart} and dtend <= {$dtend} and dtend > dtstart AND equipment_id = {$equipment->id}
+        GROUP BY
+        QUARTER(FROM_UNIXTIME(dtend))
+        ORDER BY
+        QUARTER(FROM_UNIXTIME(dtend)) DESC; 
+    ";
+}
+
+if($unit == 'month' || $unit == 'quarter'){
+    $rows = $db->query($sql)->rows();
+    $db_rows = [];
+    foreach($rows as $row){
+        $db_rows['m'.$row->ds] = round($row->dur / 3600 , 2);
+    }
+    $x_data_value = array_merge($x_data_value,$db_rows);
+    $x_data_value = array_combine($x_data_filed,$x_data_value);
+}
+
+if($unit == 'year'){
+    $year = Date('Y');
+    $sql = "
+        SELECT
+            sum(dtend - dtstart) dur,
+            YEAR(FROM_UNIXTIME(dtend)) ds
+        FROM
+            eq_record
+        WHERE dtend > dtstart AND equipment_id = {$equipment->id}
+        GROUP BY
+        YEAR(FROM_UNIXTIME(dtend))
+        ORDER BY
+        YEAR(FROM_UNIXTIME(dtend)) ASC; 
+    ";
+    $rows = $db->query($sql)->rows();
+    $db_rows = [];
+    foreach($rows as $row){
+        $db_rows[$row->ds] = round($row->dur / 3600 , 2);
+    }
+    $x_data_filed = array_keys($db_rows);
+    $x_data_value = $db_rows;
+}
+?>
+<style>
+    .btn_active{
+        background: var(--basiccolor) !important;
+        color: white !important;
+    }
+</style>
+<script src="<?= $cache_js ?>"></script>
+<body>
+<div class="description">使用时长最大值: <?= $rule->use_limit_max ?? 0?>H</div>
+<div class="description">使用时长最小值: <?= $rule->use_limit_min ?? 0?>H</div>
+<div style="height: 5rem;margin-bottom:3rem">
+    <ul style="width:18rem;display: inline-flex;line-height: 2rem;margin-top:2rem">
+        <li class="left">
+           时间筛选:<a class="button <?= $unit=='year' ? 'btn_active' : '' ?>" href="<?= URI::url($equipment->url('warning_stat',['unit'=>'year']))?>">按年</a>
+        </li>
+        <li class="left">
+        <a class="button <?= $unit=='quarter' ? 'btn_active' : '' ?>" href="<?= URI::url($equipment->url('warning_stat',['unit'=>'quarter']))?>">按季度</a>
+        </li>
+        <li class="left">
+        <a class="button <?= $unit=='month' ? 'btn_active' : '' ?>" href="<?= URI::url($equipment->url('warning_stat',['unit'=>'month']))?>">按月</a>
+        </li>
+    </ul>
+</div>
+<!-- 为 ECharts 准备一个定义了宽高的 DOM -->
+<div id="main" style="width: 600px;height:400px;">
+</div>
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+
+    // 指定图表的配置项和数据
+    option = {
+        title: {
+            text: '仪器故障预警分析'
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {},
+        xAxis: {
+            type: 'category',
+            data: JSON.parse('<?= json_encode(array_values($x_data_filed));?>'),
+        },
+        yAxis: {
+            type: 'value',
+            axisLabel: {
+                formatter: '{value}'
+            }
+        },
+        series: [
+            {
+                name: '使用时长',
+                type: 'line',
+                data:  JSON.parse('<?= json_encode(array_values($x_data_value));?>'),
+                markLine: {
+                    data: [
+                        <?php if($rule->use_limit_max):?>
+                        {
+                            name:'使用时长最大值',
+                            symbol:'none',
+                            yAxis:<?= $rule->use_limit_max ?>,
+                            lineStyle: {
+                                color: "red",
+                                type: 'solid',
+                                opacity: 0.6
+                            },
+                        },
+                        <?php endif;?>
+                        <?php if($rule->use_limit_min):?>
+                        {
+                            name:'使用时长最小值',
+                            symbol:'none',
+                            yAxis:<?= $rule->use_limit_min?>,
+                            lineStyle: {
+                                color: "red",
+                                type: 'solid',
+                                opacity: 0.6
+                            }
+                        }
+                        <?php endif;?>
+                    ],
+                }
+            }
+        ]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+</script>
+</body>

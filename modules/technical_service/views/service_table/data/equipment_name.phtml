@@ -1,0 +1,9 @@
+<a class="rmargin_10 blue" href="<?php echo $connect->equipment->url(); ?>"><?php echo H($connect->equipment->name) ?></a>
+<?php
+$equipment = $connect->equipment;
+if ($equipment->status != EQ_Status_Model::NO_LONGER_IN_SERVICE): ?>
+    <?php $status_tags = (string)$equipment->status_tags(); ?>
+    <?php if ($status_tags): ?>
+        <?php echo $status_tags ?>
+    <?php endif; ?>
+<?php endif; ?>

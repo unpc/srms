@@ -1,0 +1,112 @@
+<div class="hr_1">&#160;</div>
+<?php $me=L('ME'); ?>
+<div class="panel padding_1 clearfix">
+	<?php if($me->access('添加/修改项目')) : ?>
+	<div class="float_left">
+		<a href="<?php echo URI::url('!projects/project/add'); ?>" class="button button_add"><?php echo I18N::T('projects', '添加项目')?></a>
+	</div>
+</div>
+<?php endif; ?>
+
+<?php echo $pagination; ?>
+
+<?php
+	/*
+		NO. TASK#250 (Cheng.Liu@2010.11.18)
+		projects 列表转换成table widget
+	*/
+	$table = Widget::factory('table');
+	$table->sort_asc = $sort_asc;
+	$table->sort_by = $sort_by;
+	$table->name = 'projects';
+
+	if($form['dtstart_check'] && $form['dtend_check']) {
+		$form['date'] = H(date('Y-m-d',$form['dtstart'])).'~'.H(date('Y-m-d',$form['dtend']));
+	}
+	elseif($form['dtstart_check']) {
+		$form['date'] = H(date('Y-m-d',$form['dtstart'])).'~'.I18N::T('projects','最末');
+	}
+	elseif($form['dtend_check']) {
+		$form['date'] = I18N::T('projects','最初').'~'.H(date('Y-m-d',$form['dtend']));
+	}
+
+	$table->add_columns([
+		'@'=>NULL,
+		'name'=>[
+			'title'=>I18N::T('projects', '名称'),
+			'sortable'=>TRUE,
+			'filter'=>[
+				'form'=>V('projects:projects_table/filters/name', ['name'=>$form['name']]),
+				'value'=>$form['name'] ? H($form['name']) : NULL
+			],
+			'nowrap'=>TRUE
+		],
+		'approved'=>[
+			'title'=>I18N::T('projects', '状态'),
+			'sortable'=>TRUE,
+			'filter'=>[
+				'form'=>V('projects:projects_table/filters/approved', ['approved'=>$form['approved']]),
+				'value'=>I18N::T('projects', Task_Model::$approved[$form['approved']])
+			],
+			'nowrap'=>TRUE
+		],
+		'progress'=>[
+			'title'=>I18N::T('projects', '进度'),
+			'nowrap'=>TRUE
+		],
+		'date'=>[
+			'title'=>I18N::T('projects', '起止时间'),
+			'filter'=>[
+				'form'=>V('projects:projects_table/filters/date', [
+															'dtstart_check'=>$form['dtstart_check'],
+															'dtstart'=>$form['dtstart'],
+															'dtend_check'=>$form['dtend_check'],
+															'dtend'=>$form['dtend']
+														]),
+				'value'=>$form['date'] ? H($form['date']) : NULL
+			],
+			'nowrap'=>TRUE
+		],
+		'description'=>[
+			'title'=>I18N::T('projects', '摘要'),
+			'nowrap'=>TRUE
+		],
+		'supervisor'=>[
+			'title'=>I18N::T('projects', '负责人'),
+			'filter'=>[
+				'form'=>V('projects:projects_table/filters/supervisor', ['supervisor'=>$form['supervisor']]),
+				'value'=>$form['supervisor'] ? H($form['supervisor']) : NULL
+			],
+			'nowrap'=>TRUE
+		],
+		'rest'=>[
+			'align'=>'right',
+			'nowrap'=>TRUE,
+		]
+	]);
+
+	$table->empty_message = I18N::T('projects', '没有符合条件的项目');
+
+	if (count($projects) > 0) {
+		foreach ($projects as $project) {
+			$task = $project->task;
+			$links = $project->links();
+			$supervisors = Q("{$task} user.supervisor")->to_assoc('id', 'name');
+		    $table->add_row([
+				'@'=>[
+					'view'=>$project->icon('32', 'style="display:block"'),
+					'extra'=>'style="padding:4px" align="right"',
+				],
+		    	'name'=>V('projects:projects_table/data/name', ['task'=>$task]),
+		    	'approved'=>H(Task_Model::$approved[$task->approved]),
+		    	'progress'=>H('进度'),
+		    	'date'=>date('Y-m-d', $task->dtstart).' - '.date('Y-m-d', $task->dtend),
+		    	'description'=>H($task->description),
+		    	'supervisor'=>implode(',', $supervisors),
+		    	'rest'=>Widget::factory('application:links', ['links' => $links]),
+		    ]);
+		}
+	}
+
+	echo $table;
+?>

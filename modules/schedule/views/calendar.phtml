@@ -1,0 +1,22 @@
+<?php 
+/*
+NO.TASK#236（guoping.zhang@2010.11.18)
+新权限判断规则
+NO.BUG#178（guoping.zhang@2010.11.20)
+列表日程附件时is_allowed_to的客体是calendar对象
+NO.BUG#205(xiaopei.li@2010.12.03)
+修正"列表实验室日程安排"权限混乱
+*/
+	$now = time();
+	$dtstart = Input::form('st') ?: $now;
+	$date=getdate($dtstart);
+	$dtstart = mktime(0,0,0,$date['mon'], $date['mday']-$date['wday'], $date['year']);
+
+	echo CSS::load_async('schedule:common');
+	$browser_id = 'browser_'.uniqid();
+?>
+<script type="text/javascript">
+Q.Calendar = Q.Calendar || {};
+Q.Calendar.left_nav_area = <?php echo JS::quote((string) V('schedule:calendar/left_nav', ['calendar_id'=> $calendar->id]));?>
+</script>
+<div id="<?php echo $browser_id; ?>" src="<?php echo H($calendar->url(NULL,['browser_id'=>$browser_id, 'st'=>$dtstart, 'user'=> $this->user->id, 'calendar_id'=>$calendar->id]) ) ?>" style="position: relative;"></div>

@@ -1,0 +1,93 @@
+<?php if (L('ME')->is_allowed_to('添加', 'gis_building')): ?>
+<?php
+$panel_buttons[] = [
+            'text'   => I18N::T('gismon', '添加楼宇'),
+            'tip'   => I18N::T('gismon', '添加楼宇'),
+            'extra' => 'q-object="add_build" q-event="click" q-src="' . Event::trigger('db_sync.transfer_to_master_url', '!gismon/buildings/add')?:
+            URI::url('!gismon/buildings/add') . '" class="button button_add"',
+        ];
+
+	   ?>
+
+<?php endif; ?>
+
+<?php
+	$table = Widget::factory('table');
+	$table->name = 'gismon';
+	$table->sort_asc = $sort_asc;
+	$table->sort_by = $sort_by;
+    $columns = [
+		// '@'=>NULL,
+		'name'=>[
+			'title'=>I18N::T('gismon', '名称'),
+			'filter'=>[
+				'form'=>V('gismon:buildings_table/filters/name', ['name'=>$form['name']]),
+				'value'=>$form['name'] ? H($form['name']) : NULL
+			],
+			'nowrap'=>TRUE,
+			'sortable'=>TRUE
+		],
+		'group'=>[
+			'title'=>I18N::T('gismon', '组织机构'),
+			'filter'=>[
+				'form'=>V('gismon:buildings_table/filters/group', [
+					'tag'=>$group,
+					'root'=>$group_root,
+					'name'=>'group_id',
+					'field_title' => '请选择组织机构',
+				]),
+				'value'=>V('application:tag/path', ['tag'=>$group, 'tag_root'=>$group_root, 'url_template'=>URI::url('', 'group_id=%tag_id')]),
+                'field'=>'group_id',
+			],
+			'nowrap'=>TRUE,
+			'input_type'=>'select'
+		],
+		'geo_location'=>[
+			'title'=>I18N::T('gismon', '经纬度'),
+			'nowrap'=>TRUE,
+		],
+		'rest'=>[
+            'title'=>I18N::T('gismon', '操作'),
+			'nowrap'=>TRUE,
+			'align'=>'left',
+		],
+	];
+	$columns = new ArrayIterator($columns);
+    Event::trigger('extra.gismon_building.column', $columns, $buildings, $form);
+	$table->add_columns((array)$columns);
+
+	$table->empty_message = I18N::T('gismon', '没有符合条件的楼宇');
+
+	foreach ($buildings as $building) {
+		$links = $building->links();
+	    $rows = [
+	    	/*'@'=>[
+	    		'view'=>$building->icon('32', ' style="display:block"'),
+	    		'extra'=>' style="padding:4px" align="right"'
+	    	],*/
+	    	'name'=>V('gismon:buildings_table/data/name', ['building'=>$building]),
+	    	'group'=>
+			V('application:tag/path', ['tag'=>$building->group, 'tag_root'=>$group_root, 'url_template'=>URI::url('', 'group_id=%tag_id')]),
+
+            'geo_location'=>V('gismon:buildings_table/data/geo_location', ['building'=>$building]),
+            'rest'=>Widget::factory('application:links', ['links' => $links])
+        ];
+        $rows = new ArrayIterator($rows);
+        Event::trigger('extra.gismon_building.row', $rows, $building);
+        $table->add_row((array)$rows);
+	}
+
+
+$param = [
+    'is_offset'     => true,
+    'top_input_arr' => ['name', 'group'],
+    'columns'       => $table->columns,
+	'panel_buttons' =>$panel_buttons
+];
+echo V('application:search_box', $param);
+
+
+echo $table;
+?>
+
+<?php echo $pagination; ?>

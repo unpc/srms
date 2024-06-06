@@ -1,0 +1,3 @@
+<?php
+
+$config['labs'] = ['people'];

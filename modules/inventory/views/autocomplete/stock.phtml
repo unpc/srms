@@ -1,0 +1,15 @@
+<div class="clearfix">
+	<div class="float_left">
+	 	<span class="tag" style="width: 80px"><?php echo $stock->ref_no ? Number::fill($stock->ref_no, 8) : '--'; ?></span>
+	</div>
+	<div style="margin-left:92px">
+	<span class="em"><?php echo H($stock->product_name); ?></span>
+	<span>
+		&#160;
+	<?php
+		$type = $stock->is_collection ? I18N::T('inventory', '存货集合') : I18N::T('inventory', '普通存货');
+			echo '('.$type.')';
+	?>
+	</span>
+	</div>
+</div>

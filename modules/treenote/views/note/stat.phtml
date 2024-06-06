@@ -1,0 +1,87 @@
+<?php $me = L('ME'); ?>
+<div class="hr_1">&#160;</div>
+<div class="clearfix panel padding_1">
+	<div class="float_left">
+	<a class="button button_save" q-object="export" q-event="click" q-src="<?php echo H(URI::url('!treenote/note/export_stat') ) ?>" q-static="<?php echo H(['type'=>'csv','form_token'=>$form_token]) ?>" ><?php echo I18N::T('treenote', '导出CSV')?></a>
+	</div>
+	<div class="float_right">
+		<?php echo I18N::T('treenote', '第 %week 周, 总耗时 %hours', ['%week'=>'<em>'.$form['week'].'</big></em>', '%hours'=>'<em>'.$hours.'</em>hr']);?>
+		&#160;&#160;
+	</div>
+</div>
+
+<?php
+
+$table = Widget::factory('table');
+
+$table->name = 'work_stat';
+
+$table->reset_search_label = I18N::HT('treenote', '本周');
+
+$table->add_columns([
+	'@' => NULL,
+	'year' => [
+		'title'=>I18N::T('treenote', '年'),
+		'filter' => [
+			'form' => V('treenote:general/table/filters/year', [
+				'year'=>$form['year'],
+			]),
+			'value' => $form['year'] ? Date::format($form['year'], 'Y') : NULL ,
+            'field' => 'year'
+		],
+		'invisible'=>TRUE,
+	],
+	'week' => [
+		'title'=>I18N::T('treenote', '工作周'),
+		'filter' => [
+			'form' => V('treenote:general/table/filters/week', [
+				'week'=>$form['week'],
+			]),
+			'value' => $form['week'] ? H(strtr("%weekW (%wstart - %wend)", [
+												   '%week' => $form['week'],
+												   '%wstart' => Date::format($form['week_start'], 'Y-m-d'),
+												   '%wend' => Date::format($form['week_end'], 'Y-m-d'),
+												   ])) : NULL,
+            'field' => 'week'
+		],
+		'invisible'=>TRUE,
+	],
+	'title' => [
+		'title' => I18N::T('treenote', '工作'),
+		'align' => 'left',
+		'nowrap' => TRUE,
+		'extra_class' => 'flexible',
+	],
+	'actual' => [
+		'title' => I18N::T('treenote', '消耗时间'),
+		'nowrap' => TRUE,
+		'align' => 'right'
+	],
+	'complete' => [
+		'title' => I18N::T('treenote', '完成时间'),
+		'nowrap' => TRUE,
+		'align' => 'right'
+	],
+	'deadline' => [
+		'title' => I18N::T('treenote', '截止日期'),
+		'nowrap' => TRUE,
+		'align' => 'right'
+	]
+
+]);
+
+$table->empty_message = I18N::T('treenote', '(无)');
+
+foreach ($notes as $note) {
+	$task = $note->task;
+	$table->add_row([
+		'@' => V('treenote:task/table/data/ref', ['task'=>$task]),
+		//'week' => date('W', $note->mtime).'W',
+		'title' => V('treenote:task/table/data/title', ['task'=>$task]),
+		'actual' => V('treenote:note/table/data/actual', ['note'=>$note]),
+		'complete' => V('treenote:note/table/data/complete', ['note'=>$note]),
+		'deadline' => V('treenote:task/table/data/deadline', ['task'=>$task]),
+	]);
+}
+
+echo $table;

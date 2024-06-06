@@ -1,0 +1,11 @@
+<?php 
+/*
+echo Widget::factory('user_selector', 
+		array(
+			'name'=>'sender', 
+			'autocomplete'=>URI::url('!eq_sample/autocomplete/user'), 
+			'user'=>$this->sender,
+	));
+ */
+?>
+<input class="text middle" name="sender" value="<?php echo H($this->sender); ?>"/>

@@ -1,0 +1,80 @@
+<?php $select_achievements_id = "select_achievements_".uniqid();?>
+<?php $select_equipments_id = "select_equipments_".uniqid();?>
+<div class="form padding_2">
+	<form method="post" autocomplete="off" action="<?php echo H(URI::url()) ?>">
+	<?php echo V('form_error', ['form'=>$form]); ?>
+		<table class="form">
+			<tbody>
+				<tr>
+					<td>
+						<?php echo Form::checkbox('sync[users]', $form['sync']['users']); ?>
+					</td>
+					<td class="nowrap"><?php echo I18N::T('wordpress', '成员信息'); ?></td>
+				</tr>
+				<tr>
+					<td>
+						<?php echo Form::checkbox('sync[equipments]', $form['sync']['equipments']); ?>
+					</td>
+					<td class="nowrap"><?php echo I18N::T('wordpress', '仪器信息'); ?></td>
+				</tr>
+				<tr>
+					<td>
+						<?php echo Form::checkbox('', FALSE, NULL, 'id="'.$select_achievements_id.'"'); ?>
+					</td>
+					<td class="nowrap"><?php echo I18N::T('wordpress', '成果信息'); ?></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td class="nowrap">
+                        <span>
+                            <?php echo Form::checkbox('sync[publications]', $form['sync']['publications'], I18N::T('wordpress', '论文信息'), 'class="middle monitor"', 'class="middle"')?>
+                        </span>
+                        <span class="toggle:sync[publications] show_on:on hidden lpadding_4">
+                            <?php echo Form::dropdown('sp_type', I18N::T('wordpress', WP_Sync::$sync_publication_types), $form['sp_type'] ? : WP_Sync::TYPE_TIME_DESC);?>
+                        </span>
+					</td>
+				</tr>
+<?php /*
+				<tr>
+					<td></td>
+					<td class="nowrap">
+						<?php echo Form::checkbox('sync[patents]', $form['sync']['patents'], I18N::T('wordpress', '专利信息'))?>
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td class="nowrap">
+						<?php echo Form::checkbox('sync[awards]', $form['sync']['awards'], I18N::T('wordpress', '获奖信息'))?>
+					</td>
+				</tr>
+  */?>
+				<tr>
+					<td class="nowrap" colspan="2">
+                        <input name="submit" type="submit" class="button button_import" value="<?php echo H(I18N::T('wordpress', '同步数据') ) ?>" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div id="<?php echo H($equipments_list_uniqid) ?>" class="padding_1 clearfix">&#160;</div>
+	</form>
+	<script>
+		jQuery(function($){
+			var $selector = $("#<?php echo $select_achievements_id; ?>");
+			var $form = $selector.parents('form');
+			$selector.bind('click', function(e) {
+				if(Q.browser.msie){
+					$(this).change();
+				}
+			})
+			.bind('change', function(e){
+				var $selectors = $form.find('input[name="sync\[publications\]"]');
+				if ($selector.is(':checked')) {
+					$selectors.attr('checked', 'checked');
+				}
+				else {
+					$selectors.removeAttr('checked');
+				}
+			});
+		});
+	</script>
+</div>

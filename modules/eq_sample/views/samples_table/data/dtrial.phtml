@@ -1,0 +1,14 @@
+<small class="description">
+    <?php
+    $records = Q("$sample eq_record");
+    if ($records->total_count()) {
+        $dtrials = [];
+        foreach ($records as $record) {
+            $dtrials[] = Date::format($record->dtstart).'-'.Date::format($record->dtend);
+        }
+        echo implode('<br>', $dtrials);
+    }else {
+        echo $sample->dtstart ? Date::format($sample->dtstart).'-'.Date::format($sample->dtend) : '--';
+    }
+    ?>
+</small>

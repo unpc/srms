@@ -1,0 +1,13 @@
+<div class="description">
+<?php 
+	$params = Config::get('system.controller_params');
+	$id = $params[0];
+	$user = O('user',$id);	
+ ?>
+	<p>您正在查看 <?php echo H($user->name); ?> 的详细信息。</p>
+	<p>*您可以修改或删除此用户信息。</p>	
+	<p>*您可以按仪器名称查看您的仪器使用收费情况。</p>
+	<p>*您可以输出仪器使用收费报表。</p>
+	<p>*管理员权限。</p>
+</div>
+

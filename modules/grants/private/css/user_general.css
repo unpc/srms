@@ -1,0 +1,21 @@
+.general_title {
+	padding: 5px 2px;	
+}
+
+.grant_template {
+	
+	td {
+		
+		span.amount {
+			color: #CC6600;
+			font-weight: bold;
+		}
+		
+		span.project {
+			color: #333333;
+			cursor: pointer;
+			font-weight: bold;
+		}
+	}
+	
+}

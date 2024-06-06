@@ -1,0 +1,69 @@
+<style>
+    .dialog_content table.form td div.dropdown_container {
+        min-width: 175px;
+        width: 175px;
+    }
+
+    .dialog_content tr td div.dropdown_container div.dropdown_text {
+        min-width: 152px;
+    }
+</style>
+<table class="form">
+  <tr>
+    <td class="right nowrap middle"><?php echo I18N::T('application','重复周期'); ?></td>
+    <td class="left nowrap middle" style="padding-left: 10px;">
+      <?php
+		 /*
+		 NO.TASK#262 (xiaopei.li@2010.11.20)
+		 */
+	if ($rrule->id > 0) {
+		$rule = json_decode($rrule->rule);
+	}
+
+	$uniqid = uniqid();
+	$rrule_uniqid = 'rrule_'.$uniqid;
+	$static = H(['rrule_uniqid'=>$rrule_uniqid]);
+
+    $rtypes = TM_RRule::$cal_rtype;
+	$rtype;
+	if( isset($form['cal_rtype']) ){
+		$rtype = $form['cal_rtype'];
+	} else {
+		$rtype = $rule->rtype?:1;
+	}
+	echo Form::dropdown('cal_rtype', T($rtypes), $rtype, 'style="width: 210px;min-width: 210px;" class="middle view event:change object:cal_rtype src:'.URI::url('rrule').' static:'.$static.'"','class="middle"');
+      ?>
+    </td>
+    <td class="center nowrap middle" style="width: 47px;"><?php echo I18N::T('application','频率'); ?></td>
+    <td class="left nowrap middle">
+      <input type="text" size="25" name="rnum" class="text number" value="<?php echo H($rule->rnum ?: 1 ) ?>" />
+    </td>
+  </tr>
+</table>
+<div id="<?php echo H($rrule_uniqid ) ?>">
+  <?php
+	 switch ($rtype) {
+        case TM_RRule::RRULE_DAILY:   // 按照日计算
+        echo V('application:widgets/cal_rule_date/daily/day');
+    break;
+        case TM_RRule::RRULE_WEEKLY:  // 按照周计算
+        echo V('application:widgets/cal_rule_date/weekly/week', ['week_day'=>$rule->rrule[0]]);
+    break;
+    default:
+    break;
+  }
+  ?>
+
+</div>
+<table class="form">
+  <tr>
+	<td class="left nowrap middle"><?php echo I18N::T('application','有效时间') ?></td>
+	<td class="left nowrap middle" style="padding-left: 10px;" colspan="3">
+        <div style="height: 28px;width: 100%;border: 1px solid #E5E5E5;border-radius: 3px;">
+            <input name="dtfrom" size="25" style="border: none;" class="text date" value="<?php echo H($rrule->dtfrom ? : $dtstart ) ?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/>
+            <span class="date_interval" style="width: 40px;">-</span>
+            <input name="dtto" size="25" style="border: none;" class="text date" value="<?php echo H($rrule->dtto ? : $dtend+2678400 ) ?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/>
+        </div>
+	</td>
+  </tr>
+</table>

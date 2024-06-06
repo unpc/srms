@@ -1,0 +1,5 @@
+<?php 
+	$education_set[0] = '--';
+	$education_set += (array)Resume::$education;	
+?>
+<?php echo Form::dropdown('education', $education_set, H($this->education) ?: 0, ' class="drop middle"'); ?>

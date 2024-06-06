@@ -1,0 +1,113 @@
+.capture_window {
+	position: relative;
+	
+	#chat {
+		border: 1px #CCCCCC solid;
+		width: 350px;
+		height: 100px;
+		overflow-x: hidden;
+		overflow-y: scroll;
+		
+		.speaker {
+			padding-left: 5px;
+			color: blue;
+		} 
+		
+		.text {
+			padding-left: 10px;
+			margin: 0px 0px 3px;
+		}
+	}
+
+	.screen {
+		background: #000 url(!/images/loading_black.gif) no-repeat center center;
+	}
+
+	.camera {
+		width: 220px;
+		height: 171px;
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		z-index: 999;
+		visibility: hidden;
+		outline: none;
+	}
+	
+	#camera {
+		outline: none;
+	}
+
+	a.icon_button {
+		width: 24px;
+		height: 24px;
+		display: inline-block;
+		cursor: pointer;
+		text-decoration: none;
+		background-position: center center;
+		background-repeat: no-repeat;
+		border-radius: 5px;
+	}
+
+	a.icon_button:hover {
+		text-decoration: none;
+		background-color: #999;
+	}
+
+	a.icon_button_video {
+		background-image:url('!eq_mon/images/video.png');
+	}
+	
+	a.icon_button_talk {
+		background-image:url('!eq_mon/images/talk.png');
+	}
+	
+	a.icon_button_fullscreen {
+		background-image: url('!eq_mon/images/fullscreen.png');
+	}
+	
+	.talk_container {
+		position:absolute;
+		display: none;
+	}
+	
+	.talk_content {
+		border:1px solid #999;
+		min-width: 350px;
+		min-height: 150px;
+		_width:350px;
+		_height:150px;
+		margin-left: 5px;
+		background: #FFFFFF;
+		box-shadow: rgba(0,0,0,0.5) 2px 2px 5px;
+		filter: progid:DXImageTransform.Microsoft.Shadow (Color=#000000, Direction=135, Strength=2);
+		border-radius: 5px;
+	}
+	
+	.talk_arrow {
+		position: absolute;
+		width: 30px;
+		height: 17px;
+		left: 0;
+		background-image: url('!eq_mon/images/arrowdown.png');
+		background-repeat: no-repeat;
+		z-index: 600;
+	}
+	
+	.talk_loading {
+		background: url('images/loading.gif') no-repeat center center;
+	}
+}
+
+.capture_image {
+	display:block;
+}
+
+a.send_chat {
+	background-image: url("images/buttons/talk.png");
+	*background-image: url("images/buttons/talk.gif");
+	background-position: 4px center;
+	background-repeat: no-repeat;
+	padding-left: 22px;
+}
+

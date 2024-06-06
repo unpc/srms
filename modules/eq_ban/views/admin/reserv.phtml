@@ -1,0 +1,207 @@
+<form method="post" autocomplete="off">
+	<div class="form">
+	<?php echo V('form_error', ['form'=>$form])?>
+	<table class="form td_padding_2">
+        <tr>
+            <td>
+                <div class="interval_6"></div>
+                <h2 class="section_title"><?php echo I18N::T('eq_ban', '默认设置')?></h2>
+            </td>
+        </tr>
+		<tr>
+			<td class="middle">
+                <div><?php echo I18N::T('eq_ban', '自动加入黑名单的迟到次数上限') ?></div>
+                <div class="interval_10"></div>
+                <input type="text" name="max_allowed_late_times" size="35" class="text number" value="<?php echo H((int) $max_allowed_late_times) ?>" /><span style="padding: 0 4px;"><?php echo I18N::T('eq_ban', '次') ?></span>
+                <?php echo Form::checkbox('is_late_times_exceed', $is_late_times_exceed, I18N::T('eq_ban', '设置通知阈值'), 'class="monitor checkbox"'); ?>
+                <span class="right nowrap middle toggle:is_late_times_exceed show_on:on"><?php echo I18N::T('eq_ban', '迟到次数通知阈值') ?></span>
+                <span class="top toggle:is_late_times_exceed show_on:on">
+                <input class="text number" name="late_times_exceed_preset" size="20" value="<?php echo H($late_times_exceed_preset)?>" />
+                <span style="padding: 0 4px;"><?php echo I18N::T('eq_ban', '次') ?></span>
+                </span>
+            </td>
+		</tr>
+		<tr>
+            <td class="middle">
+			    <div><?php echo I18N::T('eq_ban', '自动加入黑名单的早退次数上限') ?></div>
+                <div class="interval_10"></div>
+			    <input type="text" name="max_allowed_leave_early_times" size="35" class="text number" value="<?php echo H((int) $max_allowed_leave_early_times) ?>" /><span style="padding: 0 4px;"><?php echo I18N::T('eq_ban', '次') ?></span>
+                <?php echo Form::checkbox('is_leave_early_times_exceed', $is_leave_early_times_exceed, I18N::T('eq_ban', '设置通知阈值'), 'class="monitor checkbox"'); ?>
+                <span class="right nowrap middle toggle:is_leave_early_times_exceed show_on:on"><?php echo I18N::T('eq_ban', '早退次数通知阈值') ?></span>
+                <span class="top toggle:is_leave_early_times_exceed show_on:on">
+                <input class="text number" name="leave_early_times_exceed_preset" size="20" value="<?php echo H($leave_early_times_exceed_preset)?>" />
+                <span style="padding: 0 4px;"><?php echo I18N::T('eq_ban', '次') ?></span>
+                </span>
+            </td>
+		</tr>
+		<tr>
+			<td class="middle">
+                <div><?php echo I18N::T('eq_ban', '自动加入黑名单的爽约次数上限') ?></div>
+                <div class="interval_10"></div>
+			    <input type="text" name="max_allowed_miss_times" size="35" class="text number" value="<?php echo H((int) $max_allowed_miss_times) ?>" /><span style="padding: 0 4px;"><?php echo I18N::T('eq_ban', '次') ?></span>
+                <?php echo Form::checkbox('is_miss_times_exceed', $is_miss_times_exceed, I18N::T('eq_ban', '设置通知阈值'), 'class="monitor checkbox"'); ?>
+                <span class="right nowrap middle toggle:is_miss_times_exceed show_on:on"><?php echo I18N::T('eq_ban', '爽约次数通知阈值') ?></span>
+                <span class="top toggle:is_miss_times_exceed show_on:on">
+                <input class="text number" name="miss_times_exceed_preset" size="20" value="<?php echo H($miss_times_exceed_preset)?>" />
+                <span style="padding: 0 4px;"><?php echo I18N::T('eq_ban', '次') ?></span>
+                </span>
+            </td>
+		</tr>
+		<tr>
+			<td class="middle">
+                <div><?php echo I18N::T('eq_ban', '自动加入黑名单的超时次数上限') ?></div>
+                <div class="interval_10"></div>
+			    <input type="text" name="max_allowed_overtime_times" size="35" class="text number" value="<?php echo H((int) $max_allowed_overtime_times) ?>" /><span style="padding: 0 4px;"><?php echo I18N::T('eq_ban', '次') ?></span>
+                <?php echo Form::checkbox('is_overtime_times_exceed', $is_overtime_times_exceed, I18N::T('eq_ban', '设置通知阈值'), 'class="monitor checkbox"'); ?>
+                <span class="right nowrap middle toggle:is_overtime_times_exceed show_on:on"><?php echo I18N::T('eq_ban', '超时次数通知阈值') ?></span>
+                <span class="top toggle:is_overtime_times_exceed show_on:on">
+                <input class="text number" name="overtime_times_exceed_preset" size="20" value="<?php echo H($overtime_times_exceed_preset)?>" />
+                <span style="padding: 0 4px;"><?php echo I18N::T('eq_ban', '次') ?></span>
+                </span>
+            </td>
+		</tr>
+        <tr>
+            <td class="middle">
+                <div><?php echo I18N::T('eq_ban', '自动加入黑名单的违规行为上限') ?></div>
+                <div class="interval_10"></div>
+                <input type="text" name="max_allowed_violate_times" size="35" class="text number" value="<?php echo H((int) $max_allowed_violate_times) ?>" /><span style="padding: 0 4px;"><?php echo I18N::T('eq_ban', '次') ?></span>
+                <?php echo Form::checkbox('is_violate_times_exceed', $is_violate_times_exceed, I18N::T('eq_ban', '设置通知阈值'), 'class="monitor checkbox"'); ?>
+                <span class="right nowrap middle toggle:is_violate_times_exceed show_on:on"><?php echo I18N::T('eq_ban', '违规行为次数通知阈值') ?></span>
+                <span class="top toggle:is_violate_times_exceed show_on:on">
+                <input class="text number" name="violate_times_exceed_preset" size="20" value="<?php echo H($violate_times_exceed_preset)?>" />
+                <span style="padding: 0 4px;"><?php echo I18N::T('eq_ban', '次') ?></span>
+                </span>
+            </td>
+        </tr>
+
+            <tr>
+            <td class="middle">
+                <div><?php echo I18N::T('eq_ban', '自动加入黑名单的违规总次数上限') ?></div>
+                <div class="interval_10"></div>
+                <input type="text" name="max_allowed_total_count_times" size="35" class="text number" value="<?php echo H((int) $max_allowed_total_count_times) ?>" /><span style="padding: 0 4px;"><?php echo I18N::T('eq_ban', '次') ?></span>
+                <?php echo Form::checkbox('is_total_count_times_exceed', $is_total_count_times_exceed, I18N::T('eq_ban', '设置通知阈值'), 'class="monitor checkbox"'); ?>
+                <span class="right nowrap middle toggle:is_total_count_times_exceed show_on:on"><?php echo I18N::T('eq_ban', '违规总次数通知阈值') ?></span>
+                <span class="top toggle:is_total_count_times_exceed show_on:on">
+                <input class="text number" name="total_count_times_exceed_preset" size="20" value="<?php echo H($total_count_times_exceed_preset)?>" />
+                <span style="padding: 0 4px;"><?php echo I18N::T('eq_ban', '次') ?></span>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td class="middle" style="color: #e54041">
+				<div><?php echo I18N::HT('eq_ban', '* 为0时不做上限限制')?></div>
+				<div><?php echo I18N::HT('eq_ban', '* 上限设置为3时, 表示用户在违规3次后, 就会被加入黑名单')?></div>
+				<div><?php echo I18N::HT('eq_ban', '* 提醒阈值设置为3时, 表示用户在违规超过3次后, 就会给违规用户发送系统消息，提醒用户注意规范使用')?></div>
+			</td>
+        </tr>
+	</table>
+	</div>
+	<div class="interval_36"></div>
+    <div class="form eq_ban_reserv" style="width: 66%">
+        <?php
+
+        $need_to_check = [
+            'equipment.max_allowed_miss_times' => 'max_allowed_miss_times',
+            'equipment.max_allowed_leave_early_times' => 'max_allowed_leave_early_times',
+            'equipment.max_allowed_overtime_times' => 'max_allowed_overtime_times',
+            'equipment.max_allowed_late_times' => 'max_allowed_late_times',
+            'equipment.max_allowed_violate_times' => 'max_allowed_violate_times',
+            'equipment.max_allowed_total_count_times' => 'max_allowed_total_count_times',
+
+            'equipment.is_late_times_exceed' => 'is_late_times_exceed',
+            'equipment.is_leave_early_times_exceed' => 'is_leave_early_times_exceed',
+            'equipment.is_miss_times_exceed' => 'is_miss_times_exceed',
+            'equipment.is_overtime_times_exceed' => 'is_overtime_times_exceed',
+            'equipment.is_violate_times_exceed' => 'is_violate_times_exceed',
+            'equipment.is_total_count_times_exceed' => 'is_total_count_times_exceed',
+
+            'equipment.late_times_exceed_preset' => 'late_times_exceed_preset',
+            'equipment.leave_early_times_exceed_preset' => 'leave_early_times_exceed_preset',
+            'equipment.miss_times_exceed_preset' => 'miss_times_exceed_preset',
+            'equipment.overtime_times_exceed_preset' => 'overtime_times_exceed_preset',
+            'equipment.violate_times_exceed_preset' => 'violate_times_exceed_preset',
+            'equipment.total_count_times_exceed_preset' => 'total_count_times_exceed_preset',
+        ];
+        $specific = [];
+        $tagged = (array) Lab::get('@TAG');
+        foreach ($tagged as $tag => $data) {
+            $new_data = [];
+            foreach($need_to_check as $k=>$v) {
+                if (isset($data[$k])) {
+                    $new_data[$v] = $data[$k];
+                }
+            }
+            if ($new_data) {
+                asort($new_data);
+                $key = json_encode($new_data);
+                if (!isset($specific[$key])) {
+                    $specific[$key] = $new_data;
+                }
+                $specific[$key]['tags'][] = $tag;
+            }
+        }
+
+        $flexform = Widget::factory('flexform');
+        $flexform->title = I18N::T('eq_ban', '个别黑名单-用户限制');
+        $flexform->template_data = ['disabled'=>true];
+        $flexform->title_width = 50;
+        $flexform->existing_data = array_values($specific);
+        $flexform->item_view = 'eq_ban:admin/specific_setting';
+        $flexform->extra_vars = [
+            'modify_limit_format' => $modify_limit_format,
+            'reserv_max_format' => $reserv_max_format,
+        ];
+        echo $flexform;
+
+        ?>
+    <?php
+
+    // 仪器组织机构
+
+    $eq_need_to_check = [
+      'eq.max_allowed_miss_times' => 'max_allowed_miss_times',
+      'eq.max_allowed_leave_early_times' => 'max_allowed_leave_early_times',
+      'eq.max_allowed_overtime_times' => 'max_allowed_overtime_times',
+      'eq.max_allowed_late_times' => 'max_allowed_late_times',
+      'eq.max_allowed_violate_times' => 'max_allowed_violate_times',
+      'eq.max_allowed_total_count_times' => 'max_allowed_total_count_times',
+    ];
+    $specific_eq = [];
+    $tags = (array) Lab::get('@TAG');
+    foreach ($tags as $tag => $data) {
+      $new_data = [];
+      foreach ($eq_need_to_check as $k=>$v) {
+        if (isset($data[$k])) {
+          $new_data[$v] = $data[$k];
+        }
+      }
+      if ($new_data) {
+        asort($new_data);
+        $key = json_encode($new_data);
+        if (!isset($specific_eq[$key])) {
+          $specific_eq[$key] = $new_data;
+        }
+        $specific_eq[$key]['tags'][] = $tag;
+      }
+    }
+
+    $flexform_eq = Widget::factory('flexform');
+    $flexform_eq->title = I18N::T('eq_ban', '个别黑名单-仪器限制');
+    $flexform_eq->template_data = ['disabled'=>true];
+    $flexform_eq->existing_data = array_values($specific_eq);
+    $flexform_eq->title_width = 50;
+    $flexform_eq->item_view = 'eq_ban:admin/specific_eq_setting';
+    $flexform_eq->extra_vars = [
+      'modify_limit_format' => $modify_limit_format,
+      'reserv_max_format' => $reserv_max_format,
+    ];
+    echo $flexform_eq;
+  ?>
+  </div>
+	<div class="form lpadding_2">
+        <input type="submit" name="submit" value="<?php echo T('保存修改'); ?>" class="font-button-save" />
+	    <input type="reset" name="reset" value="<?php echo T('取消'); ?>" class="font-button-default rmargin" />
+	</div>
+	<div class="interval_60"></div>
+</form>
+

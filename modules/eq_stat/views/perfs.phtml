@@ -1,0 +1,93 @@
+<div class="hr_1">&#160;</div>
+<?php if (L('ME')->is_allowed_to('添加', 'eq_perf')):?>
+<div class="panel clearfix">
+	<div class="float_left padding_1">
+		<a class="button button_add" href="<?php echo H(URI::url('!eq_stat/perfs/add')) ?>"><?php echo I18N::HT('eq_stat', '添加评估') ?></a>
+	</div>
+</div>
+<?php endif;?>
+<?php echo $pagination; ?>
+<?php
+	if($form['dtstart_check'] && $form['dtend_check']) {
+		$form['date'] = H(date('Y/m/d',$form['dtstart'])).'-'.H(date('Y/m/d',$form['dtend']));
+	}
+	elseif($form['dtstart_check']) {
+		$form['date'] = H(date('Y/m/d',$form['dtstart'])).'-'.I18N::T('eq_stat','最末');
+	}
+	elseif($form['dtend_check']) {
+		$form['date'] = I18N::T('eq_stat','最初').'-'.H(date('Y/m/d',$form['dtend']));
+	}
+
+	$cat = O('tag', $form['cat_id']);
+	$group = O('tag', $form['group_id']);
+	$tag_type = $form['tag'];
+	if ($tag_type == 'group') {
+		$tag = $group;
+	}
+	else {
+		$tag = $cat;
+	}
+	$table = Widget::factory('table');
+	$table->name = 'eq_perfs';
+	$table->add_columns([
+		'@'=>[
+			'extra_class'=>'tight',
+		],
+		'name'=>[
+			'title'=>I18N::T('eq_stat', '评估项目'),
+			'filter'=>[
+				'form'=>V('perfs_table/filters/name', ['name'=>$form['name']]),
+				'value'=>$form['name'] ? H($form['name']) : NULL
+			],
+			'nowrap'=>TRUE,
+		],
+		'collection'=>[
+			'title'=>I18N::T('eq_stat', '评估范围'),
+			'align'=>'left',
+			'filter'=>[
+				'form'=>V('perfs_table/filters/tag', [
+					'tag_type'=>$tag_type,
+					'cat'=>$cat,
+					'group'=>$group,
+					'cat_root'=>$cat_root,
+					'group_root'=>$group_root
+				]),
+				'value'=>$tag->root->id ? V('application:tag/path', ['tag'=>$tag]) : NULL,
+				'field'=>'tag,cat_id,group_id'
+			],
+			'nowrap'=>TRUE,
+		],
+		'date'=>[
+			'title'=> I18N::T('eq_stat', '评估时段'),
+			'filter'=>[
+				'form'=>V('perfs_table/filters/date',[
+					'dtstart_check'=>$form['dtstart_check'],
+					'dtstart'=>$form['dtstart'],
+					'dtend_check'=>$form['dtend_check'],
+					'dtend'=>$form['dtend']
+				]),
+				'value' => $form['date'] ? H($form['date']) : NULL,
+				'field'=>'dtstart_check,dtstart,dtend,dtend_check'
+			],
+			'nowrap'=>TRUE,
+		],
+		'rest'=>[
+			'nowrap'=>TRUE
+		]
+	]);
+
+	$table->empty_message = I18N::T('eq_stat', '无符合条件的绩效评估');
+
+	if (count($perfs)) foreach($perfs as $perf) {
+		$links = $perf->links('index');
+		$tag = $perf->collection;
+		$table->add_row([
+			'@' => NULL,
+			'name' => V('perfs_table/data/name', ['perf'=>$perf]),
+			'collection' => $tag->root->id ? V('application:tag/path', ['tag'=>$tag]) : T('所有'),
+			'date' => Date::format($perf->dfrom, 'Y/m/d').' - '.Date::format($perf->dto, 'Y/m/d'),
+			'rest' => Widget::factory('application:links', ['links'=>$links]),
+		]);
+	}
+
+	echo $table;

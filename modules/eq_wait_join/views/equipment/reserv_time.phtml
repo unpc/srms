@@ -1,0 +1,10 @@
+<div class="form padding_2 hidden toggle:accept_reserv show_on:on">
+    <h4><?php echo I18N::T('eq_wait_join', '预约等待设置')?></h4>
+    <div class="hr_1">&#160;</div>
+    <div class="padding_2">
+        <?php echo Form::checkbox('wait_join_for_reserv', $equipment->wait_join_for_reserv, I18N::T('eq_wait_join', '允许用户在预约失败后申请预约等待'), 'class="middle checkbox"', 'class="middle"')?>
+        <div class="description wait_join_for_reserv_descripton">
+            *&#160;<?php echo I18N::T('eq_reserv', '打开此功能后允许用户在预约失败自行申请预约等待');?>
+        </div>
+    </div>
+</div>

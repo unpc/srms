@@ -1,0 +1,98 @@
+<?php
+/*
+ * @Description:预约的弹出层（Ps：此处还有websocket通信的代码）
+ */
+$me = L('ME');
+$tree['uuid'] = 'uuid_reserv-server_' . uniqid();
+$formJson     = json_encode((array) $tree);
+$parentId     = $calendar->parent->id;
+$parentName   = $calendar->parent->name();
+?>
+<div class="padding_1 middle center calendar_wait" id="<?= $tree['uuid'] ?>">
+	<img src="<?php echo H(_C('images/wait.png'))?>" />
+	<div class="hr_2"></div>
+	<h1 class="middle center title"><?= I18N::T('calendars', '请 稍 后') ?></h1>
+    <p class="content center"><?= I18N::T('calendars', '此时段还有其他用户正在预约') ?></p>
+    <p class="content center"><?= I18N::T('calendars', '预约结果马上揭晓') ?></p>
+    <h1 class="middle center title">. . .</h1>
+</div>
+
+<script>
+(function($){
+
+    var config = {
+        path: '<?= Config::get("calendar.io.path", "/socket.io") ?>',
+        autoConnect: false,
+        forceNew: true,
+        query: {
+            userId: '<?= $me->id ?>',
+            userName: '<?= $me->name ?>',
+            ticket: '<?= JS::quote($ticket, '') ?>',
+            ticketId: '<?= JS::quote($ticketId, '') ?>',
+        }
+    };
+
+    <?php if ($_SERVER['HTTPS'] == 'on') : ?>
+        config.secure = true;
+        config.rejectUnauthorized = true;
+    <?php endif; ?>
+
+    var socket = io.connect('<?= Config::get("calendar.io.url", "") ?>', config);
+    var uuid = '<?= $tree['uuid'] ?>';
+    var url = '<?= $url ?: URI::url("!calendars/calendar") ?>'
+
+    var _Failed = function(msg) {
+        Q.trigger({
+            url: url,
+            data: {
+                errorMsg: msg,
+                uuid: uuid,
+                parentId: '<?= $parentId ?>',
+                parentName: '<?= $parentName ?>'
+            },
+            object: 'reservComponentFailed',
+            event: 'click',
+            global: false
+        })
+    };
+
+    var _Success = function(data) {
+        Q.trigger({
+            url: url, 
+            data: data,
+            object: 'refreshComponent',
+            event: 'click',
+            global: false,
+            success: function(){
+                Dialog.close()
+            }
+        })
+    };
+
+    socket
+        .connect()
+        .on('yiqikong-reserv-reback', function (rep) {
+            socket.disconnect()
+            if (rep.success) {
+                socket.disconnect()
+                if (rep.success) {
+                    rep.form = '<?= $formJson ?>'
+                    _Success(rep)
+                    return;
+                }
+            }
+            _Failed(rep.error_msg)
+        })
+        .on('connect', function(msg) {
+            socket.emit('yiqikong-reserv', { form: <?= JS::quote($formJson) ?>, ticket: <?= JS::quote($ticket) ?>})
+        })
+        .on('connect_error', function(msg) {
+            this.disconnect()
+            _Failed('<?= T("连接预约服务器失败, 请稍后再试!") ?>')
+        })
+        .on('error', function(msg) {
+            this.disconnect()
+            _Failed(msg)
+        });
+})(jQuery)
+</script>

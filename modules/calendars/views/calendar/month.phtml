@@ -1,0 +1,181 @@
+<style>
+    div.tab_content {
+        position: inherit !important;
+    }
+</style>
+<?php
+//$dtstart: 日历的第一天
+//$dtend: 日历的最后一天
+$month = (int) date('n', $dtstart);
+$now = time();
+?>
+<script>
+    var month_day = [];
+	var month_day_loading = false;
+
+	/**
+	 * 无奈之举，和week.phtml对应，后面再调整
+	 */
+	
+	$('#toggle_button .button_save').hide();
+	$('#toggle_button .button_print').hide();
+
+    load_month_day = function (rec) {
+        if (month_day.length == 0) month_day_loading = false;
+        if (month_day_loading && !rec) return;
+
+        month_day_loading = true;
+        var month_day_current = month_day.pop();
+
+        Q.trigger({
+            url: month_day_current.url,
+            object: 'month_components',
+            event: 'get',
+            data: {
+            calendar: month_day_current.calendar,
+            dtstart: month_day_current.dtstart,
+            dtend: month_day_current.dtend,
+            container: month_day_current.container
+            },
+            parallel: true,
+            complete: function() {
+            $(month_day_current.container).removeClass('loading');
+            if ($('.calendar_month').length > 0) setTimeout(function () {
+                load_month_day(true);
+            }, 400); // 根据nginx的防并发机制进行的调整
+            }
+        });
+    }
+</script>
+<div class="overlay" id="calendar_month_overlay">
+</div>
+
+<div class="panel clearfix calendar_pad_bottom">
+
+    <div class = "float_left toggle_view week_month" style="left: 2041px;">
+        <?php if (!$form['disable_day']): ?>
+            <a href="<?php echo H($calendar->url('day', ['st'=>$now] + Input::get())) ?>" class="calendar_button">
+                <span><?php echo I18N::T('calendars', '日')?> </span>
+            </a>
+        <?php endif;?>
+        <?php if (!$form['disable_week']): ?>
+            <a href="<?php echo H($calendar->url('week', ['st'=>$now] + Input::get())) ?>" class="calendar_button">
+                <span><?php echo I18N::T('calendars', '周')?> </span>
+            </a>
+        <?php endif;?>
+        <?php if (!$form['disable_month']): ?>
+            <a href="<?php echo H($calendar->url('month', ['st'=>$now] + Input::get())) ?>" class="calendar_button calendar_active" style="margin-left: 11px;">
+                <span><?php echo I18N::T('calendars', '月')?> </span>
+            </a>
+        <?php endif;?>
+    </div>
+
+	<div class = "float_left toggle_view week_month" id="week_month" style="left:-4px; bottom: 28px; width: 150px; ">
+		<a href="<?php echo H(URI::url('', ['st'=>$dtprev] + Input::get())) ?>" class="calendar_button" style="width: 34px;">
+			<span class="calendar_pre icon-left  rpadding_1"></span>
+		</a>
+		<a href="<?php echo H(URI::url('', ['st'=>$dtnext] + Input::get())) ?>" class="calendar_button" style="margin-left: 11px; width: 34px;">
+			<span class="calendar_pre icon-right lpadding_1"></span>
+		</a>
+		<a href="<?php echo H(URI::url('', ['st'=>$now] + Input::get())) ?>" class="calendar_button" style="margin-left: 11px !important; padding-left: 5px; width: 50px;">
+			<span><?php echo I18N::T('calendars', '本月')?></span>
+		</a>
+	</div>
+
+    <div class="center time_center" id="calendar_time_center">
+        <span class="center_date"><?php echo Date::format($dtstart, I18N::T('calendars', 'Y/m/d'))?> - <?php echo Date::format(Date::prev_time($dtnext), I18N::T('calendars', 'Y/m/d'))?></span>
+    </div>
+</div>
+<script>
+    var o = document.getElementById("layout_body");
+    var w = o.clientWidth || o.offsetWidth;
+    document.getElementById("calendar_time_center").style.cssText='width: ' + (w - 270 -500) + 'px;';
+    $('.calendar_week_header_left').css({position: "unset"});
+    $('.calendar_week_header_right').css({position: "unset", width: ''});
+    $(".calendar_week_header_left").removeClass("display_with_calendar_week_header_left");
+    $(".calendar_week_header_right").removeClass("display_with_calendar_week_header_right");
+</script>
+<table class="calendar_month flexible" cellpadding="0" cellspacing="0" style="margin-top: 45px;">
+	<thead class="header">
+		<tr>
+		<?php 
+			$headers = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']; 
+			foreach ($headers as $wday) : 
+		?>
+			<th class="header">
+				<h2><?php echo I18N::T('calendars', $wday); ?></h2>
+			</th>
+		<?php 
+			endforeach; 
+		?>
+		</tr>
+	</thead>
+	<!-- <tbody class="hr">
+		<tr><td colspan="7"></td></tr>
+	</tbody> -->
+	<tbody class="month_grid">
+	<?php
+		$day = $dtstart;
+		$diff = date('w', $day) ;
+		$day = strtotime("-{$diff} day", $day);
+		$current_month = (int) date('n', $now);
+		$current_month_day = (int) date('j', $now);
+		while ($day <= $dtend) :
+	?>
+		<tr class="<?php echo $class; ?>">
+			<?php
+			$week_start = $day;
+			$week_end = strtotime('+6 day', $week_start);
+			for($wday =0; $wday<7; $wday++):
+				$cc = 'day_cell';
+				if ($wday===0) $cc .= ' tick';
+				$month_day = (int) date('j', $day);
+				$real_month = (int) date('n', $day);
+				$real_month_day = (int) date('j', $day);
+				if ($current_month==$real_month && $current_month_day==$real_month_day) $cc .= ' today';
+				if ($day < $dtstart) $cc .= ' prev_month_day_cell';
+				if ($day > $dtend) $cc .= ' next_month_day_cell';
+			?>
+				<td class="<?php echo H($cc) ?>">
+					<div class="month_day">
+						<a href="<?php echo H($calendar->url('week', ['st'=>$week_start])) ?>"><?php echo H($month_day);?></a>
+					</div>
+					<?php
+					$container_id = "month_{$real_month}_day_{$real_month_day}";
+					$dayend = Date::next_time($day)
+					?>
+					<div id="<?php echo $container_id; ?>" class="day_content loading">&#160;</div>
+					<script>
+					jQuery(function($){
+						var url = <?php echo JS::quote(URI::url('!calendars/calendar'))?>;
+						var calendar = <?php echo (int)$calendar->id ?>;
+						var dtstart = <?php echo (int)$day ?>;
+						var dtend = <?php echo (int)$dayend - 1 ?>;
+						var container = <?php echo JS::quote('#'.$container_id) ?>;
+
+            month_day.push({
+              url: url,
+              calendar: calendar,
+              dtstart: dtstart,
+              dtend: dtend,
+              container: container
+            });
+            $('.browser_wrapper').css('position', 'relative');
+            setTimeout(function () {
+				load_month_day();
+				$('#calendar_month_overlay').remove();
+				$('.browser_wrapper').css('position', 'inherit');
+            }, 1000);
+					});
+					</script>
+				</td>
+			<?php
+				$day = Date::next_time($day);
+			endfor;
+			?>
+		</tr>
+	<?php
+		endwhile;
+	?>
+	</tbody>
+</table>

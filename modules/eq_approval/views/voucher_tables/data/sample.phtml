@@ -1,0 +1,5 @@
+<?php if ($voucher->type == EQ_Voucher_Model::SAMPLE): ?>
+	<span><?= $voucher->samples ?><?= I18N::T('eq_approval', '个') ?></span>
+<?php else: ?>
+	<span>--</span>
+<?php endif; ?>

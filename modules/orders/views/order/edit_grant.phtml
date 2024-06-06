@@ -1,0 +1,61 @@
+<?php
+$expense = $order->expense;
+$no_error = (!is_object($form) || !!$form->no_error);
+$grant = O('grant', $form['grant']);
+$portion = O('grant_portion', $form['grant_portion']);
+if (!$grant->id) $grant = $expense->grant;
+if (!$portion->id) $portion = $expense->portion;
+$grant_element_class = $grant_element_class ? : 'grant_element_' . uniqid();//bug4058, 未关联经费的订单，不能看见经费元素
+?>
+<tr>
+    <td class="label top nowrap right"><?php echo I18N::HT('orders', '关联经费'); ?></td>
+    <td class="left" colspan="3">
+        <?php echo Widget::factory('grants:grant_select', ['grant' => $grant, 
+        	'portion' => $portion, 
+        	'grant_name' => $grant_name,
+        	'portion_name' => $portion_name,
+			'grant_element_class' => $grant_element_class,
+        	]); ?>
+    </td>
+</tr>
+<?php 
+$grants = Q('grant');
+?>
+<?php if (count($grants) > 0): ?>
+<tr class="<?php echo $grant_element_class; ?>">
+    <td class="label top nowrap right">* <?php echo I18N::HT('grants', '说明')?></td>
+    <td class="left" colspan="3">
+	    <input class="text" name="grant_summary" size="40" value="<?php echo H($no_error ? $expense->summary : $form['grant_summary'] ? : '')?>"/>
+    </td>
+</tr>
+
+<tr class="<?php echo $grant_element_class; ?>">
+    <td class="label top nowrap right"><?php echo I18N::HT('grants', '发票号') ?></td>
+    <td class="left" colspan="3">
+        <input class="text" name="grant_invoice_no" size="40" value="<?php echo H($no_error ? $expense->invoice_no : $form['grant_invoice_no'])?>"/>
+    </td>
+</tr>
+
+<tr class="<?php echo $grant_element_class; ?>">
+    <td class="label top nowrap right"><?php echo I18N::HT('grants', '支出标签') ?></td>
+    <td class="left" colspan="3">
+        <?php
+        $root = Tag_Model::root('grant_expense');
+        $tags = (array) Q("$expense tag[root=$root]")->to_assoc('name','name');
+        $order_tag = I18N::T('orders', '订单');
+        $tags[$order_tag] = $order_tag;
+        $tags = json_encode($tags,TRUE);
+        
+        echo Widget::factory('application:multi_tag_selector',
+                [
+                    'autocomplete' => URI::url("autocomplete/tags.$root->id"),
+                    'name' => 'grant_tags',
+                    'value' => $no_error ? $tags : $form['grant_tags'],
+                    'size' => '40',
+                    'allow_creating' => TRUE,
+                    'token_tip' => I18N::T('grants', '您可选择标签或按回车键输入新的标签'),
+                ]);
+        ?>
+    </td>
+</tr>
+<?php endif; ?>

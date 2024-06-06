@@ -1,0 +1,37 @@
+<div class="form padding_2">
+	<form method="post" autocomplete="off" action="<?php echo H(URI::url()) ?>">
+	<?php
+		echo V('form_error', ['form'=>$form]);
+	?>
+		<table class="form">
+			<tbody>
+				<tr>
+					<td class="nowrap">
+						<span class="label"><?php echo I18N::T('wordpress', '用户名')?></span>
+					</td>
+					<td>
+						<input name="username" class="text <?php echo $is_bind ? 'readonly' : '' ?>" <?php echo $is_bind ? 'disabled' : '' ?> value="<?php echo $is_bind ? L('ME')->wordpress_username : H($form['username'])?>"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="nowrap">
+						<span class="label"><?php echo I18N::T('wordpress', '密码')?></span>
+					</td>
+					<td>
+						<input name="password" type="password" class="text <?php echo $is_bind ? 'readonly' : '' ?>" <?php echo $is_bind ? 'disabled' : '' ?> value="<?php echo $is_bind ? '' : H($form['password'])?>"/>
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td class="nowrap">
+						<?php if ($is_bind): ?>
+						<input name="unbind" class="button button_save" type="submit" value="<?php echo H(I18N::T('wordpress', '解除绑定')) ?>" />
+						<?php else: ?>
+						<input name="bind" class="button button_import" type="submit" value="<?php echo H(I18N::T('wordpress', '绑定数据')) ?>" />
+						<?php endif; ?>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</div>

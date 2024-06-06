@@ -1,0 +1,7 @@
+<?php
+$me = L('ME');
+$count = Q("{$me}<incharge equipment[allow_evaluate=1]")->total_count();
+if ($me->is_active() && $count) :
+?>
+    <a href="<?php echo H(URI::url('!equipments/extra/evaluate_incharge')) ?>" class="blue"><?php echo I18N::T('equipments', '您负责的所有仪器的评价记录');?></a>
+<?php endif;?>

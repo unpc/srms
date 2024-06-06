@@ -1,0 +1,8 @@
+<?php
+    $credit_levels = Q("credit_level");
+    $levels = [];
+    foreach ($credit_levels as $credit_level) {
+        $levels[$credit_level->level] = str_repeat('A', $credit_level->level);
+    }
+?>
+<?php echo Form::dropdown('level', ['' => '--'] + $levels, $this->level, 'class="dropdown middle"'); ?>

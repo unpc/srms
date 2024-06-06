@@ -1,0 +1,31 @@
+<?php 
+	$user = L('ME');
+	$root = $equipment->get_root();
+	$charge_type = $equipment->charge_template['reserv'];
+	$template = Config::get('eq_charge.template')[$charge_type];
+	$charge_default_setting = $template['content']['reserv']['params']['%options'];
+	$charge_setting = EQ_Charge::get_charge_setting($equipment);
+	$reserv_setting = $charge_setting['reserv'] ?: $charge_default_setting;
+?>
+<?php
+	$unit_price = $reserv_setting['*']['unit_price'];
+	$minimum_fee = $reserv_setting['*']['minimum_fee'];
+	unset($reserv_setting['*']);
+	$return = false;
+	foreach ($reserv_setting as $key => $value) {
+		$return = EQ_Lua::user_has_tag($key, $user, $root);
+		if ($return) {
+			$unit_price = $value['unit_price'];
+			$minimum_fee = $value['minimum_fee'];
+			break;
+		}
+	}
+?>
+<p class="lpadding_2">
+	<?php echo I18N::T('eq_charge', '每小时需要金额')?>:
+	<?php echo Number::currency($unit_price); ?>
+</p>
+<p class="lpadding_2">
+	<?php echo I18N::T('eq_charge', '每次使用的开机费用')?>:
+	<?php echo Number::currency($minimum_fee); ?>
+</p>

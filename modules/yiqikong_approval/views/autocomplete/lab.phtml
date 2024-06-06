@@ -1,0 +1,14 @@
+<table class="mini_form">
+	<tr>
+		<td class="top">
+			<span class="name"><?php echo H($lab->name) ?></span>
+			<br />
+			<?php $status_tags = (string) $lab->status_tags(); ?>
+			<?php if ($status_tags): ?>
+			<div class="clearfix">
+				<?php echo $status_tags ?>
+			</div>
+			<?php endif;?>
+		</td>
+	</tr>
+</table>

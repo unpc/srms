@@ -1,0 +1,6 @@
+<?php
+$time_lenth = 0;
+foreach (Q("service_apply_record[apply={$apply}]") as $item)
+    $time_lenth += $item->dtlength;
+echo round($time_lenth / 3600, 2);
+?>

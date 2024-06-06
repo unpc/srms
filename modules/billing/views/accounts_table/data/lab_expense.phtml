@@ -1,0 +1,1 @@
+<?php echo Number::currency(Q("billing_transaction[account={$account}][!transfer][!manual]")->sum('outcome'));?>

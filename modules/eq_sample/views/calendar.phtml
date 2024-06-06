@@ -1,0 +1,32 @@
+<?php
+$now = Date::time();
+$dtstart = Input::form('st') ?: $now;
+$date = getdate($dtstart);
+$dtstart = mktime(0, 0, 0, $date['mon'], $date['mday'], $date['year']);
+$dtend = $dtstart + 604800;
+$browser_id = 'browser_' . uniqid();
+?>
+<div id="<?php echo H($browser_id) ?>" src="<?php echo H($calendar->url('week', ['browser_id' => $browser_id, 'st' => $dtstart, 'ed' => $dtend, 'calendar_id' => $calendar->id, 'disable_list' => TRUE, 'disable_month' => TRUE])) ?>" style="position: relative;"></div>
+<script type="text/javascript">
+    var equipment_id = <?= $equipment->id ?>;
+    var url = "<?= URI::url('!eq_sample/index'); ?>";
+    var is_admin = <?= json_encode(L('ME')->is_allowed_to('添加送样记录', $equipment)) ?>;
+    Q.js_ready('calendars:week', function() {
+        Q.Calendar.Week.IComponent = {
+            insert: function() {
+                //AJAX调用
+                Q.trigger({
+                    object: is_admin ? 'add_sample_record' : 'add_sample',
+                    event: 'click',
+                    data: {
+                        dtstart: this.dtStart,
+                        dtend: this.dtEnd,
+                        equipment_id: equipment_id
+                    },
+                    url: url
+                });
+                if (!this.is_hover) this.remove();
+            }
+        }
+    });
+</script>

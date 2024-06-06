@@ -1,0 +1,13 @@
+<graph 
+	baseFont="Arial" baseFontSize="14" animation="1" formatNumberScale="0" pieSliceDepth="30" 
+	decimalPrecision="0" showNames="1" divLineDecimalPrecision="0" hoverCapSepChar=" ">
+	<?php foreach ((array) $this->curves as $key => $pie): 
+			$name = $p;
+			$name = $pie['label'];
+			$val = $pie['points'][0]['value'];
+			$color = $this->colors[$key % 10];
+			if ($val <= 0) continue;
+	?>
+	<set name="<?php echo H($name)?>" value="<?php echo H($val)?>" color="<?php echo H($color) ?>" />
+	<?php endforeach ?>
+</graph>

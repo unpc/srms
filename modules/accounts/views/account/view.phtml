@@ -1,0 +1,53 @@
+<div class="hr_1">&#160;</div>
+<div class="clearfix">
+	<table class="account_grid form">
+		<tr>
+			<td class="top icon">
+				<?php
+					echo $account->icon('64');
+				?>
+			</td>
+			<td class="top nowrap">
+				<h2>
+					<?php echo H($account->lab_name)?>
+					<small class="description normal">
+						(<?php echo H($account->lab_id)?>)
+					</small>
+				</h2>
+				<div class="hr_1">&#160;</div>
+				<p>
+					<?php
+						echo I18N::T('accounts', '客户类型: ');
+						echo H($available_types[$account->type]);
+					?>
+				</p>
+				<p>
+					<?php
+						echo I18N::T('accounts', '程序代号: ');
+						echo H($account->code_id);
+					?>
+				</p>
+				<?php if ($account->etime):?>
+				<p>
+					<?php
+
+						echo I18N::T('accounts', '到期时间：');
+						echo Date::format($account->etime);
+
+						if (time() > $account->etime && $account->is_open()):
+					?>
+						<span class="red"><?php echo I18N::T('accounts', '(未关闭)');?></span>
+						<?php endif; ?>
+				</p>
+				<?php endif; ?>
+				<div class="hr_3">&#160;</div>
+				<?php echo V('application:widgets/links', ['links'=>$account->links('view'), 'separator'=>'&#160;&#160;']);?>
+			</td>
+		</tr>
+	</table>
+</div>
+<div class="hr_3">&#160;</div>
+<?php
+	echo $secondary_tabs;
+	echo $secondary_tabs->content;
+?>

@@ -1,0 +1,3 @@
+<?php
+    echo Number::currency((double)Q("billing_transaction[account={$account}][site={$site}][outcome>0][source=local][transfer=0][manual=0]")->sum('outcome'));
+?>

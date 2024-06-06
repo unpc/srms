@@ -1,0 +1,17 @@
+<?php
+
+if ($c->source->id) {
+    switch($c->source->name()) {
+    case 'eq_sample':
+        echo I18N::HT('eq_charge', '送样收费');
+        break;
+    case 'eq_reserv':
+        echo I18N::HT('eq_charge', '预约收费');
+        break;
+    case 'service_apply_record':
+        echo I18N::HT('eq_charge', '服务收费');
+        break;
+    default:
+        echo I18N::HT('eq_charge', '使用收费');
+    }
+}

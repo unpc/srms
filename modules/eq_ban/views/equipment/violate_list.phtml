@@ -1,0 +1,90 @@
+<?php
+$me = L('ME');
+
+$table = Widget::factory('table');
+
+$table->name = 'eq_ban_eq';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+if($form['ctstart_check'] && $form['ctend_check']) {
+	$form['ctime'] = H(date('Y/m/d',$form['ctstart'])).'~'.H(date('Y/m/d',$form['ctend']));
+}
+elseif($form['ctstart_check']) {
+	$form['ctime'] = H(date('Y/m/d',$form['ctstart'])).'~'.I18N::T('eq_ban','最末');
+}
+elseif($form['ctend_check']) {
+	$form['ctime'] = I18N::T('eq_ban','最初').'~'.H(date('Y/m/d',$form['ctend']));
+}
+
+$columns = [
+	'name'=>[
+		'weight'=>20,
+		'title'=>I18N::T('eq_ban', '姓名'),
+		'align'=>'left',
+		'nowrap'=>TRUE,
+		'filter'=> [
+			'form' => V('eq_ban:eq_ban_table/filters/text', ['value'=>$form['name']]),
+			'value' => $form['name'] ? H($form['name']) : NULL
+		],
+	],
+	'eq_name'=>[
+		'weight'=>25,
+		'title'=>I18N::T('eq_ban', '违规仪器'),
+		'align' => 'left',
+		'nowrap'=>TRUE,
+		'filter'=> [
+			'form' => V('eq_ban:eq_ban_table/filters/text', ['name'=>'eq_name', 'value'=>$form['eq_name']]),
+			'value' => $form['eq_name'] ? H($form['eq_name']) : NULL
+		],
+	],
+	'reason'=>[
+		'weight'=>30,
+		'title'=>I18N::T('eq_ban', '违规原因'),
+		'align' => 'left',
+		'nowrap'=>TRUE,
+	],
+    'ctime' => [
+		'weight' => 50,
+		'title'=>I18N::T('eq_ban', '违规时间'),
+		'align' => 'left',
+		'nowrap'=>TRUE,
+	],
+	'rest'=>[
+		'weight'=>60,
+		'align'=>'right',
+		'nowrap'=>TRUE,
+	]
+];
+
+$columns = new ArrayIterator($columns);
+
+Event::trigger('eq_ban.list.columns', $form, $columns);
+$param = [
+    'panel_buttons' => $panel_buttons,
+    'top_input_arr' => ['name', 'eq_name'],
+    'columns'       => (array) $columns
+];
+echo V('application:search_box', $param);
+
+$table->add_columns((array)$columns);
+
+$table->empty_message = I18N::T('eq_ban', '找不到相关的仪器违规记录！');
+
+if ($violations->total_count()) foreach ($violations as $violation) {
+	$links = $violation->links('eq');
+	$table->add_row([
+		'@' => [
+			'view'=> URI::anchor($violation->user->url(), $violation->user->icon('32', 'style="display:block"')),
+			'extra'=>'style="padding:4px;min-width:44px;*width:44px;" align="right"',
+		],
+		'name' => V('eq_ban:eq_ban_table/data/name', ['ban'=>$violation]),
+		'eq_name' => V('eq_ban:eq_ban_table/data/eq_violate', ['ban'=>$violation]),
+		'reason' => V('eq_ban:eq_ban_table/data/reason', ['ban' => $violation]),
+		'ctime' => V('eq_ban:eq_ban_table/data/ctime', ['ban' => $violation]),
+		'rest'=> Widget::factory('application:links', ['links'=>$links]),
+	]);
+}
+echo $table;
+?>
+<div class="pages"><?= $pagination;?></div>

@@ -1,0 +1,12 @@
+* {
+    font-weight: bold;
+    color: #333;
+    font-size: 14px;
+    font-family: helvetica, arial, sans-serif;
+}
+
+div.form {
+    background-color: #fff;
+    padding-left: 30px;
+    padding-top: 10px;
+}

@@ -1,0 +1,501 @@
+.layout_table {
+    width: 100%;
+    padding: 0 24px;
+}
+
+#center {
+    /*background-color: #FFF;*/
+    height: 100%;
+}
+
+table th.check_hover .filter_container {
+    position: relative;
+}
+
+.form .form tr.section td {
+    border-top: none;
+}
+
+table tr.skipped td {
+    background-color: #e7e7e7;
+}
+
+.row td a.eq_name {
+    color: #333;
+}
+
+table.month,table.month_day{
+    tr:not(:first-child){
+        td{
+            padding-right:60px;
+            padding-top:6px;
+        }
+    }
+}
+table.setting{
+    tr{
+        td{
+            padding-top:5px;
+            padding-bottom:10px;
+            div.container{
+                margin-top:5px;
+            }
+        }
+    }
+}
+table.form {
+    color: #4D4D4D;
+
+    td,
+    th {
+        /* padding: 2px; */
+        /* *padding: 3px 2px 1px; */
+    }
+    td.fill_left{
+        padding-left:18px
+    }
+
+    td.first,
+    th.first {
+        padding-left: 2px;
+    }
+
+    td.label {
+        /*	line-height: 30px;*/
+        font-weight: normal;
+    }
+
+    p.form_paragraph {
+        margin-bottom: 5px;
+    }
+
+    th.legend {
+        font-size: 14px;
+        font-weight: bold;
+        color: #666;
+    }
+
+    td.table_interval {
+        width: 80px;
+    }
+}
+
+table.form td.first,
+table.form th.first {
+    padding-left: 2px;
+}
+
+table.mini_form td {
+    padding: 1px;
+    *padding: 2px 1px 0;
+}
+
+table.sticky,
+table.sticky_header,
+.equipment_attachments table#nfs_sticky {
+    border-collapse: collapse;
+    width: 100%;
+
+    th {
+        padding: 2px 12px 2px 12px !important;
+        text-transform: capitalize;
+        color: #000000;
+        a {
+            color: #000000;
+        }
+    }
+
+    td {
+        padding-left: 12px !important;
+    }
+
+    thead th {
+        height: 44px;
+        cursor: default;
+        background-color: #FAFAFA;
+        font-size: 14px;
+        border-bottom: 1px solid #f4f5f6;
+        border-top: 1px solid #f0f0f0;
+
+        a.header,
+        span.header {
+            text-decoration: none;
+            display: block;
+            clear: right;
+            height: 18px;
+            line-height: 18px;
+            color: #333333;
+            _height: 18px;
+            overflow: hidden;
+        }
+
+        a.header_search,
+        span.header_search {
+            background-image: url("images/icons/search.png");
+            _background-image: url("images/icons/search.gif");
+            background-repeat: no-repeat;
+            background-position: 4px center;
+            padding-left: 22px;
+            padding-right: 4px;
+            white-space: nowrap;
+        }
+
+        a.header_sort_asc {
+            background: url("images/icons/asc.gif") no-repeat right center;
+            padding-right: 20px;
+        }
+
+        a.header_sort_desc {
+            background: url("images/icons/desc.gif") no-repeat right center;
+            padding-right: 20px;
+        }
+    }
+
+    thead th.filter_search {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    thead th.sort_by {
+        /*background-color: #F1F1F1;*/
+    }
+
+    thead th.border {
+        border-left: 1px solid #f4f5f6;
+        border-right: 1px solid #f4f5f6;
+    }
+
+    thead th.first {
+        border-left: 1px solid #f4f5f6;
+    }
+
+    thead th.last {
+        position: sticky;
+        z-index: 2;
+        right: 0;
+    }
+
+    tbody td.last {
+        position: sticky;
+        z-index: 2;
+        right: 0;
+    }
+
+
+    th.active,
+    th.filter:hover {
+        /*	background-color: #ccc;*/
+        background-image: none;
+        /*	border-bottom-color: #999;*/
+    }
+
+    th.filter .filter_container {
+        position: relative;
+    }
+
+    th.filter .filter_panel {
+        position: absolute;
+        z-index: 100;
+        background-color: #ccc;
+        border-left: 2px solid #999;
+        border-bottom: 2px solid #999;
+        border-right: 2px solid #999;
+        left: -12px;
+        top: 20px;
+        box-shadow: #666 0 3px 3px;
+        border-radius: 0 0 3px 3px;
+        filter: progid:DXImageTransform.Microsoft.Shadow (Color=#000000, Direction=135, Strength=2);
+    }
+
+    th.filter_search .filter_panel {
+        left: 0;
+    }
+
+    th.filter .filter_panel_right,
+    th.filter_right .filter_panel {
+        left: auto;
+        right: -12px;
+    }
+
+    thead td.search_filters {
+        text-align: left;
+        padding: 4px 0;
+        border-bottom: 1px solid #EDEFF2;
+        line-height: 1;
+
+        .tag {
+            background-color: #eff2f7;
+            border: 1px solid #ccd5e4;
+            margin-right: 2px;
+            padding: 2px;
+            cursor: default;
+            text-decoration: none;
+
+            a,
+            span {
+                display: inline-block;
+                vertical-align: middle;
+            }
+
+            .remove {
+                display: inline-block;
+                width: 10px;
+                height: 12px;
+                overflow: hidden;
+                background: transparent url("images/token/x.gif") no-repeat 0 0;
+                cursor: pointer;
+            }
+        }
+
+        .tag:hover {
+            background-color: #d8dfea;
+            border-color: #ccd5e4;
+            text-decoration: none;
+        }
+    }
+
+    .filter_container .form {
+        font-weight: normal;
+    }
+
+    .filter_container table.form td {
+        border: none;
+        padding: 2px;
+        *padding: 3px 2px 1px;
+    }
+}
+.equipment_attachments table#nfs_sticky th {
+    font-weight: normal;
+}
+.equipment_attachments table#nfs_sticky td {
+    line-height: 43px;
+}
+table.sticky,
+.equipment_attachments table#nfs_sticky {
+    position: relative;
+    background-color: #fff;
+    border-bottom: 1px solid #d7d7d7;
+    width: 100%;
+
+    td {
+        padding: 2px 12px 2px 0;
+        border-right-width: 0;
+        height: 43px;
+        border-bottom: 1px solid #EDEFF2;
+
+        a:hover {
+            color: var(--basiccolor);
+        }
+    }
+
+    td.row_even {
+        background-color: #FBFBFB;
+    }
+
+    td.row_odd {
+        background-color: #fff;
+    }
+
+    >tbody>tr.row:nth-child(even)>td {
+        background-color: #FAFAFA;
+        height: 43px;
+        color: #333333;
+        border-bottom: 1px solid #f5f6f7;
+    }
+
+    td *:not(.status_tag) a {
+        &:hover {
+            color: var(--basiccolor);
+            text-decoration-line: none;
+        }
+    }
+
+    a.status_tag_warning {
+        &:hover {
+            color: #f9b92e!important;
+        }
+    }
+
+    >tbody>tr.row:nth-child(odd)>td {
+        background-color: #fff;
+        height: 43px;
+        color: #333333;
+        border-bottom: 1px solid #f5f6f7;
+        word-break: break-all;
+    }
+
+    >tbody>tr.row:hover>td {
+        background-color: #f7f9fa;
+        /* cursor: pointer; */
+    }
+
+    td.icon img {
+        display: block;
+    }
+
+    tfoot th {
+        background-color: #f4f4f4;
+        border-top: 2px solid #ccc;
+    }
+
+    tr.section td {
+        border: none;
+        vertical-align: middle;
+        font-weight: bold;
+        padding: 0;
+
+        a,
+        strong {
+            color: #000;
+            display: block;
+            background-color: #e7e7e7;
+            padding: 4px 8px;
+        }
+
+        a:hover {
+            background-color: #d7d7d7;
+            text-decoration: none;
+        }
+    }
+
+    td span.panel_uniqid {
+        border-radius: 3px;
+        display: inline-block;
+        text-decoration: none !important;
+        white-space: nowrap;
+        padding: 1px 6px;
+        color: var(--basiccolor);
+        background-color: var(--backgroundcolor);
+    }
+
+    .num.nowrap>span.panel_uniqid {
+        color: var(--basiccolor);
+    }
+
+    /***送样预约表格的收费字体样式		***/
+    td.nowrap.fee {
+        color: var(--basiccolor) !important;
+    }
+
+    /**送样预约表格状态的样式**/
+    .status.nowrap>span.panel_uniqid {
+        width: 70px;
+        height: 20px;
+        color: #fff;
+        text-align: center;
+    }
+
+    th.tabs {
+        background-color: #d7d7d7;
+        background-image: none;
+        border: none;
+        padding: 2px 0 0;
+
+        .tab_wrapper {
+            display: inline-block;
+            position: relative;
+            font-weight: normal;
+        }
+
+        .num_notif {
+            background-color: #8CBF40;
+            border: 1px solid #360;
+            background: -moz-linear-gradient(270deg, #8CBF40, #693);
+            background: -webkit-gradient(linear, left top, left bottom, from(#8CBF40), to(#693));
+            text-shadow: 0 -1px 1px #693;
+            padding-bottom: 1px;
+            right: -10px;
+        }
+
+        a {
+            display: inline-block;
+            vertical-align: bottom;
+            padding: 2px 6px;
+            /* border-radius: 4px 4px 0 0; */
+        }
+
+        a:hover {
+            text-decoration: none;
+            background-color: #999;
+            color: #eee;
+        }
+
+        a.selected {
+            color: #000;
+            font-weight: bold;
+            background-color: #f4f4f4;
+        }
+
+        a.selected:hover {
+            color: #000;
+            background-color: #f4f4f4;
+        }
+    }
+
+    td.sort_column {
+        background: #FDFDFD;
+    }
+
+    td.sort_column.row_even {
+        background: #F9F9F9;
+    }
+
+    >tbody>tr.row:nth-child(even)>td.sort_column {
+        /*background-color: #FAFAFA;*/
+    }
+
+    >tbody>tr.row:nth-child(odd)>td.sort_column {
+        /*background-color: #FFFFFF;*/
+    }
+
+    td .criteria,
+    td.criteria {
+        font-weight: normal !important;
+        color: #999;
+        line-height: 1.231;
+        border-bottom: 1px solid #d7d7d7;
+    }
+
+    tr.date_header td {
+        background-color: #F5F5F5 !important;
+        color: #fff;
+        padding: 4px;
+        font-weight: bold;
+        font-size: 13px;
+        height: 15px !important;
+        line-height: 1;
+    }
+    
+
+    /*equipment模块下送样预约单元格高度*/
+    &#table_eq_sample td {
+        padding: 8px 12px;
+        .panel_uniqid{
+            color:#fff;
+        }
+        .panel_font{
+            color: var(--basiccolor);
+        }
+    }
+
+    /*equipment模块下使用收费单元格高度*/
+    &#table_eq_charge_charges td {
+        padding: 8px 12px;
+    }
+
+    &#table_equipments_applied_training td {
+        height: 64px;
+    }
+
+    &#table_equipments_approved_training td {
+        height: 64px;
+    }
+
+    &#table_equipments_overdue_training td {
+        height: 64px;
+    }
+
+    &#table_equipments_group_training td {
+        height: 64px;
+    }
+}

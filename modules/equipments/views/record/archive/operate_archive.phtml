@@ -1,0 +1,5 @@
+<div class="operate_archive_div">
+    <a href="<?php echo H(URI::url()) ?>" q-object="add_records_to_archive" q-event="click" q-static="<?php echo H(['archive_id'=>$archive->id, 'equipment_id'=>$equipment->id, 'form_token'=>$form_token])?>"><?php echo I18N::T('equipments', '添加当前搜索记录到该档案')?></a>
+    <a href="<?php echo H(URI::url()) ?>" q-object="edit_archive" q-event="click" q-static="<?php echo H(['archive_id'=>$archive->id, 'equipment_id'=>$equipment->id])?>"><?php echo I18N::T('equipments', '重命名档案')?></a>
+    <a href="<?php echo H(URI::url()) ?>" q-object="delete_archive" q-event="click" q-static="<?php echo H(['archive_id'=>$archive->id, 'equipment_id'=>$equipment->id]);?>"><?php echo I18N::T('equipments', '删除档案')?></a>
+</div>

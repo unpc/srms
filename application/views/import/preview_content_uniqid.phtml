@@ -1,0 +1,19 @@
+<tbody id="csv_content_<?php echo $uniqid; ?>">
+<?php
+?>
+	<?php foreach($preview_data as $ri => $row): ?>
+		<tr<?php echo $ri == 0 ? ' class="first_row"':''?>>
+		<td class="nowrap left"><?php echo $start_row++; ?></td>
+		<?php for($i = 0; $i <= $real_col_num; $i++ ): ?>
+			<td class="nowrap left"><?php echo mb_substr($row[$i], 0, 50, 'utf-8'); ?></td>
+		<?php endfor; ?>
+		</tr>
+	<?php endforeach; ?>
+	<tr>
+		<td class="nowrap left">...</td>
+		<?php for($i = 0; $i <= $real_col_num; $i++): ?>
+			<td class="nowrap left">...</td>
+		<?php endfor; ?>
+	</tr>
+</tbody>
+

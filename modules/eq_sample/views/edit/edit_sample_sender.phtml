@@ -1,0 +1,96 @@
+<?php
+echo CSS::load_async('equipments:common');
+$require = (string) V('form_require');
+$me = L('ME');
+$user = $form['sender'] ? O('user', $form['sender']) :
+($user ? :
+    ($sample->id ? $sample->sender : $me));
+?>
+<tr>
+    <td class="label left top nowrap">
+        <?php echo Form::radio('user_option', 'existing_user', $form['user_option'] ? : ($user->id ? 'existing_user' : 'new_user'),
+            I18N::T('eq_sample', '已存在成员'), 'class="monitor middle radio"', 'class="middle"'); ?>
+        <span class="toggle:user_option show_on:existing_user" style="display: block;padding-top: 24px;">
+            <?php
+            echo Widget::factory('user_selector', [
+                'autocomplete'=>URI::url('!eq_sample/autocomplete/sender'),
+                'name'=>'sender',
+                'user'=> $user,
+                'size'=>36,
+            ]);
+            ?>
+        </span>
+    </td>
+    <td class="label left top nowrap">
+        <?php echo Form::radio('user_option', 'new_user', $form['user_option'] ? : ($user->id ? 'existing_user' : 'new_user'),
+            I18N::T('eq_sample', '新建成员'),  'class="monitor middle radio"', 'class="middle"'); ?>
+    </td>
+</tr>
+
+<tr>
+    <td class="label left top nowrap" colspan="2">
+        <div class="toggle:user_option show_on:new_user">
+            <table class="form create_user">
+                <tr>
+                    <td class="label left nowrap">
+                        <?php echo $require;echo I18N::T('eq_sample', '姓名')?>
+                        <?php echo V('form_filter', ['error' => $form->errors['user_name'][0]]) ?>
+                    </td>
+                    <td class="label left nowrap">
+                        <?php echo $require;echo I18N::T('eq_sample', '电子邮箱')?>
+                        <?php echo V('form_filter', ['error' => $form->errors['user_email'][0]]) ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input name="user_name" class="text" size="20" value="<?php echo H($form['user_name'])?>" />
+                    </td>
+                    <td>
+                        <input name="user_email" class="text" size="20" value="<?php echo H($form['user_email'])?>" />
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td class="label left nowrap">
+                        <?php echo $require;echo I18N::T('eq_sample', '联系电话')?>
+                        <?php echo V('form_filter', ['error' => $form->errors['phone'][0]]) ?>
+                    </td>
+                    <td class="label left nowrap">
+                        <?php echo $require;echo I18N::T('eq_sample', '单位名称')?>
+                        <?php echo V('form_filter', ['error' => $form->errors['user_org'][0]]) ?>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>
+                        <input name="phone" class="text" size="20" value="<?php echo H($form['phone'])?>" />
+                    </td>
+                    <td>
+                        <input name="user_org" class="text" size="20" value="<?php echo H($form['user_org'])?>" />
+                    </td>
+                </tr>
+                <?php echo Event::trigger('equipments.record.create_user_view', $form);?>
+
+                <tr>
+                    <td class="label left nowrap">
+                        <?php if (Config::get('people.temp_user.tax_no.required', FALSE)) : ?>*<?php endif?>&#160;<?php echo I18N::T('eq_sample', '税务登记号')?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input name="tax_no" class="text" size="20" value="<?php echo H($form['tax_no'])?>" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label left description content_wrap" colspan="2">
+                        <?php echo I18N::T('eq_sample', '备注: 此处仅可以添加临时实验室成员, 如涉及计费, 单位名称应与发票抬头保持一致')?>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </td>
+</tr>
+
+
+

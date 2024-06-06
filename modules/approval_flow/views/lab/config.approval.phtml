@@ -1,0 +1,286 @@
+<form autocomplete="off" action="<?php echo H(URI::url()) ?>" method="post">
+    <?php echo V('form_error', ['form' => $form]) ?>
+    <table class="form">
+        <tr>
+            <td class="top icon" width="130">
+                <img src="<?php echo H($lab->icon_url('104')) ?>" width="104" />
+            </td>
+            <td class="top">
+                <h2 class="section_title">
+                    <span class="border"></span>
+                    <span class="black_title"><?php echo I18N::T('labs', '审核设置') ?></span>
+                </h2>
+                <?php if (Config::get('flow.eq_sample')['approve_pi']):?>
+                <div class="interval_12"></div>
+                <div class="lmaigin_1e5">
+                    <?php echo Form::checkbox('sample_approval', $form['sample_approval'] ?: $lab->sample_approval, I18N::T('labs', '送样需要PI审核'), 'class="middle checkbox monitor"'); ?>
+                    <div class="interval_12"></div>
+                    <div class="lmaigin_1e5">
+                        <span class="label description"><?php echo I18N::T('labs', '注: 勾选后, 组内用户提交送样申请后, 需要先通过PI审核'); ?></span>
+                    </div>
+
+                    <div class="lmaigin_1e5 toggle:sample_approval show_on:on hidden">
+                            <table>
+                                <tr>
+                                    <td><div class="interval_20">&#160;</div></td>
+                                </tr>
+                                <tr>
+                                    <td class="left nowrap top rpadding_label">
+                                        <?= Form::checkbox(
+                                            "sample_approval_unlimit_users_mode",
+                                            isset($form['sample_approval_unlimit_users_mode']) ? ($form['sample_approval_unlimit_users_mode'] == 'on') : ($lab->sample_approval_unlimit_users_mode == 'on'),
+                                            I18N::T('labs','免审用户'),
+                                            'class="middle checkbox monitor"',
+                                            'class="middle monitor"')
+                                        ?>
+                                    </td>
+                                    <td class="toggle:sample_approval_unlimit_users_mode show_on:on hidden">
+                                        <?php
+                                            $unlimit_users = [];
+                                            if ($lab->sample_approval_unlimit_users) {
+                                                foreach($lab->sample_approval_unlimit_users as $user_id) {
+                                                    $user = O('user', $user_id);
+                                                    if ($user->id) {
+                                                        $unlimit_users[$user->id] = "{$user->name}";
+                                                    }
+                                                }
+                                            }
+                                            $tooltip = I18N::T('equipments', '请输入关键字并选择');
+                                            echo Widget::factory('multi_user_selector', [
+                                                'autocomplete'=> URI::url("!labs/autocomplete/lab_users.{$lab->id}"),
+                                                'name'=>'sample_approval_unlimit_users',
+                                                'value' => $form['sample_approval_unlimit_users'] ?: json_encode($unlimit_users),
+                                            ]);
+                                        ?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><div class="interval_20">&#160;</div></td>
+                                </tr>
+                                <tr>
+                                    <td class="left nowrap middle rpadding_label">
+                                        <?= Form::checkbox(
+                                            "sample_approval_unlimit_amount_mode",
+                                            isset($form['sample_approval_unlimit_amount_mode']) ? ($form['sample_approval_unlimit_amount_mode'] == 'on') : ($lab->sample_approval_unlimit_amount_mode == 'on'),
+                                            I18N::T('labs','免审金额'),
+                                            'class="middle checkbox monitor"',
+                                            'class="middle monitor"')
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <input 
+                                            class="text currency toggle_status:sample_approval_unlimit_amount_mode enable_on:on"
+                                            name="sample_approval_unlimit_amount"
+                                            sign="<?php echo H(Config::get('lab.currency_sign') ) ?>"
+                                            value="<?= $form['sample_approval_unlimit_amount'] ?: $lab->sample_approval_unlimit_amount ?>"
+                                            style="width: 70px;"
+                                            <?php if((isset($form['sample_approval_unlimit_amount_mode']) && $form['sample_approval_unlimit_amount_mode'] != 'on') || (!isset($form['sample_approval_unlimit_amount_mode']) && $lab->sample_approval_unlimit_amount_mode != 'on')): ?>
+                                                disabled
+                                            <?php endif; ?>
+                                        /> 元/次
+                                        <span style="color: #E02020; padding-left: 20px;">*注：当设置免审金额后，用户送样低于该金额则无需PI审批</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><div class="interval_20">&#160;</div></td>
+                                </tr>
+                                <tr>
+                                    <td class="left nowrap top rpadding_label">
+                                        <?= Form::checkbox(
+                                            "sample_approval_unlimit_time_mode",
+                                            isset($form['sample_approval_unlimit_time_mode']) ? ($form['sample_approval_unlimit_time_mode'] == 'on') : ($lab->sample_approval_unlimit_time_mode == 'on'),
+                                            I18N::T('labs','审核时限'),
+                                            'class="middle checkbox monitor"',
+                                            'class="middle monitor"')
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php
+                                            $disabled = '';
+                                            if((isset($form['sample_approval_unlimit_time_mode']) && $form['sample_approval_unlimit_time_mode'] != 'on') || (!isset($form['sample_approval_unlimit_time_mode']) && $lab->sample_approval_unlimit_time_mode != 'on')) {
+                                                $disabled = 'disabled';
+                                            }
+                                            list($i_time, $interval_format) = Date::format_interval($lab->sample_approval_unlimit_time_mins);
+                                        ?>
+                                        <input 
+                                            class="text number middle set_time_value toggle_status:sample_approval_unlimit_time_mode enable_on:on"
+                                            q-number_default_value="0"
+                                            name="sample_approval_unlimit_time_mins"
+                                            value="<?php echo H($i_time ) ?>"
+                                            style="width: 70px;"
+                                            <?= $disabled ?>
+                                        />
+                                        <?= Form::dropdown(
+                                            "sample_approval_unlimit_time_format",
+                                            Date::units('ihd'),
+                                            $interval_format ?: 'i',
+                                            'class="middle set_time_format_80 toggle_status:sample_approval_unlimit_time_mode enable_on:on" ' . $disabled);
+                                        ?>
+                                        <div class="interval_20">&#160;</div>
+                                        <div>
+                                            超过时限后规则：
+                                            <?= Form::radio(
+                                                "sample_approval_unlimit_time_type",
+                                                1,
+                                                $lab->sample_approval_unlimit_time_type == 1,
+                                                I18N::T('announces', '申请通过'),
+                                                'class="middle radio toggle_status:sample_approval_unlimit_time_mode enable_on:on" ' . $disabled,
+                                                'class="middle rmargin_10 toggle_status:sample_approval_unlimit_time_mode enable_on:on" ' . $disabled);
+                                            ?>
+                                            <?= Form::radio(
+                                                "sample_approval_unlimit_time_type",
+                                                2,
+                                                $lab->sample_approval_unlimit_time_type != 1,
+                                                I18N::T('announces', '申请驳回'),
+                                                'class="middle radio toggle_status:sample_approval_unlimit_time_mode enable_on:on" ' . $disabled,
+                                                'class="middle toggle_status:sample_approval_unlimit_time_mode enable_on:on" ' . $disabled); 
+                                            ?>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                    </div>
+                </div>
+                <?php endif;?>
+                <?php if (Config::get('flow.eq_reserv')['approve_pi']):?>
+                <div class="interval_30"></div>
+                <div class="lmaigin_1e5">
+                    <?php echo Form::checkbox('reserv_approval', $form['reserv_approval'] ?: $lab->reserv_approval, I18N::T('labs', '预约需要PI审核'), 'class="middle monitor checkbox"'); ?>
+                    <div class="interval_12"></div>
+                    <div class="lmaigin_1e5">
+                        <span class="label description"><?php echo I18N::T('labs', '注: 勾选后, 组内用户提交预约申请后, 需要先通过PI审核'); ?></span>
+                    </div>
+
+                    <div class="lmaigin_1e5 toggle:reserv_approval show_on:on hidden">
+                            <table>
+                                <tr>
+                                    <td><div class="interval_20">&#160;</div></td>
+                                </tr>
+                                <tr>
+                                    <td class="left nowrap top rpadding_label">
+                                        <?= Form::checkbox(
+                                            "reserv_approval_unlimit_users_mode",
+                                            isset($form['reserv_approval_unlimit_users_mode']) ? ($form['reserv_approval_unlimit_users_mode'] == 'on') : ($lab->reserv_approval_unlimit_users_mode == 'on'),
+                                            I18N::T('labs','免审用户'),
+                                            'class="middle checkbox monitor"',
+                                            'class="middle monitor"')
+                                        ?>
+                                    </td>
+                                    <td class="toggle:reserv_approval_unlimit_users_mode show_on:on hidden">
+                                        <?php
+                                            $unlimit_users = [];
+                                            if ($lab->reserv_approval_unlimit_users) {
+                                                foreach($lab->reserv_approval_unlimit_users as $user_id) {
+                                                    $user = O('user', $user_id);
+                                                    if ($user->id) {
+                                                        $unlimit_users[$user->id] = "{$user->name}";
+                                                    }
+                                                }
+                                            }
+                                            $tooltip = I18N::T('equipments', '请输入关键字并选择');
+                                            echo Widget::factory('multi_user_selector', [
+                                                'autocomplete'=> URI::url("!labs/autocomplete/lab_users.{$lab->id}"),
+                                                'name'=>'reserv_approval_unlimit_users',
+                                                'value' => $form['reserv_approval_unlimit_users'] ?: json_encode($unlimit_users),
+                                            ]);
+                                        ?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><div class="interval_20">&#160;</div></td>
+                                </tr>
+                                <tr>
+                                    <td class="left nowrap middle rpadding_label">
+                                        <?= Form::checkbox(
+                                            "reserv_approval_unlimit_amount_mode",
+                                            isset($form['reserv_approval_unlimit_amount_mode']) ? ($form['reserv_approval_unlimit_amount_mode'] == 'on') : ($lab->reserv_approval_unlimit_amount_mode == 'on'),
+                                            I18N::T('labs','免审金额'),
+                                            'class="middle checkbox monitor"',
+                                            'class="middle monitor"')
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <input 
+                                            class="text currency toggle_status:reserv_approval_unlimit_amount_mode enable_on:on"
+                                            name="reserv_approval_unlimit_amount"
+                                            sign="<?php echo H(Config::get('lab.currency_sign') ) ?>"
+                                            value="<?= $form['reserv_approval_unlimit_amount'] ?: $lab->reserv_approval_unlimit_amount ?>"
+                                            style="width: 70px;"
+                                            <?php if((isset($form['reserv_approval_unlimit_amount_mode']) && $form['reserv_approval_unlimit_amount_mode'] != 'on') || (!isset($form['reserv_approval_unlimit_amount_mode']) && $lab->reserv_approval_unlimit_amount_mode != 'on')): ?>
+                                                disabled
+                                            <?php endif; ?>
+                                        /> 元/次
+                                        <span style="color: #E02020; padding-left: 20px;">*注：当设置免审金额后，用户预约低于该金额则无需PI审批</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><div class="interval_20">&#160;</div></td>
+                                </tr>
+                                <tr>
+                                    <td class="left nowrap top rpadding_label">
+                                        <?= Form::checkbox(
+                                            "reserv_approval_unlimit_time_mode",
+                                            isset($form['reserv_approval_unlimit_time_mode']) ? ($form['reserv_approval_unlimit_time_mode'] == 'on') : ($lab->reserv_approval_unlimit_time_mode == 'on'),
+                                            I18N::T('labs','审核时限'),
+                                            'class="middle checkbox monitor"',
+                                            'class="middle monitor"')
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php
+                                            $disabled = '';
+                                            if((isset($form['reserv_approval_unlimit_time_mode']) && $form['reserv_approval_unlimit_time_mode'] != 'on') || (!isset($form['reserv_approval_unlimit_time_mode']) && $lab->reserv_approval_unlimit_time_mode != 'on')) {
+                                                $disabled = 'disabled';
+                                            }
+                                            list($i_time, $interval_format) = Date::format_interval($lab->reserv_approval_unlimit_time_mins);
+                                        ?>
+                                        <input 
+                                            class="text number middle set_time_value toggle_status:reserv_approval_unlimit_time_mode enable_on:on"
+                                            q-number_default_value="0"
+                                            name="reserv_approval_unlimit_time_mins"
+                                            value="<?php echo H($i_time ) ?>"
+                                            style="width: 70px;"
+                                            <?= $disabled ?>
+                                        />
+                                        <?= Form::dropdown(
+                                            "reserv_approval_unlimit_time_format",
+                                            Date::units('ihd'),
+                                            $interval_format ?: 'i',
+                                            'class="middle set_time_format_80 toggle_status:reserv_approval_unlimit_time_mode enable_on:on" ' . $disabled);
+                                        ?>
+                                        <div class="interval_20">&#160;</div>
+                                        <div>
+                                            超过时限后规则：
+                                            <?= Form::radio(
+                                                "reserv_approval_unlimit_time_type",
+                                                1,
+                                                $lab->reserv_approval_unlimit_time_type == 1,
+                                                I18N::T('announces', '申请通过'),
+                                                'class="middle radio toggle_status:reserv_approval_unlimit_time_mode enable_on:on" ' . $disabled,
+                                                'class="middle rmargin_10 toggle_status:reserv_approval_unlimit_time_mode enable_on:on" ' . $disabled);
+                                            ?>
+                                            <?= Form::radio(
+                                                "reserv_approval_unlimit_time_type",
+                                                2,
+                                                $lab->reserv_approval_unlimit_time_type != 1,
+                                                I18N::T('announces', '申请驳回'),
+                                                'class="middle radio toggle_status:reserv_approval_unlimit_time_mode enable_on:on" ' . $disabled,
+                                                'class="middle toggle_status:reserv_approval_unlimit_time_mode enable_on:on" ' . $disabled); 
+                                            ?>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                    </div>
+                </div>
+                <div class="interval_30"></div>
+                <?php endif;?>
+            </td>
+        </tr>
+        <?php echo Event::trigger('approval_flow.lab_setting.extra_view', $lab, $form); ?>
+    </table>
+    <div class="form float_right" style="padding-left: 130px">
+        <input type="submit" name="submit" class="font-button-save float_right" value="<?php echo H(I18N::T('labs', '保存修改')) ?>" />
+    </div>
+    <div class="interval_60"></div>
+</form>

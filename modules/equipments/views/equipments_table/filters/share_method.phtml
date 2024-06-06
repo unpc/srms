@@ -1,0 +1,6 @@
+<?php
+$share_methods = ['--','reserv'=>'预约','sample'=>'送样','reserv|sample'=>'预约或送样','reserv&sample'=>'预约和送样','no'=>'无预约送样'];
+echo Form::dropdown('share_method',
+    $share_methods,
+    $form['share_method'] ? : 0,'class="autosubmittable dropdown middle"');
+?>

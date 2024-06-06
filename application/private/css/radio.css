@@ -1,0 +1,98 @@
+.pretty * {
+    box-sizing: border-box;
+}
+.pretty {
+    position: relative;
+    display: inline-block;
+    margin-right: 0 !important;
+    white-space: nowrap;
+    line-height: 1;
+}
+
+.pretty input {
+    position: absolute;
+    left: 0;
+    top: 0;
+    min-width: 1em;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    opacity: 0;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+}
+
+.pretty .state label {
+    position: initial;
+    display: inline-block;
+    font-weight: normal;
+    margin: 0;
+    text-indent: 1.5em;
+    min-width: calc(1em + 2px);
+}
+
+.pretty .state label:before,
+.pretty .state label:after {
+    content: '';
+    width: 16px;
+    height: 16px;
+    display: block;
+    box-sizing: border-box;
+    border-radius: 0;
+    border: 1px solid transparent;
+    z-index: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: transparent;
+}
+
+.pretty .state label:before {
+    border-color: #cccfd0;
+    border-radius: 10px;
+}
+
+
+.pretty input:checked ~ .state.p-success-o label:before,
+.pretty.p-toggle .state.p-success-o label:before {
+    border-color: #2BA07F;
+    border-color: var(--basiccolor);
+    border-radius: 10px;
+}
+
+.pretty input:checked ~ .state.p-success-o label:after,
+.pretty.p-toggle .state.p-success-o label:after {
+    background-color: transparent;
+}
+
+.pretty.p-default:not(.p-fill) input:checked ~ .state.p-success-o label:after {
+    background-color: #ffffff !important;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    width: 10px;
+    height: 10px;
+    left: 3px;
+    top: 3px;
+}
+.pretty.p-default:not(.p-fill) input:checked ~ .state.p-success-o label:before {
+    background-color: #2BA07F;
+    background-color: var(--basiccolor) !important;
+}
+
+.pretty.p-default.p-fill .state label:after {
+    -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    transform: scale(1);
+}
+
+.pretty.p-default .state label:after {
+    -webkit-transform: scale(0.6);
+    -ms-transform: scale(0.6);
+    transform: scale(0.6);
+}
+
+.pretty.p-default input:checked ~ .state label:after {
+    background-color: #bdc3c7 !important;
+}

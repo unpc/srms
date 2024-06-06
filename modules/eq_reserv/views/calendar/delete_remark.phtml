@@ -1,0 +1,33 @@
+<?php
+$form_id = 'delete_remark_form_' . uniqid();
+?>
+<div class="form padding_2">
+    <form id="<?= $form_id ?>">
+        <?= Form::hidden('component_id', $component->id); ?>
+        <textarea name="delete_remark" rows="3"
+                  style="height:100px;width:100%;"><?= $component->delete_remark ?></textarea>
+
+        <div class="button_container">
+            <div class="float_right">
+                <input class="font-button-save" type="submit" name="submit"
+                       value="<?php echo H(I18N::T('eq_reserv', '提交')) ?>"/>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    $('#<?= $form_id ?>').submit(function () {
+        Q.trigger({
+            object: 'delete_component',
+            event: 'click',
+            url: '<?= H(URI::url('!calendars/calendar')) ?>',
+            data: {
+                component_id: <?= $component->id ?>,
+                delete_remark: $('[name=delete_remark]').val(),
+                submit: 'submit'
+            }
+        });
+        return false;
+    });
+</script>

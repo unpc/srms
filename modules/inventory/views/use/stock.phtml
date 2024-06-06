@@ -1,0 +1,78 @@
+<?php
+// stock_uses table
+?>
+<?php
+
+// TODO 转移pagination(xiaopei.li@2011.10.20)
+$form = Lab::form();
+$stock_uses = Q("$stock<stock stock_use:sort(ctime D)");
+
+// pagination
+$start = (int) $form['st'];
+$per_page = 10;
+$start = $start - ($start % $per_page);
+
+if($start > 0) {
+	$last = floor($stock_uses->total_count() / $per_page) * $per_page;
+	if ($last == $stock_uses->total_count()) {
+		$last = max(0, $last - $per_page);
+	}
+	if ($start > $last) {
+		$start = $last;
+	}
+	$stock_uses = $stock_uses->limit($start, $per_page);
+}
+else {
+	$stock_uses = $stock_uses->limit($per_page);
+}
+
+$pagination = Widget::factory('pagination');
+$pagination->set([
+					 'start' => $start,
+					 'per_page' => $per_page,
+					 'total' => $stock_uses->total_count(),
+					 ]);
+
+echo $pagination;
+
+$table = Widget::factory('table');
+$table->name = 'stock_uses';
+$table->add_columns(
+	[
+		// '@' => NULL,
+		'ctime' => [
+			'title' => I18N::T('inventory', '领用时间'),
+			'nowrap' => TRUE
+			],
+		'stock' => [
+			'title' => I18N::T('inventory', '存货'),
+			'nowrap' => TRUE
+			],
+		'user' => [
+			'title' => I18N::T('inventory', '领用人'),
+			'nowrap' => TRUE
+			],
+		'quantity' => [
+			'title' => I18N::T('inventory', '数量'),
+			'nowrap' => TRUE
+			],
+		'note' => [
+			'title' => I18N::T('inventory', '备注'),
+			]
+		]);
+$table->empty_message = I18N::T('inventory', '无领用记录');
+if (count($stock_uses)) {
+	foreach ($stock_uses as $stock_use) {
+		$table->add_row(
+			[
+				'ctime' => V('inventory:stock_use_table/data/ctime', ['stock_use' => $stock_use]),
+				'stock' => V('inventory:stock_use_table/data/stock', ['stock_use' => $stock_use]),
+				'user' => V('inventory:stock_use_table/data/user', ['stock_use' => $stock_use]),
+				'quantity' => V('inventory:stock_use_table/data/quantity', ['stock_use' => $stock_use]),
+				'note' => V('inventory:stock_use_table/data/note', ['stock_use' => $stock_use]),
+				]
+			);
+	}
+}
+echo $table;
+?>

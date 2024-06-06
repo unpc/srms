@@ -1,0 +1,36 @@
+<div>
+<form autocomplete="off" class="view object:refund_transaction src:<?php echo URI::url('!billing/transaction')?>">
+<?php echo V('form_error', ['form'=>$form]);?>
+	<table class="form">
+		<tbody>
+			<tr>
+				<td class="label left nowrap top"><?php echo I18N::T('billing', '操作'); ?></td>
+                <td class="label left nowrap top"><?php echo I18N::T('billing', '金额'); ?></td>
+			</tr>
+			<tr>
+                <td>
+                    <?php
+                    $op_type = $form['op_type'] ?: 'refund';
+                    echo Form::radio('op_type', 'refund', $op_type, I18N::T('billing', '返还'), 'class="middle radio"', 'class="middle rmargin_80"');
+                    echo Form::radio('op_type', 'arrears', $op_type, I18N::T('billing', '补交'), 'class="middle radio"', 'class="middle"');
+                    ?>
+                </td>
+				<td><input type="text" class="text currency" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" name="money" value="<?php echo H($form['money']) ?>" /></td>
+			</tr>
+			<tr>
+				<td colspan="2" class="label left nowrap top"><?php echo I18N::T('billing', '描述'); ?></td>
+			</tr>
+            <tr>
+                <td colspan="2"><textarea name="description" type="text" cols="82" rows="4" class="text autogrow"><?php echo H($form['description']); ?></textarea></td>
+            </tr>
+		</tbody>
+	</table>
+    <div class="button_container">
+        <div class="float_right">
+            <input type="hidden" name="id" value="<?php echo $transaction->id; ?>" />
+            <input name="cancel" id="cancel" type="reset" class="font-button-default sm rmargin_2e4" value="<?php echo H(I18N::T('billing', '取消') ) ?>">
+            <input name="submit" type="submit" class="font-button-save sm" value="<?php echo H(I18N::T('billing', '提交')) ?>">
+        </div>
+    </div>
+</form>
+</div>

@@ -1,0 +1,41 @@
+<div class="hr_1"></div>
+<?php
+/*
+NO.BUG#264(guoping.zhang@2010.12.22)
+修改仪器状态添加权限
+*/
+$me = L('ME');
+if ($me->is_allowed_to('修改版本', $account)) :
+?>
+<div class="panel padding_1 clearfix">
+	<a class="button button_edit" href="<?php echo $account->url('version', NULL, NULL, 'edit'); ?>"><?php echo I18N::T('accounts', '修改版本'); ?></a>
+</div>
+<?php
+endif;
+	$table = Widget::factory('table');
+	$table->name = 'account_versions';
+	$table->add_columns([
+		'version'=>[
+			'title'=>I18N::T('accounts', '版本'),
+			'nowrap'=>TRUE
+		],
+		'date'=>[
+			'title'=>I18N::T('accounts', '时间'),
+			'nowrap'=>TRUE
+		],
+		'description'=>[
+			'title'=>I18N::T('accounts', '备注'),
+			'nowrap'=>TRUE,
+		],
+	]);
+	$table->empty_message = I18N::T('accounts', '暂无版本记录！');
+	foreach ($versions as $version) {
+	    $table->add_row([
+	    	'version'=>H($version->version),
+	    	'date'=>V('accounts:account/version_table/data/date', ['object'=>$version]),
+	    	'description'=>H($version->description, TRUE)
+	    ]);
+	}
+
+	echo $table;
+?>

@@ -1,0 +1,16 @@
+<div class="form padding_2">
+    <form id="eq_ban_form" method="POST" q-object="export" q-src="<?= URI::url('!eq_ban/index') ?>"
+        q-static="<?php echo H(['form_token'=>$form_token, 'type' => $type])?>" q-event="submit" autocomplete="off"
+        class="prevent_default">
+        <ul class="triple">
+            <?php
+	 		foreach ($columns as $p => $p_name) :?>
+            <li class="nowrap">
+                <?php echo Form::checkbox("columns[{$p}]", TRUE, I18N::T('eq_ban', $p_name), 'class="middle monitor"', 'class="middle"');?>
+            </li>
+            <?php endforeach;?>
+        </ul>
+        <input type="submit" name="submit" class="button button_edit"
+            value="<?php echo H(I18N::T('eq_ban', '提交')) ?>" />
+    </form>
+</div>

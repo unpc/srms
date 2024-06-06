@@ -1,0 +1,6 @@
+<?php
+
+//	echo '<h2 class="section_title margin-left-half">'. I18N::HT('achievements', $root->name).'</h3>';
+
+    $tags = Q("{$root->name()}[parent=$root]:sort(weight)");
+	echo V('application:admin/tags/tag_root', ['tags'=>$tags, 'root'=>$root, 'uniqid'=>$uniqid, 'button_title'=> $button_title, 'title'=> $button_title]);

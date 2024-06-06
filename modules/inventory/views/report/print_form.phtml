@@ -1,0 +1,16 @@
+<?php echo CSS::load_async('inventory:common');?>
+<div class="form padding_1">
+	<form action="<?php echo H(URI::url('!inventory/report', ['type'=>'print', 'stock_id'=>$stock_id])) ?>" target="_blank" class="prevent_default" method="post">
+		<div class="hr_2"></div>
+		<ul class="ep_triple">
+			<?php
+			foreach ($columns as $p => $p_name) :?>
+				<li class="nowrap">
+					<?php echo Form::checkbox("columns[{$p}]", TRUE, I18N::T('inventory', $p_name), 'class="middle monitor"', 'class="middle"');?>
+				</li>
+			<?php endforeach;?>
+		</ul>
+		<div class="hr_2"></div>
+		<input type="submit" name="submit" class="button button_edit middle" value="<?php echo H(I18N::T('inventory', '提交')) ?>" />
+	</form>
+</div>

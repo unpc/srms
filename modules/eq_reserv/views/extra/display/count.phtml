@@ -1,0 +1,8 @@
+<td class="label left top nowrap <?php echo $extra_class;?>" colspan="2">
+    <div class="title"><?php echo I18n::T('eq_sample', $field['title']);?>
+        <?php echo V('form_filter',['error'=>$error]);?>
+    </div>
+    <div class="">
+        <input name="count" type="text" class="text number" size="6" value="<?= $value?>" q-number_default_value="" />
+    </div>
+</td>

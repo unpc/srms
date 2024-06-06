@@ -1,0 +1,23 @@
+<table>
+	<tbody>
+	<?php
+		foreach(json_decode($update->new_data, TRUE) as $key=>$data):
+		if (!$data)
+			continue;
+		if (in_array($key, array_keys($properties))) :
+			if ($key == 'status')
+					$data = Resume::$status[$data];
+			if ($key == 'interview_time')
+					$data = Date::format($data, T('Y/m/d H:i:s'));
+	?>
+		<tr>
+			<td class="left top nowrap">
+				<strong class="description"><?php echo HT($properties[$key]);?></strong>
+			</td>
+			<td class="left top content_wrap lpadding_2">
+				<?php echo new Markup($data, TRUE) ?>
+			</td>
+		</tr>
+	<?php endif; endforeach;?>
+	</tbody>
+</table>

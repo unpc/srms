@@ -1,0 +1,21 @@
+<?php
+$add_radio = 'add_radio_'. uniqid();
+$radios_uniqid = 'radios_'. uniqid();
+?>
+<div class="<?php echo $class;?>">
+    <div id="<?php echo H($radios_uniqid) ?>">
+        <?php if (count($field['params'])) :?>
+            <?php $subprefix = 0;?>
+            <?php foreach($field['params'] as $item) : ?>
+                <?php echo V('extra:edit/readonly/radio_item', [
+                    'prefix'=> $prefix,
+                    'item'=> $item,
+                    'default' => $field['default_value'],
+                    'subprefix'=> $subprefix,
+                    'field'=> $field,
+                ]);?>
+                <?php ++ $subprefix;?>
+            <?php endforeach;?>
+        <?php endif;?>
+    </div>
+</div>

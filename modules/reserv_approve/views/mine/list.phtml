@@ -1,0 +1,63 @@
+<div class="hr_1">&#160;</div>
+<?= $secondary_tabs ?>
+<div class="hr_1">&#160;</div>
+<?= $pagination ?>
+<?php 
+$me = L('ME');
+
+$table = Widget::factory('table');
+$table->name = 'mine_reserv_approve';
+$table->form = $form;
+$table->add_columns([
+    '@'=>NULL,
+    'equipment'=> [
+        'title' => I18N::T('reserv_approve', '仪器名称'),
+        'filter'=> [
+            'form'=> V('reserv_approve:approve_table/filters/equipment', ['form'=> $form]),
+            'value'=> H($form['equipment']),
+        ],
+        'nowrap'=>TRUE
+    ],
+    'status' => [
+        'title' => I18N::T('reserv_approve', '审核状态'),
+        'align'=>'left',
+        'nowrap'=>TRUE,
+        ],
+    'date' => [
+        'title' => I18N::T('reserv_approve', '时间'),
+        'align' => 'left',
+        'nowrap' =>TRUE,
+        'filter' => [
+            'form' => V('reserv_approve:approve_table/filters/date', ['form' => $form]),
+            'value' => $date_value,
+            'field' => 'dtstart_check,dtend_check,dtstart,dtend'
+        ]
+    ],
+    'rest'=> [
+        'title' => I18N::T('reserv_approve', '操作'),
+        'align' => 'right',
+        'nowrap'=>TRUE
+    ]
+]);
+
+$table->empty_message = I18N::T('reserv_approve', '没有查询到相应的预约申请!');
+
+if (count($reservs) > 0) {
+    foreach($reservs as $reserv) {
+        $links = Reserv_Approve_Help::links($reserv);
+        $table->add_row([
+            '@'=>[
+                'view'=> $reserv->equipment->icon('32', 'style="display:block"'),
+                /*因为该列表中不存在了flexbie类， 因为都是自动增长的td，因此为了保持与IE上统一， 该处需要增加样式特殊处理*/
+                'extra'=>'style="padding:4px;min-width:44px;*width:44px;" align="right"',
+            ],
+            'equipment'=> '<a style="text-decoration: underline;" href="'.$reserv->equipment->url().'">'.$reserv->equipment->name.'</a>',
+            'status'=>Reserv_Approve_Help::get_status_str($reserv),
+            'date'=>date('Y-m-d H:i:s', $reserv->dtstart).' - '.date('Y-m-d H:i:s', $reserv->dtend),
+            'rest'=>Widget::factory('application:links', ['links' => $links]),
+        ]);
+    }
+}
+echo $table;
+?>
+<?= $pagination ?>

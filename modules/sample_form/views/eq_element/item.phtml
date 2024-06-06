@@ -1,0 +1,18 @@
+<table class="form">
+    <tbody>
+        <tr>
+            <td class="label right top nowrap">
+                <?= I18N::T('sample_form', '名称'); ?>
+                <input name="<?= "element[$flexform_index][name]" ?>" type="text" class="text"
+                       value="<?= $form['name'][$flexform_index] ? : $result->name ?>">
+            </td>
+            <td class="small_text"></td>
+            <td class="label right top nowrap">
+                <?= I18N::T('sample_form', '单价'); ?>
+                <input name="<?= "element[$flexform_index][price]" ?>" q-number_default_value="0" type="text" class="text currency" value="<?= $result->price ?>">
+            </td>
+            <input name="<?= "element[$flexform_index][id]" ?>" type="hidden" value="<?= $result->id ?>">
+        </tr>
+    </tbody>
+</table>
+<div class="interval_10"></div>

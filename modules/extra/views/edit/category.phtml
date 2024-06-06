@@ -1,0 +1,76 @@
+<?php $uniqid = 'category_'.uniqid(); ?>
+<li class="item:<?php echo $category; ?> extra_category <?php echo $selected == $category ? 'active' : '';?>" id="<?php echo H($uniqid) ?>" category_name="<?= $category?>" >
+    <div class="category_title item:<?php echo $category?>">
+        <div class="category_drag_handle float_left">&#160;</div>
+        <span class="category_name float_left"><?php echo $i18n_module ? I18N::T($i18n_module, $category) : H($category);?></span>
+        <?php if ($can_edit && !$readonly) :?>
+        <a  class="float_right color-grey rmargin_1"
+            q-object="delete_category"
+            q-event="click"
+            q-static="<?php echo H(['extra_id'=>$extra->id, 'category'=>$category])?>"
+            q-src="<?php echo H(URI::url('!extra/extra')) ?>">
+            <span class="icon-trash"></span>
+        </a>
+        <?php endif;?>
+    </div>
+</li>
+<script type="text/javascript">
+jQuery(function($) {
+$("#<?php echo $uniqid?>").on('click', function(e){
+    var category = $(this).attr('category_name');
+    var $item = $(this);
+    <?php if ($can_edit && !$readonly) : ?>
+    if ($item.hasClass('active')) {
+        var $span = $item.find('span:eq(0)');
+        var html = $span.html();
+        html = html.replace(/\"/g, '&quot;');
+        if ($span.find('input').length) {
+            return false;
+        }
+        var input = '<input size="12" value="'+html+'" /'+'>';
+        $span.html($(input));
+        $span.find('input:eq(0)').focus().one('blur', function(){
+            var $input = $span.prev('input:eq(0)');
+            var new_category = $(this).val();
+            console.log(new_category);
+            Q.trigger({
+                object:'edit_category',
+                event:'blur',
+                data:{
+                    extra_id: <?php echo $extra->id?>,
+                    category: category,
+                    new_category: new_category
+                },
+                url:'<?php echo URI::url('!extra/extra')?>',
+                success: function(data) {
+                    if (data.result) category = new_category;
+                    $span.html(category);
+                    //需要同步修正relate_view中hidden的category的val
+                    $('#<?php echo $relate_uniqid?>').find('input[name=category]').val(category);
+                    $item.setClassAttr('item', category);
+                }
+            });
+        });
+        e.preventDefault();
+        return false;
+    }
+    <?php endif;?>
+    Q.trigger({
+        object:'select_category',
+        event:'click',
+        data:{
+            extra_id: <?php echo $extra->id?>,
+            category: category,
+            uniqid:'<?php echo $relate_uniqid?>',
+            readonly:'<?php echo $readonly?>',
+        },
+        url:'<?php echo URI::url('!extra/extra')?>',
+        complete:function(){
+            $(".extra_categories .active").removeClass('active');
+            $item.addClass('active');
+        }
+    });
+    return false;
+});
+});
+</script>

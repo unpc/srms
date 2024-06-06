@@ -1,0 +1,23 @@
+<div class="hr_1">&#160;</div>
+<div class="panel padding_1">
+	<div class="right">
+	<form autocomplete="off" method="post" action="<?php echo H(URI::url()) ?>">
+		<input name="query" class="text search hint:<?php echo I18N::T('eq_reserv', '关键字...')?>" value="<?php echo H(Input::form('query'))?>"/>
+	</form>
+	</div>
+</div>
+<?php echo $pagination; ?>
+<table class="sticky flexible">
+<thead>
+<tr>
+	<th>&#160;</th>
+	<th class="left nowrap"><?php echo I18N::T('eq_reserv', '仪器')?></th>
+	<th class="left nowrap"><?php echo I18N::T('eq_reserv', '预约者')?></th>
+	<th class="left nowrap"><?php echo I18N::T('eq_reserv', '预约时间')?></th>
+	<th class="left nowrap flexible"><?php echo I18N::T('eq_reserv', '使用情况')?></th>
+</tr>
+</thead>
+<tbody>
+	<?php foreach ($components as $component) { $component->render('eq_reserv:component'); } ?>
+</tbody>
+</table>

@@ -1,0 +1,23 @@
+<?php
+$charge = O('eq_charge', ['source' => $sample]);
+echo $charge->id ? Date::format($charge->ctime) : '--';
+?>
+<?php
+if ($charge->id && $charge->amount && $charge->source->name() == 'eq_sample') {
+    if (!is_array($charge->transaction) && $charge->transaction->id) {
+        $tid[] = $charge->transaction->id;
+    } else {
+        $tid[] = $charge->id;
+    }
+    if (count($tid)) {
+        $_t = [];
+        foreach ($tid as $t) {
+            $_t[] = URI::anchor($charge->equipment->url('charge', ['charge_id' => $t], NULL, 'view'), '<strong>#' . Number::fill($t) . '</strong>', 'class="blue prevent_default"');
+        }
+
+        $_t = join(', ', $_t);
+
+        echo '</br>' . I18N::T('eq_charge', '计费编号 %tid', ['%tid' => $_t]);
+    }
+}
+?>

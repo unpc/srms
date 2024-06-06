@@ -1,0 +1,52 @@
+<?php echo $pagination; ?>
+<?php
+$table = Widget::factory('table');
+
+$table->name = 'treenote_projects';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+$table->add_columns([
+	'title'=>[
+		'title'=>I18N::T('treenote', '项目名称'),
+		// 'sortable'=>TRUE,
+		'align'=>'left',
+		'sortable' => TRUE,
+		'nowrap'=>TRUE,
+		'extra_class' => 'tight',
+	],
+	'user'=>[
+		'title'=>I18N::T('treenote', '负责人|:project'),
+		'nowrap'=>TRUE,
+	],
+	'progress'=>[
+		'title'=>I18N::T('treenote', '进度'),
+		'nowrap'=>TRUE,
+	],
+	'rest'=>[
+		'nowrap'=>TRUE,
+		'extra_class' => 'flexible',
+	],
+]);
+
+$table->empty_message = I18N::T('treenote', '无相关项目');
+
+foreach ($follows as $follow) {
+
+	$project = $follow->object;
+	if (!$project->id) {
+		$follow->delete();
+		continue;
+	}
+
+	$links = L('ME')->follow_links($project);
+
+	$table->add_row(
+		[
+			'title'=>V('treenote:project/table/data/title', ['project' => $project]),
+			'user'=>$project->user->name,
+			'progress'=>V('treenote:project/table/data/progress', ['project' => $project]),
+			'rest'=>Widget::factory('application:links', ['links' => $links])
+			]);
+}
+echo $table;

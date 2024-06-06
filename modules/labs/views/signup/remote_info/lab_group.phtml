@@ -1,0 +1,36 @@
+<?php 
+	$requires = (array)$form_config['requires'];
+
+	$_require = function($key) use ($requires) {
+		echo $requires[$key] ? V('form_require') : '';
+	}
+?>
+<tr class="lab_group">
+	<td class="label right nowrap top"><?php echo I18N::T('labs', '组织机构') ?></td>
+	<td class="top">
+		<div>
+		<?php echo Form::radio('local_remote_group', 'local_group', $form['local_remote_group'] ?: 'remote_group', I18N::T('labs', '本地组织机构'), 'class="monitor middle"', 'class="middle"');?>
+		</div>
+		<div style="padding-left:15px;padding-bottom:5px" class="toggle:local_remote_group show_on:local_group">
+		<?php 
+			$root_tag = Tag_Model::root('group');
+			echo Widget::factory('application:tag_selector', [
+				'tag'=> O('tag_group', $form['group_id'] ?: $user_group_id),
+				'root'=>$root_tag,
+				'name'=>'group_id',
+				'ajax'=>true,
+			]);
+		?>
+		<?php $_require('group_id');?>
+		</div >
+		<?php echo Form::radio('local_remote_group', 'remote_group', $form['local_remote_group'] ?: 'remote_group', I18N::T('labs', '远程组织机构'), 'class="monitor middle"', 'class="middle"');?>
+		<div style="padding-left:15px;">
+		<?php
+		$group_view = implode(' &#187; ', $group);
+		if(strlen($group_view) > 70){
+			$group_view = preg_replace('/\s.*\s/', ' &#187 ... &#187 ', $group_view);
+		}?>
+		<div class="description toggle:local_remote_group show_on:remote_group"><?php echo $group_view?></div>
+		</div>
+	</td>
+</tr>

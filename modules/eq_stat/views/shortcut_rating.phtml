@@ -1,0 +1,40 @@
+<?php 
+$me = L('ME');
+if (!$me->id) return;
+$now = Date::time();
+Perf::can_grade_perfs();
+Perf::lock_overdue_perfs();
+//rating_to时间无需进行判断
+//lock_overdue_perfs已进行处理
+$perfs = Q("eq_perf[can_grade=1]");
+$num = 0;
+foreach ($perfs as $perf) {
+    $tag = $perf->collection;
+
+    //查找所对应的equipments
+    if ($tag->id) $equipments = Q("{$tag} equipment");
+    else $equipments = Q('equipment');
+
+    foreach($equipments as $e) {
+        //查找perf的评估时段内是否有使用记录
+        $dfrom = $perf->dfrom;
+        $dto = $perf->dto;
+        //echo $me->id;
+        if (Q("eq_record[user={$me}][equipment={$e}][dtstart<={$dto}][dtend>={$dfrom}]")->total_count()) {
+            $rating = Q("eq_perf_rating[perf={$perf}][equipment={$e}][user={$me}]")->current();
+            if ($rating->id) continue;
+            $num ++;
+            $object = $perf;
+        }
+    }
+}
+if ($num):
+?>
+<div class="clearfix message_normal padding_1">
+	<h4 class="center">
+		<a href="<?php echo H(URI::url('!eq_stat/perf/rating.'.$object->id)) ?>">
+		<?php echo I18N::T('eq_stat', '有 %num 台设备需要您评分', ['%num'=>$num])?>
+		</a>
+	</h4>
+</div>
+<?php endif;?>

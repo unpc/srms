@@ -1,0 +1,98 @@
+<?php
+	$form_errors = $form->errors;
+?>
+<div class="gapper_upgrade">
+<div class="process">
+	<div>
+		<div class="proce proce_ed proce_first float_left">&#160;</div>
+		<div class="node node_ing float_left">&#160;</div>
+		<div class="proce proce_ed proce_normal float_left">&#160;</div>
+		<div class="node node_ing float_left">&#160;</div>
+		<div class="proce proce_ed proce_normal float_left">&#160;</div>
+		<div class="node node_ing float_left">&#160;</div>
+		<div class="proce proce_will proce_normal float_left">&#160;</div>
+		<div class="node node_will float_left">&#160;</div>
+		<div class="proce proce_will proce_last float_left">&#160;</div>
+	</div>
+	<div class="clearfix"></div>
+	<div class="announce">
+		<div class="float_left center announce-slim"><b><?= I18N::T('gapper','关联商城')?></b></div>
+		<div class="float_left center announce-fat"><b><?= I18N::T('gapper','负责人开通')?></b></div>
+		<div class="float_left center announce-slim"><b><?= I18N::T('gapper','分组设置')?></b></div>
+		<div class="float_left center announce-fat text-grey"><?= I18N::T('gapper','完成')?></div>
+	</div>
+</div>
+<div class="clearfix"></div>
+
+<div class="gapper_content">
+	<div class="float_left gapper_img">
+		<div>
+			<img src="!gapper/images/gapper.png">
+		</div>
+	</div>
+    <p class="title">
+		<?php echo I18N::T('gapper','分组设置')?>
+	</p>
+	<?php if($count = count($groups)){?>
+		<p class="notes">
+			<?php echo I18N::T('gapper','为%lab_name下的成员选择一个分组', ['%lab_name'=>Config::get('lab.name')]) ?>&#160;
+		</p>
+
+		<div style="margin:40px 120px">
+			<?php foreach ((array)$groups as $group) {?>
+				<div class="float_left center group_img gapper_img">
+					<div class="icon_location" >
+						<a class="app_bind" q-object="bind_group" q-event="click" q-static="<?= H(['gid'=>$group['id']])?>">
+						<?php if($group['icon']) {?>
+						<img class="app_icon" src="<?= $group['icon']?>">
+						<?php }else{?>
+
+						<div class="gapper_icon">
+							<div class="icon_text">
+								<p class="icon_font"><b><?php echo $group['name'] ?></b></p>
+							</div>
+						</div>
+						<?php }?>
+						</a>
+					</div>
+					<p><?= $group['title']?></p>
+				</div>
+			<?php }?>
+		</div>
+		<div class="clearfix"></div>
+		<hr style="margin:20px 120px;width:80%">
+	<?php }?>
+	<div style="margin:40px">
+		<form action="<?php echo H(URI::url('!gapper/group_upgrade') ) ?>" method="POST">
+			<p style="margin-bottom: 5px;margin-left: 78px;color:#787878;font-size:13px">
+				<?php if ($count) {echo I18N::T('gapper','没有对应分组？');}?>
+				<?= I18N::T('gapper','创建新的分组:')?>
+			</p>
+
+			<?php if(isset($form_errors['name'])) {?>
+			<div class="text-danger">
+                <small><?= $form_errors['name'][0]?></small>
+            </div>
+        	<?php }?>
+			<div class="form-control">
+				<input type="text" value="<?= trim($form['name']) ?>" class="text-group-input <?= $form_errors['name'] ? 'has-error' : ''?>" placeholder="<?= I18N::T('gapper','组标识')?>" name="name" >
+				<div class="text-note">
+					<?= I18N::T('gapper','组标识只可使用包括字母、数字、“-”、“_”、“.” 和 “@”.') ?>
+				</div>
+			</div>
+
+			<?php if(isset($form_errors['title'])) {?>
+			<div class="text-danger">
+                <small><?= $form_errors['title'][0]?></small>
+            </div>
+        	<?php }?>
+			<div class="form-control">
+				<input type="text" value="<?= trim($form['title']) ?>" class="text-group-input <?= $form_errors['title'] ? 'has-error' : ''?>" placeholder="<?= I18N::T('gapper','名称')?>"  name="title" >
+			</div>
+			<div style="margin: 20px 80px;">
+				<input type="submit" value="<?php echo H(I18N::T('gapper','创建组') ) ?>" class="upgrade_button" name="submit" style="padding:7px 105px"/>
+			</div>
+		</form>
+	</div>
+</div>
+</div>

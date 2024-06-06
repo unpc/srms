@@ -1,0 +1,8 @@
+<?php
+$root = Tag_Model::root('grant_expense');
+$tags = Q("$expense tag[root=$root]");
+if (count($tags)) {
+	foreach ($tags as $tag) {
+		echo '<span class="status_tag status_tag_normal">' . H($tag->name) . '</span> ';
+	}
+}

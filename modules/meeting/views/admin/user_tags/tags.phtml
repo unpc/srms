@@ -1,0 +1,36 @@
+<?php
+	echo CSS::load_async('equipments:relate_list');
+	$uniqid = 'relate_tags_'.uniqid();
+    $root = Tag_Model::root('meeting_user_tags');
+    $tags = Q("tag_meeting_user_tags[root={$root}]:sort(weight A)")->to_assoc('id', 'id');
+	$keys = array_keys($tags);
+	$tid = $keys[0];
+?>
+<div class="relate_list">
+	<div class="relate_left">
+
+        <div class="padding_1 panel clearfix add_tags center tmargin_3 bmargin_3">
+            <a class="font-button-default border_gray gray" q-object="admin_create_tag" q-event="click" q-src="<?= H(URI::url('!meeting/meeting')) ?>">
+            <span class="icon-add rmargin_1"></span><?php echo T('添加标签')?></a>
+        </div>
+
+        <div class="equipment_tags">
+    		<?php
+    			foreach($tags as $key => $tag) {
+    				if ($is_slave) {
+                        echo V('meeting:admin/user_tags/tag_slave', ['id'=>$key, 'tid'=>$tid, 'relate_uniqid'=>$uniqid]);
+                    } else {
+                        echo V('meeting:admin/user_tags/tag', ['id'=>$key, 'tid'=>$tid, 'relate_uniqid'=>$uniqid]);
+                    }
+    			}
+    		?>
+        </div>
+	</div>
+    <div class="relate_right" id="<?php echo H($uniqid); ?>">
+    	<?php
+    		if ($tid) {
+    			echo V('meeting:admin/user_tags/relate_view', ['tid' => $tid, 'is_slave' => $is_slave]);
+    		}
+    	?>
+    </div>
+</div>

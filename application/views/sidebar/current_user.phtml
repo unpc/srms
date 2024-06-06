@@ -1,0 +1,22 @@
+<?php 
+$me = L('ME');
+
+if($me->id): 
+
+	$me->render('objects/user/card'); 
+
+else:
+	$token = Auth::token();
+	if ($token):
+
+		list($token, $backend) = explode('|', $token, 2);
+
+		$backends = Config::get('auth.backends');
+		$title = $backends[$backend]['title'];
+		$user = O('user');
+		$user->name = $token;
+		$user->title = $title;
+		$user->render('objects/tmp_user');
+
+	endif;
+endif;

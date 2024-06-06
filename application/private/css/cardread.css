@@ -1,0 +1,29 @@
+.cardread_button {
+	display:inline-block;
+	width:20px;
+	height:20px;
+	background:url('images/buttons/cardread.gif') no-repeat center center;
+	margin-left:5px;
+	vertical-align: middle;
+}
+
+.cardread_container {
+	position:absolute;
+	overflow:hidden;
+	display:none;
+	z-index:2000;
+	border: 1px solid #AAA;
+	padding:5px;
+	background:#F4F4F4;
+	-moz-box-shadow: rgba(0,0,0,0.7) 0 1px 5px;
+	-webkit-box-shadow: rgba(0,0,0,0.7) 0 1px 5px;
+	box-shadow: rgba(0,0,0,0.7) 0 1px 5px;
+	filter: progid:DXImageTransform.Microsoft.Shadow (Color=#000000, Direction=135, Strength=2);
+
+}
+
+.cardread_container input{
+	font-size:24px;
+	width:192px;
+}
+

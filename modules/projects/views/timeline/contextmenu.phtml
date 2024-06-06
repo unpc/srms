@@ -1,0 +1,14 @@
+<?php if($task->id):
+	$me = L('ME');
+?>
+<ul>
+	<li><a href="<?php echo H($task->url()) ?>"><?php echo I18N::T('projects', '查看任务'); ?></a></li>
+	<li><a href="<?php echo H($task->url(NULL, NULL, NULL, 'edit')) ?>"><?php echo I18N::T('projects', '编辑任务'); ?></a></li>
+	<li><a href="<?php echo H($task->url(NULL, NULL, NULL, 'delete')) ?>"><?php echo I18N::T('projects', '删除任务'); ?></a></li>
+	<?php if ($task->type==Task_Model::TYPE_CONTAINER):?>
+	<li><a href="<?php echo H($task->url(0, 't=container', NULL, 'add')) ?>"><?php echo I18N::T('projects', '创建子任务集'); ?></a></li>
+	<li><a href="<?php echo H($task->url(0, NULL, NULL, 'add')) ?>"><?php echo I18N::T('projects', '创建子任务'); ?></a></li>
+	<?php endif; ?>
+</ul>
+<?php
+endif;

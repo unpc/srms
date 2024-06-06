@@ -1,0 +1,62 @@
+<div>
+<table class="form">
+<tr>
+	<td class="left nowrap middle" width="126"><?php echo I18N::T('application','重复'); ?></td>
+	<td class="left nowrap middle">
+		<?php
+			$uniqid = uniqid();
+			$rrule_uniqid = 'rrule_'.$uniqid;
+
+			$rtypes = TM_RRule::$rtype;
+			$static = H(['rrule_uniqid'=>$rrule_uniqid, 'flexform_index'=>$flexform_index]);
+			echo Form::dropdown('rtype['.$flexform_index.']', T($rtypes), $rtype, 'class="middle view event:change object:rtype src:'.URI::url('rrule').' static:'.$static.'"', 'class="middle"');
+		?>
+	</td>
+
+    <td class="table_interval"></td>
+
+	<td class="left nowrap middle" width="126"><?php echo I18N::T('application','次数'); ?></td>
+	<td class="left nowrap middle">
+		<input type="text" name="rnum[<?php echo $flexform_index ?>]" class="text number" value="<?php echo H($rnum ?: 1 ) ?>" />
+	</td>
+</tr>
+</table>
+</div>
+
+<div id="<?php echo H($rrule_uniqid ) ?>">
+<?php
+	switch ($rtype) {
+		case TM_RRule::RRULE_DAILY:   //按照日计算
+			echo V('application:widgets/rule_date/daily/day', ['flexform_index'=>$flexform_index,
+												'dtfrom'=>$dtfrom,
+												'dtto'=>$dtto
+											]);
+			break;
+		case TM_RRule::RRULE_WEEKLY:  //按照周计算
+			echo V('application:widgets/rule_date/weekly/week', ['flexform_index'=>$flexform_index,
+												  'dtfrom'=>$dtfrom,
+												  'dtto'=>$dtto,
+												  'week_day'=>$rrule[0]
+											]);
+			break;
+		case TM_RRule::RRULE_MONTHLY: //按照月计算
+			echo V('application:widgets/rule_date/monthly/month', ['flexform_index'=>$flexform_index,
+													'monthly_type'=>$monthly_type,
+													'dtfrom'=>$dtfrom,
+												    'dtto'=>$dtto,
+													'rrule'=>$rrule,
+											]);
+			break;
+		case TM_RRule::RRULE_YEARLY:  //按照年计算
+			echo V('application:widgets/rule_date/yearly/year', ['flexform_index'=>$flexform_index,
+												  'yearly_type'=>$yearly_type,
+												  'dtfrom'=>$dtfrom,
+											      'dtto'=>$dtto,
+												  'rrule'=>$rrule,
+											]);
+			break;
+		default:
+			break;
+	}
+?>
+</div>

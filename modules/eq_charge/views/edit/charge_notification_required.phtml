@@ -1,0 +1,8 @@
+<div class="form">
+	<?php echo Form::checkbox('charge_notification_required', $lab->charge_notification_required ? TRUE : FALSE, I18N::T('eq_charge', '仪器使用超额时向负责人发送提醒'), 'class="middle monitor checkbox"', 'class="middle"'); ?>
+    <div class="interval_12"></div>
+	<div class="lpadding_3 middle toggle_status:charge_notification_required enable_on:on">
+		<span class="middle rpadding_label"><?php echo I18N::T('eq_charge', '需提醒的金额上限'); ?></span>
+		<input type="text" name="min_notification_fee" class="text currency middle" sign="<?php echo H(Config::get('lab.currency_sign')) ?>" value="<?php echo max(0, $lab->min_notification_fee); ?>" />
+	</div>
+</div>

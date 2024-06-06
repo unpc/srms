@@ -1,0 +1,24 @@
+.task_status {
+	display:inline-block;
+	width: 16px;
+	height: 16px;
+	background-repeat:no-repeat;
+	background-position: center center;
+	background-image: url(!accounts/images/status_normal.gif);
+}
+.task_status_complete {
+	background-image: url(!accounts/images/status_complete.gif);
+}
+.task_status_locked {
+	background-image: url(!accounts/images/status_locked.gif);
+}
+@css-define actions: ["lock", "unlocked", "activate", "backward"];
+@css-foreach(action in actions) {
+	input.button_$action, a.button_$action {
+		padding-left: 22px;
+		background-image: url(!accounts/images/buttons/$action.png);
+		background-repeat: no-repeat;
+		background-position: 4px center;
+		_background-image: url(!accounts/images/buttons/$action.gif);
+	}
+}

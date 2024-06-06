@@ -1,0 +1,110 @@
+<?php
+$table = Widget::factory('table');
+$table->name = 'services';
+$columns = [
+    'ref_no' => [
+        'weight' => 10,
+        'title' => I18N::T('technical_service', '服务编号'),
+        'sortable' => TRUE,
+        'align' => 'left',
+        'filter' => [
+            'form' => V('technical_service:service_table/filters/text', ['name' => $form['ref_no']]),
+            'value' => $form['ref_no'] ? H($form['ref_no']) : NULL
+        ],
+        'nowrap' => TRUE,
+    ],
+    'name' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '服务名称'),
+        'sortable' => TRUE,
+        'align' => 'left',
+        'filter' => [
+            'form' => V('technical_service:service_table/filters/text', ['name' => $form['name']]),
+            'value' => $form['name'] ? H($form['name']) : NULL
+        ],
+        'nowrap' => TRUE,
+    ],
+    'service_type' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '服务分类'),
+        'align' => 'left',
+        'filter' => [
+            'form' => V('technical_service:service_table/filters/service_type', ['form' => $form]),
+            'value' => $form['service_type'] ? H($form['service_type']) : NULL
+        ],
+        'nowrap' => TRUE,
+    ],
+    'billing_department' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '收费平台'),
+        'align' => 'left',
+        'filter' => [
+            'form' => V('technical_service:service_table/filters/billing_department', ['form' => $form]),
+            'value' => $form['billing_department'] ? H($form['billing_department']) : NULL
+        ],
+        'nowrap' => TRUE,
+    ],
+    'incharges' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '负责人'),
+        'align' => 'left',
+        'filter' => [
+            'form' => V('technical_service:service_table/filters/incharges', ['form' => $form]),
+            'value' => $form['incharge'] ? H($form['incharge']) : NULL
+        ],
+        'nowrap' => TRUE,
+    ],
+    'phones' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '联系电话'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'emails' => [
+        'weight' => 20,
+        'title' => I18N::T('technical_service', '联系邮箱'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'rest' => [
+        'title' => I18N::T('technical_service', '操作'),
+        'weight' => 70,
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ]
+];
+
+$table->add_columns($columns);
+$table->empty_message = I18N::T('technical_service', '没有相关服务数据');
+
+foreach ($services as $service) {
+    $links = $service->links();
+    $table->add_row([
+        'ref_no' => V('technical_service:service_table/data/ref_no', ['service' => $service]),
+        'name' => V('technical_service:service_table/data/name', ['service' => $service]),
+        'service_type' => V('technical_service:service_table/data/service_type', ['service' => $service]),
+        'billing_department' => V('technical_service:service_table/data/billing_department', ['service' => $service]),
+        'incharges' => V('technical_service:service_table/data/incharges', ['service' => $service]),
+        'phones' => V('technical_service:service_table/data/phones', ['service' => $service]),
+        'emails' => V('technical_service:service_table/data/emails', ['service' => $service]),
+        'rest' => Widget::factory('application:links', ['links' => $links])
+    ]);
+}
+
+$param = [
+    'is_offset' => true,
+    'top_input_arr' => Config::get('search.top_input_arr')['service.list'],
+    'columns' => $table->columns,
+    'panel_buttons' => $panel_buttons,
+    'extra_view' => '<div class="adj statistics middle">' .
+        I18N::T('technical_service', '共有 %service_count 种技术服务', [
+            '%service_count' => '<span class=" blue">' . $services->total_count() . '</span>',
+        ]) . $pagination . '</div>'
+];
+echo V('application:search_box', $param);
+
+echo $table; ?>
+
+<div class="interval_12"></div>
+<div class="float_right"><?php echo $pagination; ?></div>
+<div class="interval_12"></div>

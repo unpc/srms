@@ -1,0 +1,26 @@
+<tr>
+    <td class="padding_2" colspan="2">
+        <div class="bpadding_2">
+            <span class="rpadding_1"><?php echo I18N::T('people', 'IC卡卡号')?></span>
+            <br>
+            <?php echo V('form_filter',['error'=>$form->errors['card_no'][0]])?>
+        </div>
+        <div>
+            <input autocomplete="off" name="card_no" size="54"
+                class="text card_no autoselect enter_to_tab"
+                value="<?= $form['card_no'] ? : $user->card_no ?>" />
+            <!-- 防止chrome浏览器自动将账号密码填充到ic卡号。。 -->
+            <input style="display: none">
+        </div>
+    </td>
+    <?php if(Module::is_installed('entrance')): ?>
+    <td class="padding_2 lpadding_4" colspan="2">
+        <div class="bpadding_2">
+        <br>
+        </div>
+        <div class="right">
+            <a class="font-button-save" confirm="<?php echo H(I18N::T('people', '您确定同步卡号吗?')) ?>" href="<?php echo H(URI::url('!people/profile/sync_card.'.$user->id)) ?>"><?php echo I18N::T('people', '同步')?></a>
+        </div>
+    </td>
+    <?php endif; ?>
+</tr>

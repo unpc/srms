@@ -1,0 +1,42 @@
+<table class="form">
+<tr>
+	<td width="126" height="30" style="text-align: center;" id="iscSetting">
+    <?php if ($door->isSettingHkisc): ?>
+        <span class="prevent_default status_tag status_tag_inservice" style="font-size: 13px;">已设置</span>
+    <?php else: ?>
+        <span class="prevent_default status_tag status_tag_danger" style="font-size: 13px;">未设置</span>
+    <?php endif; ?>
+    </td>
+	<td>
+    </td>
+</tr>
+<tr>
+	<td width="126" height="30"></td>
+	<td>
+        <a id="tohkisc" class="button blue" style="float: left;height: 44px;line-height: 44px !important;padding: 0 15px;border-radius: 5px;" title="进入ISC设置海康门禁规则">进入ISC设置海康门禁规则</a>
+	</td>
+</tr>
+<tr>
+	<td width="126" height="30"></td>
+	<td>
+        <div class="description" style="color: #E02020">
+           <span class="required">*</span><?php echo I18N::T('entrance', '注：请确保在ISC系统中有相应账号及权限否则无法设置');?>
+        </div>
+	</td>
+</tr>
+</table>
+<script>
+    jQuery(function($){
+        $('#tohkisc').click(function(){
+            window.open('javascript:window.name;', '<script>location.replace("'+"<?= Config::get('iot_door.hkisc_url'); ?>"+'")<\/script>');
+            Q.trigger({
+                object: 'tohkisc',
+                event: 'view',
+                global: false,
+                data: {
+                    id : <?= $door->id ?>
+                }
+            });
+        });
+    })
+</script>

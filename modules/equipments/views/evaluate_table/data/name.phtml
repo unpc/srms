@@ -1,0 +1,8 @@
+<div>
+  <a href="<?php echo H($eva->user->url() ) ?>">
+    <strong class="name"><?php echo H($eva->user->name) ?></strong>
+  </a>
+</div>
+<?php if ($eva->lab->id): ?>
+<div><a class="description" href="<?php echo H($eva->lab->url() ) ?>"><?php echo H($eva->lab->name) ?></a></div>
+<?php endif;?>

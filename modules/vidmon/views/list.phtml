@@ -1,0 +1,33 @@
+<?php $me = L('ME'); ?>
+<?php echo $search_box; ?>
+<?php 
+
+$table = Widget::factory('table');
+$table->name = 'vidmon_cams';
+
+$table->add_columns($columns);
+
+$table->empty_message = I18N::T('vidmon', '无符合条件的视频设备');
+
+if (count($vidcams)) {
+    foreach ($vidcams as $vidcam) {
+        $links = $vidcam->links('list');
+        $row = new ArrayIterator([
+            '@'=>[
+                'view' => $vidcam->icon('32', 'style="display:block"'),
+                'extra' => 'style="padding:4px" align="right"'
+            ],
+            'name' => V('vidmon:vidcam_table/data/name', ['vidcam'=>$vidcam]),
+            'status'=>V('vidmon:vidcam_table/data/status', ['vidcam'=>$vidcam]),
+            'incharge'=> V('vidmon:vidcam_table/data/incharge', ['vidcam'=> $vidcam]),
+            'location' => V('vidmon:vidcam_table/data/location', ['vidcam'=>$vidcam]),
+            'rest' => Widget::factory('application:links', ['links' => $links]),
+        ]);
+        Event::trigger('extra.vidcam.row', $row, $vidcam);
+        $table->add_row((array)$row);
+    }
+}
+
+echo $table;
+?>
+<div class="pages"><?= $pagination ?></div>

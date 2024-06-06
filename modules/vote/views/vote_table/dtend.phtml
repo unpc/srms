@@ -1,0 +1,12 @@
+<?php 
+	echo CSS::load_async('vote:common');
+	$one_date = Config::get('expire.one_day');
+	 if ( ((int)$dtend - (int)time())>0 && ((int)$dtend - (int)time())<$one_date ) {
+	 	$class = 'red_text';
+	 } 
+	 else if ( ((int)$dtend - (int)time())<=0  ) {
+	 	$class = 'gray_text';
+	 }
+?>
+
+<p class="<?php echo $class; ?>"><?php echo Date::format($dtend); ?></p>

@@ -1,0 +1,6 @@
+<?php
+echo Widget::factory('user_selector', [
+	'name' => 'duty_teacher',
+	'user' => $duty_teacher,
+    'autocomplete'=>URI::url('!equipments/autocomplete/record_user')
+]);

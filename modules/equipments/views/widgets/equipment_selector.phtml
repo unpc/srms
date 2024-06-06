@@ -1,0 +1,11 @@
+<?php 
+
+if (!is_object($equipment)) $equipment = O('equipment', $equipment);
+
+$uniqid = 'eqsel_'.uniqid();
+$size = $this->size ?: '';
+$autocomplete = $this->autocomplete ?: URI::url('!equipments/autocomplete/equipment');
+$name = $this->name ?: 'equipment_id';
+?>
+<input id="<?php echo $uniqid?>_eq" name="<?php echo H($name ) ?>" type="hidden" value="<?php echo H($equipment->id) ?>" />
+<input id="<?php echo $uniqid?>_eq_name" class="text middle select_on_focus autocomplete:<?php echo H($autocomplete) ?> autocomplete_alt:#<?php echo $uniqid?>_eq tooltip:<?php echo I18N::T('equipments', '请输入关键字并选择')?>" size="<?php echo H($size ) ?>" value="<?php echo $equipment->id ? H($equipment->name) : '' ?>" />

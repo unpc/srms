@@ -1,0 +1,212 @@
+<?php 
+$me = L('ME'); 
+$sort_fields = Config::get('eq_charge.sortable_columns');
+echo CSS::load_async('eq_charge:common');
+?>
+
+<?php 
+
+$table = Widget::factory('table');
+
+$table->name = 'eq_charge_charges';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+$field = [];
+
+if ($GLOBALS['preload']['tag.group_limit'] >= 0 && $obj === null) {
+    $field['group'] = [
+        'title'=>I18N::T('equipments', '组织机构'),
+        'align'=>'left',
+        'suppressible' => TRUE,
+        'invisible' => TRUE,
+        'filter'=> [
+            'form' => V('equipments:equipments_table/filters/group', [
+                'name'=>'group_id',
+                'group'=>$group,
+                'root'=>$group_root,
+                'field_title' => '请选择'.I18N::T('equipments', '组织机构'),
+            ]),
+            'value' =>  ($group->id && $group->id != $group_root->id) ? V('application:tag/path', ['tag'=>$group, 'tag_root'=>$group_root, 'url_template'=>URI::url('', 'group_id=%tag_id')]) : NULL,
+            'field' => 'group_id'
+        ],
+        'nowrap'=>TRUE,
+        'input_type' => 'select'
+    ];
+}
+
+$field['charge_id'] = [
+	'title'       => I18N::T('eq_charge', '计费编号'),
+	'filter'      => [
+		'form'  => V('eq_charge:charges_table/filters/id', ['form' => $form, 'tip' => '请输入计费编号']),
+		'value' => $form['charge_id'] ? Number::fill($form['charge_id']) : null,
+	],
+	'weight'      => 5,
+	'extra_class' => 'blue nowrap',
+];
+
+if (!$obj || $obj->name() != 'equipment') {
+	$equipment = O('equipment', $form['equipment']);
+	$field['equipment'] = [
+		'title' => T('仪器'),
+		// 'sortable'=> in_array('equipment', $sort_fields),
+		'filter' => [
+			'form' => V('eq_charge:charges_table/filters/equipment', ['equipment' => $form['equipment']]),
+			'value' => $equipment->id ? H($equipment->name) : H($form['equipment'] ?: NULL)
+		],
+		'nowrap' => TRUE,
+		'weight' => 10
+	];
+}
+if ($me->is_allowed_to('查看收费情况', $equipment->id ? $equipment : 'equipment')) {
+	if (!$obj || $obj->name() != 'user') {
+		$user = O('user', $form['user']);
+		$field['user'] = [
+			'title'=>I18N::T('eq_charge', '使用者'),
+			// 'sortable'=> in_array('user', $sort_fields),
+			'filter'=>[
+				'form'=>V('eq_charge:charges_table/filters/user', ['user'=>$user]),
+				'value'=> $user->id ? H($user->name) : H($form['user'] ?: NULL)
+			],
+			'nowrap'=>TRUE,
+			'weight' => 20
+		];
+	}
+
+	if (!$obj || $obj->name() != 'lab') {
+		$lab = O('lab', $form['lab']);
+		$field['lab'] = [
+			'title'=>I18N::T('eq_charge', '实验室'),
+			'invisible' => TRUE,
+			'filter'=>[
+				'form'=>V('eq_charge:charges_table/filters/lab', ['lab'=>$lab]),
+				'value'=> $lab->id ? H($lab->name) : H($form['lab'] ?: NULL)
+			],
+			'nowrap'=>TRUE,
+			'weight' => 20
+		];
+	}
+}
+
+if (Config::get('eq_charge.foul_charge')) {
+	$field['status'] = [
+		'title' => I18N::T('eq_charge', '状态'),
+		'filter' => [
+			'form' => V('eq_charge:charges_table/filters/status', [
+				'status' => $form['status']
+			]),
+			'value' => $form['status'] ? (implode(', ', array_map(function($k) {
+				return EQ_Reserv_Model::$reserv_status[$k] == '正常使用' ? '正常' : EQ_Reserv_Model::$reserv_status[$k];
+			}, array_keys($form['status'])))) : '',
+			'nowrap' => FALSE,
+		],
+		'nowrap' => TRUE,
+		'weight' => 40
+	];
+}
+
+if($form['dtstart'] && $form['dtend']) {
+	$form['date'] = H(date('Y/m/d',$form['dtstart'])).'~'.H(date('Y/m/d',$form['dtend']));
+}
+elseif($form['dtstart']) {
+	$form['date'] = H(date('Y/m/d',$form['dtstart'])).'~'.I18N::T('eq_charge','最末');
+}
+elseif($form['dtend']) {
+	$form['date'] = I18N::T('eq_charge','最初').'~'.H(date('Y/m/d',$form['dtend']));
+}
+
+$field += [
+	'date'=>[
+		'title'=>I18N::T('eq_charge', '时间'),
+		'invisible' => TRUE,
+		'filter' => [
+			'form' => V('eq_charge:charges_table/filters/date', [
+				'dtstart'=>$form['dtstart'],
+				'dtend'=>$form['dtend']
+			]),
+			'value' => $form['date'] ? H($form['date']) : NULL,
+			'field' => 'dtstart,dtend'
+		],
+		'nowrap'=>TRUE
+	],
+	'amount'=>[
+		'title'=>I18N::T('eq_charge', '收费'),
+		'sortable'=> in_array('amount', $sort_fields),
+		'nowrap'=>TRUE,
+		'weight' => 30
+	],
+	'type'=>[
+		'title'=>I18N::T('eq_charge', '收费类型'),
+		'sortable'=> in_array('type', $sort_fields),
+		'nowrap' => TRUE,
+		'weight' => 30
+	],
+	'summary' => [
+		'title' => I18N::T('eq_charge', '备注'),
+        'nowrap' => TRUE,
+		'weight' => 50
+	],
+	'rest'=> [
+		'nowrap' => TRUE,
+		'weight' => 60
+	]
+];
+$columns = new ArrayObject($field);
+Event::trigger('index_charges.table_list.columns', $form, $columns, $obj);
+
+$table->add_columns((array)$columns);
+$table->empty_message = I18N::T('eq_charge', '无符合条件的收费记录');
+
+foreach ($charges as $c) {
+	$links = $c->transaction->id
+	? $c->transaction->links('charge', $obj) 
+	: Event::trigger('eq_charge.get.links', $this, $links, $obj);
+	
+	$links = array_merge($links ? : [], $c->links('charge'));
+
+	$row = [
+		'charge_id' => V('eq_charge:charges_table/data/ref', ['c'=>$c]),
+		'equipment'=>V('eq_charge:charges_table/data/equipment', ['obj'=>$obj, 'c'=>$c]),
+		'user'=>V('eq_charge:charges_table/data/user_with_lab', ['obj'=>$obj, 'c'=>$c]),
+		'date'=>V('eq_charge:charges_table/data/date', ['c' => $c]),
+		'type'=>V('eq_charge:charges_table/data/type', ['c' => $c]),
+		'status'=>V('eq_charge:charges_table/data/status', ['c' => $c]),
+		'amount'=>V('eq_charge:charges_table/data/amount_with_date', ['c'=>$c]),
+		'summary' => V('eq_charge:charges_table/data/summary', ['c' => $c]),
+		'rest'=>Widget::factory('application:links', ['links' => $links])
+	];
+
+	$row = new ArrayIterator($row);
+	$row = Event::trigger('index_charges.table_list.row', $row, $c, $obj) ? : $row;
+	$table->add_row($row);
+}
+
+switch (Input::args()[1]){
+    // 负责的仪器
+    case "charge":
+        $extra_view_type = 'incharge';
+        break;
+    // 所有的/院级所有的仪器
+    case 'charges' :
+        $extra_view_type = $me->access('查看所有仪器的使用收费情况') ? 'all' : 'group';
+        break;
+}
+
+$extra_view = Event::trigger('charges.table_list.search_box.extra_view', $form, $me, $extra_view_type);
+
+$param = [
+    'is_offset'     => true,
+    'top_input_arr' => ['charge_id'],
+    'columns'       => $table->columns,
+    'extra_view'    => $extra_view
+];
+if ($me->is_allowed_to('查看收费情况', $obj ? $obj : 'equipment')){
+    $param['panel_buttons'] = $panel_buttons;
+}
+echo V('application:search_box', $param);?>
+<div class="pages"><?= $pagination ?></div>
+<?php
+echo $table;
+?>
+
+<div class="pages"><?= $pagination ?></div>

@@ -1,0 +1,31 @@
+<?php
+foreach ($equipments as $equipment) {
+  $equipment_links[] = URI::anchor($equipment->url(), H($equipment->name));
+}
+?>
+<li class="li_1_3">
+    <span class="left" style="width: 100px;"><?php echo I18N::T('labs', '实验室');?></span>
+    <span class="right">
+        <?php foreach(Q("{$award} lab") as $lab) {
+            echo URI::anchor($lab->url(), H($lab->name));
+            echo '<br/>';
+        }?>
+    </span>
+</li>
+<li class="li_1_3">
+    <span class="left"><?php echo I18N::T('achievements', '项目');?></span>
+    <span class="right">
+        <?php foreach ($projects as $project) :?>
+            <?php echo H($project->id ? $project->name : T('--')); ?><br/>
+        <?php endforeach; ?>
+    </span>
+</li>
+<div class="interval_30 float_left" style="width: 100%"></div><br/>
+<li class="li_1_12">
+    <span class="left"  style="width: 100px;"><?php echo I18N::T('achievements', '使用仪器');?></span>
+    <span class="right">
+        <?php
+        echo empty($equipment_links) ? T('--') : implode(', ', $equipment_links);
+        ?>
+    </span>
+</li>

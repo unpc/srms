@@ -1,0 +1,52 @@
+<?php
+$me = L('ME');
+$form_id = 'create_distribution_form_'. uniqid();
+?>
+
+<div class="form" style="width:524px">
+    <form q-object="batch_edit_transaction" q-event="submit" q-src="<?php echo H(URI::url('!billing_standard/index')) ?>" id="<?php echo H($form_id) ?>" autocomplete="off" method="post">
+        <?php echo V('form_error', ['form' => $form]);?>
+
+        <?php foreach($transaction_ids as $transaction_id): ?>
+        <input type="hidden" name="select[<?php echo $transaction_id; ?>]" value="on">
+        <?php endforeach; ?>
+
+        <table class="form">
+            <tr>
+                <td colspan="2">
+                    <div style="font-size: 14px;height: 48px;color: #FF9500;line-height: 24px;">
+                        您勾选的结算项目, 根据结算单生成规则, 共计将生成 <?= count($preview) ?:0?> 张结算单据, 单据支付信息依次为
+                    </div>
+                </td>
+            </tr>
+            <?php $i = 1;?>
+            <?php foreach($preview as $k => $p):?>
+                <tr>
+                    <td style="text-align: center;">单据<?= $i++ ?>、</td>
+                    <td><span style="margin-right: 60px;">结算金额</span>¥<?= number_format($p['amount'], 2) ?></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><span style="margin-right: 60px;">经费卡号</span><?= $p['fund'] ?></td>
+                </tr>
+                <?php if($p['struct']): ?>
+                <tr>
+                    <td></td>
+                    <td><span style="margin-right: 60px;">入账账号</span><?= $p['struct'] ?></td>
+                </tr>
+                <?php endif; ?>
+            <?php endforeach;?>
+
+            <tr>
+                <td colspan="2" class="nowrap" style="height:78px;vertical-align:center;padding-top:0px!important;">
+                    <div class="float_right">
+                        <input name="cancel" type='reset' id='cancel' class="font-button-default sm rmargin_2e4" value="<?php echo I18N::HT('billing_standard', '取消');?>" />
+                        <input name="create" type='submit' class="font-button-save sm" value="<?php echo I18N::HT('billing_standard', '确认');?>" />
+                        <input name="confirm" type="hidden" value="1" />
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+    </form>
+</div>

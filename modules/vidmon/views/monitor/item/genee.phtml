@@ -1,0 +1,24 @@
+<div class="float_left list_video">
+    <?php $video_img_id = 'video_img'. uniqid();?>
+    <div class="list_video_title">
+        <div class="list_video_name clearfix">
+            <span class="float_left">
+                <h4>
+                    <a href="<?php echo H($vidcam->url()) ?>"><?php echo H($vidcam->name)?></a>
+                </h4>
+            </span>
+            <span class="float_right">
+                <a href="#" q-object="restart" q-event="click" q-src="<?php echo H(_U('!vidmon/vidcam')) ?>" q-static="<?php echo H(['id'=> $vidcam->id])?>"><?php echo I18N::T('vidmon', '重启');?></a>
+            </span>
+        </div>
+            <div class="list_video_address">
+            <?php echo V('vidcam_table/data/location', ['vidcam'=>$vidcam])?>
+        </div>
+    </div>
+    <div class="list_video_monitor loading video_monitor_<?php echo $vidcam->id?>" style="width:212px;height:160px">
+        <a href="<?php echo H($vidcam->url() ) ?>">
+            <img _id="<?php echo H($vidcam->id) ?>" src="<?php echo H($vidcam->url(NULL, ['width'=>212], NULL, 'snapshot')) ?>" width="212" height="160"/>
+            <?php echo V('monitor/alarm')?>
+        </a>
+    </div>
+</div>

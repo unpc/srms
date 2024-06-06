@@ -1,0 +1,72 @@
+.container {
+	position:relative;
+	min-width:390px;
+}	
+
+.container .box {
+	float:left;
+}
+
+.container .block {
+	border:1px solid #666;
+	background:#ccc;
+	padding:5px;
+	text-align:center;
+}
+
+.container .left,
+.container .right {
+	position:relative;
+	top:53px;
+}
+
+.container .left div,
+.container .right div {
+	float:left;
+}
+
+.container .left .line,
+.container .right .line {
+	width:15px;
+	height:2px;
+	background:red;
+	margin-top:15px;
+}
+
+.container .middle .line {
+	width:2px;
+	height:15px;
+	background:red;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+.users_container {
+	width:390px;
+}
+
+.branches {
+	margin-top:10px;
+	margin-bottom:10px;
+	background:#eee;
+	padding-left:10px;
+	padding-top:5px;
+	padding-bottom:10px;
+}
+
+.branches .branch {
+	margin-top:5px;
+}
+
+.branches .block {
+	padding:10px;
+	background:#ccc;
+	border:solid 1px #666;
+}
+/*
+guoping.zhang2010.12.29
+*/
+ul.token_box li.active { 
+	background-color: #3366CC;
+	color: #eee;
+}

@@ -1,0 +1,7 @@
+<?php echo Form::checkbox('ap_dtstart_check', $form['ap_dtstart_check'], '', 'class="middle monitor"'); ?>&#160;<input name="ap_dtstart" class="text date middle
+toggle_status:ap_dtstart_check enable_on:on" value="<?php echo H($form['ap_dtstart']) ?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/>
+
+<span class="middle description"> - </span>
+
+<?php echo Form::checkbox('ap_dtend_check', $form['ap_dtend_check'], '', 'class="middle monitor"'); ?>&#160;<input name="ap_dtend" class="text date middle toggle_status:ap_dtend_check enable_on:on" value="<?php echo H($form['ap_dtend']) ?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/>
+<input class="hidden" name="ap_date_filter" value="1" />

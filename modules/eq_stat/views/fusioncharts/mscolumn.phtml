@@ -1,0 +1,32 @@
+<graph 
+	baseFont="Arial" baseFontSize="13" animation="1" formatNumberScale="0" 
+	decimalPrecision="0" showNames="1" hoverCapSepChar=" " yAxisMaxValue="5">
+	<?php 
+		$categories = (array)$columns[0]['points'];
+		if (count($categories)): 
+	?>
+	<categories>
+		<?php 
+			foreach ($categories as $category): 
+			$name = $category['label'];
+		?>
+		<category name="<?php echo H($name)?>" />
+		<?php endforeach ?>
+	</categories>
+	<?php 
+		foreach($columns as $key => $label) :
+		$name = $label['label'];
+		$color = $this->colors[$key%10];
+		$sets = $label['points'];
+	?>
+	<dataset seriesname="<?php echo H($name)?>" color="<?php echo H($color)?>" showValues="0">	
+		<?php 
+			foreach($sets as $set):
+			$val = $set['value'];
+		?>
+		<set value="<?php echo H($val)?>" />
+		<?php endforeach ?>
+	</dataset>
+	<?php endforeach ?>
+	<?php endif ?>
+</graph>

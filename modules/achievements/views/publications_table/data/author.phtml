@@ -1,0 +1,19 @@
+<?php			
+	$authors = Q("ac_author[achievement=$publication]");
+	$author_list = [];
+	foreach($authors as $author) {
+		/*
+			BUG#227 (Cheng.Liu@2010.12.14)
+			成果人员中需要链接
+		*/
+		$user = $author->user;
+		if ($user->id) {
+			$author_list[] = URI::anchor($user->url(), H($author->name));
+		}
+		else {
+			$author_list[] = H($author->name);
+		}
+		
+	}
+	echo implode(', ', $author_list);
+?>

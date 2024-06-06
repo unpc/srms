@@ -1,0 +1,40 @@
+.prop_box {
+	position: fixed;
+	z-index: 999;
+	padding: 5px;
+    background-color: #EEEEEE;
+    box-shadow: rgba(0,0,0,0.8) 0 2px 6px;
+
+    .prop_title {
+    	background-color: #EEEEEE;
+	    display: block;
+	    position: relative;
+	    min-height: 24px;
+
+	    a.prop_close {
+	    	float: right;
+		    cursor: pointer;
+		    display: -moz-inline-box;
+		    display: inline-block;
+		    padding: 0;
+		    z-index: 5000;
+		    height: 24px;
+		    width: 24px;
+		    text-decoration: none;
+		    background: url("images/buttons/close.png") no-repeat 4px 0px;
+	    }
+    }
+
+    .prop_content {
+    	background: #fff;
+    	vertical-align: middle;
+    	text-align: center;
+    	height: 100%;
+    	width: 100%;
+    }
+
+    a {
+    	text-decoration: none;
+    	cursor: pointer;
+    }
+}

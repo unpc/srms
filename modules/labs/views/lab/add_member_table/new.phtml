@@ -1,0 +1,226 @@
+<?php 
+	$requires = Lab_Model::add_require_fields();
+	$_requires = function($key) use ($requires) {
+		echo $requires[$key] ? (string) V('form_require') : '';
+	}
+?>
+<table class="form flexible hidden toggle:add_from show_on:<?= $method?>">
+    <tr><td colspan="2"></td></tr>
+    <tr class="begin">
+        <td colspan="2" class="label left top nowrap blue">
+            <input type="hidden" name="add_form" value="new">
+            <h1 class="">
+                <?php echo I18N::T('people', ' 登录信息') ?>
+            </h1>
+        </td>
+    </tr>
+    <tr>
+        <td class="label left nowrap" width="80" colspan="2">
+
+            <div class="title">
+                <?php echo $_requires('token')?><?php echo I18N::T('people', '登录帐号')?>
+                <?php echo V('form_filter',['error'=>$form->errors['token'][0]])?>
+            </div>
+            <input
+                name="token"
+                size="30"
+                class="text"
+                value="<?php echo H($form['token']) ?>"/>
+            @
+            <?php
+			echo Widget::factory('people:backend_selector', [
+				'select'=> $form['backend'] ?? (Config::get('auth.default_add_backend') ?? Config::get('auth.default_backend')),
+				'extra_class' => 'monitor',
+                'skip_backends' => Config::get('labs.add_user_skip_backends'),
+			]);
+		?>
+            <?php
+         /*
+           添加成员时走默认backend，不容许选择
+           (xiaopei.li@2011.08.19)
+                @
+                <?php
+                echo Widget::factory('people:backend_selector', array(
+                    'select'=> $form['backend'] ? : 'database'
+                ));
+                ?>
+            */ ?>
+
+            <div class="description">
+                <?php 
+            $message = Config::get('auth.enable_cn_token') ? 
+            Config::get('people.signup.label.cn') : Config::get('people.signup.label.en'); ?>
+                <div class="interval_6"></div>
+                <?php echo I18N::T('people', $message);?>
+            </div>
+
+        </td>
+    </tr>
+
+    <?php echo V('labs:lab/add_member_pwd', ['form'=>$form, 'require'=>$require, 'name'=>'backend']); ?>
+    <?php
+	$members_type = [];
+	foreach(User_Model::get_members() as $key => $value){
+		$members_type[I18N::T('people', $key)] = $value;
+	}
+	?>
+    <tr><td colspan="2"></td></tr>
+    <tr class="begin">
+        <td colspan="2" class="blue">
+            <h1 class="">
+                <?php echo I18N::T('people', '个人信息') ?>
+            </h1>
+        </td>
+    </tr>
+    <tr>
+        <td class="label left nowrap">
+
+            <div class="title">
+                <?php echo $_requires('name')?>
+                <?php echo I18N::T('people', '姓名')?>
+                <?php echo V('form_filter',['error'=>$form->errors['name'][0]])?>
+            </div>
+            <input
+                name="name"
+                class="text"
+                size="40"
+                value="<?php echo H($form['name']) ?>"/></td>
+
+        <td class="label left nowrap">
+            <div class="title"><?php echo $_requires('gender')?><?php echo I18N::T('people', '性别')?>
+                <?php echo V('form_filter',['error'=>$form->errors['gender'][0]])?>
+            </div>
+            <?php echo Form::dropdown('gender', I18N::T('people', User_Model::$genders), isset($form['gender']) ? $form['gender'] : -1, 'class="dropdown"'); ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label left nowrap">
+            <div class="title">
+                <?php echo $_requires('member_type')?><?php echo I18N::T('people', '人员类型')?>
+                <?php echo V('form_filter',['error'=>$form->errors['member_type'][0]])?></div>
+            <?php echo Form::dropdown('member_type', ['-1'=>'--'] + I18N::T('people', $members_type), isset($form['member_type']) ?  $form['member_type'] : -1, 'class="dropdown"'); ?></td>
+
+        <?php if ( Config::get('people.show_ref_no', true) ) : ?>
+        <td>
+            <div class="title"><?php echo $_requires('ref_no')?><?php echo I18N::T('people', '学号/工号')?>
+                <?php echo V('form_filter',['error'=>$form->errors['ref_no'][0]])?></div>
+            <input
+                name="ref_no"
+                class="text"
+                size="40"
+                value="<?php echo H($form['ref_no']); ?>"/></td>
+    </tr>
+    <?php endif; ?>
+    <?php if (Config::get('people.show_mentor_name', false) ) : ?>
+    <tr>
+        <td colspan="2" class="label left nowrap">
+            <div class="title">
+                <?php echo $_requires('mentor_name')?>
+                <?php echo I18N::T('people', '导师姓名');  ?>
+                <?php echo V('form_filter',['error'=>$form->errors['mentor_name'][0]])?>
+            </div>
+            <input name="mentor_name" class="text" size="40" value="<?php echo H($form['mentor_name']); ?>"/>
+        </td>
+    </tr>
+    <?php endif; ?>
+    <tr>
+        <td class="label left nowrap">
+            <div class="title"><?php echo $_requires('major')?><?php echo I18N::T('people', '专业')?>
+                <?php echo V('form_filter',['error'=>$form->errors['major'][0]])?>
+            </div>
+            <input
+                name="major"
+                class="text"
+                size="40"
+                value="<?php echo H($form['major']) ?>"/></td>
+
+        <td class="label left nowrap">
+            <div class="title"><?php echo $_requires('organization')?><?php echo I18N::T('people', '单位名称')?>
+                <?php echo V('form_filter',['error'=>$form->errors['organization'][0]])?></div>
+            <input
+                name="organization"
+                class="text"
+                size="40"
+                value="<?php echo H($form['organization']) ?>"/></td>
+    </tr>
+    <?php if (Module::is_installed('equipments') && $lab->id == Equipments::default_lab()->id) : ?>
+    <?php echo Event::trigger('equipments.record.create_user_view', $form, 40);?>
+    <tr>
+        <td colspan="2" class="label left nowrap">
+            <div class="title">
+                <?php if (Config::get('people.temp_user.tax_no.required', FALSE)) :?>
+                    <?php echo V('form_require');?>
+                <?php endif;?>
+                <?php echo I18N::T('equipments', '税务登记号');?>
+            </div>
+            <input type="text" class="text" size="40" value="<?php echo H($form['tax_no'])?>" name="tax_no"/>
+        </td>
+    </tr>
+    <?php endif;?>
+    <?php if ($GLOBALS['preload']['people.enable_member_date']) :?>
+    <tr>
+        <td class="label left nowrap">
+            <div class="title">
+                <?php echo $_requires('time');?>
+                <?php echo I18N::T('equipments', '所在时间');?>
+                <?php echo V('form_filter',['error'=>$form->errors['time'][0]])?>
+            </div>
+            <input id="dfrom" placeholder="请输入开始时间" date_type="date" name="dfrom" class="text date" value="<?= $form['dfrom'] ?: date('Y-m-d', H($form['dfrom'])) ?>" />
+            
+        </td>
+        <td>
+            <div class="title">&nbsp;</div>
+            <input id="dto" placeholder="请输入结束时间" date_type="date" name="dto" class="text date" value="<?= $form['dto'] ?: date('Y-m-d', H($form['dto'])) ?>" />
+        </td>
+    </tr>
+    <?php endif;?>
+
+    <tr><td colspan="2"></td></tr>
+    <tr class="begin">
+        <td colspan="2">
+            <h1 class="blue">
+                <?php echo I18N::T('people', '联系方式') ?>
+            </h1>
+        </td>
+    </tr>
+    <tr>
+        <td class="label left nowrap">
+            <div class="title"><?php echo $_requires('email')?><?php echo I18N::T('people', '电子邮箱')?>
+            <?php echo V('form_filter',['error'=>$form->errors['email'][0]])?></div>
+            <input
+                name="email"
+                class="text"
+                size="40"
+                autocomplete="new-password"
+                value="<?php echo H($form['email']) ?>"/></td>
+
+        <td class="label left nowrap middle">
+            <div class="title"><?php echo $_requires('phone')?><?php echo I18N::T('people', '联系电话')?>
+            <?php echo V('form_filter',['error'=>$form->errors['phone'][0]])?>
+            </div>
+            <input
+                name="phone"
+                class="text"
+                size="40"
+                value="<?php echo H($form['phone']) ?>"/></td>
+    </tr>
+    <?php if ( Config::get('people.show_personal_phone', false) ) : ?>
+    <tr>
+        <td class="label right nowrap middle"><?php echo $_requires('personal_phone')?><?php echo I18N::T('people', '个人手机'); ?></td>
+        <td class="middle"><input
+            name="personal_phone"
+            class="text"
+            size="40"
+            value="<?php echo H($form['personal_phone']); ?>"/></td>
+    </tr>
+    <?php endif; ?>
+    <tr>
+        <td class="label left nowrap middle">
+            <div class="title"><?php echo $_requires('address')?><?php echo I18N::T('people', '地址')?></div>
+            <input
+                name="address"
+                class="text"
+                size="40"
+                value="<?php echo H($form['address']) ?>"/></td>
+    </tr>
+</table>

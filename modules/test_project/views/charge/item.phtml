@@ -1,0 +1,37 @@
+<table class="form lmaigin_1e5 bmargin_3">
+    <tbody>
+    <tr>
+        <td class="middle right nowrap"><?php echo I18N::T('test_project', '用户标签')?></td>
+        <td class="middle lpadding_8" colspan="2" style="width: 350px;">
+            <?php
+            echo Widget::factory('equipments:tag_selector', [
+                'autocomplete'=> URI::url('!equipments/autocomplete/user_tags.'.$equipment->id),
+                'name'=>'special_tags[]',
+                'value'=>($error ? $form['special_tags'] : @json_encode($special_tags)),
+            ]);
+            ?>
+        </td>
+    </tr>
+    <tr>
+        <td><div class="interval_20">&#160;</div></td>
+    </tr>
+    <?php if (!count($test_projects)): ?>
+        <tr>
+            <td class="left nowrap middle"><?= I18N::T('test_project', '请到测试项目中添加项目'); ?></td>
+        </tr>
+    <?php else: ?>
+        <?php foreach ($test_projects as $id => $test_project):?>
+            <tr>
+                <td class="middle right nowrap"><?= $test_project->name; ?></td>
+                <td class="middle lpadding_8">
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <?= I18N::T('test_project', '每一样品需要金额'); ?>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <input name="<?= 'special_unit_price['.$id.'][]'?>" class="text currency" size="10" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?= H($unit_price[$id]) ?>" <?= $disabled?>/>
+                </td>
+            </tr>
+            <tr><td><div class="interval_20">&#160;</div></td></tr>
+        <?php endforeach; ?>
+    <?php endif; ?>
+    </tbody>
+</table>

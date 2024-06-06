@@ -1,0 +1,335 @@
+.envmon_require {
+    line-height: 24px;    
+}
+
+#table_nodes {
+
+	td.row_even, td.row_odd {
+		background-color: #fff;
+		border-bottom: 1px solid #eee;
+	}
+
+}
+
+
+.sensors_brief {
+	.sensor {
+		width: 150px;
+		overflow:hidden;
+		padding: 5px;
+		background-color: #eee;
+		text-align: center;
+		margin: 8px;
+		float: left;
+		border-radius:5px;
+		box-shadow: rgba(0,0,0,0.5) 0 1px 2px;
+		margin-bottom: 5px;
+
+		.sensor_name  {
+			padding: 0 2px 2px;
+			
+			.name {
+				font-weight: bold;
+				text-shadow: 0 1px 0 #fff;
+			}
+
+			.blue {
+				text-shadow: 0 1px 0 #fff;
+			}
+		}
+
+		.sensor_body {
+			background: #002c19 url(!envmon/images/sensor_bg.png);
+			border: 1px solid #ccc;
+			color: #cff;
+			padding: 8px 10px;
+			line-height: 1;
+
+			.current_value {
+				font-weight: bold;
+
+				.value {
+					font-size: 26px;
+				}
+
+				.unit {
+					font-size: 22px;
+				}
+			}
+
+			.normal_range {
+				text-align: right;
+			}
+		}
+	}
+
+	.sensor_out_of_service {
+		.sensor_name {
+			color: #aaa;
+
+			.name {
+				text-shadow: none;
+			}
+		}
+
+		.sensor_body {
+			color: #566;
+		}		
+	}
+}
+
+.bucket_vis {
+
+	fieldset {
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		padding: 6px;
+		margin: 0;
+		line-height: 1;
+		display: block;
+		vertical-align: top;
+		margin-bottom: 2.5em;
+		width: 180px;
+
+		legend {
+			color:#000000;
+			font-weight: bold;
+			padding: 0 4px;
+		}
+		
+		p {
+			margin-bottom: .5em;
+		}
+		
+	}
+	
+}
+.preview_dlg {
+	border: 3px solid #ccc;
+	border-radius: 10px;
+	border-style: dashed;
+	overflow: auto
+}
+
+
+.plot_image {
+
+	fieldset {
+		border: 1px solid #ccc;
+		border-radius: 5px;
+		padding: 6px;
+		margin: 0;
+		line-height: 1;
+		display:inline-block;
+		vertical-align: top;
+		margin-bottom: .5em;
+		width: auto;
+		height: auto;
+
+		legend {
+			font-weight: bold;
+			padding: 0 4px;
+		}
+		
+		p {
+			margin-bottom: .5em;
+		}
+		
+	}
+	
+}
+
+.bucket_plot_legend {
+	border: 1px solid #ccc;
+	padding: 5px;
+	border-radius: 4px;
+	
+	
+	table.sticky {
+		th, td {
+			padding: 2px 3px;
+		}
+	}
+	
+}
+
+.legend_color {
+	display: block;
+	width: 16px;
+	height: 16px;
+}
+
+.bucket_report {
+	.bucket_plot_legend {
+		border: none;
+		padding: 5px 0;
+	}
+	
+	table.sticky {
+		th {
+			background-color: #fff;
+			border-bottom: 1px solid #999;
+		}
+		
+		td {
+			border: none;
+		}
+		
+		border-top: 2px solid #666;
+		border-bottom: 2px solid #666;
+	}
+}
+
+ul.envmon_curve_options {
+	padding:0;
+	margin: 0;
+
+	li {
+		font-weight: bold;
+		margin-left: 0;
+	}
+
+	ul {
+		margin-left: 20px;
+
+		li {
+			font-weight: normal;
+			display: inline-block;
+			padding: 2px;
+			width: 50%;
+		}
+		
+		li.r {
+			display: block;
+			height: 1px;
+			width: auto;
+			overflow:hidden;
+			padding:0;
+			margin:0;
+		}
+		
+	}
+	
+}
+
+.bucket_report {
+	padding: 0;
+	margin:10px auto;
+	width: 640px;
+	overflow: visible;
+
+	fieldset {
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		padding: 6px;
+		margin: 0;
+		line-height: 1;
+		display:inline-block;
+		vertical-align: top;
+
+		legend {
+			font-weight: bold;
+			padding: 0 4px;
+		}
+		
+		p {
+			margin-bottom: .5em;
+		}
+		
+	}
+	
+	.print_view {
+		display: none;
+	}
+}
+
+.bucket_plot_export {
+	fieldset {
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		padding: 6px;
+		margin: 0;
+		line-height: 1;
+		display:inline-block;
+		vertical-align: top;
+		margin-bottom: .5em;
+		width: 190px;
+
+		legend {
+			font-weight: bold;
+			padding: 0 4px;
+		}
+		
+		p {
+			margin-bottom: .5em;
+		}
+	}
+}
+
+@media print{
+	.disable_when_printing {
+		display: none;
+	}
+	
+	.bucket_report .rte_zone {
+		display: none;
+	}
+	
+	.bucket_report .print_view {
+		display: block;
+	}
+		
+}
+
+ul.envmon_curve_axis_options ul li {
+	margin-bottom: 3px;
+}
+
+input.button_reset_zoom, a.button_reset_zoom {
+	padding-left: 20px;
+	background-image: url(!envmon/images/buttons/reset_zoom.png);
+	background-repeat: no-repeat;
+	background-position: 2px center;
+}
+
+input.button_database, a.button_database {
+	padding-left: 20px;
+	background-image: url(!envmon/images/buttons/database.png);
+	background-repeat: no-repeat;
+	background-position: 2px center;
+}
+
+td.common_units  {
+	padding-top: 2px !important;
+	span{
+	border: 1px solid #EEEEEE;
+	background-color: #999;
+    border-radius: 2px 2px 2px 2px;
+    color: #FFFFFF;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.231;
+    padding: 2px 6px;
+    text-align: center;
+    text-decoration: none;
+    text-transform: capitalize;
+    vertical-align: middle;
+	cursor:pointer;
+}
+
+}
+
+table.node {
+    .node_input {
+        width: 280px !important;
+    }
+
+    .node_incharge_input {
+        width: 100% !important;
+    }
+}
+
+.margin_-1{
+	margin-top: -1rem;
+}

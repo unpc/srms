@@ -1,0 +1,15 @@
+<?php if($calendar->allows['attachments']): ?>
+<tr>
+	<td class="right top nowrap">
+		<?php echo $properties['label'] ?>
+	</td>
+	<td>
+		<div class="form form_border">
+			<div class="clearfix">
+				<span class="description padding_text"><?php echo I18N::T('calendars', '无'); ?></span>
+			</div>
+		</div>
+	</td>
+</tr>
+<?php endif; ?>
+

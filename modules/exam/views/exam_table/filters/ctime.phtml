@@ -1,0 +1,6 @@
+<?php echo Form::checkbox('ctstart_check', $form['ctstart_check'], '', 'class="middle monitor"'); ?>&#160;
+<input name="ctstart" class="text date middle toggle_status:ctstart_check enable_on:on" value="<?php echo H($form['ctstart'] ) ?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/>
+&#160;<span class="middle description">-</span>&#160;
+<?php echo Form::checkbox('ctend_check', $form['ctend_check'], '', 'class="middle monitor"'); ?>&#160;
+<input name="ctend" class="text date middle toggle_status:ctend_check enable_on:on" value="<?php echo H($form['ctend'] ) ?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/>
+<input class="hidden" name="date_filter" value="1" />

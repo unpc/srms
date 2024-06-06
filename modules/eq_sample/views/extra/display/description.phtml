@@ -1,0 +1,10 @@
+
+    <td class="label left top nowrap" colspan="2">
+        <div class="bpadding_24">
+            <?php echo I18N::T('eq_sample', $field['title']);?>
+            <?php echo V('form_filter',['error'=>$error]);?>
+        </div>
+        <textarea style="word-break: break-word;white-space: normal;line-height: normal;height: 60px;width: 100%;" name="description" type="text" <?php if ($is_edit && $sample->sender->id != L('ME')->id) echo 'disabled="disabled"'?>class="text"><?= $value?></textarea>
+    </td>
+
+

@@ -1,0 +1,51 @@
+<?php /* TASK #1305::财务账号查看使用preview(kai.wu@2011.08.23) */ ?>
+<?php
+$billing_accounts = Q("billing_account[lab={$lab}]");
+$effective_accounts = $billing_accounts->find('[balance>0]');
+$arrears_accounts = $billing_accounts->find('[balance<=0]');
+$balance = $effective_accounts->sum('balance');
+?>
+<div class="padding_2 clearfix">
+	<table class="form" width="300">
+	<?php
+	$k = 0;
+	foreach($effective_accounts as $account):
+		$proportion = max(5, ceil((float)$account->balance/$balance*100));
+		$tip = Number::currency($account->balance);
+	?>
+		<tr>
+			<td class="nowrap tight"><span class="description"><?php echo H($account->department->name)?></span></td>
+			<td class="nowrap tight" align="right"><small><strong><?php echo H($tip)?></strong></small></td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<div class="lpadding_2 clearfix">
+				<div class="tooltip:<?php echo E(H($tip))?> tooltip_offsetY:5 tooltip_class:sidebar_tooltip balance_<?php echo $k ?>" style="width:<?php echo $proportion?>%; overflow:hidden; height:15px; cursor:default"></div>
+				</div>
+			</td>
+		</tr>
+	<?php
+		$k++;
+		$k = $k % 7;
+	endforeach;?>
+
+	<?php if(count($arrears_accounts)):?>
+		<tr>
+		<td colspan="2">
+			<div class="interval_24"></div>
+			<hr>
+			<div class="interval_24"></div>
+		</td>
+		</tr>
+	<?php endif?>
+	<?php
+		foreach($arrears_accounts as $account):
+		$tip = Number::currency($account->balance);
+	?>
+		<tr>
+			<td class="nowrap tight"><span class="description"><?php echo H($account->department->name)?></span></td>
+			<td class="nowrap tight" align="right"><small><strong><span class="red"><?php echo H($tip)?></span></strong></small></td>
+		</tr>
+	<?php endforeach;?>
+	</table>
+</div>

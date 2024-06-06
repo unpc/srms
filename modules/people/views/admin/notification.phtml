@@ -1,0 +1,42 @@
+<div class="form padding_1"><form method="post" action="" autocomplete="off">
+<?php
+$error = FALSE;
+if($form['type']==$type){
+	$error = ($form->no_error===FALSE);
+	if($error) echo V('form_error', ['form'=>$form]);
+}
+?>
+	<table class="form">
+		<tr><td colspan="2"><strong>
+			<?php echo I18N::T($module_name, $description); ?>
+		</strong></td></tr>
+		<tr>
+			<td class="top nowrap left"><?php echo I18N::T('people', '消息内容'); ?></td>
+			<td><textarea name="body" cols="50" rows="5" class="autogrow"><?php echo $error ? H($form['body']) : $body; ?></textarea></td>
+		</tr>
+		<tr><td></td>
+		<td class="description">
+		    <?php 
+		        $descriptions = $strtr; 
+		        if(is_array($descriptions)):
+		    ?>
+		    	<ul>
+		    <?php
+					foreach($descriptions as $k=>$v):
+		    ?>
+		    		<li><?php echo $k; ?>: <?php echo I18N::HT($module_name, $v); ?></li>
+		    <?php			            
+		        	endforeach;
+		    ?>
+		    	</li></ul>
+		    <?php
+		        endif;
+		    ?>
+		</td></tr>
+		<tr><td></td><td>
+			<input type="hidden" name="type" value="<?php echo $type; ?>" />
+			<input type="submit" name="submit" class="button button_save" value="<?php echo HT('保存'); ?>" />
+			<input type="reset" class="button button_cancel" value="<?php echo HT('取消'); ?>" />
+		</td></tr>
+	</table>
+</form></div>

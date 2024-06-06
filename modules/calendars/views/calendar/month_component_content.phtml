@@ -1,0 +1,24 @@
+<?php
+
+$title = Date::range($object->dtstart, $object->dtend);
+
+$q_static = H([
+	'id'=>$object->id,
+	'day'=>$day,
+	'dtstart'=>$object->dtstart,
+	'dtend'=>$object->dtend
+]);
+
+$content = Event::trigger('calendar.component_content.render', $object, $calendar);
+$class = "block block_{$color} block_top block_bottom block_default";
+$is_repeat = (bool) $object->cal_rrule->id;
+if ($is_repeat) $class .= " repeat_event";
+?>
+<div style="overflow:hidden; margin:1px 0; position: relative;" class="<?php echo H($class) ?>" q-object="component" q-event="dblclick" q-static="<?php echo $q_static; ?>" title="<?php echo H($title); ?>">
+    <div class="block_left_resizer"></div>
+<span>
+	<?php echo Event::trigger('calendar.component_icon.present', $object); ?>
+</span>
+<span></span>
+<?php echo $content ?: H(truncate($object->name, 20)) ?>
+</div>

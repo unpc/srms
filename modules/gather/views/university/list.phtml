@@ -1,0 +1,30 @@
+<?php
+
+$table       = Widget::factory('table');
+$table->name = 'university';
+
+$table->add_columns([
+    'name'  => [
+        'title'  => I18N::T('equipments', '高校名称'),
+        'nowrap' => true,
+    ],
+    'count' => [
+        'title'  => I18N::T('equipments', '仪器台数'),
+        'nowrap' => true,
+    ],
+]);
+
+$table->empty_message = I18N::T('equipments', '没有查询到相应高校!');
+
+if (count($data) > 0) {
+    foreach ($data as $name => $count) {
+        $root  = Tag_Model::root('group');
+        $group = O('tag_group', ['root' => $root, 'parent' => $root, 'name' => $name]);
+        $table->add_row([
+            'name'  => '<a href="' . URI::url("!equipments/index?group_id=$group->id") . '">' . I18N::T('equipments', $name) . '</a>',
+            'count' => $count,
+        ]);
+    }
+}
+
+echo $table;

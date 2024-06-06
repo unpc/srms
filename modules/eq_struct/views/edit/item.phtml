@@ -1,0 +1,15 @@
+<tr>
+    <?php
+    foreach ($values as $value) :?>
+    <td class="label left nowrap middle"><?php echo I18N::HT('eq_struct', $value['name']);?></td>
+    <?php endforeach; ?>
+</tr>
+<tr>
+    <?php foreach ($values as $i => $value) :
+    $key = $keys[$i];
+    ?>
+    <td class="top">
+        <input placeholder="请输入<?php echo I18N::HT('eq_struct', $value['name']);?>" name="<?= $key?>" class="text" value="<?php echo H($form[$key] ? : $struct->$key); ?>" />
+    </td>
+    <?php endforeach; ?>
+</tr>

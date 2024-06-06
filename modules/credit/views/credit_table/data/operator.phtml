@@ -1,0 +1,9 @@
+<div>
+    <?php if ($credit->operator->id): ?>
+        <a href="<?php echo H($credit->operator->url()) ?>">
+            <strong class="name"><?php echo H($credit->operator->name) ?></strong>
+        </a>
+    <?php else:?>
+        <strong class="name"><?php echo I18N::T('credit', '系统'); ?></strong>
+    <?php endif;?>
+</div>

@@ -1,0 +1,24 @@
+<div class="form padding_2 clearfix">
+	<form method="POST">
+	<?php 
+		$equipments = Q("{$door}<asso equipment");
+		$specific = [];
+		foreach ($equipments as $key => $equipment) {
+			if (isset($specific[$key])) continue;
+			$specific[$key]['equipment'] = $equipment;
+		}
+		echo Widget::factory('flexform', [
+			'title' => I18N::T('eq_door', '关联仪器'),
+			'template_data' => ['disabled'=>TRUE],
+			'existing_data' => $specific,
+			'delete_message' => I18N::T('eq_door', '您确定要取消该仪器的关联吗？请谨慎操作！'),
+			'item_view' => 'eq_door:door/equipment/door_special_item',
+			'extra_vars' => [
+				'door' => $door,
+			],
+		]);
+	?>
+	<div class="hr_2">&#160;</div>
+	<input name="submit" class="button button_save" type="submit" value="<?php echo H(I18N::T('eq_door', '更新')) ?>" />
+	</form>
+</div>

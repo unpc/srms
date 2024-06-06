@@ -1,0 +1,55 @@
+table.charge_summary_table {
+	tr td {
+		padding: 2px;
+		border: none;
+	}
+
+	td .status_tag_label {
+		min-width: 56px;
+		*width: 56px;
+		background-color: #777;
+		display: block;
+		text-align: center;
+		/*padding-left: 6px;
+		padding-right: 6px;*/
+	}
+}
+table {
+    tr.hr {
+        background-color: #FFF;
+        td {
+            padding: 0px;
+            height: 1px;
+        }
+    }
+}
+
+.triple {
+	width:350px;
+	overflow:hidden;
+}
+.triple li {
+	float:left;
+	display:inline;
+	width:30%;
+}
+
+div.hr {
+    height:1px;
+    line-height:1px;    
+    background-color:white;
+}
+
+
+.charge_setting{
+
+    .charge_dis{
+	    display: inline-block;
+    }
+
+	b{
+		display: inline-block;
+		width: 150px;
+	}
+
+}

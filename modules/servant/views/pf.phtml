@@ -1,0 +1,125 @@
+<div class="hr_1">&#160;</div>
+<div class="panel clearfix">
+    <div class="float_left padding_1 nowrap" style="line-height:24px">
+        <?php if (count($buttons)) : ?>
+        <span>
+        <?= Widget::factory('application:links', ['links' => $buttons, 'separator' => '&#160;']);?>
+        </span>
+        <?php endif; ?>
+    </div>
+</div>
+<?php
+$me = L('ME');
+echo $pagination;
+    
+$table = Widget::factory('table');
+$table->name = 'servant';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+$columns = [
+    '@' => NULL,
+    'name' => [
+        'weight' => 10,
+        'title' => I18N::T('servant', '机构名称'),
+        'align' => 'left',
+        'filter' => [
+            'form' => V('servant:pf_table/filters/text', ['name'=>'name', 'value'=>$form['name']]),
+            'value' => $form['name'] ? H($form['name']) : NULL
+        ],
+        'nowrap' => TRUE,
+    ],
+    'code' => [
+        'weight' => 20,
+        'title' => I18N::T('servant', '机构代码'),
+        'align' => 'left',
+        'filter' => [
+            'form' => V('servant:pf_table/filters/text', ['name'=>'code', 'value'=>$form['code']]),
+            'value' => $form['code'] ? H($form['code']) : NULL
+        ],
+        'nowrap' => TRUE,
+    ],
+    'href' => [
+        'weight' => 25,
+        'title' => I18N::T('servant', '访问地址'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'contact' => [
+        'weight' => 30,
+        'title' => I18N::T('servant', '联系方式'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'address' => [
+        'weight' => 40,
+        'title' => I18N::T('servant', '地址'),
+        'align' => 'left',
+        'filter' => [
+            'form' => V('servant:pf_table/filters/text', ['name' => 'address','value'=>$form['address']]),
+            'value'=> $form['address'] ? H($form['address']) : NULL
+        ]
+    ],
+    'owner' => [
+        'weight' => 50,
+        'title' => I18N::T('servant', '负责人'),
+        'align' => 'left',
+        'filter' => [
+            'form' => V('servant:pf_table/filters/text', ['name' => 'owner', 'value'=>$form['owner']]),
+            'value'=> $form['owner'] ? H($form['owner']) : NULL
+        ]
+    ],
+    'creator' => [
+        'weight' => 60,
+        'title' => I18N::T('servant', '创建者'),
+        'align'=>'center',
+        'nowrap'=>TRUE,
+        'filter' => [
+            'form' => V('servant:pf_table/filters/text', ['name' => 'creator', 'value'=>$form['creator']]),
+            'value'=> $form['creator'] ? H($form['creator']) : NULL
+        ]
+    ],
+    'ctime' => [
+        'weight' => 70,
+        'title' => I18N::T('servant', '创建时间'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'description' => [
+        'weight' => 80,
+        'title' => I18N::T('servant', '描述'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'rest' => [
+        'weight' => 90,
+        'align' => 'right',
+        'nowrap' => TRUE,
+    ]
+];
+
+$table->add_columns($columns);
+$table->empty_message = I18N::T('servant', '暂无符合条件的机构');
+
+if ($pfs) foreach ($pfs as $pf) {
+    $links = $pf->links();
+    
+    $row = [
+        '@' => V('servant:pf_table/data/id', ['pf' => $pf]),
+        'name' => V('servant:pf_table/data/name', ['pf' => $pf]),
+        'code' => V('servant:pf_table/data/code', ['pf' => $pf]),
+        'href' => V('servant:pf_table/data/href', ['pf' => $pf]),
+        'contact' => V('servant:pf_table/data/contact', ['pf' => $pf]),
+        'address' => V('servant:pf_table/data/address', ['pf' => $pf]),
+        'owner' => V('servant:pf_table/data/owner', ['pf' => $pf]),
+        'creator' => V('servant:pf_table/data/creator', ['pf' => $pf]),
+        'ctime' => V('servant:pf_table/data/ctime', ['pf' => $pf]),
+        'description' => V('servant:pf_table/data/description', ['pf' => $pf]),
+        'rest' => Widget::factory('application:links', ['links' => $links]),
+    ];
+    $table->add_row($row);
+}
+
+echo $table;
+echo $pagination;
+?>

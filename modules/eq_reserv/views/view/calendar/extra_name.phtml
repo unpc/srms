@@ -1,0 +1,21 @@
+<?php
+$me = L('ME');
+
+$can_edit = $component->id ? ($me->is_allowed_to('修改', $component) && $me->is_allowed_to('修改事件', $component->calendar)) : TRUE;
+?>
+<tr>
+  <td class="label right top nowrap <?php if (!$can_edit) echo 'description'?>">
+  	* <?php echo I18N::T('eq_reserv', $properties['label'])?>
+  </td>
+  <td class="nowrap">
+    <?php
+    $extra_value = O('extra_value', ['object'=> $component]);
+    $values =  $extra_value->values;
+    ?>
+    <?php if ($can_edit) :?>
+	<input name="<?php echo H($name) ?>" type="text" class="text" value="<?php echo H( $component->id ? $values['name']: $properties['default_value']);?>"/>
+    <?php else :?>
+    <?php echo H($values['name']);?>
+    <?php endif;?>
+  </td>
+</tr>

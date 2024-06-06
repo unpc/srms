@@ -1,0 +1,67 @@
+<div class="padding_1 clearfix">
+	<?php if(count($panel_buttons) > 0) : ?>
+	<div class="float_left">
+	<?= Widget::factory('application:links', ['links'=>$panel_buttons, 'separator'=>' ']); ?>
+	</div>
+	<?php endif; ?>
+	<div class="float_right record_count">
+		<div class="inline_block">
+		<?= I18N::T('equipments', '共有 %total_count 条评价记录',  [
+            '%total_count' => '<span class="eq_number">'.intval($total_count).'</span>'
+            ]);?>
+
+        <?= I18N::T('equipments', '其中五星评价占比 %five_star_percent ;四星评价占比 %four_star_percent ;
+        三星评价占比 %three_star_percent ;二星评价占比 %two_star_percent ;一星评价占比 %one_star_percent ;',  [
+            '%five_star_percent' => '<span class="eq_number">'.$five_star_percent.'%</span>',
+            '%four_star_percent' => '<span class="eq_number">'.$four_star_percent.'%</span>',
+            '%three_star_percent' => '<span class="eq_number">'.$three_star_percent.'%</span>',
+            '%two_star_percent' => '<span class="eq_number">'.$two_star_percent.'%</span>',
+            '%one_star_percent' => '<span class="eq_number">'.$one_star_percent.'%</span>',
+        ]);
+        ?>
+		</div>
+	</div>
+</div>
+<div class="pages"><?= $pagination ?></div>
+<?php 
+	$table = Widget::factory('table');
+	$table->name = 'equipment_evaluates';
+	$table->sort_asc = $sort_asc;
+	$table->sort_by = $sort_by;
+
+	if($form['dtstart'] && $form['dtend']) {
+		$form['date'] = H(date('Y/m/d',$form['dtstart'])).'-'.H(date('Y/m/d',$form['dtend']));
+	}
+	elseif($form['dtstart']) {
+		$form['date'] = H(date('Y/m/d',$form['dtstart'])).'-'.I18N::T('equipments','最末');
+	}
+	elseif($form['dtend']) {
+		$form['date'] = I18N::T('equipments','最初').'-'.H(date('Y/m/d',$form['dtend']));
+	}
+
+
+    Event::trigger('eq_evaluate.list.columns', $form, $columns);
+
+	$table->add_columns((array)$columns);
+	$table->empty_message = I18N::T('equipments', '无符合条件的评价');
+
+	if (count($evaluates) > 0) foreach ($evaluates as $evaluate) {
+		$ajax_id = uniqid();
+	    $row = [
+	    	'serial_number'=>V('eq_evaluate:evaluates_table/data/serial_number', ['id'=>$evaluate->id]),
+			'equipment_name'=>V('eq_evaluate:evaluates_table/data/equipment_name', ['evaluate'=>$evaluate]),
+	    	'user_name'=>V('eq_evaluate:evaluates_table/data/user_name_with_lab', ['evaluate'=>$evaluate]),
+	    	'score'=>V('eq_evaluate:evaluates_table/data/score', ['evaluate'=>$evaluate]),
+	    	'duty_teacher'=>V('eq_evaluate:evaluates_table/data/duty_teacher', ['evaluate' => $evaluate]),
+	    	'content'=>V('eq_evaluate:evaluates_table/data/content', ['evaluate'=>$evaluate]),
+	    ];
+        $row = Event::trigger('eq_evaluate.list.row', $row, $evaluate) ? : $row;
+        $table->add_row($row);
+	}
+
+	
+?>
+
+<?php echo $table;?>
+
+<div class="pages"><?= $pagination ?></div>

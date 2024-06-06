@@ -1,0 +1,169 @@
+<div class="hr_1">&#160;</div>
+<?php if (count($panel_buttons)) : ?>
+    <div class="panel padding_1 clearfix">
+        <span><?= Widget::factory('application:links', ['links' => $panel_buttons, 'separator' => '&#160;']); ?></span>
+        <div class="float_right padding_1 nowrap" style="line-height:15px">
+            <div class="inline_block middle">
+                <?php
+                echo I18N::T('nrii', '共有%total_count条数据',
+                    ['%total_count' => '<span class="eq_number">' . intval($total_count) . '</span>']);
+                ?>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
+<?= $pagination ?>
+<?php
+$me = L('ME');
+
+
+if ($form['worthmin'] && $form['worthmax']) {
+    $worthValue = H($form['worthmin'] . '~' . $form['worthmax'] . '(万元)');
+} elseif ($form['worthmin']) {
+    $worthValue = H($form['worthmin'] . '~ * (万元)');
+} elseif ($form['worthmax']) {
+    $worthValue = H(' * ~' . $form['worthmax'] . '(万元)');
+}
+
+$table = Widget::factory('table');
+$table->name = 'nirr_equipment';
+$table->form = $form;
+$columns = [
+    '@' => NULL,
+    'eq_name' => [
+        'title' => I18N::T('nrii', '仪器名称'),
+        'filter' => [
+            'form' => V('nrii:equipment/filters/text', ['form' => $form, 'name' => 'eq_name']),
+            'value' => H($form['eq_name']),
+        ],
+        'nowrap' => TRUE,
+        'weight' => 10
+    ],
+    'innerId' => [
+        'title' => I18N::T('nrii', '所属单位科学内部编号'),
+        'filter' => [
+            'form' => V('nrii:equipment/filters/text', ['form' => $form, 'name' => 'innerId']),
+            'value' => I18N::T('nrii', $form['innerId']),
+        ],
+        'invisible' => TRUE,
+        'nowrap' => TRUE,
+        'weight' => 20
+    ],
+    'class' => [
+        'title' => I18N::T('nrii', '设备分类'),
+        'filter' => [
+            'form' => V('nrii:equipment/filters/class', ['form' => $form]),
+            'value' => H(Config::get('class._root_')[substr($form['class'], 0, 2) . '0000']),
+            'field' => 'class'
+        ],
+        'nowrap' => TRUE,
+        'weight' => 30
+    ],
+    'nation' => [
+        'title' => I18N::T('nrii', '产地国别'),
+        'filter' => [
+            'form' => V('nrii:device/filters/nation', ['form' => $form]),
+            'value' => H($form['nation']),
+        ],
+        'nowrap' => TRUE,
+        'weight' => 40
+    ],
+    'worth' => [
+        'title' => I18N::T('nrii', '原值(万元)'),
+        'filter' => [
+            'form' => V('nrii:device/filters/worth', ['form' => $form]),
+            'value' => $worthValue,
+            'field' => 'worthmin,worthmax'
+        ],
+        'nowrap' => TRUE,
+        'weight' => 50
+    ],
+    'affiliate' => [
+        'title' => I18N::T('nrii', '所属仪器类型'),
+        'filter' => [
+            'form' => V('nrii:equipment/filters/affiliate', ['form' => $form, 'name' => 'affiliate']),
+            'value' => H(Nrii_Equipment_Model::$affiliate_type[$form['affiliate']]),
+        ],
+        'nowrap' => TRUE,
+        'weight' => 60
+    ],
+    'affiliate_name' => [
+        'title' => I18N::T('nrii', '所属仪器名称'),
+        'filter' => [
+            'form' => V('nrii:equipment/filters/text', ['form' => $form, 'name' => 'affiliate_name']),
+            'value' => H($form['affiliate_name']),
+        ],
+        'nowrap' => TRUE,
+        'weight' => 70
+    ],
+    'nrii_status' => [
+        'title' => I18N::T('nrii', '上传状态'),
+        'filter' => [
+            'form' => V('nrii:equipment/filters/nrii_status', ['form' => $form, 'name' => 'nrii_status']),
+            'value' => H(Nrii_Equipment_Model::$nrii_status[$form['nrii_status']]),
+        ],
+        'nowrap' => TRUE,
+        'weight' => 80
+    ],
+    'rest' => [
+        'title' => I18N::T('nrii', '操作'),
+        'nowrap' => TRUE,
+        'weight' => 90
+    ]
+];
+
+$extraColumns = Event::trigger('extra.nrii.equipment.column', $form, $columns);
+if($extraColumns) {
+    $columns = $extraColumns;
+}
+
+$table->add_columns($columns);
+
+if ($me->access('管理所有内容')) {
+    $table->add_column('shen_status', [
+        'title' => I18N::T('nrii', '审核状态'),
+        'filter' => [
+            'form' => V('nrii:equipment/filters/shen_status', ['form' => $form, 'name' => 'shen_status']),
+            'value' => H(Nrii_Equipment_Model::$shen_status[$form['shen_status']]),
+        ],
+        'nowrap' => TRUE,
+        'weight' => 80
+    ]);
+}
+
+$table->empty_message = I18N::T('nrii', '没有查询到相应的科学装置!');
+
+if (count($equipments) > 0) {
+    foreach ($equipments as $equipment) {
+        $icon_file = Core::file_exists(PRIVATE_BASE . 'icons/equipment/32/' . $equipment->eq_id . '.png', '*');
+        if ($icon_file) {
+            $view = ['view' => O('equipment', $equipment->eq_id)->icon('32', 'style="display:block"'),
+                'extra' => 'style="padding:4px" align="right"'];
+        } else {
+            $icon_url = Config::get('system.base_url') . 'icon/nrii_equipment.0.32';
+            $view = ['view' => '<img style="padding:4px" align="right" src="' . $icon_url . '" />'];
+        }
+
+        $links = $equipment->links('index');
+        $row = [
+            '@' => $view,
+            'eq_name' => HT($equipment->eq_name),
+            'class' => HT(Config::get('class._root_')[substr($equipment->class, 0, 2) . '0000']),
+            'nation' => HT($equipment->nation),
+            'worth' => HT($equipment->worth),
+            'affiliate' => HT(Nrii_Equipment_Model::$affiliate_type[$equipment->affiliate]),
+            'affiliate_name' => HT($equipment->affiliate_name),
+            'shen_status' => V('nrii:equipment/nrii_tables/data/shen_status', ['equipment' => $equipment]),
+            'nrii_status' => V('nrii:equipment/nrii_tables/data/nrii_status', ['equipment' => $equipment]),
+            'rest' => Widget::factory('application:links', ['links' => $links]),
+        ];
+        $extraRow = Event::trigger('extra.nrii.equipment.row', $equipment, $row);
+        if($extraRow) {
+            $row = $extraRow;
+        }
+        $table->add_row($row);
+    }
+}
+echo $table;
+?>
+<?= $pagination ?>

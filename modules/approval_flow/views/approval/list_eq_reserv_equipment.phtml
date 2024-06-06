@@ -1,0 +1,154 @@
+<div class="interval_16"></div>
+<!-- <div class="pages"><?php // echo $pagination ?></div> -->
+<?php
+
+$me = L('ME');
+if ($flag == 'approve_incharge' && $me->can_approval($flag)):
+$uniqid = uniqid();
+$select_all_id = 'select_all_' . $uniqid;
+$batch_form_id = 'batch_form_' . $uniqid;
+?>
+<div class="clearfix">
+	<form
+        q-object="batch_action" q-event="submit"
+        q-src="<?= H(URI::url('!approval_flow/index'))?>"
+        q-static="<?= H(['flag' => $flag])?>"
+	    q-src="<?php echo H(URI::url('!approval_flow/index')) ?>"
+        id="<?php echo H($batch_form_id ) ?>"
+	    method="post" autocomplete="off"
+    >
+		<div class="float_left">
+			<?php echo Form::checkbox('', FALSE, I18N::T('approval_flow', '全选'), 'id="'.$select_all_id.'" class="checkbox middle"') ?>
+			<?php foreach ($approval as $ap) echo Form::checkbox('select['.$ap->id.']', FALSE, NULL, 'class="hidden" value="'.$ap->id.'"'); ?>
+			&#160;&#160;
+			<label><?php echo I18N::T('approval_flow', '批量操作')?></label>
+			<input name="pass" type="submit" class="lmargin_10 font-button-save" value="<?php echo I18N::T('approval_flow', '通过'); ?>" />
+            &#160;
+            <input name="reject" type="submit" class="lmargin_10 font-button-delete" value="<?php echo I18N::T('approval_flow', '驳回'); ?>" />
+		</div>
+	</form>
+</div>
+<div class="interval_16"></div>
+<?php endif?>
+<!-- <div class="pages"><?php // echo $pagination ?></div> -->
+<?php
+
+$table = Widget::factory('table');
+$table->name = 'approval_reserv';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+$table->form = $form;
+
+if($form['source_dtstart'] && $form['source_dtend']) {
+    $form['source_time'] = true;
+} elseif($form['source_dtstart']) {
+    $form['source_time'] = true;
+} elseif($form['source_dtend']) {
+    $form['source_time'] = true;
+}
+
+switch($flag) {
+    case 'approve':
+        $stime_title = '';
+        break;
+    case 'done':
+        $stime_title = '通过时间';
+        break;
+    case 'rejected':
+        $stime_title = '驳回时间';
+        break;
+    case 'expired':
+        $stime_title = '过期时间';
+        break;
+}
+
+$table->add_columns([
+    'checkbox' => [
+        'align' => 'center'
+    ],
+    'user'=> [
+        'title' => I18N::T('approval', '申请人'),
+        'filter' => [
+            'form' => V('approval_flow:approval_table/filters/user', ['user' => $form['user']]),
+            'value' => $form['user'] ? O('user', H($form['user']))->name : NULL
+        ],
+        'input_type' => 'select',
+        'nowrap' => TRUE
+    ],
+    'lab'=> [
+        'title' => I18N::T('approval', '课题组'),
+        'nowrap' => TRUE
+    ],
+    'reserv_time'=> [
+        'title' => I18N::T('approval', '预约时间'),
+        'nowrap' => TRUE,
+        'filter' => [
+            'form' => V('approval_flow:approval_table/filters/date', [
+                'form' => $form,
+                'dtstart' => $form['source_dtstart'],
+                'dtend' => $form['source_dtend'],
+                'name_prefix' => 'source_'
+            ]),
+            'value' => $form['source_time'] ? H($form['source_time']) : NULL,
+            'field' => 'source_dtstart,source_dtend'
+        ]
+    ],
+    'amount' => [
+        'title' => I18N::T('approval', '金额'),
+        'align' => 'left',
+        'nowrap' =>TRUE,
+    ],
+    'ctime'=> [
+        'title' => I18N::T('approval', '申请时间'),
+        'nowrap' => TRUE
+    ],
+    'stime'=> [
+        'title' => I18N::T('approval', $stime_title),
+        'nowrap' => TRUE
+    ],
+    'description'=> [
+        'title' => I18N::T('approval', '备注'),
+        'nowrap' => TRUE
+    ],
+    'rest'=>[
+		'align'=>'right',
+		'nowrap'=>TRUE,
+	]
+]);
+
+$table->empty_message = I18N::T('approval', '没有查询到相应的项目!');
+
+if (count($approval) > 0) {
+
+    foreach($approval as $ap) {
+        $stime = $stime_title ? O('approved', ['source' => $ap, 'flag' => $flag])->ctime : '';
+
+        if ($flag == 'approve_incharge' && $me->can_approval($flag)) {
+            $select = V('approval_flow:approval_table/data/select', ['object'=>$ap, 'select_all_id'=>$select_all_id]);
+        }
+        $table->add_row([
+            'checkbox' => $select,
+            'user' => V('approval_flow:approval_table/data/user', ['user'=>$ap->user]),
+            'lab' => Approval::reserv_lab($ap),
+            'reserv_time' => date('Y/m/d H:i:s', $ap->dtstart).' - '.date('Y/m/d H:i:s', $ap->dtend),
+            'amount' => V('approval_flow:approval_table/data/amount', ['source'=>$ap->source]),
+            'ctime' => date('Y/m/d H:i:s', $ap->ctime),
+            'stime' => $stime_title ? date('Y/m/d H:i:s', $stime) : '',
+            'description' => $ap->source->component->description ? H($ap->source->component->description) : H($ap->reserv_desc),
+            'rest' => Widget::factory('application:links', ['links' => $ap->links()])
+        ]);
+    }
+}
+
+$param = [
+    'top_input_arr'=> ['user'],
+    'columns'=> (array)$table->columns,
+];
+echo V('application:search_box', $param);
+
+echo $table;
+?>
+<div class="pages"><?= $pagination ?></div>
+<?php
+echo JS::load('messages:index_operate', ['select_all_id'=>$select_all_id, 'batch_form_id' => $batch_form_id]);
+?>

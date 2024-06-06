@@ -1,0 +1,5 @@
+<?php if ($sample->ctime) :?>
+<?php echo Date::format($sample->ctime, 'Y/m/d H:i:s');?>
+<?php else: ?>
+<?php echo I18N::T('eq_sample', '送样申请时间')?>
+<?php endif;?>

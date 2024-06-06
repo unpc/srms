@@ -1,0 +1,4 @@
+<?php
+	$status = ['-1' => '---'] + EQ_Voucher_Model::$USE_STATUS;
+	echo Form::dropdown('use_status', I18N::T('eq_approval', $status), isset($form['use_status']) ? $form['use_status'] : -1, 'class="autosubmittable dropdown middle"');
+?>

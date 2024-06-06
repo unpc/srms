@@ -1,0 +1,22 @@
+<?php
+$disabled = L('ME')->is_allowed_to('修改计费设置', $equipment) ? '' : 'disabled="disabled"';
+$charge_template = $equipment->charge_template;
+$charge_sample_form = $charge_template['sample_form'];
+?>
+<tr>
+    <td class="lpadding_30">
+        <div class="interval_60"></div>
+        <h2 class="section_title"><?php echo I18N::T('material', '样品检测计费设置')?></h2>
+        <div class="interval_30"></div>
+        <div class="charge_setting">
+            <div class="">
+                <div  class="charge_dis lmaigin_1e5">
+                    <?= Form::radio('sample_form', 'no_charge_sample_form' , (!$charge_sample_form || !$form['sample_form']) ? TRUE : FALSE, I18N::T('sample_form', '免费检测'), 'class="monitor" data="" ' . $disabled); ?>
+                </div>
+                <div class="charge_dis lpadding_10">
+                    <?= Form::radio('sample_form', 'element_count' , ($charge_sample_form == 'element_count') ? TRUE : FALSE, I18N::T('sample_form', '按元素计费'), 'class="monitor element_count" data="sample_form" ' . $disabled); ?>
+                </div>
+            </div>
+        </div>
+    </td>
+</tr>

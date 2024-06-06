@@ -1,0 +1,9 @@
+<?php
+$now = Date::time();
+$alarm_capture_start = $now - Config::get('vidmon.capture_duration');
+if (Q("vidcam_alarm[vidcam={$vidcam}][ctime={$alarm_capture_start}~{$now}]")->total_count()) {
+    echo I18N::T('vidmon', '报警');
+}
+else {
+    echo I18N::T('vidmon', '正常');
+}

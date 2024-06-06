@@ -1,0 +1,97 @@
+<div class="interval_16"></div>
+<?php
+echo CSS::load_async('equipments:common');
+
+$table = Widget::factory('table');
+
+$table->name = 'incharge_training_approved';
+
+$columns = [
+    'status' => [
+        'weight' => 0,
+        'title' => I18N::T('equipments', '状态'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'user'=>[
+        'weight' => 10,
+        'title' => I18N::T('equipments', '姓名'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+        'filter'=> [
+            'form'=> V('equipments:equipments_table/filters/name', [
+                'name'=> 'user',
+                'value'=> $form['user'],
+            ]),
+            'value'=> H($form['user']),
+        ],
+    ],
+    'user_info' => [
+        'weight' => 20,
+        'title' => I18N::T('equipments', '联系方式'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'equipment' => [
+        'weight' => 30,
+        'title' => I18N::T('equipments', '仪器名称'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+        'filter'=> [
+            'form'=> V('equipments:equipments_table/filters/name', [
+                'name'=> 'equipment',
+                'value'=> $form['equipment'],
+            ]),
+            'value' => H($form['equipment']),
+        ],
+    ],
+    'mtime' => [
+        'weight' => 40,
+        'title' => I18N::T('equipments', '通过时间'),
+        'align' => 'center',
+        'nowrap' => TRUE,
+    ],
+    'atime' => [
+        'weight' => 50,
+        'title' => I18N::T('equipments', '过期时间'),
+        'align' => 'center',
+        'nowrap' => TRUE,
+    ],
+    'description' => [
+        'weight' => 60,
+        'title' => I18N::T('equipments', '授权备注'),
+        'align' => 'left'
+    ]
+];
+
+$table->add_columns($columns);
+
+$table->empty_message = I18N::T('equipments', '无符合条件的培训 / 授权');
+
+$param = [
+    'panel_buttons' => $panel_buttons,
+    'top_input_arr'=> ['user', 'equipment'],
+    'columns'=> $table->columns,
+];
+echo V('application:search_box', $param);
+
+foreach ($trainings as $training) {
+    $table->add_row([
+        'status'=> [
+            'view' => V('equipments:training_table/data/label', ['training' => $training]),
+            'extra' => 'style="padding:4px" align="right"',
+        ],
+        'user' => V('equipments:users_table/data/name', ['user' => $training->user]),
+        'user_info' => V('equipments:users_table/data/contact_info', ['user' => $training->user, 'training'=>$training]),
+        'equipment' => V('equipments:equipments_table/data/name', ['equipment' => $training->equipment]),
+        'mtime' => $training->mtime ? date('Y/m/d', $training->mtime) : T('--'),
+        'atime' => $training->atime ? date('Y/m/d', $training->atime) : I18N::T('equipments', '不过期'),
+        'description' => H($training->description),
+    ]);
+}
+?>
+<div class="pages" ><?php echo $pagination; ?></div>
+<?php
+echo $table;
+?>
+<div class="pages" ><?php echo $pagination; ?></div>

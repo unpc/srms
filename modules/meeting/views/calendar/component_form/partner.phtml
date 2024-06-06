@@ -1,0 +1,83 @@
+<?php
+$reserv = O('me_reserv', ['component' => $component]);
+$type = $form['type'] ? : ($reserv->type ? : 'all');
+$roles = $form['roles'] ? : $reserv->roles;
+$groups = $form['groups'] ? : $reserv->groups;
+$users = $form['users'] ? : $reserv->users;
+?>
+<tr>
+	<td class="label left nowrap" colspan="2">
+    <div>
+        <div class="title" style="line-height: initial;">
+            <?= I18N::T('meeting', $properties['label']) ?>
+        </div>
+      <?= Form::radio('type', 'all', $type == 'all',
+      I18N::T('meeting', '全部成员'), 'class="monitor middle radio"', 'class="middle"'); ?>
+      <span class="rmargin_152">&nbsp;</span>
+      <?php
+      echo Form::radio('type', 'part', $type == 'part',
+      I18N::T('meeting', '部分成员'),  'class="monitor middle radio"', 'class="middle"');
+      $tooltip = I18N::T('meeting', '请输入关键字并选择');
+      ?>
+
+      <div class="toggle_status:type enable_on:part">
+        <div class="form">
+          <table class="form" style="width: 100%">
+            <tr>
+              <td class="label left nowrap" style="width: 60px;">
+                <?= I18N::T('meeting', '角色')?>
+              </td>
+              <td style="padding-left: unset">
+              <?= Widget::factory('roles:role_selector', [
+                'autocomplete' => URI::url('!roles/autocomplete/role'),
+                'name' => 'roles',
+                'size' => 40,
+                'value' => $roles,
+                'tooltip' => $tooltip,
+                'extra' => 'token_verify'
+              ]);
+              ?>
+              </td>
+            </tr>
+            <tr>
+              <td class="label left nowrap">
+                <?= I18N::T('meeting', '组织机构')?>
+              </td>
+                <td style="padding-left: unset">
+                <div class="user_box">
+                  <?= Widget::factory('multi_tag_selector', [
+                    'autocomplete' => URI::url('autocomplete/groups'),
+                    'name' => 'groups',
+                    'size' => 35,
+                    'value' => $groups,
+                    'tooltip' => $tooltip,
+                    'extra' => 'token_verify'
+                  ]);
+                  ?>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="label left nowrap">
+                <?= I18N::T('meeting', '个别用户')?>
+              </td>
+                <td style="padding-left: unset">
+                <div class="user_box">
+                  <?= Widget::factory('multi_user_selector', [
+                    'autocomplete' => URI::url('autocomplete/user'),
+                    'name' => 'users',
+                    'size' => 35,
+                    'value' => $users,
+                    'tooltip' => $tooltip,
+                    'extra' => 'token_verify'
+                  ]);
+                  ?>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+	</td>
+</tr>

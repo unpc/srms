@@ -1,0 +1,8 @@
+<?php
+    $credit_rules = Q("credit_rule");
+    $rules = [];
+    foreach ($credit_rules as $credit_rule) {
+        $rules[$credit_rule->id] = $credit_rule->name;
+    }
+?>
+<?php echo Form::dropdown('event', ['' => '--'] + $rules, $this->event, 'class="dropdown middle"'); ?>

@@ -1,0 +1,63 @@
+<br>
+<h4><?php echo I18N::T('eq_empower', '设置该时段可预约用户'); ?></h4>
+<div class="interval_6"></div>
+<div class="lmaigin_1e5">
+  <?= Form::radio("controlall[{$flexform_index}]", 1, $controlall, I18N::T('announces', '所有用户'), 'class="monitor middle radio"', 'class="middle rmargin_10"'); ?>
+  &nbsp;&nbsp;
+  <?= Form::radio("controlall[{$flexform_index}]", 0, $controlall, I18N::T('announces', '个别用户'), 'class="monitor middle radio"', 'class="middle"'); ?>
+</div>
+<div class="lmaigin_1e5 toggle:controlall[<?= $flexform_index ?>] show_on:0">
+    <div class="interval_6"></div>
+  <table class="form" style="width: 100%">
+    <tr>
+      <td class="left nowrap top" style="width:100px">
+        <?= Form::checkbox("select_user_mode_user[{$flexform_index}]", !!$controluser,
+          I18N::T('eq_empower','个别用户'), 'class="middle checkbox monitor"', 'class="middle monitor"') ?>
+      </td>
+      <td>
+        <div class="toggle:select_user_mode_user[<?= $flexform_index ?>] show_on:on" style="display:none">
+        <?= Widget::factory('eq_empower:selector', [
+          'name' => "user[{$flexform_index}]",
+          'autocomplete'=>URI::url('autocomplete/user'),
+          'value'=> $controluser ? $controluser : null,
+        ]); ?>
+        </div>
+      </td>
+	</tr>
+	<tr><td><div class="interval_6"></div></td></tr>
+    <?php if (!$GLOBALS['preload']['people.multi_lab'] && Module::is_installed('labs')): ?>
+    <tr>
+      <td class="left nowrap top">
+        <?= Form::checkbox("select_user_mode_lab[{$flexform_index}]", $controllab,
+          I18N::T('eq_empower','实验室'),'class="middle checkbox monitor"', 'class="middle monitor"') ?>
+      </td>
+      <td>
+        <div class="toggle:select_user_mode_lab[<?= $flexform_index ?>] show_on:on" style="display:none">
+        <?= Widget::factory('eq_empower:selector', [
+          'name' => "lab[{$flexform_index}]",
+          'autocomplete'=>URI::url('!eq_empower/autocomplete/labs'),
+          'value'=> $controllab ? $controllab : null,
+        ]); ?>
+        </div>
+      </td>
+	</tr>
+	<tr><td><div class="interval_6"></div></td></tr>
+    <?php endif ?>
+    <tr>
+      <td class="left nowrap top">
+        <?= Form::checkbox("select_user_mode_group[{$flexform_index}]", $controlgroup,
+          I18N::T('eq_empower','组织机构'),'class="middle checkbox monitor"', 'class="middle monitor"') ?>
+      </td>
+      <td>
+        <div class="toggle:select_user_mode_group[<?= $flexform_index ?>] show_on:on" style="display:none">
+        <?= Widget::factory('eq_empower:tag_selector',  [
+          'name' => "group[{$flexform_index}]",
+          'autocomplete'=>URI::url('autocomplete/groups'),
+          'value'=> $controlgroup ? $controlgroup : null,
+        ]); ?>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="interval_12"></div>

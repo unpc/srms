@@ -1,0 +1,72 @@
+<?php
+if (!$form['email_vfcode_uniqid']) {
+    $uniqid = uniqid();
+}
+$key = $key ?: 'email';
+$email = $form[$key] ?: $_SESSION['SIGNUP_EMAIL_VFCODE']['email'];
+?>
+<tbody id="<?= $uniqid ?>">
+<?php if ($form->email_vfcode && $form->errors[$key]) : ?>
+    <tr>
+        <td></td>
+        <td></td>
+        <td class="middle description nowrap"><?php echo V('form_filter', ['error' => $form->errors[$key][0]]) ?></td>
+    </tr>
+<?php endif ?>
+<tr>
+    <td>
+        <div class="interval_20"></div>
+    </td>
+</tr>
+<tr class="nowrap">
+    <td class="label right nowrap middle">
+        <?php echo V('form_require'); ?><?php echo I18N::T('labs', '验证码') ?></td>
+    <td class="sinup_table_interval"></td>
+    <td class="middle">
+        <input class="text" placeholder="请输入电子邮箱验证码" name="email_vfcode" size="26"
+               value="<?= H($form['email_vfcode']) ?>"/>
+        <input name="email_vfcode_btn" type="button" class="button button_refresh email_vfcode_btn font-button-save"
+               style="width: 6rem;" value="<?php echo H(I18N::T('labs', '发送验证码')) ?>"/>
+    </td>
+</tr>
+<?php if ($_SESSION['SIGNUP_EMAIL_VFCODE']['expireat'] > time() && $form->no_error) : ?>
+    <?php $timeout = max($_SESSION['SIGNUP_EMAIL_VFCODE']['resend_timeout'] - time(), 0);?>
+    <tr>
+        <td></td>
+        <td class="sinup_table_interval"></td>
+        <td class="middle description">
+            <?php echo I18N::T('labs', "验证码已发送至您的邮箱\"{$email}\", 有效期15分钟</br><span id=\"email_vfcode_timeout\">{$timeout}</span>s后可重新发送"); ?>
+        </td>
+    </tr>
+<?php endif; ?>
+</tbody>
+<script>
+    var email_vfcode_btn = $("#<?= $uniqid ?> input.email_vfcode_btn");
+    var email = $("input[name=<?=$key?>]");
+
+    email_vfcode_btn.unbind('click');
+    email_vfcode_btn.click(function () {
+        Q.trigger({
+            object: 'email_vfcode_btn',
+            event: 'click',
+            url: '<?php echo URI::url("!login_plus/vfcode"); ?>',
+            data: {
+                <?= $key?>: email.val(),
+                key: "<?= $key?>",
+                email_vfcode_uniqid: "<?= H($uniqid) ?>"
+            }
+        });
+    });
+    <?php if ($_SESSION['SIGNUP_EMAIL_VFCODE']['expireat'] > time() && $form->no_error) : ?>
+    var timeout = <?= $timeout?>;
+    var desription = $("#<?= $uniqid ?> #email_vfcode_timeout");
+    email_vfcode_btn.hide();
+    var timer = setInterval(() => {
+        desription.html(timeout);
+        if (timeout-- <= 0) {
+            email_vfcode_btn.show();
+            clearInterval(timer);
+        }
+    }, 1000);
+    <?php endif; ?>
+</script>

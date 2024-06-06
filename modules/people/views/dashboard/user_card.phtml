@@ -1,0 +1,59 @@
+<?php 
+    $me = L('ME');
+    $labs = Q("$me lab");
+    
+    /* if($GLOBALS['preload']['billing.single_department']) {
+        $department = Billing_Department::get();
+        foreach ($labs as $lab) {
+            $account = Q("$lab billing_account[department={$department}]")->current();
+            $billing_info = ['balance' => $account->balance];
+        }
+    } else {
+    } */
+
+    $now = Date::time();
+    $records = Q("eq_record[user=$me][dtend>0][dtend<=$now][status=0]:sort(dtend D):limit(2)");
+    $feedback = dashboard::get_feedback();
+?>
+
+<div class="user_card">
+    <div style="padding: 0px 8px 0px 16px">
+        <div class="padding">
+            <div class="clearfix padding_12_16 border_bottom_line">
+                <div class="title float_left">反馈记录</div>
+                <div class="more float_right">
+                    <a href="<?= $me->url('eq_record') ?>">更多<i style="font-size: 14px;" class="icon-right"></i></a>
+                </div>
+            </div>
+            <div class="feedback_body padding_12_16">
+                <div style="width:45%;float: left;">
+                    <div class="feedback_total_content">
+                        <a href="<?= $me->url('eq_record') ?>">
+                            <div class="feedback_total">
+                                <div class="total"><?= $feedback['total'] ? : 0; ?></div>
+                                <div class="total_tips">待反馈</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div style="width:50%;float: left;">
+                    <div class="sub_feedbacks">
+                        <?php foreach ($records as $record): ?>
+                            <div class="title">
+                                <?= $record->equipment->name; ?>待反馈
+                            </div>
+                            <div class="content">
+                                您好：请填写<?= $record->equipment->name; ?>仪器的使用反馈。
+                                您好：请填写<?= $record->equipment->name; ?>仪器的使用反馈。
+                            </div>
+                            <div>
+                                <span class="float_right operation"><a class="blue overflow" href="<?php echo $record->equipment->url('feedback'); ?>">填写反馈</a></span>
+                            </div>
+                            <?php break;
+                        endforeach; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,11 @@
+<div class="light_panel padding_1">
+<?php
+$status_color = Event::trigger('sample.colors');
+foreach (Event::trigger('sample.status') as $k => $v) :
+    if (!Config::get('sample_approval.to_equipment')
+        || (Config::get('sample_approval.to_equipment') && ($equipment->sample_approval_enable || !$equipment->sample_approval_enable && !in_array($k, Sample_Approval::get_not_show_status()))) ) :?>
+  <a class="sample_link middle" href="<?= $equipment->url("sample.list.{$k}"); ?>">
+    <span class="tab" style="background-color:#<?= $status_color[$k]?>" ><?= I18N::HT('eq_sample', $v)?></span>
+  </a>
+    <?php endif;endforeach; ?>
+</div>

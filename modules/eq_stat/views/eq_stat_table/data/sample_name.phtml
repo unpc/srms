@@ -1,0 +1,23 @@
+<?php CSS::load_async('eq_stat:common'); ?>
+<div q-preview="<?php echo H(URI::url('!equipments/index')) ?>" q-static="<?php echo H(['id'=>$equipment->id]); ?>">
+    <strong class="name middle">
+        <?php if($equipment->id): ?>
+            <a href="<?php echo H($equipment->url() ) ?>"><?php echo H($equipment->name) ?></a>
+						<?php 
+							switch ($equipment->status) {
+								case EQ_Status_Model::IN_SERVICE:
+									echo "<small class='in_service'>".I18N::T('eq_stat', '(正常)')."</small>";
+									break;
+								case EQ_Status_Model::OUT_OF_SERVICE:
+									echo "<small class='out_of_service'>".I18N::T('eq_stat', '(暂时故障)')."</small>";
+									break;
+								case EQ_Status_Model::NO_LONGER_IN_SERVICE:
+									echo "<small class='no_longer_in_service'>".I18N::T('eq_stat', '(报废)')."</small>";
+									break;
+							}
+						?>					
+        <?php else: ?>
+            <?php echo H($equipment->name) ?>
+        <?php endif; ?>
+    </strong>
+</div>

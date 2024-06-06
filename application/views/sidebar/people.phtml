@@ -1,0 +1,45 @@
+<?php
+$me = L('ME');
+if ($me->id && Config::get('lab.sidebar_people_list', FALSE)) :
+
+$limit = Config::get('lab.sidebar_people_limit');
+$now = Date::time();
+if ($limit) {
+	$users = Q("user[!hidden][atime][dto>$now|!dto]")->limit($limit);
+}
+else {
+	$users = Q("user[!hidden][atime][dto>$now|!dto]");
+}
+?>
+<div class="lpadding_1">
+	<div class="clearfix">
+<?php
+	foreach ($users as $user) :
+?>
+	<div class="float_left sidebar_people_list">
+		<a href="<?php echo $user->url(); ?>">
+			<?php echo $user->icon(48, 'class="people_icon" width="40px" height="40px"');?>
+		</a>
+		<a class="sidebar_people_item" href="<?php echo H($user->url() ) ?>">
+            <?php //
+            $name = $user->name;
+            //截取第一个字
+            $first_letter = mb_substr($name, 0, 1);
+            ?>
+            <p q-tooltip="<?php echo H($user->name) ?>" q-tooltip_offsetY="8" q-tooltip_class="sidebar_tooltip">
+                <?php if (preg_match('/[\x7f-\xff]/', $first_letter)) :?>
+                    <?php echo H(mb_substr($user->name, 0, 3));?>
+                <?php else: ?>
+                    <?php echo H(mb_substr($user->name, 0, 6));?>
+                <?php endif;?>
+            </p>
+		</a>
+	</div>
+<?php
+	endforeach;
+?>
+	</div>
+</div>
+<?php
+	endif; 
+?>

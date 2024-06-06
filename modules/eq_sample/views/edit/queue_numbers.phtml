@@ -1,0 +1,16 @@
+<div class="inner_message inner_message_info">
+    <div style="color: #FFF">
+        <span><?= I18N::T('eq_sample', '本仪器当前有 (') ?></span>
+        <span style="color: red"><?= $total['queue_people'] ?></span>
+        <span><?= I18N::T('eq_sample', ') 人, (') ?></span>
+        <span style="color: red"><?= $total['queue_samples'] ?></span>
+        <span><?= I18N::T('eq_sample', ') 个样品排队申请测试中。') ?></span>
+    </div>
+    <div style="color: #FFF">
+        <span><?= I18N::T('eq_sample', '本仪器当前有 (') ?></span>
+        <span style="color: red"><?= $total['access_people'] ?></span>
+        <span><?= I18N::T('eq_sample', ') 人, (') ?></span>
+        <span style="color: red"><?= $total['access_samples'] ?></span>
+        <span><?= I18N::T('eq_sample', ') 个样品已被管理员批准, 排队测试中。') ?></span>
+    </div>
+</div>

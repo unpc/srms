@@ -1,0 +1,3 @@
+<?php
+echo Form::dropdown('is_reserv',I18N::T('eq_reserv', [-1=>'--'] + EQ_Reserv::$record_reserv_options), $filter_selected ?: -1, 'class="dropdown middle"');
+

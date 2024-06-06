@@ -1,0 +1,4 @@
+<div>
+    <?php $record = O('eq_record', ['evaluate' => $evaluate]); ?>
+    <?php echo H($record->duty_teacher->id ? $record->duty_teacher->name : '--'); ?>
+</div>

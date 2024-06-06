@@ -1,0 +1,47 @@
+<?php
+$tr_authorized_id = $tr_authorized_id ?: 'tr_authorized_' . uniqid();
+?>
+    <tr id="<?php echo $tr_authorized_id; ?>">
+        <?php
+        $me = L('ME');
+        $user = $change && $user->id ? $user : ($component->organizer->id ? $component->organizer : $me);
+        $object = O('eq_reserv', ['component' => $component]);
+        $equipment = $equipment->id ? $equipment : $component->calendar->parent;
+        $grantSelect = $object->billing_fund_id ? O('billing_fund',$object->billing_fund_id )->remote_id : '';
+        $grants = (array)Billing_Manage::get_grants($user, $equipment);
+        $canChangeUser = $me->is_allowed_to('修改预约', 'equipment') || $me->is_allowed_to('修改预约', $equipment);
+        ?>
+        <td>
+          <div class="title">
+            <?php echo I18N::T('billing_manage', '选择经费'); ?>
+            <?php if(!Billing_Manage::isFree($equipment, 'eq_reserv')): ?> <span class="red">*</span> <?php endif; ?>
+          </div>
+          <?php echo Form::dropdown('remote_fund_id', ['--'] + $grants, $grantSelect); ?>
+        </td>
+    </tr>
+<?php if ($canChangeUser) : ?>
+    <script type="text/javascript">
+      $().ready(function () {
+        $('input[name=organizer]')
+          .bind('change', function (e) {
+            var $user_id = $(this).val()
+              , $curr_lab_id = '<?php echo $lab->id ?: 0 ?>'
+              , $component_id = '<?php echo $component->id ?: 0 ?>'
+              , $equipment_id = '<?php echo $equipment->id ?: 0 ?>'
+              , $tr_authorized_id = '<?php echo $tr_authorized_id ?: 0 ?>'
+            Q.trigger({
+              object: 'grants'
+              , event: 'change'
+              , data: {
+                'user_id': $user_id,
+                'curr_lab_id': $curr_lab_id,
+                'component_id': $component_id,
+                'equipment_id': $equipment_id,
+                'tr_authorized_id': $tr_authorized_id,
+              }
+              , url: "<?php echo URI::url('!billing_manage'); ?>"
+            });
+          });
+      })
+    </script>
+<?php endif; ?>

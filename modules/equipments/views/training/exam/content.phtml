@@ -1,0 +1,40 @@
+<div class="pages">
+<?php
+	echo $pagination;
+?>
+</div>
+<?php
+	$table = Widget::factory('table');
+	$table->name = 'exam_user_list';
+	$table->add_columns([
+		'name'=>[
+			'title'=>I18N::T('exam', '考试名称'),
+			'align'=>'left',
+			'nowrap'=>TRUE,
+		],
+		'equipments'=>[
+			'title'=>I18N::T('exam', '相关仪器'),
+		],
+		'status'=>[
+			'title'=>I18N::T('exam', '考试通过状态'),
+		],
+		'ftime'=>[
+			'title'=>I18N::T('exam', '考试通过时间'),
+		]
+	]);
+	$table->empty_message = I18N::T('equipment', '没有考试记录');
+	if (count($records)) {
+		foreach($records as $record) {
+			/*
+			<a href="<?php echo $record->equipment->url('records'); ?>"><?php echo H($record->equipment->name) ?></a><br/>
+			*/
+			$table->add_row([
+				'name'=>$record['name'],
+				'equipments' => V('equipments:training/exam/tb_equipments', ['equipments'=>(array)$record['equipments']]),
+				'status' => $record['status'],
+				'ftime' => $record['status'] == '通过' ? $record['finish_time']: '--',
+			]);
+		}
+	}
+	echo $table;
+?>

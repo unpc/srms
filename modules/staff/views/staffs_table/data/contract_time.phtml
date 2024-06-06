@@ -1,0 +1,11 @@
+<?php 
+if( $staff->start_time ){
+	echo Date::format($staff->start_time, 'Y/m/d'); 
+}
+if( $staff->start_time || $staff->contract_time ){
+	echo '~';
+}
+if( $staff->contract_time ){
+	echo Date::format($staff->contract_time, 'Y/m/d'); 
+}
+?>

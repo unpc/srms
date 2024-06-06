@@ -1,0 +1,17 @@
+<?php 
+// 接口：
+// 接收 $project, parent_task, form 对象
+// 接收 $task    当编辑的时候，此task对象为当前编辑对象
+
+$task_containers = $project->task->list_subtasks(Task_Model::TYPE_CONTAINER, '--', FALSE, [$task->id=>$task->id]);
+
+$prev_uniqid = 'prev_'.uniqid();
+
+$parent_task = $form->no_error ? ($task->parent->id ? $task->parent : ($parent_task->id ? $parent_task : $project->task)) : O('task', $form['parent']);
+
+echo Form::dropdown('parent', [$project->task->id=>I18N::T('projects', '项目：%project', ['%project'=>$project->task->name])]+$task_containers, 
+						$parent_task->id, 'class="middle view object:parent_select event:change static:prev_uniqid='.$prev_uniqid.'"'
+					);
+
+echo V('task/prev', [ 'prev_uniqid'=>$prev_uniqid, 'current' => $task, 'parent_task'=>$parent_task, 'prev_task_id'=>$prev_task_id]);
+

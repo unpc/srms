@@ -1,0 +1,17 @@
+<?php echo V('form_error', ['form' => $form]); ?>
+<div class="form padding_2">
+  <div class="item">
+    <form method="POST" q-object="faceless" q-event="submit"
+    q-src="<?= URI::url('!login_plus/manyfaced_god') ?>">
+      <div style="padding-bottom: 5px; font-weight: bold;">
+        <?= I18N::T('support', '要切换的账号') ?>
+      </div>
+      <hr />
+      <div style="padding: 5px 0;">
+        <?= I18N::T('support', '请输入用户ID: ') ?> <input name="id" class="text number" value="">
+        <input type="submit" name="submit" class="button font-button-save" type="button"
+        value="<?= I18N::HT('support', '匹配')?>"/>
+      </div>
+    </form>
+  </div>
+</div>

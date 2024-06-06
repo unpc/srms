@@ -1,0 +1,67 @@
+<?php
+    $tag_name = $tag_name ?: 'tag';
+	$tag = O($tag_name, $id);
+	$uniqid = 'tag_'.uniqid();
+?>
+<div class="item:<?php echo $tag->id; ?> equipment_tag tag_weight:<?php echo $tag->weight; ?> <?php echo $tid == $id ? 'active' : '';?>" id="<?php echo H($uniqid) ?>">
+<div class="tag_title item:<?php echo $tag->id ?>">
+	<div class="tag_drag_handle" style="margin: 6px;height: 16px;width: 16px;text-align: center;margin-right: -15px;">&nbsp;</div>
+	<input class="text hidden" value="<?php echo H($id) ?>" />
+	<span class="tag_name"><?php echo H($tag->name)?></span>
+	<a  class="icon-trash float_right icon-color-g"
+        style="cursor: pointer;line-height: 30px"
+		q-object="delete_tag"
+		q-event="click"
+		q-static="<?php echo H(['tid'=>$id, 'tag_name'=>$tag_name])?>"
+		q-src="<?php echo H(URI::url('!equipments/equipment')) ?>">&#160;</a>
+	<script type="text/javascript">
+		$("#<?php echo $uniqid?>").bind('click', function(e){
+			var $item = $(this);
+			if ($item.hasClass('active')) {
+				var $span = $item.find('span:eq(0)');
+				var html = $span.html();
+				html = html.replace(/\"/g, '&quot;');
+				if ($span.find('input').length) {
+					return false;
+				}
+				var input = '<input size="12" value="'+html+'" /'+'>';
+				$span.html($(input));
+				$span.find('input:eq(0)').focus().one('blur', function(){
+					var $input = $span.prev('input:eq(0)');
+					Q.trigger({
+						object:'edit_tag',
+						event:'blur',
+						data:{
+							tname:$(this).val(),
+							tid:$input.val(),
+                            tag_name:'<?= $tag_name?>',
+							uniqid:'<?php echo $uniqid?>',
+							relate_uniqid:'<?php echo $relate_uniqid?>'
+						},
+						url:'<?php echo URI::url("!equipments/equipment")?>'
+					});
+				});
+				e.preventDefault();
+				return false;
+			}
+			var $input = $item.find('input:text:eq(0)');
+			Q.trigger({
+				object:'admin_replace_tag',
+				event:'click',
+				data:{
+					tid:$input.val(),
+                    tag_name:'<?= $tag_name?>',
+					uniqid:'<?php echo $relate_uniqid?>'
+				},
+				url:'<?php echo URI::url("!equipments/equipment")?>',
+				complete:function(){
+					$box = $("#<?php echo $relate_uniqid?> .equipment_tags .active");
+					$box.removeClass('active');
+					$item.addClass('active');
+				}
+			});
+			return false;
+		});
+	</script>
+</div>
+</div>

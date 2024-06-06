@@ -1,0 +1,64 @@
+<div class="hr_1">&#160;</div>
+<?php
+
+echo $pagination;
+	
+$table = Widget::factory('table');
+	
+$table->name = 'equipments';
+
+$columns = [
+	'@'=>NULL,
+	'name'=>[
+		'weight'=>20,
+		'title'=>I18N::T('equipments', '仪器名称'),
+		'sortable'=>TRUE,
+		'align'=>'left',
+		'filter'=> [
+			'form' => V('equipments:equipments_table/filters/name', ['name'=>'name', 'value'=>$form['name']]),
+			'value' => $form['name'] ? H($form['name']) : NULL
+		],
+		'nowrap'=>TRUE,
+	],
+	'ref_no'=>[
+		'weight'=>30,
+		'title'=>I18N::T('equipments', '仪器编号'),
+		'filter'=>[
+			'form' => V('equipments:equipments_table/filters/ref_no', ['ref_no'=>$form['ref_no']]),
+			'value'=> $form['ref_no'] ? H($form['ref_no']) : NULL
+		]
+	],
+	'current_user'=>[
+		'weight'=>50,
+		'title'=> I18N::T('equipments', '当前使用者'),
+		'nowrap'=>TRUE,
+	],
+	'rest'=>[
+		'weight'=>70,
+		'align'=>'right',
+		'nowrap'=>TRUE,
+	]
+];
+
+$table->add_columns($columns);
+
+$table->empty_message = I18N::T('equipments', Config::get('equipment.default_empty_message'));
+
+foreach ($equipments as $equipment) {
+
+	$links = $equipment->links('watcher');
+
+	$table->add_row([
+		'@' => [
+			'view'=> URI::anchor($equipment->url(), $equipment->icon('32', 'style="display:block"')),
+			'extra'=>'style="padding:4px;min-width:44px;*width:44px;" align="right"',
+		],
+		'name' => V('equipments:equipments_table/data/name', ['equipment'=>$equipment, 'tab'=>$secondary_tabs->selected]),
+		'current_user' => V('equipments:equipments_table/data/current_user', ['equipment'=>$equipment]),
+		'ref_no' => H($equipment->ref_no ?: '--'),
+		'rest'=> Widget::factory('application:links', ['links'=>$links])
+	]);
+}
+
+echo $table;
+echo $pagination;

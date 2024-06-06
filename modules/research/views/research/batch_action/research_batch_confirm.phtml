@@ -1,0 +1,50 @@
+<div class="form padding_2" style="min-width: 10rem">
+    <table class="form">
+        <tr>
+            <td>
+                <div class="nowrap lpadding_2">
+                    <?php echo I18N::T('eq_training', $title) ?>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="nowrap padding_2">
+                    批量设置收费状态为：<?php echo Form::dropdown('charge_status', Research_Record_Model::$charge_status, Research_Record_Model::CHARGE_STATUS_DONE); ?>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="lpadding_2">
+                    <a data-ac='reject'
+                        class="training_batch_process button button_cross button_cancel"><?php echo I18N::T('eq_training', '取消') ?></a>
+                    <a data-ac='pass'
+                        class="training_batch_process button button_tick"><?php echo I18N::T('eq_training', '批量确认') ?></a>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+<script>
+  jQuery(function ($) {
+    $('.training_batch_process').bind('click', function () {
+      if ($(this).hasClass('button_cancel')) {
+        $('.dialog_close').click();
+      } else {
+        Q.trigger({
+          object: 'confirm_batch',
+          event: 'submit',
+          data: {
+            'research': "<?= $form['research'] ?>",
+            'type': "<?= $form['ac']?>",
+            'ac': $(this).data('ac'),
+            'charge_status': $('select[name="charge_status"]').val()
+          },
+          url: "<?= H(URI::url('!research/research'))?>"
+        });
+      }
+    })
+
+  })
+</script>

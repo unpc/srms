@@ -1,0 +1,136 @@
+<?php 
+$me = L('ME');
+echo CSS::load_async('eq_charge:common');
+?>
+<?php
+$table = Widget::factory('table');
+
+$table->name = 'eq_charge_confirm';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+$columns = [
+	'select'=>[
+		'align' => 'center',
+	],
+    'id' =>  [
+        'title'=>I18N::T('eq_charge', '计费编号'),
+    ],
+    'equipment' => [
+		'title' => T('仪器'),
+		'nowrap' => TRUE
+    ],
+    'lab' => [
+		'title'=>I18N::T('eq_charge', '实验室'),
+		'invisible' => TRUE,
+		'nowrap'=>TRUE
+    ],
+    'user' =>  [
+		'title'=>I18N::T('eq_charge', '使用者'),
+		'nowrap'=>TRUE
+	],
+	'date' => [
+		'title'=>I18N::T('eq_charge', '时间'),
+		'invisible' => TRUE,
+		'nowrap'=>TRUE
+	],
+	'amount'=>[
+		'title'=>I18N::T('eq_charge', '收费'),
+		'nowrap'=>TRUE
+	],
+	'type'=>[
+		'title'=>I18N::T('eq_charge', '收费类型'),
+		'nowrap' => TRUE,
+	],
+	'summary' => [
+		'title' => I18N::T('eq_charge', '备注'),
+		'weight' => 100,
+	],
+	'rest'=> [
+        'title' => I18N::T('eq_charge', '操作'),
+		'nowrap' => TRUE,
+		'weight' => 110,
+	]
+];
+
+$columns = new ArrayObject($columns);
+
+Event::trigger('eq_charge_confirm.table_list.columns', $form, $columns, $obj);
+
+$table->add_columns((array)$columns);
+
+$table->empty_message = I18N::T('eq_charge', '无符合条件的收费记录');
+
+foreach ($charges as $c) {
+	$links = $c->links('confirm');
+
+	$row = [
+		'id' => V('eq_charge:charges_table/data/ref', ['c'=>$c]),
+		'equipment' => V('eq_charge:charges_table/data/equipment', ['obj'=>$obj, 'c'=>$c]),
+		'user' => V('eq_charge:charges_table/data/user_with_lab', ['obj'=>$obj, 'c'=>$c]),
+		'date' => V('eq_charge:charges_table/data/date', ['c'=>$c]),
+		'amount' => V('eq_charge:charges_table/data/amount_with_date', ['c'=>$c]),
+        'type' => V('eq_charge:charges_table/data/type', ['c'=>$c]),
+        'summary' => V('eq_charge:charges_table/data/summary', ['c' => $c]),
+		'rest' => Widget::factory('application:links', ['links' => $links])
+	];
+
+	$row = new ArrayIterator($row);
+	$table->add_row($row);
+}
+
+$param = [
+    'panel_buttons'     => $panel_buttons,
+    'top_input_arr' => ['equipment'],
+    'columns'       => $table->columns,
+];
+
+if (!$no_search) echo V('application:search_box', $param);
+echo $table;
+?>
+
+<div class="pages"><?= $pagination ?></div>
+
+<script>
+jQuery(function($){
+    var select_all_id = '<?= $select_all_id?>';
+	var $selector = $('#' + select_all_id);
+
+	$selector
+	.bind('click', function(){
+		if(/msie/.test(navigator.userAgent.toLowerCase())){
+			$(this).change();
+		}
+	})
+	.bind('change', function(){
+		var $el = $(this);
+		if ($el.is(':checked')) {
+			$('input.'+ select_all_id ).prop('checked', true).change();
+		}
+		else {
+			$('input.'+ select_all_id ).prop('checked',false).change();
+		}
+	});
+
+    $('input[name=batch_confirm]').click(function(e){
+		e.preventDefault();
+		e.stopPropagation();
+
+        var ids = [];
+        $('input[name="select[]"]:checked')
+        .map(function(){
+            ids.push($(this).val());
+        });
+
+        Q.trigger({
+            object: 'charge_batch_confirm',
+            event: 'click',
+            data: {
+                'lab_project_type': $('input[name=lab_project_type]:checked').val(),
+                'ids': ids
+            },
+            url: "<?= URI::url('!eq_charge_confirm/confirm'); ?>"
+        });
+    });
+});
+</script>

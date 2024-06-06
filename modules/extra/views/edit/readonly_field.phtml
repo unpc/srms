@@ -1,0 +1,69 @@
+<?php 
+$types = $field ? Extra_Model::field_change_types($field['type']) : Extra_Model::$type_names;
+?>
+<div class="field padding_1">
+<div class="nowrap clearfix" style="min-width: 680px;">
+    <div class="float_left">
+        <span class="lmargin_2">
+            <input name="field[<?php echo $prefix?>][title]" type="text" placeholder="表单字段" class="text" value="<?php echo H($field['title']) ?>" style="width:134px"  disabled="disabled"/>
+        </span>
+        <span class="lpadding_4 rpadding_4">
+            <?php $require_id = 'require_id'. uniqid();?>
+            <input class="checkbox" name="field[<?php echo $prefix?>][required]" type="checkbox" id="<?php echo H($require_id) ?>" <?php if ($field['required']) echo 'checked="checked"'?> disabled="disabled"/>
+            <label for="<?php echo H($require_id) ?>"><?php echo I18N::T('extra', '必填');?></label>
+            <?php echo Form::hidden("field[{$prefix}][type]", $field['type']); ?>
+        </span>
+        <span class="padding_2">
+            <label><?php echo I18N::T('extra', $types[$field['type']]);?></label>
+        </span>
+        <?php if ($field['type'] != Extra_Model::TYPE_SELECT): ?>
+        <span>
+            <?php $default_id = 'default_id'. uniqid();?>
+            <input class="checkbox" style="vertical-align: middle" name="field[<?php echo $prefix?>][default]" type="checkbox" id="<?php echo H($default_id) ?>" <?php if ($field['default']) echo 'checked="checked"'?>  disabled="disabled"/>
+            <label for="<?php echo H($default_id) ?>"><?php echo I18N::T('extra', '默认值');?></label>
+        </span>
+        <?php endif; ?>
+    </div>
+</div>
+
+<div class="lmargin_4">
+    <?php 
+        $type = Extra_Model::$types[$field['type']];
+        if ($type != 'text' && $type != 'textarea') {
+            echo V('extra:edit/readonly/'. $type, [
+                'class'=> "padding_2",
+                'prefix'=> $prefix,
+                'field'=> $field,
+            ]);
+        }
+    ?>
+</div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    var checkbox = $('#<?php echo $default_id?>'),
+        container = $(checkbox).parent(),
+        value = '<?php echo json_encode($field['default_value']) ?>';
+
+    if (checkbox.attr('checked') == 'checked') {
+        Q.trigger({
+            object: 'add_default',
+            parallel: true,
+            event: 'click',
+            global: false,
+            data: {
+                prefix: <?php echo $prefix?>,
+                type: $("[name='field[<?php echo $prefix?>][type]']").val(),
+                value: value,
+                readonly: true
+            },
+            url: '<?php echo URI::url();?>',
+            success: function(data) {
+                container.nextAll().remove()
+                container.after(data);
+            }
+        })
+    }
+});
+</script>

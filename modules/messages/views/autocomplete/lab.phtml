@@ -1,0 +1,15 @@
+<table class="mini_form">
+	<tr>
+		<td class="middle icon" width="32"><?php echo $lab->icon('26') ?></td>
+		<td class="middle">
+			<span class="name middle"><?php echo H($lab->name) ?></span>
+			<?php $status_tags = (string) $lab->status_tags(); ?>
+			<?php if ($status_tags): ?>
+			<span>
+				<?php echo $status_tags ?>
+			</span>
+			<?php endif;?>
+		</td>
+	</tr>
+</table>
+

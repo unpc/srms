@@ -1,0 +1,11 @@
+<?php
+    $size = L('ME')->locale == 'en_US' ? 17 : 15;
+?>
+<div class="checkbox_container nowrap bpadding_1">
+    <?php echo H('取值范围:') ?>
+    <input name="field[<?php echo $prefix?>][number][0]" type="text" class="text" size="<?php echo $size; ?>" 
+    value="<?php echo H($params[0]) ?>" disabled="disabled"/>
+    &nbsp;-&nbsp;
+    <input name="field[<?php echo $prefix?>][number][1]" type="text" class="text" size="<?php echo $size; ?>" 
+    value="<?php echo H($params[1]) ?>" disabled="disabled"/>
+</div>

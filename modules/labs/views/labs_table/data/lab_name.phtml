@@ -1,0 +1,16 @@
+<div q-preview="<?php echo H(URI::url('!labs/list')) ?>" q-static="<?php echo H(['id' => $lab->id]); ?>">
+    <a href="<?php echo H($lab->url()) ?>"><strong class="name rpadding_1">
+            <?php
+            /*NO.BUG#154 (xiaopei.li@2010.11.12)*/
+            /* 由!labs/list 中引用，name之前未做转义输出 */
+            echo H($lab->name)
+            ?>
+        </strong>
+    </a>
+    <?php if (!(isset($not_tag) && $not_tag)): ?>
+        <?php $status_tags = (string)$lab->status_tags(); ?>
+        <?php if ($status_tags): ?>
+            <?php echo $status_tags ?>
+        <?php endif; ?>
+    <?php endif; ?>
+</div>

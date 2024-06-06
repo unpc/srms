@@ -1,0 +1,27 @@
+<?php
+$me = L('ME');
+$no_error = ($form->no_error !== false);
+$require = (string) V('form_require', ['extra_class'=> 'top gismon_require']);
+$sites = Config::get('site.slave');
+// 主站可选列表: 从站(所有)+主站
+// 从站可选列表: 从站(当前)+主站
+array_unshift($sites, Config::get('site.master'));
+$infos = [];
+foreach ($sites as $site) {
+    $infos[$site['name']] = $site['zh_name'];
+}
+?>
+<tr>
+    <td class="nowrap label top"><?php echo I18N::T('db_sync', '所属站点') ?></td>
+    <td class="nowrap label top">
+        <?php
+        if (!$build->site && $_SESSION['from_lab']) {
+            echo Form::hidden('site', $_SESSION['from_lab']);
+            echo $infos[$_SESSION['from_lab']];
+        }else{
+            echo Form::dropdown('site', $infos, $form['site'] ?: ($build->site ?: key($infos)), 'style="width: 280px;"');
+        }
+        echo $require;
+        ?>
+    </td>
+</tr>

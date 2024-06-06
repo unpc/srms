@@ -1,0 +1,154 @@
+<div class="form">
+	<h4>
+		<span class="red">
+			<?php echo I18N::T('cers', '* 如果您修改仪器信息，请及时刷新相应CERS接口以确保信息准确!')?>
+		</span>
+	</h4>
+	<div class="interval_20"></div>
+	<?php
+		$loadinghead = '<span class="refresh_loading relative float_left center" style="height:22px;line-height:22px;padding-right:8px;" data-refresh="';
+		$loadingfoot = '">loading...</span>';
+	?>
+	<table class="form cers_info">
+		<tr>
+			<td>
+				<div>
+					<h4><?php echo I18N::T('cers', '校级共享平台描述信息')?></h4>
+				</div>
+			</td>
+			<td></td>
+			<td>
+				<?php if (Lab::get('cers.platform_refresh_pid')): ?>
+					<?php
+						echo $loadinghead.'platform'.$loadingfoot;
+					?>
+				<?php else: ?>
+					<a class="button icon-refresh" title="刷新数据" data-refresh="platform"><?php echo I18N::T('cers', '')?></a>
+					&#160;&#160;
+					<?php if ( is_file(Cers::getLabPrivateFile('Platform.xml'))): ?>
+						<a  class="button icon-export" title="下载" href="<?php echo H(URI::url('!cers/index/download.platform')) ?>"><?php echo I18N::T('cers', '')?></a>
+					<?php endif; ?>
+				<?php endif; ?>
+			</td>
+		</tr>
+        <tr><td><div class="interval_20"></div> </td></tr>
+		<tr>
+			<td>
+				<div>
+					<h4><?php echo I18N::T('cers', '大型仪器设备共享信息')?></h4>
+				</div>
+			</td>
+			<td></td>
+			<td>
+				<?php if (Lab::get('cers.instrusandgroups_refresh_pid')): ?>
+					<?php
+						echo $loadinghead.'instrusandgroups'.$loadingfoot;
+					?>
+				<?php else: ?>
+					<a class="button icon-refresh" title="刷新数据" data-refresh="instrusandgroups"><?php echo I18N::T('cers', '')?></a>
+					&#160;&#160;
+					<?php if ( is_file(Cers::getLabPrivateFile('InstrusAndGroups.xml')) ): ?>
+						<a  class="button icon-export" title="下载" href="<?php echo H(URI::url('!cers/index/download.instrusandgroups')) ?>"><?php echo I18N::T('cers', '')?></a>
+					<?php endif; ?>
+				<?php endif; ?>
+			</td>
+		</tr>
+        <tr><td><div class="interval_20"></div> </td></tr>
+		<tr>
+			<td>
+				<div>
+					<h4><?php echo I18N::T('cers', '大型仪器设备共享效益')?></h4>
+				</div>
+			</td>
+			<td></td>
+			<td>
+				<?php if (Lab::get('cers.shareeffect_refresh_pid')): ?>
+					<?php
+						echo $loadinghead.'shareeffect'.$loadingfoot;
+					?>
+				<?php else: ?>
+					<a class="button icon-refresh" title="刷新数据" data-refresh="shareeffect"><?php echo I18N::T('cers', '')?></a>
+					&#160;&#160;
+					<?php if ( is_file(Cers::getLabPrivateFile('ShareEffect.xml')) ): ?>
+						<a  class="button icon-export" title="下载" href="<?php echo H(URI::url('!cers/index/download.shareeffect')) ?>"><?php echo I18N::T('cers', '')?></a>
+						&#160;&#160;
+					<?php endif; ?>
+					<a class="button icon-import" title="上传" q-object="import_share_data" q-event="click" q-src="<?php echo H(URI::url('!cers/index')) ?>"><?php echo I18N::T('cers', '')?></a>
+				<?php endif; ?>
+			</td>
+		</tr>
+	</table>
+</div>
+<script>
+jQuery(function($){
+	var loading = '<?php echo $loadinghead.$loadingfoot ?>',
+		action = '<a class="button button_refresh"><?php echo I18N::T("cers", "刷新数据")?></a>',
+		download = '<a class="button button_export"><?php echo I18N::T("cers", "下载")?></a>',
+		upload = '<a class="button button_import" q-object="import_share_data" q-event="click" q-src="<?php echo URI::url("!cers/index")?>"><?php echo I18N::T("cers", "上传")?></a>',
+		url = '<?php echo URI::url()?>',
+		CheckRefreshStatus,
+		Fuc = function(){
+			var refreshButtons = $('.cers_info span.refresh_loading')
+			if (!refreshButtons.length) {
+				clearInterval(CheckRefreshStatus)
+			}
+			else {
+				Q.trigger({
+					url: url,
+					object: 'check_status',
+					event: 'click',
+					global: false,
+					success: function(data) {
+						$.each(data.complete, function(k, v){
+							if (v) {
+								var me = $('.refresh_loading.relative.float_left.center[data-refresh="'+k+'"]'),
+									td = me.parent('td')
+								if (me.length) {
+									var c = $(download).attr('href', '<?php echo URI::url("!cers/index/download.")?>'+k),
+										a = $(action).attr('data-refresh', k)
+									td.html('')
+									.append(a[0])
+									.append("&#160;&#160;&#160;&#160;")
+									.append(c[0])
+
+									if (k == 'shareeffect') {
+										td
+										.append("&#160;&#160;&#160;&#160;")
+										.append($(upload)[0])
+									}
+								}
+							}
+						})
+					}
+				})
+			}
+		}
+
+
+
+	$('.cers_info a.button_refresh').on('click', function(e){
+		var me = $(this),
+			object = 'refresh_cers',
+			type = me.data('refresh')
+			success = function(data) {
+				$(loading)
+				.attr('data-refresh', type)
+				.replaceAll(me)
+				CheckRefreshStatus = setInterval(Fuc, 5000)
+			}
+		Q.trigger({
+			url: url,
+			object: object,
+			event: 'click',
+			data: {
+				type: type
+			},
+			success: success
+		})
+		e.preventDefault()
+		return false
+	});
+
+	CheckRefreshStatus = setInterval(Fuc, 5000)
+});
+</script>

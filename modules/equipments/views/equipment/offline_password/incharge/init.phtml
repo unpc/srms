@@ -1,0 +1,48 @@
+<style type="text/css">
+ul{
+	margin:0px;
+	list-style:none;
+	font-size:14px;
+}
+.top_text {
+	font-size:14px;
+	margin-left:42px;
+	padding:4px;
+}
+li {
+	padding: 4px;
+}
+.indent{
+	text-indent: 2em;
+}
+</style>
+<p style="font-size:18px"><b><?= I18N::T('equipments','尊敬的 %name', ['%name'=>$incharge->name])?></b></p>
+<div>
+
+<p class="indent"><?= I18N::T('equipments', '您好')?></p>
+<p class="indent"><?= I18N::T('equipments', '您负责的仪器 [%equipment] 的离线密码, 在 %time 初始化!', ['%equipment'=>URI::anchor($equipment->url(), $equipment->name), '%time'=>Date('Y-m-d H:i:s')]);?></p>
+<p class="indent"><?= I18N::T('equipments', '离线密码为')?>: <span style="color:red"><?= $equipment->offline_password?></span></p>
+<br>
+<p class="indent"><?= I18N::T('equipments', '请您注意保管, 切勿透露给他人, 以便保障仪器的安全使用!')?></p>
+<br>
+</div>
+
+<div align='left' style="font-size:14px;">
+	<br>
+	<div style="padding:5px">
+		<b><?= I18N::T('equipments', '祝您工作顺利, 心情愉快!')?></b>
+	</div>
+	<br>
+	<div style="padding:5px">
+		<b><?= I18N::T('equipments', '基理科技')?></b>
+	</div>
+	<div style="padding:5px">
+		<b>T: <?= Config::get('system.customer_service_tel_text'); ?>（<?= Config::get('system.customer_service_tel'); ?>）</b>
+	</div>
+	<div style="padding:5px">
+		<b>W: <a href='www.geneegroup.com'>www.geneegroup.com</a></b>
+	</div>
+	<div style="padding:5px">
+		<b>LabScout LIMS: Research Gets Easier!</b>
+	</div>
+</div>

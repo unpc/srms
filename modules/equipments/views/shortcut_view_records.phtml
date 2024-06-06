@@ -1,0 +1,8 @@
+<?php
+$me = L('ME');
+$group = $me->group;
+//产品要求名字是"所有仪器的使用记录"且只能看当前组织结构的记录，而且之前不存在看所有记录的shotrcuts
+if ($me->is_active() && $me->group->id && $me->access('添加/修改下属机构的仪器')):
+?>
+	<a href="<?php echo ($me->access('管理所有内容') ? H(URI::url('!equipments/records/index')) : H(URI::url('!equipments/records/index_group'))) ?>" class="blue"><?php echo I18N::T('equipments', '所有仪器的使用记录');?></a>
+<?php endif;?>

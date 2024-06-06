@@ -1,0 +1,84 @@
+<div class="hr_1">&#160;</div>
+<?php if (count($panel_buttons)) :?>
+	<div class="panel padding_1 clearfix">
+		<span><?= Widget::factory('application:links', ['links'=>$panel_buttons, 'separator'=>'&#160;']);?></span>
+	</div>
+<?php endif;?>
+<?= $pagination ?>
+<?php
+$me = L('ME');
+
+$table = Widget::factory('table');
+$table->name = 'nirr_center';
+$table->form = $form;
+$columns = [
+	'@'=>NULL,
+	'centname'=> [
+        'title' => I18N::T('nrii', '仪器中心名称'),
+        'filter'=> [
+            'form'=> V('nrii:center/filters/text', ['form'=> $form, 'name' => 'centname']),
+            'value'=> I18N::T('nrii', $form['centname']),
+        ],
+        'nowrap'=>TRUE,
+        'weight' => 10,
+    ],
+    'innerId'=> [
+        'title' => I18N::T('nrii', '所属单位中心内部编码'),
+        'filter'=> [
+            'form'=> V('nrii:center/filters/text', ['form'=> $form, 'name' => 'innerId']),
+            'value'=> I18N::T('nrii', $form['innerId']),
+        ],
+        'invisible' => TRUE,
+        'nowrap'=>TRUE,
+        'weight' => 20,
+    ],
+    'service_content'=> [
+        'title' => I18N::T('nrii', '中心简介'),
+        'nowrap'=>FALSE,
+        'weight' => 30,
+    ],
+    'contact'=> [
+        'title' => I18N::T('nrii', '联系人'),
+        'filter'=> [
+            'form'=> V('nrii:center/filters/text', ['form'=> $form, 'name' => 'contact']),
+            'value'=> H($form['contact']),
+        ],
+        'nowrap'=>TRUE,
+        'weight' => 40,
+    ],
+    'rest'=> [
+        'title' => I18N::T('nrii', '操作'),
+        'nowrap'=>TRUE,
+        'weight' => 999,
+    ]
+];
+$extraColumns = Event::trigger('extra.nrii.center.column', $form, $columns);
+if($extraColumns) {
+    $columns = $extraColumns;
+}
+$table->add_columns($columns);
+$table->empty_message = I18N::T('nrii', '没有查询到相应的科学仪器中心!');
+
+if (count($centers) > 0) {
+    foreach($centers as $center) {
+        $links = $center->links('index');
+        $row = [
+            '@'=>[
+                'view' => $center->icon('32', 'style="display:block"'),
+                'extra' => 'style="padding:4px" align="right"',
+            ],
+            'centname'=>HT($center->centname),
+            'service_content'=>HT($center->service_content),
+            'contact'=>HT($center->contact),
+            'rest'=>Widget::factory('application:links', ['links' => $links]),
+        ];
+        $extraRow = Event::trigger('extra.nrii.center.row', $center, $row);
+        if($extraRow) {
+            $row = $extraRow;
+        }
+        $table->add_row($row);
+    }
+}
+echo $table;
+?>
+<?= $pagination ?>

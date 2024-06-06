@@ -1,0 +1,80 @@
+
+.user_card .icon {
+    display: inline-block;
+}
+
+.user_card .icon img {
+	display: block;
+	border-radius: 22px;
+}
+
+.user_card .information {
+	display: block;
+    padding-left: 54.8px;
+    height: 45.5px;
+
+	span {
+        a {
+            color: #FFFFFF;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+            font-family: PingFangSC-Medium, PingFang SC;
+            font-weight: 500;
+        }
+        
+        .lab {
+            font-size: 14px;
+            line-height: 17px;
+            padding-top: 4px;
+        }
+        
+        .user {
+            padding-top: 2px;
+            line-height: 20px;
+            font-size: 14px;
+        }
+	}
+
+    .user-home a {
+        color: #FFFFFF;
+        font-size: 14px;
+    }
+
+	.title{
+		color: #FFF !important;
+		overflow: hidden;
+        text-overflow: ellipsis;
+		white-space: nowrap;
+		display: block;
+		padding-right: 16px;
+		width: auto;
+	}
+}
+
+
+/* .user_card span.name {
+	font-weight:bold;
+	font-size: 14px;
+} */
+
+.user_card span.email {
+	color: #666;
+	font-size:14px;
+}
+
+.user_grid span.email {
+	padding-left:18px;
+	background: url(images/icons/mail.gif) no-repeat 0 center;
+	color: #666;
+}
+
+.user_grid span.phone {
+	font-size:10px;
+	font-weight:bold;
+}
+
+.user_grid span.date {
+	font-size: 95%;
+}

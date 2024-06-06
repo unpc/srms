@@ -1,0 +1,53 @@
+<div class="form">
+    <?php echo V('form_error', ['form' => $form]); ?>
+    <table class="form flexible">
+        <tr>
+            <td class="" style="width: 100px;">
+                <?= I18N::T('gateway', '用户') ?>
+            </td>
+            <td class="lpadding_30" style="padding-top: 1rem;">
+            <form class="edit" action="<?php echo H(URI::url()) ?>" method="post" autocomplete="off">
+                <div class="interval_12"></div>
+                    <table>
+                        <tbody>
+                        <tr>
+                            <td>
+                                <?php
+                                $gapper_user = O('gapper_user', ['gapper_id' => $user->gapper_id]);
+                                echo Widget::factory('gateway:gapper_user_selector', [
+                                    'name' => 'gapper_info',
+                                    'selected_gapper_user' => [
+                                        'id' => $user->id,
+                                        'gapper_id' => $user->gapper_id,
+                                        'gapper_name' => $gapper_user->name,
+                                        'gapper_email' => $gapper_user->email,
+                                        'gapper_ref_no' => $gapper_user->ref_no,
+                                        'gapper_avatar' => $gapper_user->avatar,
+                                    ],
+                                    'size' => 50
+                                ]);
+                                ?>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="float_right">
+                        <input type="submit" name="submit" class="font-button-save"
+                                value="<?php echo H(I18N::T('labs', '保存修改')) ?>"/>
+                        <input type="submit" name="cancel" id="cancel" class="font-button-default"
+                                value="<?php echo H(I18N::T('labs', '解除绑定')) ?>"/>
+                    </div>
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>
+<script type="text/javascript">
+    $('#cancel').click(
+       function () {
+           if(!confirm("您确定要进行此操作么?")){
+               return false;
+           }
+       }
+    );
+</script>

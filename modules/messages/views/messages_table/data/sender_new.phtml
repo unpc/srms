@@ -1,0 +1,16 @@
+<div style="line-height: 45px">
+    <div
+        style="width:45px;
+    height:45px;
+    text-align: center;
+    font-weight: bold;
+    background:rgba(68,142,246,0.16);
+    border-radius: 50%;
+    color: var(--basiccolor);
+    display: inline-block;
+    margin-right: 8px">发件人</div>
+    <span style="font-size: 14px;font-weight: bolder">
+    <?php if ($message->sender->id) :?><a href="<?php echo H($message->sender->home_url()) ?>"><?php echo H($message->sender->name)?>
+            <?php else: echo I18N::T('messages', '系统');endif;?>
+    </span>
+</div>

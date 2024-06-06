@@ -1,0 +1,5 @@
+deb http://mirrors.sohu.com/ubuntu CODENAME main restricted universe multiverse
+deb http://mirrors.sohu.com/ubuntu CODENAME-security main restricted universe multiverse
+deb http://mirrors.sohu.com/ubuntu CODENAME-updates main restricted universe multiverse
+deb http://mirrors.sohu.com/ubuntu CODENAME-backports main restricted universe multiverse
+

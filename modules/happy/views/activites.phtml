@@ -1,0 +1,115 @@
+<div class="hr_1">&#160;</div>
+<div class="panel clearfix"></div>
+<div class="message_content padding_2">
+	<table class="form">
+	<?php echo V('form_error', ['form'=>$form])?>
+		<tr>
+			
+			<td>
+				<?php echo $happyhour->creater->icon('48'); ?>
+			</td>
+			<td class="top flexible">
+				<h2>
+					<a href="<?php echo H( URI::url('')) ?>"><?php echo H($happyhour->title);?></a>
+				</h2>
+				<p>
+					<?php echo I18N::HT('happy', '发起人')?>：
+					<span class="nowrap">
+						<a href="<?php echo H(URI::url('!people/profile/index.'.$happyhour->creater->id)) ?>"><?php echo H($happyhour->creater->name);?></a>
+					</span>
+				</p>
+				<div class="happy_body">
+					<?php echo H($happyhour->body); ?>
+				</div>
+			</td>
+			<td>
+				<div class="hr_2">&nbsp;</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="right middle nowrap">
+				<strong class="description"><?php echo I18N::HT('happy', '发布时间:')?>
+			</td> 
+			<td class="middle">
+				<?php echo Date::format($happyhour->ctime); ?>
+			</td>
+		</tr>
+		<tr>
+			<td class="right middle nowrap">
+				<strong class="description"><?php echo I18N::HT('happy', '截止时间:')?>
+			</td> 
+			<td class="middle">
+				<?php echo Date::format($happyhour->dtime); ?>
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>
+			<?php $me = L('ME');if ($me->is_allowed_to('创建', 'happyhour')):?>
+				<a class="button button_edit" href="<?php echo H( URI::url('!happy/edit/index.'.$happyhour->id)) ?>">修改</a>
+			<?php endif;?>
+			</td>
+		</tr>
+	</table>
+<?php
+?>
+</div>
+	<h2 class="section_title">
+		<span class="middle" >选购单</span>
+	</h2>
+<div class="hr_1">&nbsp;</div>
+
+	<?php if (count($panel_buttons)) :?>
+		<div class="panel padding_1 clearfix middle">	
+			<?php echo Widget::factory('application:links', ['links'=>$panel_buttons, 'separator'=>'&#160;']);?>
+		</div>
+	<?php endif;?>
+
+<div class="hr_1">&nbsp;</div>
+<div class="message_content padding_2">
+	<table class="form happy_info_form">
+		<?php 
+			$num = 1;
+			foreach($replys as $key => $reply) {
+		?>
+			<tr>
+				<td class="right middle"><?php echo $num;?></td>
+				<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo H($reply->content);?></span></td>
+				<td class="description">X&nbsp&nbsp<?php echo $reply->stock;?></td>
+			</tr>
+		<?php	
+				$num = $num+1;
+			} 
+		?>	
+	</table>
+	<?php
+		$me = L('ME');
+		if($happyhour->dtime > time() or $me->is_allowed_to('创建', 'happyhour')) :
+	?>
+	<form action="" method="post">
+
+			<table class="form">
+				<tbody>	
+				<tr>
+					<td class="right middle"><strong class="description"><?php echo I18N::T('happy', '添加物品')?>:
+					</td>
+					<td class="label left top">
+						<input name="content" class="text" size="20" value="<?php echo H($form['content']) ?>">
+					</td>	
+					<td>
+						<input name="stock" class="text number" size="5" value='1'>
+					</td>
+				</tr>	
+				<tr>
+					<td class="label right nowrap middle">
+					</td>
+					<td>
+						<input type="submit" value="提交" class="button button_add" name="submit">
+					</td>
+				</tr>
+						
+					</tbody>
+			</table>
+		</form>
+	<?php endif;?>
+</div>

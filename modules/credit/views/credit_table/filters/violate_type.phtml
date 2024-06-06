@@ -1,0 +1,11 @@
+<?php
+$violate_types = [
+    '-1'       => '--',
+    'late'    => '迟到',
+    'early'   => '早退',
+    'timeout' => '超时',
+    'miss'    => '爽约',
+    'other'   => '其他',
+];
+?>
+<?php echo Form::dropdown('violate_type', $violate_types, $this->violate_type ?: -1, 'class="middle"', 'class="middle"');

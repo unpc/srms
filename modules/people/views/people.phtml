@@ -1,0 +1,292 @@
+<?php
+$me = L('ME');
+if (Config::get('people.batch.disable.users')) {
+    $uniqid        = uniqid();
+    $select_all_id = 'select_all_' . $uniqid;
+    $batch_form_id = 'batch_form_' . $uniqid;
+    $form_token    = 'form_token_' . $uniqid;
+}
+?>
+
+<?php
+if (Config::get('people.batch.disable.users')) {
+    echo JS::load('people:disable', [
+        'form_token' => $form_token,
+        'no_checked' => I18N::T('people', '请选择要停用的用户!'),
+    ]);
+}
+?>
+
+<?php if (Config::get('people.batch.disable.users')): ?>
+<?php echo JS::load('people:index_operate', ['select_all_id'=>$select_all_id, 'batch_form_id' => $batch_form_id]); ?>
+<?php endif; ?>
+<?php
+/*
+NO. TASK#246 (Cheng.Liu@2010.11.16)
+people列表转换table widget
+ */
+
+$table = Widget::factory('table');
+
+$table->name         = 'people_users';
+$table->sort_asc     = $sort_asc;
+$table->sort_by      = $sort_by;
+$table->form         = $form;
+$enable_show_creator = $me->is_allowed_to('查看建立者', 'user') && !People::perm_in_uno();
+$enable_show_auditor = $me->is_allowed_to('查看审批者', 'user') && !People::perm_in_uno();
+
+if ($form['ctstart_check'] && $form['ctend_check']) {
+    $form['ctime'] = H(date('Y/m/d', $form['ctstart'])) . '~' . H(date('Y/m/d', $form['ctend']));
+} elseif ($form['ctstart_check']) {
+    $form['ctime'] = H(date('Y/m/d', $form['ctstart'])) . '~' . I18N::T('people', '最末');
+} elseif ($form['ctend_check']) {
+    $form['ctime'] = I18N::T('people', '最初') . '~' . H(date('Y/m/d', $form['ctend']));
+}
+
+$columns = [];
+
+$show_fields = (array) Lab::get('people_list_show_columns') ?: Config::get('people.list_default_show_columns');
+$weight = 0;
+$searchFields = Config::get('people.search_fields_no_follow_config');
+foreach ($show_fields as $key => $show_field) {
+    if (!$show_field['show']&&!in_array($key,$searchFields)) continue;
+    $weight += 10;
+    switch ($key) {
+        case 'group':
+            if ($GLOBALS['preload']['tag.group_limit'] >= 0) {
+                $table->add_column('group', [
+                    'title' => I18N::T('people', '组织机构'),
+                    'filter' => [
+                        'form' => V('people:users_table/filters/group', [
+                            'name' => 'group_id',
+                            'tag' => $group,
+                            'root' => $group_root,
+                            'field_title' => I18N::T('people', '请选择组织机构'),
+                        ]),
+                        'value' => $group->id ? H($group->name): NULL,
+                        'field' => 'group_id',
+                    ],
+                    'invisible'=> !$show_field['show'],
+                    'nowrap'=>TRUE,
+                    'input_type'=>'select',
+                    'weight' => $weight
+                ]);
+            }
+            break;
+        case 'member_type':
+            if (!People::perm_in_uno()) {
+                $table->add_column('member_type', [
+                    'title' => I18N::T('people', '人员类型'),
+                    'filter' => [
+                        'form' => V('people:users_table/filters/member_type', ['form' => $form]),
+                        'value' => I18N::T('people', $form['member_type_name']),
+                    ],
+                    'invisible'=> !$show_field['show'],
+                    'nowrap'=>TRUE,
+                    'weight' => $weight,
+                ]);
+            }
+            break;
+        case 'name':
+            $table->add_column('name', [
+                'title'=>I18N::T('people', '姓名'),
+                'filter'=>[
+                    'form'=>V('people:users_table/filters/name', ['value'=>$form['name']]),
+                    'value'=> $form['name'] ? H($form['name']) : NULL
+                ],
+                'invisible'=> !$show_field['show'],
+                'nowrap'=>TRUE,
+                'weight'=> $weight,
+            ]);
+            break;
+        case 'contact_info':
+            $table->add_column('contact_info', [
+                'title'=>I18N::T('people', '联系方式'),
+                'nowrap'=>TRUE,
+                'weight'=> $weight,
+                'invisible'=> !$show_field['show'],
+            ]);
+            break;
+        case 'address':
+            if (!People::perm_in_uno()) {
+                $table->add_column('address', [
+                    'title' => I18N::T('people', '地址'),
+                    'filter' => [
+                        'form' => V('people:users_table/filters/address', ['address' => $form['address']]),
+                        'value' => $form['address'] ? H($form['address']) : NULL
+                    ],
+                    'invisible' => !$show_field['show'],
+                    'nowrap' => TRUE,
+                    'weight' => $weight,
+                    'invisible'=> !$show_field['show'],
+                ]);
+            }
+            break;
+        case 'ref_no':
+            $table->add_column('ref_no', [
+                'title'=>I18N::T('people', '学号/工号'),
+                'filter'=>[
+                    'form'=>V('people:users_table/filters/ref_no', ['ref_no'=>$form['ref_no']]),
+                    'value'=> $form['ref_no'] ? H($form['ref_no']) : NULL
+                ],
+                'nowrap'=>TRUE,
+                'weight'=> $weight,
+                'invisible'=> !$show_field['show'],
+            ]);
+            break;
+        case 'backends':
+            $table->add_column('backends', [
+                'title'  => I18N::T('people', '账户来源'),
+                'filter' => [
+                    'form'  => V('people:users_table/filters/backends', ['form' => $form]),
+                    'value' => I18N::T('people', $form['backends_name']),
+                ],
+                'nowrap'=> TRUE,
+                'weight'=> $weight,
+                'invisible'=> !$show_field['show'],
+            ]);
+            break;
+        case 'email':
+            if ($me->is_allowed_to('查看联系方式', 'user')) {
+                $table->add_column('email', [
+                    'title' => I18N::T('people', '邮箱'),
+                    'filter' => [
+                        'form' => V('people:users_table/filters/email', ['value' => $form['email']]),
+                        'value' => $form['email'] ? H($form['email']) : NULL
+                    ],
+                    'invisible' => TRUE,
+                    'nowrap' => TRUE,
+                    'weight' => $weight,
+                ]);
+            }
+            break;
+        case 'phone':
+            if ($me->is_allowed_to('查看联系方式', 'user')) {
+                $table->add_column('phone', [
+                    'title' => I18N::T('people', '电话'),
+                    'filter' => [
+                        'form' => V('people:users_table/filters/phone', ['phone' => $form['phone']]),
+                        'value' => $form['phone'] ? H($form['phone']) : NULL
+                    ],
+                    'invisible' => TRUE,
+                    'nowrap' => TRUE,
+                    'weight' => $weight,
+                ]);
+            }
+            break;
+        case 'creator':
+            if ($enable_show_creator) {
+                $table->add_column('creator', [
+                    'title'=>I18N::T('people', '建立者'),
+                    'filter'=>[
+                        'form'=>V('people:users_table/filters/creator', ['creator'=>$form['creator']]),
+                        'value'=> $form['creator'] ? H($form['creator']) : NULL
+                    ],
+                    'align'=>'center',
+                    'nowrap'=>TRUE,
+                    'weight'=> $weight,
+                    'invisible'=> !$show_field['show'],
+                ]);
+            }
+            break;
+        case 'auditor':
+            if ($enable_show_auditor) {
+                $table->add_column('auditor', [
+                    'title'=>I18N::T('people', '审批者'),
+                    'filter'=>[
+                        'form'=>V('people:users_table/filters/auditor', ['auditor'=>$form['auditor']]),
+                        'value'=> $form['auditor'] ? H($form['auditor']) : NULL
+                    ],
+                    'align'=>'center',
+                    'nowrap'=>TRUE,
+                    'weight'=> $weight,
+                    'invisible'=> !$show_field['show'],
+                ]);
+            }
+            break;
+        case 'token':
+            if ($me->is_allowed_to('查看登录账号', 'user')) {
+                $table->add_column('token', [
+                    'title'     => I18N::T('people', '登录账号'),
+                    'filter'    => [
+                        'form'  => V('people:users_table/filters/token', ['token' => $form['token']]),
+                        'value' => $form['token'] ? H($form['token']) : null,
+                    ],
+                    'invisible'=> !$show_field['show'],
+                    'nowrap'=>TRUE,
+                    'weight'=> $weight,
+                ]);
+            }
+            break;
+    }
+
+}
+
+$members_type = [];
+foreach (User_Model::get_members() as $key => $value) {
+    foreach ($value as $k => $v) {
+        $members_type[$k] = $v;
+    }
+}
+
+$columns = new ArrayObject($columns);
+Event::trigger('people.table_list.columns', $form, $columns);
+
+$columns['rest'] = ['title'=>I18N::T('people', '操作'), 'align'=>'left', 'nowrap'=>TRUE, 'weight'=> 120];
+$table->add_columns((array) $columns);
+
+
+$table->empty_message = I18N::T('people', '无符合条件的成员');
+
+Event::trigger("{$table->name}_table.prerender table.prerender", $table);
+
+$table->users = $users;
+
+foreach ($users as $user) {
+	$links = $user->links('index');
+	if ($me->id != $user->id) {
+		$links = $me->follow_links($user) + $links;
+	}
+    $add_row_arr = [];
+    foreach ($show_fields as $key => $show_field) {
+        if (!$show_field['show']) continue;
+        switch ($key) {
+            case 'group':
+                $add_row_arr[$key] = V('application:tag/path', ['tag' => $user->group, 'tag_root' => $group_root, 'url_template' => URI::url('', 'group_id=%tag_id')]);
+                break;
+            case 'name':
+            case 'contact_info':
+            case 'date':
+            case 'address':
+            case 'lab':
+            case 'creator':
+            case 'auditor':
+            case 'backends':
+            case 'member_type':
+            case 'ref_no':
+            case 'token':
+                $add_row_arr[$key] = V('people:users_table/data/'.$key, ['user' => $user]);
+                break;
+        }
+    }
+    $add_row_arr['rest'] = Widget::factory('application:links', ['links' => $links]);
+    $row = new ArrayIterator($add_row_arr);
+    $row = Event::trigger('people.table_list.row', $row, $user) ?: $row;
+    $table->add_row((array) $row);
+}
+
+$param = [
+    'is_offset' => true,
+    'top_input_arr' => Config::get('search.top_input_arr')['people.list'],
+    'columns' => $table->columns,
+    'panel_buttons' => $panel_buttons,
+    'extra_view'    => '<div class="adj statistics middle">'.
+        I18N::T('people', '共有 %user_count位成员', [
+            '%user_count' => '<span class=" blue">' . $users->total_count() . '</span>',
+        ]).$pagination.'</div>'
+];
+echo V('application:search_box', $param);
+?>
+
+<?php echo $table; ?>
+<div class="pages"><?php echo $pagination;?></div>

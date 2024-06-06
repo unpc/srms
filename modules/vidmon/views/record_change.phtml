@@ -1,0 +1,46 @@
+<?php
+$arr_len = count($images);
+?>
+<div class="center image_wrap">
+		<form method="post" class="view" q-object="refresh" q-event="submit" q-src="<?php echo H(URI::url('!vidmon/vidcam')) ?>" q-static="vidcam_id=<?php echo $vidcam->id?>">
+			<a class="button_img prevall" 
+			q-object="prevall"
+			q-event="click"
+			q-static="vidcam_id=<?php echo $vidcam->id;?>&ajax_time=<?php echo $images_array['name'][0];?>"
+			q-src="<?php echo H(URI::url('!vidmon/vidcam')) ?>" ><<</a>
+		
+			<a class="button_img prev"
+			q-object="prev"
+			q-event="click"
+			q-static="vidcam_id=<?php echo $vidcam->id;?>&ajax_time=<?php echo $images_array['name'][$arr_len-1];?>"
+			q-src="<?php echo H(URI::url('!vidmon/vidcam')) ?>"><</a>
+
+		
+			<input name="vidcam_date" class="text date" value="<?php echo H($time ?: $images_array['name'][$arr_len-1]) ?>" q-date_format="<?php echo HT('$year/$month/$day $hour:$min:$sec')?>"/>
+		
+
+			<a class="button_img next"
+			q-object="next"
+			q-event="click"
+			q-static="vidcam_id=<?php echo $vidcam->id;?>&ajax_time=<?php echo $images_array['name'][0];?>"
+			q-src="<?php echo H(URI::url('!vidmon/vidcam')) ?>">></a>
+		
+			<a class="button_img nextall"
+			q-object="nextall"
+			q-event="click"
+			q-static="vidcam_id=<?php echo $vidcam->id;?>&ajax_time=<?php echo $images_array['name'][$arr_len-1];?>"
+			q-src="<?php echo H(URI::url('!vidmon/vidcam')) ?>">>></a>
+			<a class="refresh"></a>
+			
+			<input type="submit" class="button" value="<?php echo H(I18N::T('vidmon', '刷新')) ?>" />
+		</form>
+		<div class="images clearfix">
+			<div class="images_container">
+				<?php
+					foreach ($images_array['img'] as $image) {
+						echo $image;
+					}			
+				?>
+			</div>
+		</div>	
+	</div>

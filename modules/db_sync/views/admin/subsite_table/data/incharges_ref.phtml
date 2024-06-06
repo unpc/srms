@@ -1,0 +1,10 @@
+<?php
+    $incharges = [];
+	foreach ($users as $user) {
+		$user->ref_no && $incharges[] = '<span class="nowrap">'. H($user->ref_no) .'</span>';
+    }
+
+    if (count($incharges)) {
+        echo join(', ', $incharges);
+    }
+?>

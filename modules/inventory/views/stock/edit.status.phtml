@@ -1,0 +1,229 @@
+<?php
+    echo CSS::load_async('inventory:stock');
+    $empty = $stock->percent_inadequate ?: Config::get('stock.default_inadequate_percent');
+    $tight = $stock->percent_adequate ? $stock->percent_adequate -  $empty : Config::get('stock.default_adequate_percent') - $empty;
+    $adequate = 100 - $empty - $tight;
+    $precent = round( ($stock->quantity / $stock->summation) * 100 );
+?>
+<div class="hr_1">&#160;</div>
+<form method="post" autocomplete="off" action="<?php echo H(URI::url() ) ?>">
+	<div class="form padding_2">
+        <h1><?php echo I18N::T('inventory', '存货状态示意图')?></h1>
+        <div class="hr_2">&#160;</div>
+        <div class="stock_container">
+            <div class="stock_portion">
+            	<div class="status_container clearfix">
+                    <div class="status_tag_error part" style="width: <?php echo $empty?>%;">&#160;</div>
+                    <div class="handler_item stock_handler:<?php echo $empty?> inadequate">
+                        <div class="tip hidden"><div class="tip_content">
+                                <input size='4' value="<?php echo H($empty . '%') ?>" />
+                        </div></div>
+                        <div class="handler">&#160;</div>
+                    </div>
+                    <div class="status_tag_warning part" style="width: <?php echo $tight?>%;">&#160;</div>
+                    <div class="handler_item stock_handler:<?php echo $tight + $empty?> adequate">
+                        <div class="tip hidden"><div class="tip_content">
+                                <input size='4' value="<?php echo H(($empty + $tight). '%') ?>" />
+                        </div></div>
+                        <div class="handler">&#160;</div>
+                    </div>
+    	            <div class="status_tag_normal part" style="width: <?php echo $adequate?>%;">&#160;</div>
+                    <div class="current_precent" style="left: <?php echo $precent?>%;">&#160;</div>      
+                </div>
+            </div>
+            <div class="clearfix status_precent">
+                <div class="empty_precent">
+                    <span class="status_tag status_tag_error"></span>&#160;&#160;
+                    <span><?php echo I18N::HT('inventory', Stock_Model::$stock_status[Stock_Model::EXHAUSTED]); ?></span>
+                    <input name="inadequate_percent" class="hidden" value="<?php echo $empty; ?>" />
+                </div>
+                <div class="tight_precent">
+                    <span class="status_tag status_tag_warning"></span>&#160;&#160;
+                    <span><?php echo I18N::HT('inventory', Stock_Model::$stock_status[Stock_Model::INADEQUATE]); ?></span>
+                    <input name="adequate_percent" class="hidden" value="<?php echo $empty + $tight; ?>" />
+                </div>
+                <div class="adequate_precent">
+                    <span class="status_tag status_tag_normal"></span>&#160;&#160;
+                    <span><?php echo I18N::HT('inventory', Stock_Model::$stock_status[Stock_Model::ADEQUATE]); ?></span>
+                </div>
+                <div class="relative">
+                    <span class="status_tag status_tag_current"></span>&#160;&#160;
+                    <span><?php echo I18N::HT('inventory', '当前存量值'); ?></span>
+                </div>
+            </div>
+        </div>
+		<div class="tpadding_3">
+			<input name="submit" class="button button_save" type="submit" value="<?php echo H(I18N::T('inventory', '更新')) ?>" />
+		</div>
+	</div>
+</form>
+<script>
+jQuery(function($){
+    $(':visible .handler_item').livequery(function(){
+
+        var width = 500;
+        var $handler_item = $(this);
+        var $handler = $handler_item.find('.handler');
+        var $tip = $handler_item.find('.tip');
+        var $position_size = $handler_item.classAttr('stock_handler');
+
+        var $container = $handler_item.parent();
+        var $width = $container.width();
+
+        var $error_status = $container.find('.status_tag_error');
+        var $warning_status = $container.find('.status_tag_warning');
+        var $normal_status = $container.find('.status_tag_normal');
+
+        $handler_item.css('left', $handler_item.classAttr('stock_handler') + '%');
+
+        /* 初始化tip */
+        $tip.css('left', - ($tip.outerWidth() / 2) + 2).show();
+
+
+        var min_left = 0;
+        var max_left = 0;
+
+        //手柄控制颜色条的显示
+        $handler_item.bind('position.move', function(e, handler_size){
+
+            var tight_precent = Math.round(( $normal_status.width() / $container.width() ) * 100);
+            var error_precent = Math.round(( $error_status.width() / $container.width() ) * 100);
+
+            var status_precent = $('.status_precent');
+
+            if ($handler_item.hasClass('inadequate')) {
+                $error_status.css('width', handler_size + '%');
+                $warning_status.css('width', Math.round(100 - handler_size - tight_precent) + '%');
+
+                status_precent.find('.empty_precent input[name="inadequate_percent"]').val(Math.round(handler_size));
+            }
+            else {
+                $warning_status.css('width', Math.round(handler_size - error_precent) + '%');
+                $normal_status.css('width', Math.round(100 - handler_size) + '%');
+
+                status_precent.find('.tight_precent input[name="adequate_percent"]').val(Math.round(handler_size));
+            }
+
+            $tip.find('input').val(Math.round(handler_size) + '%');
+        })
+        .bind('mouseenter', function(e){
+            $tip.css('opacity', 1);
+        })
+        .bind('mouseleave', function(e){
+            $tip.css('opacity', 0.8);
+        });
+
+        $tip.bind('mouseenter', function(e){
+            $tip
+                .find('input')
+                .css({
+                    'background-color' : '#FFF',
+                    'color' : '#333'
+                });
+        })
+        .bind('mouseleave', function(e){
+            $tip
+                .find('input')
+                .css({
+                    'background-color' : '#333',
+                    'color' : '#FFF'
+                })
+        });
+
+        $tip.find('input').bind('keydown', function(e){
+            var code = e.which || e.code;
+            if (code == 13) {
+                e.preventDefault();
+
+                var val = $(this).val().replace('%', '');
+
+                if (val.match(/\D/) != null) return false;
+
+                var tight_precent = Math.round(( $normal_status.width() / $container.width() ) * 100);
+                var error_precent = Math.round(( $error_status.width() / $container.width() ) * 100);
+
+                var handler_size = 0;
+
+                if ($handler_item.hasClass('inadequate')) {
+                    handler_size = Math.max(Math.min(val, 100 - tight_precent), 0);
+                }
+                else {
+                    handler_size = Math.max(Math.min(val, 100), error_precent);
+                }
+
+                $handler_item
+                    .css('left', handler_size + '%')
+                    .trigger('position.move', handler_size);
+
+                return false;
+            }
+
+            if (code == 8 || (code >= 37 && code <= 40) || (code >= 48 && code <= 57)) {
+                return true;
+            }
+            else{
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        $handler.bind('mousedown touchstart', function(e){
+
+            e = Q.event(e);
+            var isTouch = e.isTouch;
+
+            var left = $handler_item.position().left;
+
+            if ($handler_item.hasClass('inadequate')) {
+                min_left = 0;
+                max_left = Math.round(($error_status.width() + $warning_status.width()));
+            }
+            else {
+                min_left = Math.round($error_status.width());
+                max_left = width;
+            }
+
+            var point = $container.offset().left;
+
+            var _dragmove = function(e) {
+                e = Q.event(e);
+
+                var handler_left = Math.round(Math.min(Math.max(e.pageX - point, min_left), max_left));
+                var handler_size = Math.round((handler_left / $container.width()).toFixed(2) * 100);
+                
+                $handler_item
+                    .css('left', handler_size + '%')
+                    .trigger('position.move', handler_size);
+            };
+
+            var _dragend = function(e) {
+                e = Q.event(e);
+                
+                if (isTouch) {
+                    $handler_item
+                    .unbind('touchmove', _dragmove);
+                }
+                else {
+                    $(document)
+                    .unbind('mousemove', _dragmove);
+                }
+            }
+
+            if (isTouch) {
+                $handler
+                .bind('touchmove', _dragmove)
+                .one('touchend', _dragend);
+            }
+            else {
+                $(document)
+                .bind('mousemove', _dragmove)
+                .one('mouseup', _dragend);
+            }
+
+            return false;
+        });
+
+    });
+});
+</script>
+

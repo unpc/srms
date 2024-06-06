@@ -1,0 +1,114 @@
+<?php
+$form = $this->form;
+$uniqid = 'ordersel_'.uniqid();
+$autocomplete = $this->autocomplete ?: URI::url('!orders/autocomplete/order');
+$size = $this->size ? : 60;
+$this->name = $this->name ?: 'product_name';
+$sites = (array)Lab::get('mall.binded_sites', []);
+sort($sites);
+$sites = json_encode($sites);
+?>
+<input autocomplete="off" id="<?php echo H($uniqid) ?>" name="<?php echo H($this->name);?>"
+class="remote text middle select_on_focus tooltip:<?php echo I18N::T('inventory', '请输入关键字并选择') ;?> tooltip_position:left"
+	q-autocomplete="<?php echo H($autocomplete) ?>"
+	size="<?php echo H($size); ?>" value="<?php echo H($form['product_name'] ? : $order->product_name) ?>"  />
+    <?php echo $require?>
+<script type="text/javascript">
+jQuery(function() {
+	var input_id = '<?php echo $uniqid?>';
+	var $input = $('#' + input_id);
+	$input.bind('autoactivate.autocomplete', function(e, item) {
+		var sites = eval('<?php echo $sites; ?>');
+		var source = item.data['source'];
+		if (source) {
+			var ret = false;
+		    $(sites).each(function(index,val){
+		    	if (val == source) {
+		    		ret = true
+		    	}
+		    });
+		    if (!ret) {
+		    	alert('<?php echo I18N::T("orders", "无法连接到商城完成申购, 请于课题组负责人联系!"); ?>');
+		    	return;
+		    }
+
+			Q.trigger({
+				object: "get_product",
+				event: "click",
+				data: {
+					"pid": item.data['product_id'],
+					'source': item.data['source']
+				},
+				url: "<?php echo URI::url('!orders/order'); ?>",
+				success: function(data) {
+					//如果rpc或有其他错误，则返回
+					if(data.error) return;
+
+					var unit_price = data.unit_price;
+					var selling = data.selling;
+					if (!selling) {
+						alert('<?php echo I18N::T("orders", "您选择的商品目前无法直接购买!"); ?>');
+						return;
+					}
+					if (item.data['unit_price'] != unit_price | item.data['manufacturer'] != data.manufacturer | item.data['catalog_no'] != data.catalog_no | item.data['model'] != data.model | item.data['spec'] != data.spec) {
+						alert('<?php echo I18N::T("orders", "您选择的商品最新信息和之前商品信息不一致, 请查看后进行进一步处理!"); ?>');
+						item.data['manufacturer'] = data.manufacturer;
+						item.data['spec'] = data.spec;
+						item.data['catalog_no'] = data.catalog_no;
+						item.data['model'] = data.model;
+					}
+
+					if (unit_price < 0) {
+						item.data['unit_price'] = '<?php echo I18N::T("orders", "待询价") ?>';
+						item.data['price'] = '<?php echo I18N::T("orders", "待询价") ?>';
+					}
+					else {
+						item.data['unit_price'] = unit_price;
+						item.data['price'] = unit_price * item.data['quantity'];
+					}
+
+					var $form = $input.parents("form:first");
+					if ($form.length > 0) {
+						for (var name in item.data) {
+							if ((name == 'unit_price' | name == 'price') & unit_price < 0) {
+								var parent = $form.find('[name="' + name + '"]').parent();
+								$form.find('[name="' + name + '"]').prev().remove();
+								$form.find('[name="' + name + '"]').remove();
+								$form.find('[name="calculate_price"]').remove();
+								parent.append('<input class="text" type="text" name="'+name+'" value='+item.data[name]+' disabled="">');
+							}
+
+							$form.find('[name="' + name + '"]').attr('value', item.data[name]).change();
+						}
+						if (item.data.source) {
+							$(".remote").prop('disabled', true);
+							$("input[name='source']").attr("value",item.data.source);
+							$("input[name='order_id']").attr("value",item.data.order_id);
+						}
+						else {
+							$form.find('.remote').prop('disabled', false);
+						}
+					}
+				}
+			});
+		}
+		else {
+			var $form = $input.parents("form:first");
+			if ($form.length > 0) {
+				for (var name in item.data) {
+					$form.find('[name="' + name + '"]').attr('value', item.data[name]).change();
+				}
+				if (item.data.source) {
+					$(".remote").prop('disabled', true);
+					$("input[name='source']").attr("value",item.data.source);
+					$("input[name='order_id']").attr("value",item.data.order_id);
+				}
+				else {
+					$form.find('.remote').prop('disabled', false);
+				}
+			}
+		}
+	});
+
+});
+</script>

@@ -1,0 +1,20 @@
+<div class="form">
+    <form action="<?php echo H(URI::url("!eq_maintain/{$action}", ['type'=>$type, 'form_token'=>$form_token])) ?>" target="<?= $type == 'csv' ? '_self' : '_blank';?>" class="prevent_default" method="post">
+        <ul class="ep_triple" style="width:390px;">
+            <?php
+            foreach ($columns as $p => $p_name) :?>
+            <?php if ($p < 0): ?>
+            <div class="clear">&#160;</div>
+            <h4><?php echo I18N::HT('equipments', $p_name) ?></h4>
+            <?php  else:?>
+                <li class="nowrap">
+                    <?php echo Form::checkbox("columns[{$p}]", TRUE, I18N::T('equipments', $p_name), 'class="middle monitor"', 'class="middle"');?>
+                </li>
+            <?php endif; ?>
+            <?php endforeach;?>
+        </ul>
+        <div class="hr_2"></div>
+        <input type="submit" name="submit" class="button button_edit middle" value="<?php echo H(I18N::T('equipments', '提交')) ?>" />
+        <span class="lpadding_2 red"><?php echo $description?></span>
+    </form>
+</div>

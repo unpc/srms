@@ -1,0 +1,10 @@
+<div class="top_menu_contact">
+	<?php if ( Config::get('system.locale') == 'en_US' ): ?>
+    <span class="fa icon-service" style="font-size: 14px;font-weight: 700;vertical-align: center;padding-right:8px;"></span><span class="label"><?php echo HT('Need help?'); ?></span>
+	<strong><a href="mailto:support@geneegroup.com">support_us@geneegroup.com</a></strong>
+	<?php else: ?>
+        <span class="icon-service middle"></span><span><?php echo HT('客服：'); ?><?php echo Config::get('system.customer_service_tel'); ?></span>
+    <!-- 契合UI图，先注释一个 Clh 2018-10-16 -->
+    <!-- <strong><?php // echo Config::get('system.customer_service_tel_text'); ?></strong> -->
+	<?php endif; ?>
+</div>

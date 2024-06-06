@@ -1,0 +1,74 @@
+<div class="form padding_1 lpadding_2">
+<form method="post" action="<?php echo H(URI::url() ) ?>" autocomplete="off">
+	<?php 
+		echo V('form_error', ['form'=>$form]);
+		$no_error = ($form->no_error!==FALSE);
+		$options = Config::get('eq_stat.perf_opts');
+		$formula = (array)$perf->formula;
+	?>
+	<table class="form">
+		<tr>
+			<td class="label right nowrap center">
+				<?php echo I18N::T('eq_stat', '总分')?>&#160;&#160;&#160;=&#160;&#160;&#160;
+			</td>
+			<td class="left nowrap">
+				<strong><?php echo I18N::T('eq_stat', '用户评分')?></strong>
+			</td>
+			<td>
+				&#160;
+			</td>
+			<td class="middle nowrap">
+				&#160;&#160;&#160;x&#160;&#160;&#160;
+				<input class="text right middle number" size="2" name="user_score" value="<?php echo H($no_error?$formula['user_score']:$form['user_score']) ?: 0?>" />
+			</td>
+		</tr>
+		<?php 
+			foreach((array)$options as $key => $opts):
+				if (is_array($opts)):
+		?>
+		<tr>
+			<td>&#160;</td>
+			<td class="left nowrap">
+				<strong><?php echo I18N::T('eq_stat', $opts['name'])?></strong>
+			</td>
+		</tr>
+				<?php 
+					unset($opts['name']);
+					foreach ($opts as $key => $opt):
+				?>
+		<tr>
+			<td colspan="2">
+				&#160;
+			</td>
+			<td class="left nowrap">
+				<?php echo I18N::T('eq_stat', $opt)?>
+			</td>
+			<td class="middle nowrap">
+				&#160;&#160;&#160;x&#160;&#160;&#160;
+				<input class="text right middle number" size="2" name="<?php echo H($key) ?>" value="<?php echo H($no_error?$formula[$key]:$form[$key]) ?: 0?>" />
+			</td>
+		</tr>
+		<?php endforeach; else:?>
+		<tr>
+			<td>
+				&#160;
+			</td>
+			<td class="left nowrap">
+				<strong><?php echo I18N::T('eq_stat', $opts)?></strong>
+			</td>
+			<td>&#160;</td>
+			<td class="middle nowrap">
+				&#160;&#160;&#160;x&#160;&#160;&#160;
+				<input class="text right middle number" size="2" name="<?php echo H($key) ?>" value="<?php echo H($no_error?$formula[$key]:$form[$key]) ?: 0?>" />
+			</td>
+		</tr>
+		<?php endif;endforeach;?>
+		<tr>
+			<td>&#160;</td>
+			<td colspan="2" class="nowrap">
+				<input name="submit" type="submit" class="button button_save" value="<?php echo I18N::T('eq_stat', '更新'); ?>" />
+			</td>
+		</tr>
+	</table>
+</form>
+</div>

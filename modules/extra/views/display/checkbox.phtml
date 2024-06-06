@@ -1,0 +1,16 @@
+<?php
+foreach ($field['params'] as $key => $checkbox_name):?>
+	<?php 
+    $name = 'extra_fields['.$uniqid.']['.$checkbox_name.']';
+    if ($value) {
+        $v = $value[$checkbox_name] == 'on';
+    }
+    else {
+        $v = $field['default_value'][$key] == 'on';
+    }
+    ?>
+	<span class="rpadding_2 nowrap float_left">
+        <?= Form::checkbox($name, $v, $checkbox_name,'class="checkbox"');?>
+    </span>
+<?php endforeach;?>
+<?php if($field['remarks']):?><div class="description" style="clear:both"><?= H($field['remarks']); ?></div><?php endif; ?>

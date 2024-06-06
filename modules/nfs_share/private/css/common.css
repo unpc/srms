@@ -1,0 +1,40 @@
+.swfupload {
+	vertical-align: middle;
+	margin-top:-3px;
+}
+
+.file {
+	height: 16px;
+	display: inline-block;
+	padding-left: 22px;
+	line-height: 16px;
+	white-space: nowrap;
+}
+/*
+.file_dir {
+	background: url('images/mime/folder.png') no-repeat 2px 0;
+}
+
+.file_default {
+	background: url('images/mime/file.png') no-repeat 2px 0;
+}
+
+.file_image {
+	background: url('images/mime/image.png') no-repeat 2px 0;
+}
+
+.file_excel {
+	background: url('images/mime/excel.png') no-repeat 2px 0;
+}
+
+.file_pdf {
+	background: url('images/mime/pdf.png') no-repeat 2px 0;
+}*/
+
+.path_bar {
+	color: #ccc;
+}
+
+.path_bar a {
+	color: #fff;
+}

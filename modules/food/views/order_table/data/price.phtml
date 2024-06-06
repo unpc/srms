@@ -1,0 +1,11 @@
+<?php
+	$foods = json_decode($this->order->foods);
+	$count = 0;
+	
+	foreach($foods as $food => $value) {
+		$price = O('food', $food)->price;
+		$count += $price;
+	}
+	 
+	echo I18N::T('food', Number::currency($count));
+?>

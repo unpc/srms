@@ -1,0 +1,25 @@
+<?php 
+$me = L('ME');
+$require = (string)V('form_require');
+if (Module::is_installed('labs')):?>
+  <tr>
+    <td class="label left nowrap top">
+        <?php echo $require;?><?php echo I18N::T('achievements', '实验室'); ?>
+        <br>
+        <?php echo V('form_filter',['error'=>$form->errors['lab'][0]]); ?>
+    </td>
+    <td class="middle" colspan="2">
+      <?php
+        $autocomplete = $me->access('添加/修改所有实验室成果') ? FALSE : URI::url("!labs/autocomplete/lab.{$me->id}");
+        $selected_lab = ($form && !$form->no_error) ? $form['lab'] : (Q("$publication lab")->current()->id ?: 0);
+        echo Widget::factory('labs:lab_selector', [
+          'name'=>'lab',
+          'selected_lab'=>$selected_lab,
+          'size'=>'50',
+          'autocomplete'=> $autocomplete
+          ]);
+        ?>
+    </td>
+  </tr>
+<?php endif; ?>
+

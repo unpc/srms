@@ -1,0 +1,65 @@
+<div class="hr_1">&#160;</div>
+<div class="form padding_1">
+<form method="post" action="<?php echo H(URI::url() ) ?>" autocomplete="off">
+<?php echo V('form_error', ['form'=>$form]);?>
+<?php $require = (string) V('form_require'); ?>
+<?php
+	$cat_selector = V('eq_stat:eq_stat_table/filters/tag', [
+				'name'=>'cat_id',
+				'tag'=>$form['cat_id'],
+				'root'=>$cat_root,
+			]);
+
+	$group_selector = V('eq_stat:eq_stat_table/filters/tag', [
+				'name'=>'group_id',
+				'tag'=>$form['group_id'],
+				'root'=>$group_root,
+			]);
+?>
+	<table class="form">
+		<tr>
+			<td class="label right nowrap"><?php echo I18N::T('eq_stat', '评估名称')?></td>
+			<td class="middle">
+				<input name="name" class="text" value="<?php echo H($form['name']) ?>" /><?php echo $require;?>
+			</td>
+		</tr>
+		<tr>
+			<td class="label right nowrap top"><?php echo I18N::T('eq_stat', '仪器范围')?></td>
+			<td class="middle">
+				<div>
+					<?php 
+						echo Form::radio('tag', 'cat',	$tag ?: 'cat', I18N::T('eq_stat', '按仪器分类'), 'class="monitor middle"', 'class="middle"');
+					?>
+					&#160;
+					<div class="inline_block hidden toggle:tag show_on:cat">
+						<?php echo $cat_selector ?>
+					</div>
+				</div>
+				<div>
+					<?php
+						 echo Form::radio('tag', 'group', $tag, I18N::T('eq_stat', '按组织机构'), 'class="monitor middle"', 'class="middle"'); 
+					?>
+					&#160;
+					<div class="inline_block hidden toggle:tag show_on:group">
+						<?php echo $group_selector ?>
+					</div>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="label right nowrap"><?php echo I18N::T('eq_stat', '评估时段')?></td>
+			<td class="middle">
+				<input class="text date" name="dfrom" value="<?php echo H($form['dfrom']);?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/>
+				-
+				<input class="text date" name="dto" value="<?php echo H($form['dto']);?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/>
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>
+				<input class="button button_save" type="submit" name="submit" value="<?php echo H(I18N::T('eq_stat', '更新')) ?>" />
+			</td>
+		</tr>
+	</table>
+</form>
+</div>

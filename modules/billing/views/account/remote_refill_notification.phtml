@@ -1,0 +1,25 @@
+<div class="form padding_2" style="width:500px">
+	<div class="padding_1" style="text-indent:1.5em">
+		<?php echo I18N::T('billing', '您的该账号还没有绑定《充值中心系统》, 目前无法进行自助充值, 请进入以下充值中心系统, 并绑定您的账号:'); ?>
+	</div>
+	<div class="padding_1" style="text-indent:1.5em">
+	<?php 
+	$sources = Config::get('billing.sources');
+	foreach ($sources as $key => $source) : ?>
+		<a class="blue" style="cursor:pointer" q-object="refill_redirect" q-event="click" q-static="<?php echo H(['http_url'=>$source['http_url'], 'lab_id'=>$lab_id]) ?>" q-src="<?php echo H(URI::url('!billing/account') ) ?>"><?php echo $source['name']; ?> </a>
+	<?php endforeach;	?>
+	</div>
+	<div class="padding_1" style="text-indent:1.5em">
+            <?php echo I18N::T('billing', '如果不绑定《充值中心系统》, 请到相关财务部门对该账户进行充值.'); ?>
+	</div>
+	<div class="padding_1 center" >
+		<a class="button button_tick"><?php echo I18N::T('billing', '确认'); ?></a>
+	</div>
+</div>
+<script type="text/javascript">
+	jQuery(function($) {
+		$('.button_tick').bind('click',function() {
+			$('.dialog').remove();
+		});
+	});
+</script>

@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" style="overflow: hidden; margin: 0px;">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8, chrome=1" />
+    <meta name="renderer" content="webkit|ie-stand|ie-comp" />
+	<title>Glogon登录</title>
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <meta http-equiv="Content-Script-Type" content="text/javascript" />
+    <base href="<?php echo H(Config::get('system.base_url') ) ?>" />
+    <?php echo $this->controller->load_css(); ?>
+    <link href="<?php echo Config::get('system.base_url') ?>gini-ui/iconfont.css" rel="stylesheet" />
+    <?php echo $this->controller->load_js(TRUE); ?>
+
+
+    <style>
+        table.form td {
+            padding: 3px;
+            font-weight: normal;
+        }
+
+        table.form td.right {
+            text-align: right;
+        }
+
+        input, textarea {
+            border: 1px solid #E5E5E5;
+            height: 30px;
+            line-height: 30px;
+            padding: 0 10px;
+            outline: none;
+            border-radius: 3px;
+            width: 346px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        select {
+            border: 1px solid #E5E5E5;
+            height: 30px; 
+            line-height: 30px;
+            padding: 0;
+            outline: none;
+            border-radius: 3px;
+            width: 346px;
+            box-sizing: border-box;
+            font-size: 14px;
+            text-align: center;
+            position: fixed;
+        }
+
+        body {
+            background: #f5f7fa;
+            position: relative;
+            font-size: 14px;
+        }
+
+        .dropdown_container {
+            width: 324px;
+        }
+
+        div.form {
+            padding: 10px 20px; 
+            background: none; 
+            width: 480px; 
+            box-sizing: border-box;
+        }
+
+        .extra_dropdown + .dropdown_container {
+            width: 105px;
+        }
+
+        input[name="token"] {
+            width: 222px;
+        }
+
+        select[name="backend"] {
+            width: 102px;
+        }
+
+        textarea[name="use_type_desc"] {
+            height: 50px;
+            line-height: normal;
+        } 
+        
+    </style>
+
+</head>
+
+<body>
+    <img src="<?php echo H(URI::url('!equipments/images/glogon_banner.bmp')) ?>" width="<?= H(Config::get('glogon.login.window_width', 420)) . 'px' ?>" height="94px" />
+    <div class="form" style="padding: 10px 20px">
+        <form window_width="<?php echo H(Config::get('glogon.login.window_width', 420)) ?>" 
+            window_height="<?php echo Config::get('equipment.enable_use_type') ? '530' : H(Config::get('glogon.login.window_height', 310)) ?>" 
+            action="glogon_action_submit" method="get" id="form"
+        >
+            <table class="form" style="width: <?= H(Config::get('glogon.login.window_width', 420) - 50) . 'px' ?>">
+                <?php echo V('equipments:glogon/login_extra', ['equipment' => $equipment]);?>
+                <tr id="static_card">
+                    <td class="middle right nowrap label">
+                        <?php echo I18N::T('equipments', 'IC 卡');?>
+                    </td>
+                    <td class="top">
+                        <input tabindex="0" type="password" name="card_no" class="text" value_type="int" />
+                    </td>
+                </tr>
+                <tr style="height:30px;">
+                    <td class="middle right nowrap label"><?php echo I18N::T('equipments', '用户名');?></td>
+                    <td class="middle">
+                    <?php
+                    echo Widget::factory('glogon_login_token', [
+                            'name' => 'token',
+                            'backend_name'=> 'backend',
+                            'token' => $form['token'],
+                            'backend' => $form['token_backend'],
+                            'size' => 32,
+                    ]);
+                    ?></td>
+                </tr>
+                <tr>
+                    <td class="middle right nowrap label">
+                        <?php echo I18N::T('equipments', '密码');?>
+                    </td>
+                    <td class="top">
+                        <input tabindex="2" type="password" name="password" class="text" size="49" />
+                    </td>
+                </tr>
+                <?php if (Config::get('equipment.enable_use_type')): ?>
+                <tr style="height:30px;">
+                    <td class="middle right nowrap label"><?php echo I18N::T('equipments', '* 使用类型');?></td>
+                    <td class="middle"><?php echo Form::dropdown('use_type', I18N::T('equipments', EQ_Record_Model::$use_type), EQ_Record_Model::USE_TYPE_USING); ?></td>
+                </tr>
+                <tr style="height:30px;">
+                    <td class="top right label nowrap"><?php echo I18N::T('equipments', '备注');?></td>
+                    <td class="middle"><textarea name="use_type_desc" cols="49" rows="6"></textarea></td>
+                </tr>
+                <?php endif; ?>
+                <?php 
+                    // 产品强烈要求将某些选项放在视图下面
+                    echo V('equipments:glogon/after_login_extra', ['equipment' => $equipment]);
+                ?>
+                <tr style="height:30px;">
+                    <td>&#160;</td><td class="middle">
+                    <div>
+                        <input class="font-button-save middle" type="submit" value="<?php echo H(I18N::T('equipments', '提交')) ?>" />
+                        &#160;
+                        <input class="font-button-default middle" type="button" value="<?php echo H(I18N::T('equipments', '取消')) ?>" onclick="javascript:window.location.href='glogon_action_cancel'"/>
+                    </div></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <table style="width: <?= H(Config::get('glogon.login.window_width', 420)) . 'px' ?>;">
+        <tr class="qr_code_control" style="background: #F1F1F1;">
+            <td style="width: 75px;"></td>
+            <td style="border-right: 1px solid #B3B3B3; width: 170px;">
+                <?php $equipment->no_link = true; ?>
+                <?php echo Event::trigger('equipment.profile.extra_view', $equipment);?>
+            </td> 
+            <td style="padding-left: 45px; margin-top: 55px; font-weight: normal; text-align: left; font-size: 14px; width: 160px;">
+                <?= I18N::T('equipments', '微信扫描左方二维码%br实现快速开关仪器', ['%br' => '<br/>']);?>
+            </td>	
+         </tr>
+    </table>
+</body>
+</html>
+<script>
+  </script>

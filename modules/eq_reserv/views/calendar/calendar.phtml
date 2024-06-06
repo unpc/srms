@@ -1,0 +1,42 @@
+<?php
+switch($equipment->reserv_type) :
+case 'time' :
+case NULL : //如果为空, 则为默认的 time
+
+    echo JS::load_async('preview');
+    echo CSS::load_async('preview');
+
+
+  /*  $calendar = O('calendar' , ['parent'=>$equipment, 'type'=> 'eq_reserv']);
+    if (!$calendar->id) {
+        $calendar = O('calendar');
+        $calendar->parent = $equipment;
+        $calendar->type = 'eq_reserv';
+        $calendar->name = I18N::T('eq_reserv', '%equipment的预约', ['%equipment' => $equipment->name]);
+        $calendar->save();
+    }
+
+    $now = time();
+    $dtstart = Input::form('st') ?: $now;
+    $date=getdate($dtstart);
+    $dtstart = mktime(0,0,0,$date['mon'], $date['mday']-$date['wday'], $date['year']);
+    $dtend = $dtstart + 604800;
+    $browser_id = 'browser_'.uniqid();
+    $form_token = Session::temp_token('eq_reserv_', 300);*/
+    ?>
+
+
+    <?php $reserv_content_url=H($calendar->url(NULL, ['browser_id'=>$browser_id, 'st'=>$dtstart, 'ed'=>$dtend, 'calendar_id'=>$calendar_id,
+    'equipment_id'=>$equipment_id, 'form_token'=> $form_token,'hidden_tabs'=>$hidden_tabs, 'disable_day' => true]));?>
+
+   <div id="<?php echo H($browser_id) ?>" src="<?php  echo $reserv_content_url?>"></div>
+	<?php //echo $calendar_tabs ?>
+    </div>
+
+<?php
+    break;
+default :
+      echo Event::trigger('eq_reserv.tab_reserv.content', $equipment);
+    break;
+
+endswitch;

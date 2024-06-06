@@ -1,0 +1,97 @@
+<?php
+//添加预约最早提前时间
+list($add_reserv_earliest_time, $add_reserv_earliest_format) = Date::format_interval(Lab::get('equipment.add_reserv_earliest_limit', NULL, '@'), 'ihd');
+
+//添加预约最晚提前时间
+list($add_reserv_latest_time, $add_reserv_latest_format) = Date::format_interval(Lab::get('equipment.add_reserv_latest_limit', NULL, '@'), 'ihd');
+
+//修改 / 删除预约最晚提前时间
+list($modify_reserv_latest_time, $modify_reserv_latest_format) = Date::format_interval(Lab::get('equipment.modify_reserv_latest_limit', NULL, '@'), 'ihd');
+list($delete_reserv_latest_time, $delete_reserv_latest_format) = Date::format_interval(Lab::get('equipment.delete_reserv_latest_limit', NULL, '@'), 'ihd');
+?>
+<form method="post" autocomplete="off">
+	<div class="form margin-left-1">
+	<?php echo V('form_error', ['form'=>$form])?>
+	<table class="form td_padding_2">
+		<tr>
+			<td class="left nowrap middle"><?php echo I18N::T('eq_reserv', '添加预约最早可提前') ?></td>
+			<td class="middle">
+            <input type="text" name="add_reserv_earliest_time" size="6" class="text number" value="<?php echo H(isset($form['add_reserv_earliest_time']) ?  $form['add_reserv_earliest_time'] : (int) $add_reserv_earliest_time) ?>" />&#160;
+            <?php echo Form::dropdown('add_reserv_earliest_format', Date::units('ihd'), isset($form['add_reserv_earliest_format']) ?  $form['add_reserv_earliest_format'] :  $add_reserv_earliest_format ? : Config::get('eq_reserv.default_add_reserv_limit_format', 'h'),'class="middle tmp_wd"');?></td>
+		</tr>
+
+		<tr>
+			<td class="left nowrap middle"><?php echo I18N::T('eq_reserv', '添加预约最晚可提前') ?></td>
+			<td class="middle"><input type="text" name="add_reserv_latest_time" size="6" class="text number" value="<?php echo H(isset($form['add_reserv_latest_time']) ?  $form['add_reserv_latest_time'] : (int) $add_reserv_latest_time) ?>" />&#160;
+            <?php echo Form::dropdown('add_reserv_latest_format', Date::units('ihd'),
+            isset($form['add_reserv_latest_format']) ? $form['add_reserv_latest_format'] : $add_reserv_latest_format ? : Config::get('eq_reserv.default_add_reserv_limit_format', 'h'),'class="middle tmp_wd"');?></td>
+		</tr>
+
+		<tr>
+			<td class="left nowrap middle"><?php echo I18N::T('eq_reserv', '修改预约最晚可提前') ?></td>
+			<td class="middle">
+            <input type="text" name="modify_reserv_latest_time" size="6" class="text number" value="<?php echo H(isset($form['modify_reserv_latest_time']) ? $form['modify_reserv_latest_time'] : (int) $modify_reserv_latest_time) ?>" />&#160;
+            <?php echo Form::dropdown('modify_reserv_latest_format', Date::units('ihd'), isset($form['modify_reserv_latest_format']) ? $form['modify_reserv_latest_format'] : $modify_reserv_latest_format ? : Config::get('eq_reserv.default_modify_reserv_limit_format', 'd'),'class="middle tmp_wd"');?></td>
+		</tr>
+
+        <tr>
+            <td class="left nowrap middle"><?php echo I18N::T('eq_reserv', '删除预约最晚可提前') ?></td>
+            <td class="middle">
+                <input type="text" name="delete_reserv_latest_time" size="6" class="text number" value="<?php echo H(isset($form['delete_reserv_latest_time']) ? $form['delete_reserv_latest_time'] : (int) $delete_reserv_latest_time) ?>" />&#160;
+                <?php echo Form::dropdown('delete_reserv_latest_format', Date::units('ihd'), isset($form['delete_reserv_latest_format']) ? $form['delete_reserv_latest_format'] : $delete_reserv_latest_format ? : Config::get('eq_reserv.default_delete_reserv_limit_format', 'd'),'class="middle tmp_wd"');?></td>
+        </tr>
+
+	</table>
+    <div class="description" style="color: #F5222D;margin-left: 12.5rem;margin-bottom: .5rem"><?php echo I18N::HT('eq_reserv', '* 设置为0, 表示不限制添加 / 修改 / 删除的提前时间')?></div>
+    <div class="description" style="color: #F5222D;margin-left: 12.5rem;margin-bottom: .5rem"><?php echo I18N::HT('eq_reserv', '* 建议 “修改 / 删除预约最晚可提前” 时间小于 “添加预约最晚可提前” 时间, 否则会出现添加预约后用户不可编辑的情况');?></div>
+	</div>
+	<div class="margin-left-1">
+        <?php echo V('eq_reserv:admin/need_reserv_description', ['need_reserv_description' => $need_reserv_description, 'form' => $form]);?>
+    </div>
+	<div class="interval_60"></div>
+	<div class="form ">
+	<?php
+
+		$need_to_check = [
+			'equipment.add_reserv_earliest_limit' => 'add_reserv_earliest_limit', 
+			'equipment.add_reserv_latest_limit' => 'add_reserv_latest_limit', 
+			'equipment.modify_reserv_latest_limit' => 'modify_reserv_latest_limit',
+			'equipment.delete_reserv_latest_limit' => 'delete_reserv_latest_limit',
+		];
+		$specific = [];
+		$tagged = (array) Lab::get('@TAG');
+		foreach ($tagged as $tag => $data) {
+			$new_data = [];
+			foreach($need_to_check as $k=>$v) {
+				if (isset($data[$k])) {
+					$new_data[$v] = $data[$k];
+				}
+			}
+			if ($new_data) {
+				asort($new_data);
+				$key = json_encode($new_data);
+				if (!isset($specific[$key])) {
+					$specific[$key] = $new_data;
+				}
+				$specific[$key]['tags'][] = $tag;
+			}
+		}
+
+		$flexform = Widget::factory('flexform');
+		$flexform->title = I18N::T('eq_reserv', '个别预约设置');
+		$flexform->template_data = ['disabled'=>TRUE];
+		$flexform->existing_data = array_values($specific);
+		$flexform->item_view = 'eq_reserv:admin/specific_setting';
+
+		echo $flexform;
+		
+	?>
+	</div>
+	<div class="interval_60">&nbsp</div>
+	<div class="form float_right">
+	<input type="reset" name="reset" value="<?php echo T('取消'); ?>" class="font-button-default rmargin_16" />
+	<input type="submit" name="submit" value="<?php echo T('提交'); ?>" class="font-button-save" />
+	</div>
+	<div class="interval_60">&nbsp</div>
+
+</form>

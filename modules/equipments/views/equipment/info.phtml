@@ -1,0 +1,94 @@
+<style>
+    .li_1_3{
+        width: 33.33%;
+    }
+</style>
+<!-- 仪器-基本信息 -->
+<div class="equipments_info_style dashboard-info">
+    <h2 class="section_title">
+        <span class="border"></span>
+        <span class="black_title"><?php echo I18N::T('equipments', '基本信息') ?></span>
+    </h2>
+<div class="interval_30"></div>
+<ul class="form equipment_info_form clearfix" style="min-width: 100px">
+	<li class="li_1_3">
+		<span class="left" style="width: 142px;"><?php echo I18N::T('equipments', '仪器编号')?></span>
+		<span class="right"><?php echo H($equipment->ref_no) ?></span>
+    </li>
+    <li class="li_1_3">
+		<span class="left"><?php echo I18N::T('equipments', '规格')?></span>
+		<span class="right"><?php echo H($equipment->specification) ?></span>
+    </li>
+    <li class="li_1_3">
+        <span class="left"><?php echo I18N::T('equipments', '生产厂家')?></span>
+		<span class="right"><?php echo H($equipment->manufacturer) ?></span>
+	</li>
+	<div class="interval_30 float_left" style="width: 100%"></div><br/>
+	<li class="li_1_3">
+		<span class="left" style="width: 142px;"><?php echo I18N::T('equipments', '型号')?></span>
+		<span class="right"><?php echo H($equipment->model_no) ?></span>
+    </li>
+    <li class="li_1_3">
+        <span class="left"><?php echo I18N::T('equipments', '制造国家')?></span>
+		<span class="right"><?php echo H($equipment->manu_at) ?></span>
+    </li>
+    <li class="li_1_3">
+		<span class="left"><?php echo I18N::T('equipments', '分类号')?></span>
+		<span class="right"><?php echo H($equipment->cat_no) ?></span>
+	</li>
+    <div class="interval_30 float_left" style="width: 100%"></div><br/>
+	<li class="li_1_3">
+        <span class="left" style="width: 142px;"><?php echo I18N::T('equipments', '入网时间')?></span>
+		<span class="right"><?php echo $equipment->atime ? Date::format($equipment->atime, 'Y/m/d') : NULL ?></span>
+    </li>
+    <li class="li_1_3">
+		<span class="left"><?php echo I18N::T('equipments', '出厂日期')?></span>
+		<span class="right"><?php echo $equipment->manu_date ? Date::format($equipment->manu_date, 'Y/m/d') : NULL?></span>
+    </li>
+    <li class="li_1_3">
+        <span class="left"><?php echo I18N::T('equipments', '购置日期')?></span>
+		<span class="right"><?php echo $equipment->purchased_date ? Date::format($equipment->purchased_date, 'Y/m/d') : NULL ?></span>
+	</li>
+    <div class="interval_30 float_left" style="width: 100%"></div><br/>
+    <?php if (Config::get('equipment.location_type_select')):?>
+        <li class="li_1_3">
+            <span class="left" style="width: 142px;"><?php echo I18N::T('equipments', '放置房间')?></span>
+            <span class="right">
+                <?= join('  &#187; ',Q("{$equipment} tag_location")->to_assoc('id','name')); ?>
+            </span>
+        </li>
+        <li class="li_1_3">
+        </li>
+    <?php else:?>
+        <li class="li_1_3">
+            <span class="left" style="width: 142px;"><?php echo I18N::T('equipments', '放置房间')?></span>
+            <span class="right"><?php echo H($equipment->location) ?></span>
+        </li>
+    <?php endif;?>
+    <div class="interval_30 float_left" style="width: 100%"></div><br/>
+	<li>
+		<span class="left" style="width: 142px;"><?php echo I18N::T('equipments', '主要规格及技术指标')?></span>
+		<span class="right" style="width: 800px;"><?php echo H($equipment->tech_specs, TRUE) ?></span>
+	</li>
+    <div class="interval_30 float_left" style="width: 100%"></div><br/>
+	<li>
+		<span class="left" style="width: 142px;"><?php echo I18N::T('equipments', '主要功能及特色')?></span>
+		<span class="right" style="width: 800px;"><?php echo H($equipment->features, TRUE) ?></span>
+	</li>
+    <div class="interval_30 float_left" style="width: 100%"></div><br/>
+	<li>
+		<span class="left" style="width: 142px;"><?php echo I18N::T('equipments', '主要附件及配置')?></span>
+		<span class="right" style="width: 800px;"><?php echo H($equipment->configs, TRUE) ?></span>
+	</li>
+    <div class="interval_30 float_left" style="width: 100%"></div><br/>
+	<li>
+		<span class="left" style="width: 142px;"><?php echo I18N::T('equipments', '开放预约')?></span>
+		<span class="right" style="width: 800px;"><?php echo H($equipment->open_reserv, TRUE) ?></span>
+	</li>
+    <div class="interval_30 float_left" style="width: 100%"></div><br/>
+	<li>
+		<span class="left" style="width: 142px;"><?php echo I18N::T('equipments', '计费信息')?></span>
+		<span class="right" style="width: 800px;"><?php echo H($equipment->charge_info, TRUE) ?></span>
+	</li>
+</ul>
+</div>

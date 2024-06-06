@@ -1,0 +1,384 @@
+<?php
+$me = L('ME');
+
+$sort_fields = Config::get('equipments.equipment.sortable_columns');
+
+// 表格开始
+$table = Widget::factory('table');
+
+$table->name     = 'equipments';
+$table->sort_asc = $sort_asc;
+$table->sort_by  = $sort_by;
+// $table->change_sort = true;
+
+if ($form['atime_s'] || $form['atime_e']) {
+    $form['atime'] = true;
+}
+
+$currency_sign = Config::get('lab.currency_sign');
+
+//表头
+$show_fields = (array) Lab::get('equipments_list_show_columns') ?: Config::get('equipments.list_default_show_columns');
+$searchFields = Config::get('equipment.search_fields_no_follow_config');
+$weight = 10;
+foreach ($show_fields as $key => $show_field) {
+    if (!$show_field['show'] && !in_array($key, ['group'])&&!in_array($key,$searchFields)) continue;
+    switch ($key) {
+        case 'ref_no':
+            $columns['ref_no'] = [
+                'weight' => $weight,
+                'title' => I18N::T('equipments', '仪器编号'),
+                'sortable' => in_array('ref_no', $sort_fields),
+                'filter' => [
+                    'form' => V('equipments:equipments_table/filters/ref_no', ['value' => $form['ref_no'], 'tip' => I18N::T('equipments', '请输入仪器编号')]),
+                    'value' => $form['ref_no'] ? H($form['ref_no']) : null,
+                ],
+                'nowrap' => true,
+                'invisible'=> !$show_field['show'],
+            ];
+            break;
+        case 'name':
+            $columns['name'] = [
+                'weight' => $weight,
+                'title' => I18N::T('equipments', '仪器名称'),
+                'sortable' => in_array('name', $sort_fields),
+                'align' => 'left',
+                'filter' => [
+                    'form'  => V('equipments:equipments_table/filters/name', ['name' => $form['name'], 'tip' => '请输入仪器名称']),
+                    'value' => $form['name'] ? H($form['name']) : null,
+                ],
+                'nowrap'   => true,
+                'invisible'=> !$show_field['show'],
+            ];
+            break;
+        case 'group':
+            if ($GLOBALS['preload']['tag.group_limit'] >= 0) {
+                switch ($tab) {
+                    case 'broken':
+                        $status = EQ_Status_Model::OUT_OF_SERVICE;
+                        break;
+                    case 'scrapped':
+                        $status = EQ_Status_Model::NO_LONGER_IN_SERVICE;
+                        break;
+                    default:
+                        $status = EQ_Status_Model::IN_SERVICE;
+                        break;
+                }
+                $columns['group'] = [
+                    'weight'       => $weight,
+                    'title'        => I18N::T('equipments', '组织机构'),
+                    'align'        => 'left',
+                    'suppressible' => true,
+                    'invisible'    => !$show_field['show'],
+                    'filter'       => [
+                        'form'  => V('equipments:equipments_table/filters/group', [
+                            'name' => 'group_id',
+                            'group' => $group,
+                            'root' => $group_root,
+                            'status'=>$status,//该值用于确定是仪器列表页组织机构的，以及增加筛选条件
+                            'field_title' => '请选择'.I18N::T('equipments', '组织机构'),
+                        ]),
+                        'value' => $group->id?V('application:tag/path', ['tag' => $group, 'tag_root' => $group_root, 'url_template' => URI::url('', 'group_id=%tag_id')]):'',
+                        'field' => 'group_id',
+                    ],
+                    'nowrap'       => true,
+                    'input_type' => 'select'
+                ];
+            }
+            break;
+        case 'location':
+            $columns['location'] = [
+                'weight'   => $weight,
+                'title'    => I18N::T('equipments', '放置房间'),
+                'sortable' => in_array('location', $sort_fields),
+                'align'    => 'left',
+                'filter'   => !Config::get('equipment.location_type_select') ? [
+                    'form'  => V('equipments:equipments_table/filters/location', [
+                        'location_name' => 'location', 'location_value' => $form['location'],
+                    ]),
+                    'value' => V('equipments:equipments_table/filters/location.value', [
+                        'location' => H($form['location']),
+                    ]),
+                    'field' => 'location',
+                ] : [
+                    'form'  => V('equipments:equipments_table/filters/tag.form', [
+                        'name' => 'location_id', 
+                        'tag' => $location,
+                        'root' => $location_root,
+                    ]),
+                    'value' => $location->id ? V('application:tag/path', ['tag' => $location, 'tag_root' => $location_root, 'url_template' => URI::url('', 'location_id=%tag_id')]) : '',
+                    'field' => 'location_id',
+                ],
+                'invisible'=> !$show_field['show'],
+                'nowrap'   => true,
+            ];
+            break;
+        case 'current_user':
+            $columns['current_user'] = [
+                'weight'   => $weight,
+                'title'    => I18N::T('equipments', '当前使用者'),
+                'sortable' => in_array('current_user', $sort_fields),
+                'align'    => 'left',
+                /*'filter'=> [
+                'form' => V('equipments:equipments_table/filters/current_user', ['name'=>'current_user', 'value'=>$form['current_user']]),
+                'value' => $form['current_user'] ? H($form['current_user']) : NULL
+                ],*/
+                'invisible'=> !$show_field['show'],
+                'nowrap'   => true,
+            ];
+            break;
+        case 'control':
+            $columns['control'] = [
+                'weight'   => $weight,
+                'title'    => I18N::T('equipments', '控制方式'),
+                'sortable' => in_array('control', $sort_fields),
+                'align'    => 'center',
+                'filter'   => [
+                    'form'  => V('equipments:equipments_table/filters/control', [
+                        'mode_name'   => 'control_mode', 'mode_value'     => $form['control_mode'],
+                        'status_name' => 'control_status', 'status_value' => $form['control_status'],
+                    ]),
+                    'value' => V('equipments:equipments_table/filters/control.value', [
+                        'mode'   => $form['control_mode'],
+                        'status' => $form['control_status'],
+                    ]),
+                    'field' => 'control_mode,control_status',
+                ],
+                'invisible'=> !$show_field['show'],
+                'nowrap'   => true,
+            ];
+            break;
+        case 'contact':
+            $columns['contact'] = [
+                'weight'      => $weight,
+                'title'       => I18N::T('equipments', '联系人'),
+                'sortable'    => in_array('contact', $sort_fields),
+                'align'       => 'left',
+                // 2011-04-01: 联系人是object,目前Q无法实现这种排序，所以临时禁止掉联系人排序
+                // 'sortable'=>TRUE,
+                'filter'      => [
+                    'form'  => V('equipments:equipments_table/filters/contact', ['name' => 'contact', 'value' => $form['contact']]),
+                    'value' => $form['contact'] ? H($form['contact']) : null,
+                ],
+                'extra_class' => 'filter_right',
+                'invisible'=> !$show_field['show'],
+                'nowrap' => true,
+            ];
+            break;
+        case 'atime':
+            $columns['atime'] = [
+                'weight'    => $weight,
+                'title'     => I18N::T('equipments', '入网日期'),
+                'sortable'  => in_array('atime', $sort_fields),
+                'filter'    => [
+                    'form'  => V('equipments:equipments_table/filters/atime', [
+                        'form' => $form,
+                    ]),
+                    'field' => 'atime_s,atime_e',
+                    'value' => $form['atime'] ? H($form['atime']) : null,
+                ],
+                'invisible'=> !$show_field['show'],
+                'nowrap' => true,
+            ];
+            break;
+        default:
+            $columns[$key] = [
+                    'weight' => $weight,
+                    'title' => I18N::T('equipments', $show_field['title']),
+                    'nowrap' => true,
+                    'align' => 'left',
+                    'invisible'=> !$show_field['show'],
+            ];
+            break;
+    }
+    $weight += 10;
+}
+
+$columns += [
+    'tag' => [
+        'weight'    => $weight++,
+        'title'     => I18N::T('equipments', '分类标签'),
+        'invisible' => true,
+        'filter'    => [
+            'form'  => V('equipments:equipments_table/filters/tag.form', [
+                'name' => 'tag_id', 'tag' => $tag,
+                'root' => $tag_root,
+            ]),
+            'value' => $tag->id ? H($tag->name) : null,
+            'field' => 'tag_id',
+        ],
+    ]
+];
+$columns['rest'] = [
+    'weight' => $weight,
+    'title'  => I18N::T('equipments', '操作'),
+    'align'  => 'left',
+    'nowrap' => true,
+];
+
+if (
+    Config::get('equipment.enable_share') &&
+    (
+        (
+            // 设置了默认只显示共享的仪器，但是用户具有管理所有内容
+            Config::get('equipment.enable_show_list_share') &&
+            $me->access('管理所有内容')
+        )
+        ||
+        (
+            !Config::get('equipment.enable_show_list_share')
+        )
+    )
+) {
+    $columns['share'] = [
+        'weight'       => $weight++,
+        'title'        => I18N::T('labs', '共享'),
+        'invisible'    => true,
+        'suppressible' => true,
+        'filter'       => [
+            'form'  => V('equipments_table/filters/share', ['form' => $form]),
+            'value' => (isset($form['share']) && $form['share'] != -1) ?
+            I18N::T('equipments', Equipment_Model::$share_status[$form['share']])
+            :
+            null,
+        ],
+    ];
+}
+
+if ('scrapped' == $tab) {
+    unset($columns['current_user']);
+}
+
+
+$columns += [
+      'share_method' => [
+          'weight' => $weight++,
+          'title'=>I18N::T('equipments', '共享方式'),
+          'invisible' => TRUE,
+          'filter'=> [
+              'form' => V('equipments:equipments_table/filters/share_method', [
+                  'form'=> $form
+              ]),
+              'value' => !!$form['share_method'],
+              'field' => 'share_method'
+          ],
+          'nowrap'=>TRUE,
+      ]
+];
+
+$columns += [
+    'tag_equipment' => [
+        'weight' => $weight++,
+        'title'=>I18N::T('equipments', '系统分类'),
+        'invisible' => TRUE,
+        'filter'   => [
+            'form'  => V('equipments:equipments_table/filters/tag.form', [
+                'name' => 'tag_equipment_id', 
+                'tag' => $tag_equipment,
+                'root' => $tag_equipment_root,
+            ]),
+            'value' => $tag_equipment->id ? V('application:tag/path', ['tag' => $tag_equipment, 'tag_root' => $tag_equipment_root, 'url_template' => URI::url('', 'tag_equipment_id=%tag_id')]) : '',
+            'field' => 'tag_equipment_id',
+        ],
+        'nowrap'=>TRUE,
+    ]
+];
+$columns += [
+    'tag_equipment_technical' => [
+        'weight' => $weight++,
+        'title'=>I18N::T('equipments', '国家科技部分类'),
+        'invisible' => TRUE,
+        'filter'   => [
+            'form'  => V('equipments:equipments_table/filters/tag.form', [
+                'name' => 'tag_equipment_technical_id', 
+                'tag' => $tag_equipment_technical,
+                'root' => $tag_equipment_technical_root,
+            ]),
+            'value' => $tag_equipment_technical->id ? V('application:tag/path', ['tag' => $tag_equipment_technical, 'tag_root' => $tag_equipment_technical_root, 'url_template' => URI::url('', 'tag_equipment_technical_id=%tag_id')]) : '',
+            'field' => 'tag_equipment_technical_id',
+        ],
+        'nowrap'=>TRUE,
+    ]
+];
+$columns += [
+    'tag_equipment_education' => [
+        'weight' => $weight++,
+        'title'=>I18N::T('equipments', '教育部分类'),
+        'invisible' => TRUE,
+        'filter'   => [
+            'form'  => V('equipments:equipments_table/filters/tag.form', [
+                'name' => 'tag_equipment_education_id', 
+                'tag' => $tag_equipment_education,
+                'root' => $tag_equipment_education_root,
+            ]),
+            'value' => $tag_equipment_education->id ? V('application:tag/path', ['tag' => $tag_equipment_education, 'tag_root' => $tag_equipment_education_root, 'url_template' => URI::url('', 'tag_equipment_education_id=%tag_id')]) : '',
+            'field' => 'tag_equipment_education_id',
+        ],
+        'nowrap'=>TRUE,
+    ]
+];
+
+$columns = new ArrayIterator($columns);
+
+Event::trigger('equipment.table_list.columns', $form, $columns);
+
+$table->add_columns((array) $columns);
+
+$table->empty_message = I18N::T('equipments', Config::get('equipment.default_empty_message'));
+
+$me = L('ME');
+foreach ($equipments as $equipment) {
+    $links         = $me->follow_links($equipment) + $equipment->links('index');
+    $table->object = $equipment;
+    foreach ($show_fields as $key => $show_field) {
+        if (!$show_field['show']) continue;
+        switch ($key) {
+            case 'group':
+                $row['group'] = V('application:tag/path', ['tag' => $equipment->group, 'tag_root' => $group_root, 'url_template' => URI::url('', 'group_id=%tag_id')]);
+                break;
+            default:
+                $row[$key] = strval(V('equipments:equipments_table/data/'.$key, ['equipment' => $equipment, 'tab' => $secondary_tabs->selected]))
+                    ?: V('equipments:equipments_table/data/default', ['equipment' => $equipment, 'key' => $key]);
+                break;
+        }
+    }
+    $row['rest'] = Widget::factory('application:links', ['links' => $links, 'separator' => '<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp</span>']);
+    $row = new ArrayIterator($row);
+    Event::trigger('equipment.table_list.row', $row, $equipment);
+    $table->add_row((array) $row);
+}
+?>
+
+<?php
+$extra_title = '';
+if ($tab == 'normal') {
+    $extra_title = I18N::T('equipments', '共有%total_count台仪器, %using_count台仪器正在使用', ['%total_count' => '<span class="eq_number">' . intval($eq_count['total_count']) . '</span>', '%using_count' => '<span class="eq_number">' . intval($eq_count['using_count']) . '</span>']);
+} else {
+    $extra_title = I18N::T('equipments', '共有%total_count台仪器', ['%total_count' => '<span class="eq_number">' . intval($eq_count['total_count']) . '</span>']);
+}
+$param = [
+    'is_offset'     => true,
+    'top_input_arr' => Config::get('search.top_input_arr')['equipment.index'],
+    'columns'       => $table->columns,
+    'panel_buttons' => $panel_buttons,
+    'extra_view'    => '<div class="adj statistics middle">'. $extra_title. $pagination.'</div>'
+];
+echo V('application:search_box', $param);
+?>
+<?php echo $table;?>
+
+<div class="pages"><?= $pagination ?></div>
+
+<script type="text/javascript">
+	$().ready(function() {
+		$('.header_search').click(function() {
+			var fa = $('.table_key_domain')
+			,	contact = $("input[name='contact']")
+			,	div = fa.find('div');
+		})
+        
+        $('.filter_search').click(function(){
+            $('.dropdown_menu:last-child').attr('style', 'width: 195px;')
+        })
+	});
+</script>

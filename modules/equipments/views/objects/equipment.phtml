@@ -1,0 +1,5 @@
+<?php if($object->id): ?>
+<a class="eq_name" href="<?php echo H($object->url() ) ?>"><?php echo H($object->name) ?></a>
+<?php else: ?>
+<?php echo H($object->name) ?>
+<?php endif; ?>

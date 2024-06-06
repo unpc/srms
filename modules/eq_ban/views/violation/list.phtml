@@ -1,0 +1,34 @@
+<?= $search_box ?>
+<?php
+
+$table           = Widget::factory('table');
+$table->name     = 'violation';
+$table->sort_asc = $sort_asc;
+$table->sort_by  = $sort_by;
+$table->form     = $form;
+
+$table->add_columns($columns);
+
+$table->empty_message = I18N::T('eq_ban', '没有查询到相应的项目!');
+
+if (count($users) > 0) {
+    foreach ($users as $user) {
+        $table->add_row([
+            /*'@' => [
+            'view' => $user->user->icon('32', 'style="display:block"'),
+            'extra' => 'style="padding:4px" align="right"'
+            ],*/
+            'user_name'   => H($user->user->name),
+            'total'       => V('eq_ban:violation_table/data/total', ['user' => $user]),
+            'late'        => V('eq_ban:violation_table/data/late', ['user' => $user]),
+            'leave_early' => V('eq_ban:violation_table/data/leave_early', ['user' => $user]),
+            'overtime' => V('eq_ban:violation_table/data/overtime', ['user' => $user]),
+            'miss' => V('eq_ban:violation_table/data/miss', ['user' => $user]),
+            'violate' => V('eq_ban:violation_table/data/violate', ['user' => $user]),
+        ]);
+    }
+}
+echo $table;
+?>
+
+<div class="pages"><?= $pagination; ?></div>

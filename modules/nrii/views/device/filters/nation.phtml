@@ -1,0 +1,10 @@
+<?php
+echo Widget::factory('nrii:single_selector', 
+    [
+        'name'=>'nation',
+        'autocomplete'=>URI::url('!nrii/autocomplete/search.nation'), 
+        'value'=>$form['nation'],
+        'extra'=>'token_verify',
+        'size'=>'18'
+    ]);
+?>

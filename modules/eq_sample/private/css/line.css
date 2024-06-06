@@ -1,0 +1,68 @@
+.calendar_week {
+
+    .line {
+        position: absolute;
+        height: 2px;
+        /*IE6兼容性问题*/
+        *line-height: 1px;
+        *font-size: 1px;
+        /*IE6兼容性问题*/
+
+        .content {
+            position: absolute;
+            font-size: 3px;
+            width: 8px;
+            height: 8px;
+            border-radius: 4px;
+            top: -3px;
+            left: -3px;
+
+            .preview {
+               height: 8px;
+               width: 8px;
+            }
+        }
+    }
+
+    .line_0 {
+        background-color: rgb(13, 120, 19);
+        .content {
+            background-color: rgb(13, 120, 19);
+        }
+    }
+
+    .line_1 {
+        background-color: rgb(177, 54, 95);
+        .content {
+            background-color: rgb(177, 54, 95);
+        }
+    }
+
+    .line_2 {
+        background-color: rgb(82, 136, 0);
+        .content {
+            background-color: rgb(82, 136, 0);
+        }
+    }
+
+    .line_3 {
+        background-color: rgb(41, 82, 163);
+        .content {
+            background-color: rgb(41, 82, 163);
+        }
+    }
+
+    .line_4 {
+        background-color: rgb(190, 109, 0);
+        .content {
+            background-color: rgb(190, 109, 0);
+        }
+    }
+
+    .line_5 {
+        background-color: rgb(27, 136, 122);
+        .content {
+            background-color: rgb(27, 136, 122);
+        }
+    }
+}

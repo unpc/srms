@@ -1,0 +1,67 @@
+<?php echo $pagination; ?>
+<?php
+$table = Widget::factory('table');
+$table->name = 'orders';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+$table->add_columns( [
+	'status'=>[
+		'nowrap'=>TRUE,
+	],
+	'product_name'=>[
+		'title'=>I18N::T('orders', '产品名称'),
+		'nowrap'=>TRUE,
+	],
+	'manufacturer'=>[
+		'title'=>I18N::T('orders', '生产商'),
+		'invisible' => TRUE,
+		'nowrap'=>TRUE,
+	],
+	'catalog_no'=>[
+		'title'=>I18N::T('orders', '目录号'),
+		'invisible' => TRUE,
+		'nowrap'=>TRUE,
+	],
+	'vendor'=>[
+		'title'=>I18N::T('orders', '供应商'),
+		'nowrap'=>TRUE,
+	],
+	'price'=>[
+		'title' => I18N::T('orders', '总价'),
+		'align' => 'right',
+		'nowrap'=>TRUE,
+	],
+	'requester'=>[
+		'title'=>I18N::T('orders', '申购人'),
+		'nowrap'=>TRUE,
+	],
+	'rest' => [
+		'align'=>'right',
+		'nowrap'=>TRUE
+	],
+]);
+
+$table->empty_message = I18N::T('orders', '没有符合条件的订单');
+if (count($follows) > 0) {
+	foreach ($follows as $follow) {
+		$order = $follow->object;
+		if (!$order->id) {
+			$follow->delete();
+			continue;
+		}
+
+		$links = L('ME')->follow_links($order) + $order->links();
+		$label = $order->get_label_status();
+		$table->add_row( [
+			'status'=>'<a href="'.URI::url('!orders/index?status='.$label).'"><span class="status_tag status_'.Order_Model::$order_status_title[$label].'">'.I18N::T('orders', Order_Model::$order_status[$label]).'</span></a>',
+			'product_name'=>V('orders:orders_table/data/product_name', ['order'=>$order]),
+			'vendor'=>H($order->vendor),
+			'price'=> H(Number::currency($order->price)),
+			'requester'=> V('orders:orders_table/data/requester', ['order'=>$order]),
+			'rest'=>Widget::factory('application:links', ['links' => $links]),
+		]);
+	}
+}
+
+echo $table;

@@ -1,0 +1,30 @@
+#!/bin/bash
+
+DAEMON="/usr/sbin/crtmpserver"
+DAEMON_ARGS="/etc/lims2/crtmpserver/live.lua"
+
+test -f $DAEMON || exit 0
+case "$1" in
+	start)
+		echo -n "Starting crtmpd: crtmpd"
+		$DAEMON $DAEMON_ARGS
+		echo "."
+		;;
+	stop)
+		echo -n "Stopping crtmpd: crtmpd"
+		killall -9 $DAEMON
+		echo "."
+		;;
+	restart)
+		echo -n "Stopping crtmpd: crtmpd"
+		killall $DAEMON
+		echo "."
+		echo -n "Starting crtmpd: crtmpd"
+		$DAEMON $DAEMON_ARGS
+		echo "."
+		;;
+	*)
+		echo "Usage: /etc/init.d/crtmpd start|stop|restart"
+		exit 1
+		;;
+esac

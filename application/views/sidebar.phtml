@@ -1,0 +1,44 @@
+<?php if (Config::get('page.enable_sidebar_lock')): ?>
+<div class="clearfix">
+<a href="#" id="sidebar_lock" onclick="return false;"<?php echo $_SESSION['sidebar_unlock']?' class="unlock"':''?>>&#160;</a>
+</div>
+<?php else: ?>
+<?php endif ?>
+<?php
+
+$items = (array) Config::get('layout.sidebar');
+uasort($items, function($a, $b) {
+	$aw = (int) isset($a['weight']) ? $a['weight'] : 0;
+	$bw = (int) isset($b['weight']) ? $b['weight'] : 0;
+	if ($aw == $bw) {
+		return 0;
+	}
+	elseif ($aw < $bw) {
+		return 1;
+	}
+	else
+		return -1;
+});
+
+$items = array_reverse($items);
+
+foreach ($items as $id => $item) {
+	$view = (string) V(is_array($item) ? $item['view']:$item);
+	if ($view) {
+		$output .= '<div class="sidebar_item sidebar_'.$id.'">'.$view.'</div>';
+	}
+}
+
+if ($output):
+?>
+<div class="sidebar_body">
+<?php echo $output; ?>
+</div>
+<?php else: ?>
+<script>
+jQuery(function($){
+	$('#sidebar').hide();
+});
+</script>
+<?php
+endif;

@@ -1,0 +1,8 @@
+<?php
+echo Widget::factory('technical_service:service_type_selector', [
+    'autocomplete' => URI::url('!technical_service/autocomplete/service_type'),
+    'name' => 'service_type',
+    'tag' => $form['service_type'] ? O('tag_service_type', $form['service_type']) : O('tag_service_type'),
+    'root' => Tag_Model::root('service_type'),
+    'ajax' => true,
+]);

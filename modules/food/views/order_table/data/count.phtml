@@ -1,0 +1,5 @@
+<?php
+	//该处代码逻辑有误，暂时这么处理，等待有新想法后再予以修正。
+	$orders = $this->orders;
+	$price = $orders->SUM('price');
+	echo Number::currency($price);

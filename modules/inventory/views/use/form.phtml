@@ -1,0 +1,116 @@
+<?php
+// stock info
+// quantity
+// submit & cancle
+?>
+<div class="form padding_2">
+	<div class="inventory_info clearfix">
+		<div class="float_right text_like">
+			<div class="barcode"><?php echo H($stock->barcode); ?></div>
+		</div>
+		<h2>
+			<span class="product_name"><?php echo H($stock->product_name); ?>
+		</h2>
+		<div>
+			<span class="manufacturer middle"><?php echo H($stock->manufacturer); ?></span>
+			<span class="catalog_no middle"> #<?php echo H($stock->catalog_no); ?></span>
+			&#160;&#160;
+		</div>
+		<div class="hr_2">&#160;</div>
+		<div class="lpadding_3">
+			<ul class="product_info clearfix">
+				<li>
+					<span class="label"><?php echo I18N::T('inventory', '规格'); ?>:</span>
+					<span class="value"><?php echo H($stock->spec);?></span>
+				</li>
+				<li>
+					<span class="label"><?php echo I18N::T('inventory', '存量'); ?>:</span>
+					<span class="value"><?php echo H($stock->quantity);?></span>
+				</li>
+				<li>
+					<span class="label"><?php echo I18N::T('inventory', '单价'); ?>:</span>
+					<span class="value"><?php echo H(Number::currency($stock->unit_price));?></span>
+				</li>
+				<li class="clear">&#160;</li>
+				<li>
+					<span class="label"><?php echo I18N::T('inventory', '供应商'); ?>:</span>
+					<span class="value"><?php echo H($stock->vendor);?></span>
+				</li>
+				<li>
+					<span class="label"><?php echo I18N::T('inventory', '存放位置'); ?>:</span>
+					<span class="value"><?php echo H($stock->location);?></span>
+				</li>
+				<li>
+					<span class="label"><?php echo I18N::T('inventory', '库存状态'); ?>:</span>
+					<span class="value"><?php echo I18N::T('inventory', Stock_Model::$stock_status[$stock->status]);?></span>
+				</li>
+				<li class="clear">&#160;</li>
+				<li>
+					<span class="label"><?php echo I18N::T('inventory', '备注'); ?>:</span>
+					<span class="value"><?php echo H($stock->note);?></span>
+				</li>
+			</ul>
+			<div class="hr_2">&#160;</div>
+	</div>
+	<?php
+	$root = Tag_Model::root('inventory'); /* TODO fix inventory tag */
+	$tags = (array) Q("$stock tag[root=$root]")->to_assoc('name','name');
+	if (count($tags)) {
+	echo '<div class="hr_2">&#160;</div><div class="clearfix">';
+		foreach ($tags as $tag) {
+		echo '<span class="inventory_tag">'.$tag.'</span> ';
+		}
+		echo '</div>';
+	}
+	?>
+	</div>
+
+	<form method="post" autocomplete="off" action="<?php echo URI::url('!inventory/use/add'); ?>">
+		<input name="stock_id" type="hidden" value="<?php echo $stock->id; ?>"/>
+		<table class="form">
+		  <tbody>
+			<?php if(L('ME')->is_allowed_to('代人领用/归还', $stock)): ?>
+			<tr>
+			  <td class="label nowrap"><?php echo I18N::HT('inventory', '用户'); ?></td>
+				<td class="top" >
+					<?php
+						echo Widget::factory('application:user_selector', [
+									'autocomplete'=>'autocomplete/user',
+									'name'=>'user',
+									'user'=> $no_error ? $form['user'] : (O('user',$form['user'])),
+									'cardread'=>URI::url('cardread/user'),
+							]);
+					?>
+				</td>
+			</tr>
+			<?php endif; ?>
+			<tr>
+				<td></td>
+				<td>
+					<?php 
+						echo Form::radio('operate_type', 'use', $form['operate_type'] ?: 'use', I18N::T('inventory', '领用'), 'class="monitor middle"', 'class="middle"');
+						echo '&#160;&#160;';
+						echo Form::radio('operate_type', 'return', $form['operate_type'], I18N::T('inventory', '归还'), 'class="monitor middle"', 'class="middle"');
+
+					?>
+				</td>
+			</tr>
+			<tr>
+			  <td class="label nowrap"><?php echo I18N::HT('inventory', '数量'); ?></td>
+			  <td><input name="quantity" size="40" class="text number" value="<?php echo H($form['quantity'] ? : 1 ) ?>" size="20"/></td>
+			</tr>
+			<tr>
+			  <td class="label top nowrap"><?php echo I18N::HT('inventory', '备注'); ?></td>
+			  <td class="top"><textarea class="text" name="note" cols="40" rows="3"></textarea></td>
+			</tr>
+			<tr>
+			  <td></td>
+			  <td>
+				<input name="submit" class="button button_edit" type="submit" value="<?php echo H(I18N::T('inventory', '确定')) ?>" />
+			  </td>
+			</tr>
+		  </tbody>
+		</table>
+	</form>
+		
+</div>

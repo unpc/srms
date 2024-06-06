@@ -1,0 +1,10 @@
+<div style="margin-left:20px; margin-right:20px;">
+<?php if ($resume->interview_time): ?>
+<?php $interview_time_check = 1; ?>
+<a class="search_link" href="<?php echo URI::url('', ['interview_time'=>$resume->interview_time, 'interview_time_check'=>$interview_time_check]); ?>">
+<?php echo Date::format($resume->interview_time, T('Y/m/d H:i:s')); ?>
+</a>
+<?php else: ?>
+<?php echo '--'; ?>
+<?php endif; ?>
+</div>

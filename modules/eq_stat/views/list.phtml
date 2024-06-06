@@ -1,0 +1,146 @@
+<?php
+$group_tag = O('tag', $form['group_tag']);
+$equipment_tag = O('tag', $form['equipment_tag']);
+$group_root_tag = Tag_Model::root('group');
+$equipment_root_tag = Tag_Model::root('equipment');
+?>
+<div class="hr_1">&#160;</div>
+<div class="panel padding_1 clearfix">
+	<div class="float_left">
+		<a q-object="export" q-event="click" q-src="<?php echo H(URI::url('!eq_stat/list') ) ?>" q-static="<?php echo H(['type'=>'csv','form_token'=>$form_token]) ?>"
+        class="button button_save"><?php echo I18N::T('eq_stat', '导出Excel')?></a>
+		<a q-object="export" q-event="click" q-src="<?php echo H(URI::url('!eq_stat/list') ) ?>" q-static="<?php echo H(['type'=>'print','form_token'=>$form_token]) ?>" class="button button_print "><?php echo I18N::T('eq_stat', '打印')?></a>
+	</div>
+</div>
+
+<?php
+echo $pagination;
+
+$table = Widget::factory('table');
+$table->name = 'stat_list';
+$table->form = $form;
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+if($form['dtstart_check'] && $form['dtend_check']) {
+	$form['date'] = H(date('Y/m/d',$form['dtstart'])).'-'.H(date('Y/m/d',$form['dtend']));
+}
+elseif($form['dtstart_check']) {
+	$form['date'] = H(date('Y/m/d',$form['dtstart'])).'-'.I18N::T('eq_stat','最末');
+}
+elseif($form['dtend_check']) {
+	$form['date'] = I18N::T('eq_stat','最初').'-'.H(date('Y/m/d',$form['dtend']));
+}
+
+$table_columns = [
+    '@'=>NULL,
+	'name'=>[
+		'title'=>I18N::T('eq_stat', '仪器名称'),
+        'sortable'=>TRUE,
+		'nowrap'=>TRUE,
+		'extra_class'=>'tight',
+        'filter'=>[
+            'form'=>V('eq_stat_table/filters/name', ['form'=>$form]),
+            'value'=>$form['name'] ? H($form['name']) : NULL
+        ],
+	],
+	'contact'=>[
+		'title'=>I18N::T('eq_stat', '联系人'),
+		'nowrap'=>TRUE,
+		'extra_class'=>'tight',
+    ],
+    'group_tag'=>[
+        'invisible'=>TRUE,
+        'title'=>I18N::T('eq_stat', '组织机构'),
+        'filter'=>[
+            'form'=>V('eq_stat_table/filters/group_tag', ['tag'=>$group_tag, 'root'=>$group_root_tag, 'name'=>'group_tag']),
+            'value'=>$group_tag->id  && $group_tag->id != $group_root_tag->id ? H($group_tag->name) : NULL
+            ],
+		'nowrap'=>TRUE
+    ],
+    'equipment_tag'=>[
+        'invisible'=>TRUE,
+        'filter'=>[
+            'form'=>V('eq_stat_table/filters/equipment_tag', ['tag'=>$equipment_tag, 'root'=>$equipment_root_tag, 'name'=>'equipment_tag']),
+            'value'=>$equipment_tag->id && $equipment_tag->id != $equipment_root_tag->id ? H($equipment_tag->name) : NULL
+            ],
+        'title'=>I18N::T('eq_stat', '分类标签')
+    ],
+    'date'=>[
+        'invisible'=>TRUE,
+        'filter'=>[
+            'form'=>V('eq_stat_table/filters/date', ['form'=>$form]),
+            'value'=>$form['date'] ? H($form['date']) : NULL,
+            'field'=>'dtstart_check,dtstart,dtend,dtend_check'
+            ],
+        'title'=>I18N::T('eq_stat', '时间范围')
+    ],
+    //TODO,cheng.liu告之，暂时hidden
+    //'condition'=>array(
+        //'invisible'=>TRUE,
+        //'filter'=>array(
+            //'form'=>V('eq_stat_table/filters/condition', array('form'=>$form)),
+            //),
+        //'title'=>I18N::T('eq_stat', '筛选条件')
+    //)
+];
+
+$stat_list = (array) EQ_Stat::get_opts();
+$special_list = Config::get('eq_stat.special_list', []);
+//控制是否显示仪器服务项目的统计
+$show_project_value = false;
+
+foreach($stat_list as $key => $value) {
+	if ( strpos($key, 'project') !== false ) {
+		$show_project_value = true;
+	}
+
+    //默认居中显示
+    $align = 'center';
+
+    if (array_key_exists($key, $special_list) && $special_list[$key]['currency']) {
+        //数字右侧显示
+        $align = 'right';
+    }
+
+    //显示columns
+    $table_columns[$key] = [
+        'title'=>I18N::T('eq_stat', $value),
+        'nowrap'=>TRUE,
+        'align'=>$align,
+    ];
+}
+
+$table->add_columns($table_columns);
+
+$table->empty_message = I18N::T('eq_stat', '无符合条件的统计列表');
+
+foreach($equipments as $equipment) {
+
+    $stats_data = [];
+
+    $stats_data['@'] = [
+                    'view'=> URI::anchor($equipment->url(), $equipment->icon('32', 'style="display:block"')),
+                    'extra'=>'style="padding:4px;min-width:44px;*width:44px;" align="right"'
+                    ];
+
+    $stats_data['name'] = V('eq_stat:eq_stat_table/data/sample_name', ['equipment'=>$equipment]);
+    $stats_data['contact'] = V('eq_stat:eq_stat_table/data/contacts', ['equipment'=>$equipment]);
+
+	if ( $show_project_value ) {
+		$project_values = Event::trigger('stat.equipment.project_statistic_values', $equipment, $form_selector['dtstart'], $form_selector['dtend']);
+	}
+
+    foreach($stat_list as $key => $value) {
+    	if ( strpos($key, 'project') !== false ) {
+	    	$stats_data[$key] = V("eq_stat:eq_stat/list_value/$key", ['value' => $project_values[$key]]);
+    	}
+    	else {
+    		$stats_data[$key] = V("eq_stat:eq_stat/list_value/$key", ['value' => EQ_Stat::data_point($key, $equipment, $form_selector['dtstart'], $form_selector['dtend'])]);
+    	}
+    }
+
+    $table->add_row($stats_data);
+}
+
+echo $table;

@@ -1,0 +1,245 @@
+<?php
+/* xiaopei.li@2011.02.17 */
+$me = L('ME');
+$can_edit = $me->is_allowed_to('修改', 'order');
+$can_add = $me->is_allowed_to('添加申购', 'order');
+$can_import = $me->is_allowed_to('导入', 'order');
+$can_export = $me->is_allowed_to('导出', 'order');
+?>
+<div class="hr_1">&#160;</div>
+<?php if ($can_edit || $can_add || $can_import || $can_export): ?>
+<div class="panel padding_1 clearfix">
+	<div class="float_left">
+	<?php if ($can_add):?>
+	<a href="<?php echo URI::url('!orders/order/request'); ?>" q-src="<?php echo H(URI::url('!orders/order')) ?>" q-object="request" q-event="click" class="middle button button_add"><?php echo I18N::T('orders', '添加申购'); ?></a>
+	<?php endif;?>
+	<?php if($can_import):?>
+			<a href="<?php echo URI::url('!orders/index/import'); ?>" class="middle button button_import">
+				<?php echo I18N::HT('orders', '导入订单'); ?>
+			</a>
+	<?php endif;?>
+	<?php if($can_export):?>
+        <a class="middle button button_save" q-src="<?php echo H(URI::url('!orders/index')) ?>" q-object="orders_export" q-event="click" q-static="<?php echo H(['form_token'=> $form_token, 'type'=> 'csv'])?>">
+            <?php echo I18N::T('orders', '导出订单');?>
+        </a>
+	<?php endif; ?>
+	</div>
+	<div class="float_right">
+	<?php if ($can_edit):?>
+		<a href="<?php echo URI::url('!orders/order/add'); ?>" q-src="<?php echo H(URI::url('!orders/order')) ?>" q-object="add" q-event="click" class="middle button button_add">
+			<?php echo I18N::T('orders', '补增订单'); ?>
+		</a>
+	<?php endif; ?>
+	</div>
+</div>
+<?php endif; ?>
+<div class="light_panel padding_1">
+<?php 
+$order_status = Order_Model::$order_status;
+foreach ($order_status as $status => $option): ?>
+<a class="status_tag status_<?php echo Order_Model::$order_status_title[$status]; ?>" href="<?php echo URI::url('', 'status='.$status); ?>">
+	<?php echo I18N::HT('orders', $option); ?>
+</a>
+<?php endforeach; ?>
+</div>
+<?php
+
+echo $pagination;
+
+$table = Widget::factory('table');
+$table->name = 'orders';
+$table->sort_asc = $sort_asc;
+$table->sort_by = $sort_by;
+
+/* TASK#331(xiaopei.li@2011.03.14) */
+$tag_names = [];
+$tag_values = [];
+if ($form['tags']) {
+	$tag_values += json_decode($form['tags'], TRUE);
+
+	foreach (json_decode($form['tags']) as $temp_tag_id => $temp_tag_name) {
+		$tag_names[$temp_tag_id] = $temp_tag_name;
+	}
+}
+
+$tag_values = json_encode($tag_values);
+/* sorry for not beautiful code */
+
+if($form['dtstart_check'] && $form['dtend_check']) {
+	$form['purchase_date'] = H(date('Y/m/d',$form['dtstart'])).' - '.H(date('Y/m/d',$form['dtend']));
+}
+elseif($form['dtstart_check']) {
+	$form['purchase_date'] = H(date('Y/m/d',$form['dtstart'])).' - '.I18N::T('orders','最末');
+}
+elseif($form['dtend_check']) {
+	$form['purchase_date'] = I18N::T('orders','最初').' - '.H(date('Y/m/d',$form['dtend']));
+}
+
+if ($form['grant_check'] == 'linked') {
+	$portion = O('grant_portion', $form['grant_portion_select']);
+	if ($portion->id) {
+		$grant = $portion->grant;
+	}
+	else {
+		$grant = O('grant', $form['grant_select']);
+	}
+}
+
+switch($form['grant_check']) {
+    case 'unlinked' :
+        $grant_filter_value = I18N::T('orders', '未关联');
+        break;
+    case 'linked' :
+        $grant = O('grant', (int)$form['grant_select']);
+        $protions = [];
+        if ($form['grant_portion_select']) {
+            $grant_portion = O('grant_portion', $form['grant_portion_select']);
+            while($grant_portion->id) {
+                $protions[] = $grant_portion->name;
+                $grant_portion = $grant_portion->parent;
+            }
+        }
+        $protions[] = $grant->source;
+        $grant_filter_value = H(join(' » ', array_reverse($protions)));
+        break;
+    default :
+        $grant_filter_value = NULL;
+}
+
+$table->add_columns( [
+	'@'=>[
+		'nowrap'=>TRUE,
+	],
+	'product_name'=>[
+		'title'=>I18N::T('orders', '产品名称'),
+		'sortable'=>TRUE,
+		'filter'=>[
+			'form'=>V('orders:orders_table/filters/product_name', ['name'=>$form['product_name']]),
+			'value'=>$form['product_name'] ? H($form['product_name']) : NULL,
+		],
+	],
+	'manufacturer'=>[
+		'title'=>I18N::T('orders', '生产商'),
+		// 'sortable'=>TRUE,
+		'filter'=>[
+			'form'=>V('orders:orders_table/filters/manufacturer', ['manufacturer'=>$form['manufacturer']]),
+			'value' => $form['manufacturer'] ? H($form['manufacturer']) : NULL
+		],
+		'invisible' => TRUE,
+		'nowrap' => TRUE,
+	],
+	'catalog_no'=>[
+		'title'=>I18N::T('orders', '目录号'),
+		'filter'=>[
+			'form'=>V('orders:orders_table/filters/catalog_no', ['catalog_no'=>$form['catalog_no']]),
+			'value' => $form['catalog_no'] ? H($form['catalog_no']) : NULL
+		],
+		'invisible' => TRUE,
+	],
+	'vendor'=>[
+		'title'=>I18N::T('orders', '供应商'),
+		//'sortable'=>TRUE,
+		'nowrap' => TRUE,
+		'filter'=>[
+			'form'=>V('orders:orders_table/filters/vendor', ['vendor'=>$form['vendor']]),
+			'value' => $form['vendor'] ? H($form['vendor']) : NULL
+		],
+	],
+	'price'=>[
+		'title' => I18N::T('orders', '总价'),
+		'align' => 'right',
+		'sortable'=>TRUE,
+		/* TODO add a price range filter */
+		'nowrap'=>TRUE,
+	],
+	'requester'=>[
+		'title'=>I18N::T('orders', '申购人'),
+		'sortable'=>TRUE,
+		'filter'=>[
+			'form'=>V('orders:orders_table/filters/requester', ['form'=>$form]),
+			'value' => $form['requester'] ? H(O('user', $form['requester'])->name) : NULL
+		],
+		'nowrap'=>TRUE,
+	],
+	'request_date'=>[
+		'title'=>I18N::T('orders', '申购日期'),
+		'sortable'=>TRUE,
+		'filter'=>[
+			'form'=>V('orders:orders_table/filters/date', [
+				'dtstart_check'=>$form['dtstart_check'],
+				'dtend_check'=>$form['dtend_check'],
+				'dtstart'=>$form['dtstart'],
+				'dtend'=>$form['dtend']
+			]),
+			'value' => $form['purchase_date'] ?: NULL,
+            'field' => 'dtstart_check,dtend_check,dtstart,dtend'
+		],
+		'invisible' => TRUE,
+		'nowrap'=>TRUE,
+	],
+	'status'=>[
+		'title'=>I18N::T('orders', '订单状态'),
+		'invisible'=>TRUE,
+		'filter'=> [
+			'form'=> V('orders:orders_table/filters/status', ['status'=>$form['status']]),
+			'value' => $form['status'] ? implode(', ', $status_arr) : NULL,
+		],
+	],
+	'tags'=>[
+		'title'=>I18N::T('orders', '标签'),
+		'filter'=> [
+			'form'=>V('orders:orders_table/filters/tag', ['tag_values'=>$tag_values]),
+			'value' => count($tag_names) ? join(', ', $tag_names) : NULL,
+		],
+		'nowrap'=>TRUE,
+		'invisible' => TRUE,
+	],
+	'grant'=>[
+		'title'=>I18N::T('orders', '关联经费'),
+		'nowrap'=>TRUE,
+		'filter'=>[
+			'form'=>V('orders:orders_table/filters/grant', ['grant_check'=>$form['grant_check'], 'grant'=>$grant, 'portion'=>$portion]),
+			'value' => $grant_filter_value,
+		],
+	],
+	'rest' => [
+		'extra_class'=>'tight',
+		'align'=>'right',
+		'nowrap'=>TRUE
+	],
+]);
+
+$table->empty_message = I18N::T('orders', '没有符合条件的订单');
+foreach ($orders as $obj) {
+	$order = O("order", ['id'=>$obj->id]);
+    $links = L('ME')->follow_links($order) + $order->links();
+	$table->add_row( [
+		'#extra' => 'id="'.$row_id.'"',
+		'@'=> V('orders:orders_table/data/status', ['order'=>$order]),
+		'product_name'=>V('orders:orders_table/data/product_name', ['order'=>$order]),
+		'vendor'=>H($order->vendor),
+		'price'=> V('orders:orders_table/data/price', ['order'=> $order]),
+		'requester'=> V('orders:orders_table/data/requester', ['order'=>$order]),
+		'grant'=> V('orders:orders_table/data/grant', ['order'=>$order]),
+		'rest'=>Widget::factory('application:links', ['links' => $links]),
+	]);
+
+	$row_odd = !$row_odd;
+}
+
+echo $table;
+
+echo $pagination;
+?>
+<script>
+//为了能打开新页面，原来的页面弹出dialog
+jQuery(function($){
+    $('a.mall_jump').on('click', function(e){
+        Q.trigger({
+            object: 'go_mall',
+            event: 'click',
+            url: "<?= URI::url('mall')?>"
+        });
+    });
+});
+</script>

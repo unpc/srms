@@ -1,0 +1,61 @@
+<?php
+if (!$form['phone_vfcode_uniqid']) {
+    $uniqid = uniqid();
+}
+$key = $key ? : 'phone';
+$phone = $form[$key] ?: $_SESSION['SIGNUP_PHONE_VFCODE']['phone'];
+?>
+<tbody id="<?= $uniqid ?>" ?>
+    <?php if ($form->phone_vfcode && $form->errors[$key]) : ?>
+        <tr>
+            <td colspan="2"><?php echo V('form_error', ['form' => $form]); ?></td>
+        </tr>
+    <?php endif ?>
+    <tr class="nowrap">
+        <td class="label right nowrap"><?php echo I18N::T('labs', '联系电话验证码') ?></td>
+        <td class="middle">
+            <input class="text" name="phone_vfcode" size="20" value="<?= H($form['phone_vfcode'])?>" />
+            <input name="phone_vfcode_btn" type="button" class="button button_refresh phone_vfcode_btn" value="<?php echo H(I18N::T('labs', '发送验证码')) ?>" />
+            <?php echo V('form_require'); ?>
+        </td>
+    </tr>
+    <?php if ($_SESSION['SIGNUP_PHONE_VFCODE']['expireat'] > time() && $form->no_error) : ?>
+        <?php $timeout = max($_SESSION['SIGNUP_PHONE_VFCODE']['resend_timeout'] - time(), 0);?>
+        <tr>
+            <td></td>
+            <td class="middle description">
+                <?php echo I18N::T('labs', "验证码已发送至您的联系电话\"{$phone}\", 有效期15分钟</br><span id=\"phone_vfcode_timeout\">{$timeout}</span>s后可重新发送"); ?>
+            </td>
+        </tr>
+    <?php endif; ?>
+</tbody>
+<script>
+    var phone_vfcode_btn = $("#<?= $uniqid ?> input.phone_vfcode_btn");
+    var phone = $("input[name=<?=$key?>]");
+
+    phone_vfcode_btn.unbind('click');
+    phone_vfcode_btn.click(function() {
+        Q.trigger({
+            object: 'phone_vfcode_btn',
+            event: 'click',
+            url: '<?php echo URI::url("!login_plus/vfcode"); ?>',
+            data: {
+                phone: phone.val(),
+                key: "<?= $key?>",
+                phone_vfcode_uniqid: "<?= H($uniqid) ?>"
+            }
+        });
+    });
+    <?php if ($_SESSION['SIGNUP_PHONE_VFCODE']['expireat'] > time() && $form->no_error) : ?>
+        var timeout = <?= $timeout?>;
+        var desription = $("#<?= $uniqid ?> #phone_vfcode_timeout");
+        phone_vfcode_btn.hide();
+        var timer = setInterval(() => {
+            desription.html(timeout);
+            if (timeout-- <= 0) {
+                phone_vfcode_btn.show();
+                clearInterval(timer);
+            }
+        }, 1000);
+    <?php endif; ?>
+</script>

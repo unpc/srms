@@ -1,0 +1,25 @@
+<div style="width: 100%;height: 100%; position: relative;">
+  <div style="position: absolute;
+  top: 50%;
+  left: 50%;
+  height: auto;
+  width: 90%;
+  transform: translate(-50%, -50%);">
+    <div style="width: 50%; float: right; padding: 10px;">
+      <h3 style="text-align: center; color: #778996;">
+        <?= H(I18N::T('equipments', '累计使用记录条数')) ?>
+      </h3>
+      <p style="text-align: center; white-space: nowrap; font-size: 48px; color: #3983d4;">
+        <?= H($record_count) ?>
+      </p>
+    </div>
+    <div style="width: 50%; float: right; padding: 10px;">
+      <h3 style="text-align: center; color: #778996;">
+        <?= H(I18N::T('equipments', '样品总数')) ?>
+      </h3>
+      <p style="text-align: center; white-space: nowrap; font-size: 48px; color: #ffbe28;">
+        <?= H($sample_count) ?>
+      </p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,4 @@
+<?php
+$uids = $duty->user_id ? explode(',', $duty->user_id) : [];
+$uids = array_unique($uids);
+echo count($uids);

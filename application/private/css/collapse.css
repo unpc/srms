@@ -1,0 +1,29 @@
+	li.import-success div {
+	    color: #05cc05;
+	}
+	li.import-error div {
+	    color: red;
+	}
+	li.import-warning div {
+	    color: #ffab00;
+	}
+	li.result-main {
+	    border: 1px solid #999;
+	    width: 70%;
+	    max-width: 800px;
+	    background-color: #e7e7e7;
+	    margin-top: 2px; 
+	    border-radius: 6px;
+	}
+	li.result-main div {
+		cursor:pointer;
+	    border-radius: 2px;
+	    line-height: 30px;
+	    font-size: 16px;
+	    margin-left: 2%;
+	    background: url(/lims/images/icons/collapse.png) no-repeat 0 center;
+	    padding-left: 10px;
+	}
+	.result-row {
+		margin-left: 3%;
+	}

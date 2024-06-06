@@ -1,0 +1,226 @@
+<div class="hr_2">&#160;</div>
+<?php
+	$num = Config::get('vid_history.img_count', 5);
+	$now = Date::time();	
+	//最后的几张图片	
+	$max_time = Q("vidcam_capture_data[vidcam={$vidcam}][ctime<={$now}]:sort(ctime DESC):limit({$num})")->current()->ctime?:time();
+	
+	$vs = Q("vidcam_capture_data[vidcam={$vidcam}][ctime<={$now}]:sort(ctime DESC):limit({$num})")->to_assoc('id', 'ctime');
+	
+	ksort($vs);
+	
+	$min_time = current($vs)?:time();
+	
+	$days = [
+				I18N::T('vidmon', '周日'),
+				I18N::T('vidmon', '周一'),
+				I18N::T('vidmon', '周二'),
+				I18N::T('vidmon', '周三'),
+				I18N::T('vidmon', '周四'),
+				I18N::T('vidmon', '周五'),
+				I18N::T('vidmon', '周六')
+				 ]; 
+?>
+<script type="text/javascript">
+
+jQuery(function($){
+
+	var vs = [];
+	
+	var img_width = 90;
+
+	var adjustTimeout;
+	
+	/*
+	var $refresh = $("#timeframe .button_refresh");
+	var $start = $("#timeframe .start_time");
+	var $end = $("#timeframe .end_time");
+	*/
+	
+	var now = new Date();
+	options = {
+		"width":  "100%",
+		"height": "100%",
+		"style": "box",
+		'showNavigation': true,
+		//'axisOnTop': true,
+		'min': new Date(now.getFullYear() - 5, 1, 1, 0, 0, 0),
+		'max': now,
+		/* intervalMin 是设置最小块的长度，5000为1秒 */
+		'intervalMin': 25000
+	};
+	
+	var timeline = new links.Timeline($('#timeline')[0]);
+	
+	var _rangechanging = false;
+	
+	
+	var _adjust = function(min_time, max_time, width){
+		
+		/*
+		$start.html('<input class="date start_time" q-date_format="$year-$month-$day $hour:$min" value="' + min_time + '" />');
+		$end.html('<input class="date start_time" q-date_format="$year-$month-$day $hour:$min" value="' + max_time + '" />');
+		*/
+	
+		if (_rangechanging == true) return;
+		_rangechanging = true;
+	
+		Q.trigger({
+			object: 'data',
+			event: 'fetch',
+			data: {
+				min: min_time,
+				max: max_time,
+				width: width,
+				vid: <?php echo $vidcam->id; ?>
+			},
+			global: false,
+			success: function(data) {
+				
+				var currentTime;
+				
+				vs.length = 0;
+			
+				$.each(data.vs, function(k, v){
+					currentTime = new Date(v.y, v.m, v.d, v.h, v.i, v.s);
+					
+					vs.push({
+						'start': currentTime,
+						'end': null,
+						'content': v.content,
+						'className': v.className,
+						'editable': true
+					});
+				});
+				
+				timeline.draw(vs, options);
+				_rangechanging = false;
+			}
+		});
+	};
+	
+	_adjust(<?php echo $min_time;?>, <?php echo $max_time?>, timeline.size.frameWidth);
+	
+	function _rangechanged(time) {
+		adjustTimeout  && clearTimeout(adjustTimeout)
+
+		adjustTimeout = setTimeout(function() {
+			var start = parseInt(time.start.getTime() / 1000)
+				, end = parseInt(time.end.getTime() / 1000)
+			_adjust(start, end, timeline.size.frameWidth);
+		}, 2000)
+		/*
+		var step = timeline.step;
+		Times = [];
+		
+		step.start();
+		while (!step.end()) {
+			Times.push(step.current.getTime() / 1000);
+			step.next();
+		}
+		*/
+	}
+	
+	function _showimg() {
+		var $row = timeline.getSelection();
+		var object = $(timeline.getItem($row[0].row).content);
+		Q.trigger({
+			'object': 'view_img',
+			'event': 'click',
+			'data': {
+				'img_id': object.classAttr('data')
+			},
+			'global': false
+		});
+	}
+	
+	links.events.addListener(timeline, 'rangechanged', _rangechanged);
+	
+	links.events.addListener(timeline, 'edit', _showimg);
+	
+	links.Timeline.StepDate.prototype.getLabelMajor = function(date) {
+		/* 重载底边栏上显示的事件中文format问题 */
+		var DAYS = <?= json_encode( $days ); ?>;
+
+		if (date == undefined) {
+			date = this.current;
+		}
+		
+		switch (this.scale) {
+			case links.Timeline.StepDate.SCALE.MILLISECOND:
+				return  this.addZeros(date.getHours(), 2) + ":" +
+					this.addZeros(date.getMinutes(), 2) + ":" +
+					this.addZeros(date.getSeconds(), 2);
+			case links.Timeline.StepDate.SCALE.SECOND:
+				return parseInt(date.getMonth() + 1) + '-' + 
+						date.getDate() + ' ' + 
+						this.addZeros(date.getHours(), 2) + ":" +
+						this.addZeros(date.getMinutes(), 2);
+			case links.Timeline.StepDate.SCALE.MINUTE:
+			case links.Timeline.StepDate.SCALE.HOUR:
+				return date.getFullYear() + '-' + 
+						parseInt(date.getMonth() + 1) + '-' + 
+						date.getDate() + ' ' + 
+						DAYS[date.getDay()];
+			case links.Timeline.StepDate.SCALE.WEEKDAY:
+			case links.Timeline.StepDate.SCALE.DAY:
+				return  date.getFullYear() + '-' + (date.getMonth() + 1);
+			case links.Timeline.StepDate.SCALE.MONTH:
+				return String(date.getFullYear());
+			default:
+				return "";
+		}
+	};
+	
+	links.Timeline.StepDate.prototype.getLabelMinor = function(date) {
+		/* 重载X轴上显示的事件中文format问题 */
+		var MONTHS_SHORT = ["一", "二", "三",
+			"四", "五", "六",
+			"七", "八", "九",
+			"十", "十一", "十二"];
+		var DAYS_SHORT = ["日", "一", "二",
+			"三", "四", "五", "六"];
+
+		if (date == undefined) {
+			date = this.current;
+		}
+
+		switch (this.scale) {
+			case links.Timeline.StepDate.SCALE.MILLISECOND:  return String(date.getMilliseconds());
+			case links.Timeline.StepDate.SCALE.SECOND:       return String(date.getSeconds());
+			case links.Timeline.StepDate.SCALE.MINUTE:
+				return this.addZeros(date.getHours(), 2) + ":" + this.addZeros(date.getMinutes(), 2);
+			case links.Timeline.StepDate.SCALE.HOUR:
+				return this.addZeros(date.getHours(), 2) + ":" + this.addZeros(date.getMinutes(), 2);
+			case links.Timeline.StepDate.SCALE.WEEKDAY:      return date.getDate() + ' ' + DAYS_SHORT[date.getDay()];
+			case links.Timeline.StepDate.SCALE.DAY:          return String(date.getDate());
+			case links.Timeline.StepDate.SCALE.MONTH:        return MONTHS_SHORT[date.getMonth()];   // month is zero based
+			case links.Timeline.StepDate.SCALE.YEAR:         return String(date.getFullYear());
+			default:                                         return "";
+		}
+	};
+	
+	links.Timeline.prototype.repaintDeleteButton = function () {
+		/* 隐藏掉delete的button功能，在timeline的select的事件中触发 */
+	};
+	
+	
+});
+
+</script>
+<div id="timeframe">
+	<?php 
+		/*
+			TODO: 为了之后能显示范围时间内的摄像头的拍照图片，可能需要做以下处理
+	?>
+	<div class="timelineform">
+		<span class="label middle"><?php echo I18N::T('vidmon', '设定时间: ')?></span>
+		<span class="start_time"><input class="date" q-date_format="<?php echo HT('$year-$month-$day $hour:$min')?>" value="<?php echo H($min_time) ?>" /></span>
+		<span class="interval">~</span>
+		<span class="end_time"><input class="date" q-date_format="<?php echo HT('$year-$month-$day $hour:$min')?>" value="<?php echo H($max_time) ?>" /></span>
+		<a class="button button_refresh" href="#"><?php echo I18N::T('vidmon', '刷新')?></a>
+	</div>
+	<div class="hr_2">&#160;</div>
+	<?php */?>
+	<div id="timeline"></div>
+</div>

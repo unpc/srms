@@ -1,0 +1,70 @@
+<?php $root_id = 'flexform_'.uniqid(); ?>
+<div id="<?php echo H($root_id) ?>" class="flexform">
+    <?php if ($this->title): ?>
+    	<h2 class="section_title" style="width: <?php echo $this->title_width ?: 100;?>%">
+            <?php if($this->title_class):?>
+                <span class="<?= $this->title_class ?>>"><?php echo H($this->title) ?></span>
+            <?php else:?>
+                <span class="border"></span>
+                <span class="black_title"><?php echo H($this->title) ?>
+                <?php if($required): ?>
+                <span class="float_right red" style="font-size: 14px;font-weight: normal;"><span class="required">*</span>必填</span>
+                <?php endif;?>
+                </span>
+            <?php endif;?>
+            <a class="flexform_button_add pointer float_right blue" title="<?php echo isset($this->add_button_text) ? $this->add_button_text : HT('添加项目'); ?>">
+                <span class='icon-add vertical_middle'></span>
+                <span class='vertical_middle'><?php echo $this->botton_title?H($this->botton_title):I18N::T('eq_sample', '添加项目')?></span>
+            </a>
+        </h2>
+        <div class="interval_10"></div>
+	<?php else: ?>
+	<div class="clearfix" style="padding-left: 10px">
+        <a class="h2-font-button-icon font-button-icon flexform_button_add float_right flexform_button_add middle"><?php echo isset($this->add_button_text) ? $this->add_button_text : HT('添加项目'); ?></a>
+    </div>
+	<?php endif; ?>
+    <?php if($this->description): ?>
+        <span class="description middle lpadding_1e5 red"><?php echo H($this->description) ?></span>
+        <div class="interval_10"></div>
+    <?php endif;?>
+    <?php
+    	/*
+    		BUG#158 (Cheng.Liu@2010.11.12)
+    		IE6下panel样式的DIV背景色无法正常显示，加上clearfix清除
+    	*/
+    ?>
+    <!-- <div class="clearfix">
+        <a class="h2-font-button-icon font-button-icon flexform_button_add float_right flexform_button_add middle"><?php // echo isset($this->add_button_text) ? $this->add_button_text : HT('添加'); ?></a>
+    </div> -->
+
+    <?php if($this->title_class):?>
+        <div class="flexform_container">
+    <?php else:?>
+        <div class="flexform_container lmaigin_1e5">
+    <?php endif;?>
+	<?php
+		$index = 0;
+		if(is_array($this->existing_data)) foreach($this->existing_data as $data) {
+            $index ++;
+			echo V('widgets/flexform_item', [
+				'data'=> $data,
+				'index'=>$index,
+				'view'=>$this->item_view,
+				'extra_vars'=> $this->extra_vars,
+				'no_delete_confirm'=>$this->no_delete_confirm,
+			]);
+		}
+	?>
+    </div>
+	<script class="flexform_template" type="text/html">
+	<?php echo V('widgets/flexform_item', [
+		'data'=> $this->template_data,
+		'view'=>$this->item_view,
+		'extra_vars'=> $this->extra_vars,
+		'index'=>'@INDEX',
+		'no_delete_confirm'=>$this->no_delete_confirm,
+	]); ?>
+	</script>
+</div>
+
+<?php echo JS::load('widgets/flexform', ['index'=>$index, 'index_token'=>'@INDEX', 'root_id'=>$root_id, 'delete_message'=> $this->delete_message ?: T("你确定要删除吗？请谨慎操作！")]);

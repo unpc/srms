@@ -1,0 +1,93 @@
+<?php
+	$can_edit_department_id = FALSE;
+	$tokens = (array)Config::get('lab.admin');
+	$me = L('ME');
+	if ( $me->access('管理所有内容') ) $can_edit_department_id = TRUE;
+?>
+<div class="form padding_1 department_add">
+	<form method="post" autocomplete="off" action="<?php echo H(URI::url('!billing/department/add') ) ?>">
+	<?php echo V('form_error', ['form'=>$form]);?>
+	<?php $require = (string) V('form_require'); ?>
+	<table class="form">
+		<tbody>	
+			<tr>
+				<td class="right nowrap middle rpadding_label">
+                    <?php echo $require; ?>
+                    <?php echo I18N::T('billing', '名称')?>
+                </td>
+				<td class="top">
+					<input name="name" class="text validator" style="width: 330px" value="<?php echo H($form['name']); ?>" />
+				</td>
+			</tr>
+            <tr class="interval_8"></tr>
+
+		<?php if ($can_edit_department_id) : ?>
+            <tr>
+                <td class="top right nowrap middle rpadding_label">
+                    <?php echo $require;?>
+                    <?php echo I18N::T('billing', '标识名')?>
+                </td>
+                <td class="top">
+                    <input type="text" class="text" name="nickname" style="width: 330px" value="<?php echo H($form['nickname'])?>"/>
+                </td>
+            </tr>
+            <tr class="interval_8"></tr>
+		<?php endif; ?>
+		
+			<?php if (isset($group_root)): ?>
+			<tr>
+				<td class="right nowrap middle rpadding_label"><?php echo I18N::T('billing', '组织机构')?></td>
+				<td class="top">
+				<div class="gray_tag_container">
+		        <?php
+		        $group = O('tag_group', $form['group_id']);
+		        echo Widget::factory('application:tag_selector', [
+		        	'tag'=>$group,
+		        	'root'=>$group_root,
+		        	'name'=>'group_id',
+		        	'ajax'=>true,
+		        ]);
+		        ?>
+		        </div></td>
+			</tr>
+            <tr class="interval_8"></tr>
+			<?php endif; ?>
+			<tr>
+				<td class="right nowrap middle top rpadding_label"><?php echo I18N::T('billing', '负责人')?></td>
+				<td class="top">
+					<?php 
+						$users = [];
+						foreach((array) json_decode($form['users']) as $k=>$v) {
+							$users[$k] = $v;
+						}
+					?>
+					<?php 
+						echo Widget::factory('billing:selector', 
+								[
+									'name'=>'users', 
+									'autocomplete'=>URI::url('!billing/autocomplete/users'), 
+									'value'=> json_encode($users),
+									'extra'=>'token_verify',
+							]);
+					?>
+				</td>
+			</tr>
+            <tr class="interval_8"></tr>
+			<tr>
+				<td class="top right nowrap middle rpadding_label"><?php echo I18N::T('billing', '备注')?></td>
+				<td class="top">
+					<textarea style="height: 60px;line-height: normal" name="description" class="text autogrow" rows="5" cols="50"><?php echo H($form['description']); ?></textarea>
+				</td>
+			</tr>
+            <?php echo Event::trigger('billing_department[edit].view.extra', $form, O('billing_department')) ?>
+            <tr class="interval_8"></tr>
+			<tr>
+				<td class="rpadding_label">&#160;</td>
+				<td class="top">
+					<input type="submit" class="font-button-save" name="submit" value="<?php echo I18N::T('billing', '添加'); ?>" />
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	</form>
+</div>

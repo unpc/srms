@@ -1,0 +1,39 @@
+<?php
+$uniqid = 'eqctrl_'.uniqid();
+$now = time();
+$control_mode = $equipment->control_mode;
+switch ($control_mode) {
+case 'computer':
+	$label = I18N::T('equipments', '电脑控制');
+	break;
+case 'veronica':
+	$label = I18N::T('equipments', '电脑控制');
+	break;
+case 'power':
+	$label = I18N::T('equipments', '电源控制');
+	break;
+case 'ultron':
+case 'agent':
+	$label = I18N::T('equipments', '终端控制');
+	break;
+case 'bluetooth':
+	$label = I18N::T('equipments', '蓝牙控制');
+	break;	
+default:
+	$label = I18N::T('equipments', '不控制');
+	$control_mode = NULL;
+}
+
+// 对于不控制的仪器，不显示设备开关状态和开关按钮
+if ($control_mode):
+?>
+<div id="<?php echo H($uniqid) ?>" style="width: 104px;text-align: center;">
+<?php
+$equipment->control_container = $uniqid;
+if($control_mode != 'bluetooth' && $control_mode != 'agent') {
+    $control_links = $equipment->links('control');
+    if (count($control_links ))  echo V('application:widgets/links', ['links' => $control_links, 'separator'=>' ']);
+}
+?>
+</div>
+<?php endif; ?>

@@ -1,0 +1,11 @@
+<?php
+$ranges_uniqid = 'ranges_'. uniqid();
+?>
+<div class="<?php echo $class;?>">
+    <div id="<?php echo H($ranges_uniqid) ?>">
+        <?php echo V('extra:edit/readonly/range_item', [
+            'prefix' => $prefix,
+            'params' => $field['params'],
+        ]);?>
+    </div>
+</div>

@@ -1,0 +1,5 @@
+<?php
+$reserv_status = ['-1' => '']+EQ_Reserv_Model::$reserv_status;
+unset($reserv_status[0]);
+echo Form::dropdown("reserv_status[]", $reserv_status, isset($form_reserv_status) ? $form_reserv_status : -1, 'class="selectpicker"');
+?>

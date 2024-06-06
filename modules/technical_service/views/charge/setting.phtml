@@ -1,0 +1,25 @@
+<?php
+$disabled = L('ME')->is_allowed_to('修改计费设置', $equipment) ? '' : 'disabled="disabled"';
+$charge_template = $equipment->charge_template;
+$charge_service = $charge_template['service'];
+?>
+<tr>
+    <td class="lpadding_30">
+        <div class="interval_60"></div>
+        <h2 class="section_title"><?php echo I18N::T('technical_service', '服务项目计费设置') ?></h2>
+        <div class="interval_30"></div>
+        <div class="charge_setting">
+            <div class="">
+                <div class="charge_dis lmaigin_1e5">
+                    <?= Form::radio('service', 'no_charge_service', (!$charge_service || !$form['service']) ? TRUE : FALSE, I18N::T('technical_service', '免费检测'), 'class="monitor" data="" ' . $disabled); ?>
+                </div>
+                <div class="charge_dis lpadding_10">
+                    <?= Form::radio('service', 'service_count', ($charge_service == 'service_count') ? TRUE : FALSE, I18N::T('technical_service', '按服务项目计费'), 'class="monitor" data="service_count" ' . $disabled); ?>
+                </div>
+                <div class="charge_dis lpadding_10">
+                    <?= Form::radio('service', 'service_sample_count', ($charge_service == 'service_sample_count') ? TRUE : FALSE, I18N::T('technical_service', '服务项目样品数计费'), 'class="monitor" data="service_sample_count" ' . $disabled); ?>
+                </div>
+            </div>
+        </div>
+    </td>
+</tr>

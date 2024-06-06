@@ -1,0 +1,41 @@
+<?php
+    $equipment = $record->equipment;
+	$amount = $charge->amount;
+	$auto_amount = $charge->auto_amount;
+	$description = $charge->description;
+	
+	if ($reserv_charge->id) {
+		$amount += $reserv_charge->amount;
+		$auto_amount += $reserv_charge->auto_amount;
+		$description = $reserv_charge->description . $description;
+	}
+	$description .= I18N::T('eq_charge', '收费 %fee', ['%fee'=>Number::currency($amount)]);
+	//TODO 需要修改href, 可进行搜索
+	$tid = [];
+	if ($reserv_charge->id && $reserv_charge->amount) {
+		$tid[] = $reserv_charge->transaction->id;
+	}
+
+	if ($charge->id && $charge->amount) {
+		$tid[] = $charge->transaction->id;
+	}
+
+	if (count($tid)) { 
+
+		$_t = [];
+		foreach($tid as $t) {
+			$_t[] = URI::anchor($equipment->url('charge', ['charge_id'=> $t], NULL, 'view'), '<strong>#'. Number::fill($t). '</strong>', 'class="blue"');
+		}
+
+		$_t = join(', ', $_t);
+
+		$description .= I18N::T('eq_charge', '计费编号 %tid', ['%tid'=> $_t]);
+	}
+	if (($charge->custom || $reserv_charge->custom) && L('ME')->is_allowed_to('查看估计收费', $charge->equipment)) {
+		$description = I18N::T('eq_charge', '估计收费 %fee', [
+			'%fee'=>Number::currency($auto_amount)
+		]) . $description;
+	}
+	if($description) {
+		echo $description;
+	}

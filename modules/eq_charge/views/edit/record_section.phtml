@@ -1,0 +1,15 @@
+<?php
+$container_id = 'charge_' . uniqid();
+?>
+<tbody id="<?php echo $container_id; ?>">
+<?php
+	if ($record->id && $record->dtend > 0) {
+		$charge = O('eq_charge', ['source' => $record]);
+		echo V('eq_charge:edit/record_charge_section', [
+				   'record' => $record,
+				   'charge' => $charge,
+				   'form' => $form
+				   ]);
+	}
+?>
+</tbody>

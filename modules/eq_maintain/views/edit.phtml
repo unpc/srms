@@ -1,0 +1,60 @@
+<?php $me = L('ME');?>
+<div class="form padding_1 clearfix">
+<form class="view" q-object="edit" q-event="submit" 
+q-src="<?php echo H(URI::url('!eq_maintain/index') ) ?>" autocomplete="off">
+    <?php echo Form::hidden('maintain_id', $maintain->id); ?>
+    <?php echo Form::hidden('equipment_id', $maintain->equipment->id); ?>
+    <?php echo V('form_error', ['form' => $form]);?>
+    <?php $require = (string) V('form_require'); ?>
+    <table class="form clearfix">
+        <tbody>
+            <tr>
+                <td class="top" colspan="2">
+                    <h1><?php echo I18N::T('eq_maintain','维修信息');?></h1>
+                </td>
+            </tr>
+            <tr>
+                <td class="label right nowrap"><?php echo I18N::T('eq_maintain', '维修时间'); ?></td>
+                <td class="nowrap">
+                    <input name="time" type="text" class="text date middle" 
+                    value="<?php echo $form['time'] ? : ($maintain->time ? : Date::time()); ?>" 
+                    q-date_format="<?php echo HT('$year/$month/$day $hour:$min:$sec')?>"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="label middle right nowrap"><?php echo I18N::T('eq_maintain', '金额'); ?></td>
+                <td class="nowrap">
+                    <input name="amount" type="text" class="text currency" 
+                    style="bottom:3px; width: 112px;" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" 
+                    value="<?php echo $form['amount'] ? : $maintain->amount; ?>"/>
+                    <?php echo $require?>
+                </td>
+            </tr>
+            <?php echo V('eq_maintain:sub_edit', ['form' => $form, 'maintain' => $maintain]); ?>
+            <tr>
+                <td class="label top right nowrap"><?php echo I18N::T('eq_maintain', '描述'); ?></td>
+                <td class="nowrap top">
+                    <textarea name="description" type="text" cols="36" rows="3" class="text autogrow"><?php echo $form['description'] ? : $maintain->description;?></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <span class="description float_right"><?php echo I18N::T('eq_maintain', '* 必填项');?></span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" class="hr_1">&#160;</td>
+            </tr>
+            <tr>    
+                <td>&#160;</td>
+                <td>
+                    <input type="submit" name="submit" class="button button_edit middle" value="<?php echo H(I18N::T('equipments', '提交')) ?>" />
+                    <?php if ($me->is_allowed_to('修改维修记录', $maintain->equipment) && $maintain->id) { ?>
+                    <input type="submit" name="delete" class="font-button-delete middle" value="<?php echo H(I18N::T('equipments', '删除')) ?>" />
+                    <?php } ?>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+</div>

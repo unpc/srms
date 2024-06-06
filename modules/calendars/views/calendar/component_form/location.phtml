@@ -1,0 +1,7 @@
+<?php if($calendar->allows['location']): ?>
+<tr>
+	<td class="label right nowrap"><?php echo $properties['label'] ?></td>
+	<td><input name="<?php echo H($name) ?>" type="text" size="40" class="text" value="<?php echo $component->id ? $component->location : $properties['default_value']; ?>" /></td>
+</tr>
+<?php endif; ?>
+

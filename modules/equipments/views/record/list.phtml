@@ -1,0 +1,79 @@
+<!--equipment使用记录的table"-->
+<div class="clearfix">
+    <div class="pages"><?= $pagination ?></div>
+<?php
+	$sort_by = $form['sort'] ? : (Config::get('equipment.sort_reserv') ? 'reserv' : '');
+	$sort_asc = $form['sort_asc'];
+	$sort_flag = $sort_asc ? 'A':'D';
+	/*
+		NO. TASK#244 (cheng.liu@2010.11.16)
+		将仪器使用记录的列表显示转化成table widget
+	*/
+	$table = Widget::factory('table');
+	$table->sort_flag = $sort_flag;
+	$table->sort_by = $sort_by;
+	$table->name = 'equipment_records';
+    $table->form_url = URI::url(NULL, ['aid'=>$form['aid']]);
+
+	if($form['dtstart_check'] && $form['dtend_check']) {
+		$form['date'] = H(date('Y/m/d',$form['dtstart'])).'~'.H(date('Y/m/d',$form['dtend']));
+	}
+	elseif($form['dtstart_check']) {
+		$form['date'] = H(date('Y/m/d',$form['dtstart'])).'~'.I18N::T('equipments','最末');
+	}
+	elseif($form['dtend_check']) {
+		$form['date'] = I18N::T('equipments','最初').'~'.H(date('Y/m/d',$form['dtend']));
+	}
+
+
+	$me = L('ME');
+
+	$columns = new ArrayObject($columns);
+
+	// 新增eq_record.list.columns第四个参数，声明处于哪个页面
+	Event::trigger('eq_record.list.columns', $form, $columns, 'equipment_records');
+
+	$table->add_columns((array)$columns);
+
+	$table->empty_message = I18N::T('equipments', '无符合条件的记录');
+
+	$table->records = $records;
+
+	if (count($records) > 0) {
+		foreach ($records as $record) {
+			$ajax_id = uniqid();
+			$links = $record->links('index', $ajax_id);
+		    $row = [
+                'select'=>V('equipments:records_table/data/select', ['record'=>$record]),
+		    	'serial_number'=>V('equipments:records_table/data/serial_number', ['id'=>$record->id]),
+				'@lock_status' => V('equipments:records_table/data/lock_status', ['record'=>$record]),
+		    	'user_name'=>V('equipments:records_table/data/user_name_with_date', ['record'=>$record]),
+		    	'date'=>V('equipments:records_table/data/date', ['record'=>$record]),
+		    	'samples'=>V('equipments:records_table/data/samples', ['record'=>$record]),
+		    	'agent'=>V('equipments:records_table/data/agent', ['record'=>$record]),
+				'description'=>V('equipments:records_table/data/description', ['record'=>$record]),
+				'charge_amount'=>V('equipments:records_table/data/charge_amount', ['record'=>$record]),
+				'feedback'=>V('equipments:records_table/data/feedback', ['record' => $record]),
+		    	'rest'=>Widget::factory('equipments:links', ['links' => $links, 'ajax_id' => $ajax_id])
+		    ];
+			$row = new ArrayIterator($row);
+
+			Event::trigger('eq_record.list.row', $row, $record, 'equipment_records');
+			if ($installed_labs) $row['lab_name'] = V('equipments:records_table/data/lab_name', ['record'=>$record]);
+
+			if (Config::get('eq_record.duty_teacher') && $equipment->require_dteacher) {
+				$row['duty_teacher'] = V('equipments:records_table/data/duty_teacher', ['record'=>$record]);
+			}
+
+            $table->add_row((array)$row);
+		}
+	}
+
+	echo $table;
+
+
+?>
+
+<div class="pages"><?= $pagination ?></div>
+
+</div>

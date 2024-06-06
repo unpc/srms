@@ -1,0 +1,1 @@
+<?php echo Form::dropdown('type', ['-1' => '--'] + I18N::T('lab_project', Lab_Project_Model::$types), $type != -1 && $type != NULL ? $type : -1, 'class="dropdown"'); ?>

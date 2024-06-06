@@ -1,0 +1,49 @@
+<div class="form padding_2">
+	<form class="view" method="post" q-object="use_edit" q-event="submit" q-src="<?php echo URI::url('!inventory/use'); ?>" autocomplete="off">
+		<?php echo V('form_error', ['form'=>$form])?>
+		<input name="id" type="hidden" value="<?php echo $use->id; ?>"/>
+		<table class="form">
+        <?php $stock = $use->stock;?>
+			<tr>
+				<td class="label nowrap"><?php echo I18N::T('inventory', '用户'); ?></td>
+				<td class="top" >
+				<?php
+					echo Widget::factory('application:user_selector', [
+						'autocomplete'=>'autocomplete/user',
+						'name'=>'user',
+						'user'=> $use->user,
+                        'disabled'=> TRUE,
+						'size'=>40,
+					]);
+				?>
+				</td>
+			</tr>
+		<tr>
+			<td></td>
+			<td>
+				<?php
+                    $disabled = 'disabled="disabled"';
+
+					echo Form::radio('operate_type', 'use', $form['operate_type'] ? : $use->quantity > 0, I18N::T('inventory', '领用'), 'class="monitor middle"'. $disabled, 'class="middle"');
+					echo '&#160;&#160;';
+					echo Form::radio('operate_type', 'return', $form['operate_type'] ? : $use->quantity < 0, I18N::T('inventory', '归还'), 'class="monitor middle"'. $disabled, 'class="middle"');
+				?>
+			</td>
+		</tr>
+		<tr>
+		<td class="label nowrap"><?php echo I18N::T('inventory', '数量'); ?></td>
+		<td><input name="quantity" size="40" class="text number" value="<?php echo H($form['quantity'] ? : abs($use->quantity)) ?>"/></td>
+		</tr>
+        <tr>
+		<td class="label top nowrap"><?php echo I18N::T('inventory', '备注'); ?></td>
+		<td class="top"><textarea class="text" name="note" cols="40" rows="3"><?php echo $form['note'] ? : $use->note;?></textarea></td>
+		</tr>
+		<tr>
+			<td>&#160;</td>
+			<td>
+				<input name="submit" class="button button_edit" type="submit" value="<?php echo H(I18N::T('inventory', '确定')) ?>" />
+			</td>
+		</tr>
+		</table>
+	</form>
+</div>

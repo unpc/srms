@@ -1,0 +1,12 @@
+<style>
+    .dropdown_menu {
+        min-width: 92px !important;
+    }
+</style>
+
+<?php
+$control_modes = ['--','power'=>'电源控制','computer'=>'电脑控制','ultron'=>'平板控制','bluetooth'=>'蓝牙控制','agent' => '终端控制','nocontrol'=>'不控制'];
+$control_statuses = ['--', 'using'=>'使用中', 'available'=>'未使用'];
+
+echo Form::dropdown($mode_name,I18N::T('equipments', $control_modes), $mode_value ? : 0,'class="autosubmittable dropdown middle small_search_text rmargin_10"');
+?><?php echo Form::dropdown($status_name,I18N::T('equipments', $control_statuses), $status_value ? : 0,'class="autosubmittable dropdown middle small_search_text"');?>

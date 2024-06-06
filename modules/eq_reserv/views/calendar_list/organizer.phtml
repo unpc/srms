@@ -1,0 +1,16 @@
+<?php
+echo CSS::load_async('eq_reserv:common');
+$user = $component->organizer;
+$me = L('ME');
+$equipment = O('equipment', $component->calendar->parent_id);
+if ($me->is_allowed_to('查看相关人员联系方式', $equipment)) {
+    $show_email = TRUE;
+    $show_phone = TRUE;
+}
+
+?>
+<div>
+    <div class=" user_grid rpadding_3">
+        <a href="<?php echo H($user->url()) ?>" class="prevent_default table_reserv_name"><?php echo H($user->name); ?></a>
+    </div>
+</div>

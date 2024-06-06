@@ -1,0 +1,74 @@
+<?php
+$me = L('ME');
+$require = V('envmon:form_require', ['extra_class' => 'top']);
+?>
+<div class="form ">
+    <form method="post" autocomplete="off" q-event="submit" q-object="edit_node" q-src="<?php echo H(URI::url('!envmon/node')) ?>"
+        q-static="<?php echo H(['node_id' => $node->id]) ?>">
+        <?php echo V('form_error', ['form' => $form]); ?>
+        <table class="form node">
+            <tr>
+                <td class="label left nowrap" colspan=2>
+                    <div class="title">
+                        <?php echo $require; ?>
+                        <?php echo I18N::T('envmon', '名称'); ?>
+                        <?php echo V('form_filter', ['error' => $form->errors['name'][0]]) ?>
+                    </div>
+                    <input name="name" class="text node_input margin_-1" value="<?php echo H($node->name) ?>" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan=2 class="top label left nowrap">
+                    <div class="title">
+                        <?php echo $require; ?>
+                        <?php echo I18N::T('envmon', '负责人'); ?>
+                        <?php echo V('form_filter', ['error' => $form->errors['incharge'][0]]) ?>
+                    </div>
+                    <?php
+
+$incharges = [];
+foreach (Q("{$node} user.incharge") as $incharge) {
+    $incharges[$incharge->id] = $incharge->name;
+}
+
+echo Widget::factory('multi_user_selector', [
+    'autocomplete' => URI::url('autocomplete/user'),
+    'name' => 'incharge',
+    'value' => json_encode($incharges, true),
+    'extra' => 'token_verify node_incharge_input',
+]);
+?>
+                </td>
+            </tr>
+            <tr>
+                <td class="label left nowrap" colspan=2>
+                    <?php echo I18N::T('envmon', '位置'); ?>
+                </td>
+            </tr>
+            <tr class="double">
+                <td class="top nowrap">
+                    <input name="location" placeholder="楼宇名称" class="text node_input margin_-1" q-tooltip="<?php echo I18N::HT('envmon', '楼宇名称'); ?>"
+                        q-tooltip_position="left" value="<?php echo H($node->location) ?>">
+                </td>
+
+                <td class="top nowrap">
+                    <input name="location2" placeholder="房间号" class="text node_input margin_-1" q-tooltip="<?php echo I18N::HT('envmon', '房间号'); ?>"
+                        q-tooltip_position="left" value="<?php echo H($node->location2) ?>">
+                </td>
+            </tr>
+
+        </table>
+        <div class="button_container">
+            <div class="float_right">
+                <?php if ($me->is_allowed_to('删除', $node)): ?>
+                <input q-event="click" q-object="delete_node" q-src="<?php echo H(URI::url('!envmon/node')) ?>"
+                    q-static="<?php echo H(['node_id' => $node->id]); ?>" type='reset' class=" button
+                    font-button-default sm rmargin_2e4"
+                    value="<?php echo I18N::HT('envmon', '删除'); ?>" />
+                <?php endif;?>
+
+                <input name="submit" type='submit' class="font-button-save sm" value="<?php echo I18N::HT('envmon', '更新'); ?>" />
+            </div>
+        </div>
+    </form>
+</div>

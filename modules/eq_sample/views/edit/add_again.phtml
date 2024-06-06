@@ -1,0 +1,54 @@
+<div class="form padding_1">
+<form q-object="add_sample" q-event="submit" q-src="<?php echo H(URI::url('!eq_sample/index')) ?>" autocomplete="off" method="post">
+    <?php echo V('form_error', ['form'=>$form]);?>
+    <input name="equipment_id" type="hidden" value="<?php echo H($sample->equipment->id)?>" />
+    <table class="form">
+        <?php 
+            $extra = Extra_Model::fetch($sample->equipment, 'eq_sample');
+            $extra_value = O('extra_value', ['object'=>$sample]);
+            if($extra_value->id) $values = $extra_value->values;
+                echo V('eq_sample:extra/display', ['extra'=>$extra, 'form'=>$form, 'values'=>$values, 'sample'=>$sample]);
+            ?>
+        <?php //关联项目
+        	if ( class_exists('Lab_Project_Model') ) :
+         ?>
+         <tr>
+			 <td colspan="2"><h1><?php echo I18N::T('eq_sample', '关联项目'); ?></h1></td>
+		</tr>
+         <?php echo V('eq_sample:project/connect', [
+         			'lab' => $sample->sender->lab,
+         			'sample' => $sample,
+         			'form' => $form,
+         ]); ?>
+        <?php endif; ?>
+        <?= Event::trigger('eq_sample.prerender.add.form', $form, $sample->equipment); ?>
+        <tr>
+            <td class="label left top nowrap" colspan="2"><h1><?php echo I18N::HT('eq_sample', '时间设定');?></h1></td>
+        </tr>
+        <tr>
+            <td class="label right top nowrap">
+            	<span><?php echo I18N::HT('eq_sample', '送样时间');?></span>
+            </td>
+            <td class="left top nowrap">  
+            	<input name="dtsubmit" type="text" class="text date" value="<?php echo H($form['dtsubmit']); ?>" />
+            </td>
+        </tr>
+        <tr>
+            <td class="label right top nowrap description" colspan="2">
+               *&nbsp;<?php echo I18N::T('eq_sample', '必填项');?>
+            </td>
+        </tr>
+        <?php
+            //申请送样时预估收费
+            echo Event::trigger('eq_sample.charge_forecast', $sample, $sample->equipment);
+        ?>
+        <tr>
+        <td colspan="2"><div class="lpadding_3 padding_2"><input name="submit" type='submit' class="button button_add middle" value="<?php echo I18N::HT('eq_sample', '添加');?>"></div>
+        </td>
+        </tr>
+    </table>
+    <?php if (Module::is_installed('nfs')) : ?>
+        <?php echo V('eq_sample:edit/attachments', ['sample'=>O('eq_sample')]); ?>
+    <?php endif; ?>
+</form>
+</div>

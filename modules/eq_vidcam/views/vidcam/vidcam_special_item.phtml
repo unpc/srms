@@ -1,0 +1,28 @@
+<table class="form" width="80%">
+	<tbody>
+		<tr>
+			<td class="icon">
+				<?php $icon_vidcam = $vidcam->id ? $vidcam : O('vidcam');?>
+				<?php echo $icon_vidcam->icon('32'); ?>
+			</td>
+			<td class="middle">
+				<table class="form">
+					<tr>
+						<td class="nowrap" width="60"><?php echo I18N::T('eq_vidcam', '摄像头')?></td>
+						<td class="middle">
+							<?php echo Widget::factory('eq_vidcam:vidcam_selector', [
+								'name' => 'special_vidcams['.$flexform_index.']',
+								'vidcam' => $vidcam
+							]);?>
+						</td>
+                        <td class="middle right" width="60">
+                        </td>
+					</tr>
+				</table>
+			</td>
+            <td class="middle right">
+            </td>
+		</tr>
+	</tbody>
+</table>
+<div class="interval_6"></div>

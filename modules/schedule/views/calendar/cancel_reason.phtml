@@ -1,0 +1,19 @@
+<div class="padding_2">
+    <form class="view object:component_form" autocomplete="off" method="post">
+    <?php echo Form::hidden('form_token', $form_token);?>
+    <?php echo Form::hidden('component_id', $component->id);?>
+    <?php echo Form::hidden('calendar_id', $component->calendar->id);?>
+    <?php echo Form::hidden('delete_flag', TRUE);?>
+    <?php echo V('form_error', ['form'=> $form]);?>
+        <table class="form">
+            <tr class="nowrap">
+                <td class="label nowrap top right"><?php echo I18N::T('schedule', '取消原因')?></td>
+                <td><textarea name="cancel_reason" type="text" cols="40" rows="3" class="text autogrow"></textarea><?php echo V('form_require', ['extra_class'=> 'top']);?></td>
+            </tr>
+            <tr class="nowrap">
+                <td>&#160;</td>
+                <td><input type="submit" name="delete" class="button button_save" value="<?php echo H(I18N::T('schedule', '确定')) ?>" /></td>
+            </tr>
+        </table>
+    </form>
+</div>

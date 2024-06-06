@@ -1,0 +1,8 @@
+<?php
+echo H(T($item['name']));
+$value = Event::trigger('admin.support.convert', $prekey, $key);
+?>
+<br />
+<input class="text number middle" name="<?= $prekey.'_'.$key.'[value]'?>" size="6" value="<?= H($value[0]) ?>">
+&#160;
+<?= Form::dropdown($prekey.'_'.$key . '[format]', Date::units($item['format'] ? : 'sihd'), H($value[1]), 'class="middle tmp_wd"'); ?>

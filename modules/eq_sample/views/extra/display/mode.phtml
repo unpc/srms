@@ -1,0 +1,19 @@
+<tr>
+    <td class="label right top nowrap">
+        <div class="lpadding_3"><?php echo I18n::T('eq_sample', $field['title']);?>
+        </div>
+    </td>
+    <td>
+        <?php $value = json_decode($value, true) ?>
+        <?= Form::checkbox("mode[" . Sample_Approval_Model::MODE_GET ."]",
+        $value[Sample_Approval_Model::MODE_GET] == 'on', I18N::T('eq_sample', '自取'), '', ''); ?>
+        <?= Form::checkbox("mode[" . Sample_Approval_Model::MODE_SEND ."]",
+        $value[Sample_Approval_Model::MODE_SEND] == 'on', I18N::T('eq_sample', '送达'), '', ''); ?>
+        <?= Form::checkbox("mode[" . Sample_Approval_Model::MODE_CD ."]",
+        $value[Sample_Approval_Model::MODE_CD] == 'on', I18N::T('eq_sample', '光盘'), '', ''); ?>
+        <?= Form::checkbox("mode[" . Sample_Approval_Model::MODE_EMAIL ."]",
+        $value[Sample_Approval_Model::MODE_EMAIL] == 'on', I18N::T('eq_sample', '电子邮件'), '', ''); ?>
+        <?= Form::checkbox("mode[" . Sample_Approval_Model::MODE_COPY ."]",
+        $value[Sample_Approval_Model::MODE_COPY] == 'on', I18N::T('eq_sample', '电子拷贝'), '', ''); ?>
+    </td>
+</tr>

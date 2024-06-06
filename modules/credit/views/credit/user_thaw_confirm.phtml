@@ -1,0 +1,13 @@
+<div class="form padding_2">
+    <form method="POST" q-object="thaw" q-src="<?= URI::url('!credit') ?>" q-static="id=<?php echo $credit->id ?>" q-event="submit" autocomplete="off" class="prevent_default">
+        <div style="width: 500px;"><?= I18N::T('credit', '确认要解禁该用户账号吗? 解禁后, 该用户账号将重新激活, 可继续使用系统内仪器.')?></div>
+        <div class="hr_2"></div>
+        <span class="red"><?= I18N::T('credit', '注: 若该用户分数过低, 您可在本页为其增加信用分, 以避免短期内再次被封禁.')?></span>
+        <div class="hr_2"></div>
+        <div class="hr_2"></div>
+        <div class="right">
+            <input onclick="javascript:$('.dialog_close').click();" type="reset" class="button font-button-default dialog_close" value="<?php echo I18N::T('credit','取消')?>">
+            <input type="submit" name="submit" class="button font-button-save" style="margin-right: 8px;" value="<?php echo H(I18N::T('credit', '确认')) ?>" />
+        </div>
+    </form>
+</div>

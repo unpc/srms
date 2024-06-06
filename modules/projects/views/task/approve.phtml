@@ -1,0 +1,9 @@
+<?php
+if ($task->approved) $txt = I18N::T('projects', '重启动');
+else $txt = I18N::T('projects', '完成');
+$u = uniqid() . '_' . $task->id;
+?>
+<a	id="<?php echo $u; ?>" 
+	class="button view object:approve_button event:click static:approved=<?php echo !$task->approved; ?>&id=<?php echo $u;?>"
+><?php echo $txt; ?></a>
+

@@ -1,0 +1,44 @@
+<?php
+
+	$me = L('ME');
+	$tip_path = 'tips.nfs_share.'.$sub_path;
+	if ($me->hidden_tips[$tip_path] || $me->hide_all_tips) {
+		$extra_class = 'hidden';
+	}
+	
+?>
+<div class="tip <?php echo $extra_class ?>">
+	<div class="description">
+		<p><?php echo I18N::T('nfs_share', '您可以在public（公共文件夹）里上传所有人可见的文件。') ?></p>
+		<p><?php echo I18N::T('nfs_share', '您可以在private（私有文件夹）里上传只有自己可见的文件。') ?></p>
+		<?php if ( Module::is_installed('labs') ) : ?>
+		<p><?php echo I18N::T('nfs_share', '您可以在lab（实验室文件夹）里上传自己实验室成员可见的文件。') ?></p>
+		<?php endif; ?>
+		<p><?php echo I18N::T('nfs_share', '您可以根据文件名称和上传时间对个人分区的文件进行搜索。') ?></p>
+	</div>
+	<div class="links nowrap rpadding_1 right">
+		<a href="#" id="notip" class="blue"><?php echo I18N::T('nfs_share', '我知道了'); ?></a>
+		<span class="separator">•</span>
+		<a href="<?php echo H(URI::url('admin/preferences.tips')) ?>" class="blue" target="_blank"><?php echo I18N::T('nfs_share', '设置') ?></a>
+	</div>
+	<?php $path = 'tips.nfs_share.'.$sub_path ?>
+	<script>
+		jQuery(function($){
+			var $notip = $("a#notip");
+			$notip.click( function() {
+				var $this = $(this);
+				var $tip = $this.parents(".tip");
+				$tip.hide();
+				Q.trigger({
+					object: "notip",
+					event: "click",
+					data: {
+						"path": "<?php echo H($path ) ?>"
+					},
+					url: "<?php echo URI::url('/index'); ?>"
+				});
+				return false;
+			});
+		});
+	</script>
+</div>

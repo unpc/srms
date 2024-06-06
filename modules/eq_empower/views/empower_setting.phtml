@@ -1,0 +1,13 @@
+
+<?php echo V('form_error', ['form' => $form, 'show_list' => true]) ?>
+
+<div class="form">
+	<?php
+        echo Widget::factory('flexform', [
+            'title'         => I18N::T('eq_reserv', '工作时间设置'),
+            'template_data' => ['disabled' => true],
+            'existing_data' => $times,
+            'item_view'     => 'eq_empower:time/item',
+        ]);
+    ?>
+</div>

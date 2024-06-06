@@ -1,0 +1,9 @@
+<div>
+    <?php if ($ban->unsealing_user->id) : ?>
+        <a href="<?php echo H($ban->unsealing_user->url()) ?>">
+            <p class="name"><?php echo H($ban->unsealing_user->name) ?></p>
+        </a>
+    <?php else:?>
+        <p class="name"><?php echo H('系统') ?></p>
+    <?php endif; ?>
+</div>

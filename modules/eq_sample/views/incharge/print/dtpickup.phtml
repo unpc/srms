@@ -1,0 +1,5 @@
+<?php if ($sample->dtpickup) :?>
+<?php echo Date::format($sample->dtpickup, 'Y/m/d H:i:s');?>
+<?php else: ?>
+<?php echo I18N::T('eq_sample', '未设取样时间')?>
+<?php endif;?>

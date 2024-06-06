@@ -1,0 +1,78 @@
+<?= CSS::load_async('calendars:common') ?>
+
+    <script>
+        Q.globals.cal_week_rel = 'edit_week';
+        Q.globals.mode = 'list';
+    </script>
+<?php
+
+$me = L('ME');
+$table = Widget::factory('table');
+$table->name = 'approval';
+$table->form = $form;
+$columns = [
+    'task'=> [
+        'title' => I18N::T('yiqikong_approval', '考核名称'),
+        'align' => 'left',
+        'nowrap' => TRUE
+    ],
+    'equipment'=> [
+        'title' => I18N::T('yiqikong_approval', '仪器名称'),
+        'align' => 'left',
+        'nowrap' => TRUE
+    ],
+    'user'=> [
+        'title' => I18N::T('yiqikong_approval', '联系人'),
+        'align' => 'left',
+        'nowrap' => TRUE
+    ],
+    'phone' => [
+        'title' => I18N::T('yiqikong_approval', '联系人电话'),
+        'align' => 'left',
+        'nowrap' =>TRUE,
+    ],
+    'submit_user'=> [
+        'title' => I18N::T('yiqikong_approval', '提交人'),
+        'align' => 'left',
+        'nowrap' => TRUE
+    ],
+    'submit_time'=> [
+        'title' => I18N::T('yiqikong_approval', '提交时间'),
+        'align' => 'left',
+        'nowrap' => TRUE
+    ],
+    'status' => [
+        'title' => I18N::T('yiqikong_approval', '审批状态'),
+        'align' => 'left',
+        'nowrap' =>TRUE,
+    ],
+    'rest'=>[
+        'align'=>'left',
+        'nowrap'=>TRUE,
+    ]
+];
+
+$table->add_columns($columns);
+
+$table->empty_message = I18N::T('yiqikong_approval', '没有查询到相应的项目!');
+
+if (count($approval) > 0) {
+    foreach($approval as $ap) {
+        $links = dashboard::get_links_capability($ap);
+        $rows = [
+            'task' => V('people:dashboard/tabs/capability_approval_table/data/task', ['ap' => $ap]),
+            'equipment' => V('people:dashboard/tabs/capability_approval_table/data/equipment', ['ap' => $ap]),
+            'user' => V('people:dashboard/tabs/capability_approval_table/data/user', ['ap' => $ap]),
+            'phone' => V('people:dashboard/tabs/capability_approval_table/data/phone', ['ap' => $ap]),
+            'submit_user' => V('people:dashboard/tabs/capability_approval_table/data/submit_user', ['ap' => $ap]),
+            'submit_time' => V('people:dashboard/tabs/capability_approval_table/data/submit_time', ['ap' => $ap]),
+            'status' => V('people:dashboard/tabs/capability_approval_table/data/status', ['ap' => $ap]),
+            'rest' => Widget::factory('application:links', ['links' => $links])
+        ];
+        $table->add_row($rows);
+    }
+}
+echo $table;
+?>
+<div style="text-align: right"><?php echo $pagination; ?></div>
+<div class="interval_10"></div>

@@ -1,0 +1,22 @@
+<div class="form">
+    <form 
+    id="account_form" 
+    method="POST" 
+    q-object="app_unbind" 
+    q-src="<?= H(URI::url('!yiqikong/qrcode')) ?>"
+    q-event="submit" autocomplete="off" class="prevent_default">
+	    <div class="interval_20">&nbsp</div>
+        <div class="interval_20">&nbsp</div>
+		<div style="width: 400px;font-size: 14px;line-height: 1.5;">
+        确定解除绑定吗？<br/>解除后，系统将自动解除App账号绑定，您可使用 “<span class="blue">仪器控</span>” App重新扫码绑定web账号
+        </div>
+		<div class="button_container">
+		<div class="float_right">
+		<input name="cancel" id="cancel" type='reset' class="font-button-default sm rmargin_2e4" value="<?php echo I18N::HT('yiqikong', '取消');?>" />
+		<input name="submit" type='submit' class="font-button-save" value="<?php echo I18N::HT('yiqikong', '确认解绑');?>" />
+		</div>
+		</div>
+  </form>
+</div>
+
+

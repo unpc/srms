@@ -1,0 +1,14 @@
+<?php 
+if ($this->task->id) {
+	$project = $this->task->project;
+}
+else if ($this->project->id) {
+	$project = $this->project;
+}
+
+$projects = Q('tn_project');
+
+if (count($projects) > 0) {
+	echo Form::dropdown($this->name ? : 'project_id', [''=>T('--')] + $projects->to_assoc('id', 'title'),
+						$project->id);
+}

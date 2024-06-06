@@ -1,0 +1,11 @@
+<div class="hr_1">&#160;</div>
+<form method="post" autocomplete="off" action="<?php echo H(URI::url() ) ?>">
+	<div class="form padding_2">
+		<div class="tpadding_2">
+			<textarea name="content" class="rich-textarea" cols="40" rows="15"><?php echo H($stock->content)?></textarea>
+		</div>
+		<div class="tpadding_2">
+			<input name="submit" class="button button_save" type="submit" value="<?php echo H(T('更新')) ?>" />
+		</div>
+	</div>
+</form>

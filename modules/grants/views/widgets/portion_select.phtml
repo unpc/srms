@@ -1,0 +1,41 @@
+<?php
+// 接收 grant
+// 接收 portion
+// 接收 portion_uniqid
+
+$grant = $this->grant;
+$balance_uniqid = 'gp_balance_'.uniqid();
+$portion_name = $this->portion_name ?: 'grant_portion';
+$class = !$this->no_balance ?
+	'q-object="grant_portion" q-event="change" q-src="'.URI::url('!grants/index').'" q-static="balance_uniqid='.$balance_uniqid.'&portion_name='.$portion_name.'"' : '';
+
+if($grant->id){
+	$portions = $grant->children();
+
+	if ($portions->total_count() > 0) {
+		$options = [];
+
+		$make_options = function($portions, $level) use (&$options, &$make_options) {
+			foreach($portions as $p){
+				$options[$p->id] = str_repeat('--', $level) .' '. $p->name;
+				$children = $p->children();
+				if ($children->total_count()) $make_options($children, $level + 1);
+			}
+		};
+
+		$make_options($portions, 0);
+
+		echo Form::dropdown($portion_name, [''=>I18N::T('grants', '--')] + $options, $this->portion->id ?: '', 'title="'.I18N::T('grants','经费分配').'" class="middle" ' . $class);
+
+		if (!$this->no_balance) {
+			echo ' <span class="'.$balance_uniqid.' middle" >';
+			if ($this->portion->id) {
+				echo I18N::HT('grants', '可用余额 %num', ['%num'=>Number::currency($this->portion->avail_balance)]);
+			}
+			else {
+				echo V('form_require');
+			}
+			echo '</span>';
+		}
+	}
+}

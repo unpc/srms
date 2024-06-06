@@ -1,0 +1,37 @@
+<?php $tip = Config::get('eq_evaluate_user')['rate.tip']; ?>
+<div style="min-width: 330px; padding: 10px;">
+    <table>
+        <tbody>
+            <tr class="top tight nowrap">
+                <td class="description" align="right"><?= I18N::T('eq_evaluate_user', '用户使用态度'); ?></td>
+                <td><?php echo Widget::factory('rateit_show', ['value' => $record->evaluate_user->attitude, 'tip' => $tip]); ?></td>
+            </tr>
+            <?php if ($record->evaluate_user->attitude_feedback): ?>
+                <tr class="top tight">
+                    <td class="description" align="right"><?= I18N::T('eq_evaluate_user', '评价'); ?></td>
+                    <td style="padding-left: 5px;"><?= I18N::T('eq_evaluate_user', $record->evaluate_user->attitude_feedback); ?></td>
+                </tr>
+            <?php endif; ?>
+            <tr class="top tight">
+                <td class="description" align="right"><?= I18N::T('eq_evaluate_user', '熟练度'); ?></td>
+                <td><?php echo Widget::factory('rateit_show', ['value' => $record->evaluate_user->proficiency, 'tip' => $tip]); ?></td>
+            </tr>
+            <?php if ($record->evaluate_user->proficiency_feedback): ?>
+                <tr class="top tight">
+                    <td class="description" align="right"><?= I18N::T('eq_evaluate_user', '评价'); ?></td>
+                    <td style="padding-left: 5px;"><?= I18N::T('eq_evaluate_user', $record->evaluate_user->proficiency_feedback); ?></td>
+                </tr>
+            <?php endif; ?>
+            <tr class="top tight">
+                <td class="description" align="right"><?= I18N::T('eq_evaluate_user', '试验台清洁度'); ?></td>
+                <td><?php echo Widget::factory('rateit_show', ['value' => $record->evaluate_user->cleanliness, 'tip' => $tip]); ?></td>
+            </tr>
+            <?php if ($record->evaluate_user->cleanliness_feedback): ?>
+                <tr class="top tight">
+                    <td class="description" align="right"><?= I18N::T('eq_evaluate_user', '评价'); ?></td>
+                    <td style="padding-left: 5px;"><?= I18N::T('eq_evaluate_user', $record->evaluate_user->cleanliness_feedback); ?></td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>

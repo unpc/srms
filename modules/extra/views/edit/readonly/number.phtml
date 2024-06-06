@@ -1,0 +1,12 @@
+<?php
+$number_uniqid = 'number_'. uniqid();
+?>
+
+<div class="<?php echo $class?>">
+    <div id="<?php echo H($number_uniqid) ?>">
+        <?php echo V('extra:edit/readonly/number_item', [
+            'prefix' => $prefix,
+            'params' => $field['params'],
+        ]);?>
+    </div>
+</div>

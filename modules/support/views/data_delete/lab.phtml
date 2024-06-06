@@ -1,0 +1,87 @@
+<div class="padding_2">
+  <h2 class="section_title">
+    <span class="middle"><?= I18N::T('support', '基本信息') ?></span>
+  </h2>
+  <div style="padding-top:5px">
+    <table class="form equipment_info_form" style="min-width:400px">
+      <tr>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('support', '课题组名称')?>
+          </span>
+        </td>
+        <td class="left flexible" colspan="3">
+          <?= H($lab->name) ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('support', '课题组联系方式') ?>
+          </span>
+        </td>
+        <td colspan="3">
+          <?= H($lab->contact) ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left top">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('support', '课题组负责人') ?>
+          </span>
+        </td> 
+        <td colspan="3">
+          <?= H(implode(',', Q("{$lab}<pi user")->to_assoc('id', 'name'))) ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('support', '预约数')?>
+          </span>
+        </td> 
+        <td>
+            <span class="content_wrap"><?= $reservs ?></span>
+        </td>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('support', '使用数')?>
+          </span>
+        </td> 
+        <td>
+            <span class="content_wrap"><?= $records ?></span>
+        </td>
+      </tr>
+      <tr>
+        <td class="nowrap left">
+          <span class="status_tag_admin status_tag_label color_normal">
+            <?= I18N::T('support', '送样数')?>
+          </span>
+        </td> 
+        <td>
+          <?= $samples ?>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div class="interval_20"></div>
+  <div class="float_right">
+    <a class="font-button-delete middle delete_lab_match"><?= I18N::HT('support', '删除')?></a>
+  </div>
+  <div class="interval_60"></div>
+
+</div>
+
+<script>
+jQuery(function($) {
+  $('.delete_lab_match').bind('click', function () {
+    Q.trigger({
+      url: '<?= H(URI::url('!support/data')) ?>',
+      object: 'delete_lab',
+      event: 'exec',
+      global: false,
+      data: { id: <?= $lab->id ?> },
+    });
+  })
+})
+</script>

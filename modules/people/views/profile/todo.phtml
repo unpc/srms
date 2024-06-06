@@ -1,0 +1,63 @@
+<?php $me = L('ME');?>
+<div class="clearfix padding_2">
+    <ul class="stat todo">
+        <li <?php
+        if( ($user->id==$me->id)
+        || (($me->access('查看本实验室成员的预约情况') && Q("($me , $user) lab")->total_count()))
+        || (($me->access('查看负责实验室成员的预约情况') && Q("($me<pi , $user) lab")->total_count()))
+        || ($me->access('管理所有内容'))):
+        ?>
+              style="cursor: pointer;width: 4rem;" onclick="click_todo('<?= H($user->url('eq_reserv')) ?>')"
+        <?php endif;?>>
+            <div class="up">
+                <span class="num"><?= H($reserv)?></span>
+                <span class="unit"><?php echo I18N::HT('people', '个')?></span>
+            </div>
+            <div class="down"><?php echo I18N::HT('people', '预约'); ?></div>
+        </li>
+        <?php if ($me->id == $user->id
+         && Q("{$me}<incharge equipment")->total_count()):?>
+            <?php if (Module::is_installed('approval_flow')): ?>
+                <li style="cursor: pointer;width: 4rem;" onclick="click_todo('<?php echo H($user->url('approval')); ?>')">
+            <?php elseif (Module::is_installed('yiqikong_approval')): ?>
+                <li style="cursor: pointer;width: 4rem;" onclick="click_todo('<?php echo H($user->url('approval.approve')); ?>')">
+            <?php else:?>
+                <li>
+            <?php endif;?>
+            <div class="up">
+                <span class="num"><?= H($approval)?></span>
+                <span class="unit"><?php echo I18N::HT('people', '个')?></span>
+            </div>
+            <div class="down"><?php echo I18N::HT('people', '审核'); ?></div>
+        </li>
+        <?php endif;?>
+        <li <?php if ($me->id == $user->id
+        && Q("{$me}<incharge equipment")->total_count()):?>
+            style="width: 4rem;cursor: pointer;" onclick="click_todo('<?= H(URI::url('!equipments/extra/sample').'?status[1]=1&status[2]=2') ?>')"
+        <?php endif;?>>
+            <div class="up">
+                <span class="num"><?= H($sample)?></span>
+                <span class="unit"><?php echo I18N::HT('people', '个')?></span>
+            </div>
+            <div class="down"><?php echo I18N::HT('people', '送样'); ?></div>
+        </li>
+        <li <?php
+        if ($user->id == $me->id
+        && Q("{$user}<incharge equipment[require_training=1]")->total_count() && ( $me->access('管理所有仪器的培训记录') || $me->access('管理负责仪器的培训记录') )):
+        ?>
+            style="width: 4rem;cursor: pointer;" onclick="click_todo('<?= H($user->url('eq_incharge_training.applied')) ?>')"
+            <?php endif;?>>
+            <div class="up">
+                <span class="num"><?= H($training)?></span>
+                <span class="unit"><?php echo I18N::HT('people', '个')?></span>
+            </div>
+            <div class="down"><?php echo I18N::HT('people', '培训'); ?></div>
+        </li>
+    </ul>
+</div>
+<script>
+function click_todo(url) {
+    Dialog.close();
+    window.location.href = url;
+}
+</script>

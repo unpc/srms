@@ -1,0 +1,84 @@
+<div class="float_left" style="width: 130px;height: 100%;">
+    <div class="img_icon icon-radius">
+        <?php echo $door->icon('104'); ?>
+    </div>
+</div>
+<?php 
+		$rules = (array) $rules;
+        $default_rule = (array) $rules['default']; ?>
+<form class="edit lpadding_130" autocomplete="off" method="post" action="<?php echo H(URI::url() ) ?>">
+    <?php echo V('form_error', ['form'=>$form])?>
+
+    <?php if($door->type == Door_Model::type('genee')): ?>
+    <div class="form">
+        <h2 class="section_title">
+            <span class="border"></span>
+            <span class="black_title"><?php echo I18N::T('entrance', '门禁规则') ?></span>
+        </h2>
+        <div class="interval_20"></div>
+        <div class="lpadding_3">
+            <?php echo V('door/rule/direction', ['flexform_index'=>'default',
+				'directions'=> isset($default_rule['directions'])?$default_rule['directions']:[],
+				'access'=> isset($default_rule['access'])?$default_rule['access']:0]);
+	        ?>
+        </div>
+    </div>
+    <?php elseif($door->type == Door_Model::type('hikvision')): ?>
+    <div class="form">
+        <h2 class="section_title">
+            <span class="border"></span>
+            <span class="black_title"><?php echo I18N::T('entrance', '门禁规则') ?></span>
+        </h2>
+        <div class="interval_20"></div>
+        <div class="lpadding_3">
+            <?php echo V('door/rule/hkisc', ['door' => $door]);
+	?>
+        </div>
+    </div>   
+    <?php endif; ?>
+
+    <div class="interval_20"></div>
+
+    <div class="form">
+        <h2 class="section_title">
+            <span class="border"></span>
+            <span class="black_title"><?php echo I18N::T('entrance', '关联仪器') ?></span>
+        </h2>
+        <div class="interval_20"></div>
+        <div class="lpadding_3">
+			<?php $equipments = Q("{$door}<asso equipment"); ?>
+			<?php echo V('door/rule/equipment', ['flexform_index'=>'default',
+											  'equipments'=>json_encode($equipments->to_assoc('id', 'name'))]);
+			?>
+		</div>
+    </div>
+
+    <?php if($door->type == Door_Model::type('genee')): ?>
+    <div class="interval_20"></div>
+
+    <div class="form">
+        <?php
+		$data = [];
+		unset($rules['default']);
+
+		foreach ($rules as $key=>$rule) {
+			$data[] = (array) $rule;
+		}
+
+		echo Widget::factory('flexform', [
+			'title' => I18N::T('entrance', '特殊规则设置'),
+			'template_data' => ['disabled'=>TRUE],
+			'existing_data' => array_values($data),
+			'item_view' => 'entrance:door/rule/item',
+		]);
+
+	?>
+    </div>
+    <?php endif; ?>
+
+    <div class="interval_60"></div>
+    <div class="form float_right">
+        <input type="submit" name="submit" class="font-button-save" value="<?php echo H(T('保存修改')) ?>" />
+    </div>
+    <div class="interval_60"></div>
+</form>

@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C/DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    <meta name="renderer" content="webkit" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1" />
+    <title><?php echo I18N::T('technical_service', '技术服务记录'); ?></title>
+    <base href="<?php echo H(Config::get('system.base_url') ) ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php echo H(URI::url('css', ['f'=>'core'])) ?>" />
+    <style type="text/css">
+    a {
+        color: blue;
+        text-decoration: underline;
+    }
+
+    table.report {
+        font-size: 14px;
+        margin: auto;
+    }
+
+    thead {
+        border-top: 2px solid #000;
+        border-bottom: 1px solid #000;
+    }
+
+    tbody {
+        border-bottom: 2px solid #000;
+    }
+
+    thead#stat {
+        font-size: 10px;
+        border: none;
+    }
+
+    table.report caption {
+        font-size: 150%;
+        margin-bottom: 10px;
+    }
+
+    table.report tbody td {
+        vertical-align: top;
+        border-bottom: 1px dotted #CCC;
+    }
+
+    table.report .referred_charge {
+        background-color: #eee;
+        border: 1px dotted #CCC;
+    }
+    </style>
+    <style media="print">
+    .buttons {
+        display: none;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="buttons">
+        <a href="#" onclick="window.print(); return false;"><?php echo I18N::HT('equipments', '打印'); ?></a>
+        <a href="#" onclick="window.close(); return false;"><?php echo I18N::HT('equipments', '关闭'); ?></a>
+    </div>
+    <table class="report" cellpadding="5" cellspacing="5" style="border-collapse:collapse;">
+        <caption class="nowrap">
+            <?php
+                	echo I18N::HT('technical_service', '技术服务记录');			
+                ?>
+
+        </caption>
+        <thead>
+            <tr>
+                <?php foreach($valid_columns as $p => $p_name) : ?>
+                <th class="left nowrap"><?php echo I18N::T('technical_service', $p_name); ?></th>
+                <?php endforeach; ?>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+			foreach($applys as $apply):
+			?>
+            <tr>
+				<?php if (array_key_exists('ref_no', $valid_columns)) : ?>
+                    <td class="left nowrap"><?php echo $apply->ref_no ?: '';?></td>
+                <?php endif; ?>
+				<?php if (array_key_exists('service_name', $valid_columns)) : ?>
+                    <td class="left nowrap"><?php echo $apply->service->name ?: '';?></td>
+                <?php endif; ?>
+				<?php if (array_key_exists('service_incharge', $valid_columns)) : ?>
+                    <td class="left nowrap"><?php 
+						$incharges = Q("{$apply->service}<incharge user")->to_assoc('id','name');
+						echo implode(',',$incharges) ?: '';?>
+						</td>
+                <?php endif; ?>
+				<?php if (array_key_exists('status', $valid_columns)) : ?>
+                    <td class="left nowrap"><?php echo Service_Apply_Model::$status_labels[$apply->status] ?? '';?></td>
+                <?php endif; ?>
+				<?php if (array_key_exists('service_time_length', $valid_columns)) : ?>
+                    <td class="right nowrap"><?php 
+						$time_lenth = 0;
+						foreach (Q("service_apply_record[apply={$apply}]") as $item)
+							$time_lenth += $item->dtlength;
+						echo round($time_lenth / 3600, 2);
+					?></td>
+                <?php endif; ?>
+				<?php if (array_key_exists('amount', $valid_columns)) : ?>
+                    <td class="right nowrap"><?php echo $apply->status != Service_Apply_Model::STATUS_APPLY ? H($apply->totalAmount()) : '待定';?></td>
+                <?php endif; ?>
+				<?php if (array_key_exists('user', $valid_columns)) : ?>
+                    <td class="left nowrap"><?php echo $apply->user->name ?: '';?></td>
+                <?php endif; ?>
+				<?php if (array_key_exists('phone', $valid_columns)) : ?>
+                    <td class="left nowrap"><?php echo $apply->user->phone ?: '';?></td>
+                <?php endif; ?>
+				<?php if (array_key_exists('lab', $valid_columns)) : ?>
+                    <td class="left nowrap"><?php echo Q("{$apply->user} lab")->current()->name ?: '';?></td>
+                <?php endif; ?>
+				<?php if (array_key_exists('ctime', $valid_columns)) : ?>
+                    <td class="left nowrap"><?php echo $apply->ctime ? date('Y-m-d H:i:s', $apply->ctime) : '-';?></td>
+                <?php endif; ?>
+				<?php if (array_key_exists('dtrequest', $valid_columns)) : ?>
+                    <td class="left nowrap"><?php echo $apply->dtrequest ? date('Y-m-d H:i:s', $apply->dtrequest) : '-';?></td>
+                <?php endif; ?>
+
+            </tr>
+            <?php
+			endforeach;
+			?>
+            <tr>
+                <td colspan="<?php echo count($valid_columns) + 1; ?>" class="right nowrap">
+                    <?php echo I18N::T('technical_service', '总计:') . $applys->total_count(); ?>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C/DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+        <meta name="renderer" content="webkit" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1" />
+		<title><?= I18N::T('inventory', '%name存货信息', [
+			'%name' => $stock->product_name
+		]); ?></title>
+		<base href="<?php echo H(Config::get('system.base_url') ) ?>" />
+		<link type="text/css" rel="stylesheet" href="<?php echo H(URI::url('css', ['f'=>'core'])) ?>" />
+		<?= $this->controller->load_css(); ?>
+		<?= $this->controller->load_js(TRUE); ?>
+		<style>
+			.view_container {
+				margin: 10%;
+				padding: 5px;
+				background: #EEE;
+			}
+			.buttons{
+				padding: 10px;
+			}
+		</style>
+		<style media="print">
+			.view_container {
+				margin: 5%;
+				padding: 5px;
+				background: #EEE;
+			}
+			.buttons{
+				display:none;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="buttons">
+			<a href="#" onclick="window.print(); return false;"><?php echo T('打印'); ?></a>
+			<a href="#" onclick="window.close(); return false;"><?php echo T('关闭'); ?></a>
+		</div>
+		<div class="view_container">
+			<caption><?= I18N::T('inventory', '%name存货信息', [
+				'%name' => $stock->product_name
+			]); ?></caption>
+			<?php if ($stock->barcode): ?>
+				<div class="float_right text_like">
+					<div class="barcode"><?php echo H($stock->barcode); ?></div>
+				</div>
+			<?php endif; ?>
+			<h2>
+				<?php if ($stock->ref_no): ?>
+					<span class="status_tag middle"><?php echo H($stock->ref_no); ?></span>
+				<?php endif; ?>
+				<span class="product_name middle"><?php echo H($stock->product_name); ?>
+			</h2>
+			<div>
+				<?php if ( $stock->manufacturer ) : ?>
+					<span class="manufacturer middle"><?php echo H($stock->manufacturer); ?></span>
+				<?php endif; ?>
+				<?php if ( $stock->catalog_no ) : ?>
+					<span class="catalog_no middle"> #<?php echo H($stock->catalog_no); ?></span>
+				<?php endif; ?>
+				&#160;&#160;
+			</div>
+			<div class="hr_2">&#160;</div>
+			<div class="lpadding_3">
+				<ul class="product_info clearfix">
+					<li>
+						<span class="label"><?php echo I18N::T('inventory', '型号'); ?>:</span>
+						<span class="value"><?php echo H($stock->model);?></span>
+					</li>
+					<li>
+						<span class="label"><?php echo I18N::T('inventory', '规格'); ?>:</span>
+						<span class="value"><?php echo H($stock->spec);?></span>
+					</li>
+					<li class="clear">&#160;</li>
+					<li>
+						<span class="label"><?php echo I18N::T('inventory', '供应商'); ?>:</span>
+						<span class="value"><?php echo H($stock->vendor);?></span>
+					</li>
+					<li>
+						<span class="label"><?php echo I18N::T('inventory', '单价'); ?>:</span>
+						<span class="value"><?php echo H(Number::currency($stock->unit_price));?></span>
+					</li>
+					<li class="clear">&#160;</li>
+					<li>
+						<span class="label"><?php echo I18N::T('inventory', '存量'); ?>:</span>
+						<span class="value"><?php echo H($stock->quantity);?></span>
+					</li>
+					<li>
+						<span class="label"><?php echo I18N::T('inventory', '总量'); ?>:</span>
+						<span class="value"><?php echo H($stock->summation);?></span>
+					</li>
+					<li class="clear">&#160;</li>
+					<li>
+						<span class="label"><?php echo I18N::T('inventory', '库存状态'); ?>:</span>
+						<span class="value"><?php echo I18N::T('inventory', Stock_Model::$stock_status[$stock->status]);?></span>
+					</li>
+					<?php if ( $stock->expire_status != Stock_Model::$never_expired ) : ?>
+					<li class="clear">&#160;</li>
+					<li>
+						<span class="label"><?php echo I18N::T('inventory', '过期时间'); ?>:</span>
+						<span class="value">
+							<?php $expire_text_color = 'never_expired';
+							if ( $stock->expire_status == Stock_Model::$has_expired ) {
+								$expire_text_color = 'has_expired';
+							}
+							else if ( $stock->expire_status == Stock_Model::$almost_expired ) {
+								$expire_text_color = 'almost_expired';
+							}
+							?>
+							<span class="<?php echo $expire_text_color; ?>"><?php echo date('Y/m/d', $stock->expire_time); ?></span>
+						</span>
+					</li>
+					<?php endif; ?>
+					<li class="clear">&#160;</li>
+					<li>
+						<span class="label"><?php echo I18N::T('inventory', '存放位置'); ?>:</span>
+						<span class="value"><?php echo H($stock->location);?></span>
+					</li>
+					<li class="clear">&#160;</li>
+					<li>
+						<span class="label"><?php echo I18N::T('inventory', '备注'); ?>:</span>
+						<span class="value"><?php echo H($stock->note);?></span>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<?= $this->controller->load_js(FALSE); ?>
+	</body>
+	<script>
+	jQuery(function($) {
+		$('div.barcode').livequery(function(){
+			var $el = $(this);
+			var val = $.trim($el.text());
+			if (val) {
+				$el.barcode(val, "code128", {
+					bgColor: '',
+					barHeight: 60,
+					barWidth: 2,
+					moduleSize: 5,
+					fontSize: 14
+				});
+			}
+		});
+	});
+	</script>
+</html>

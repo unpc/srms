@@ -1,0 +1,358 @@
+<?php $me = L('ME');?>
+<div class="form">
+<table class="form">
+    <tbody>
+    <tr>
+<!--        <td class="icon top" width="130">-->
+<!--            <img src="--><?php //echo H($equipment->icon_url('100')) ?><!--" width="100" />-->
+<!--        </td>-->
+        <td class="top">
+        <form class="edit" method="post" autocomplete="off" q-object="add" action="<?php echo H(URI::url('!equipments/index') ) ?>">
+        <?php echo V('form_error', ['form'=>$form]);?>
+        <?php $require = (string) V('form_require', ['extra_class' => 'top']); ?>
+        <?php $requires = Config::get('form.equipment_add')['requires']; ?>
+        <table class="form">
+            <tbody>
+                <?php if(Config::get("equipment.first_ref_no")):?>
+                    <tr>
+                        <td class="label right nowrap middle"><?php echo I18N::T('equipments', '仪器编号')?></td>
+                        <td class="top">
+                            <input name="ref_no" class="text" size="40" value="<?php echo H($form['ref_no']) ?>" />
+                            <?= array_key_exists('ref_no', $requires) ? $require : ''; ?>
+                        </td>
+                    </tr>
+                <?php endif; ?>
+                <tr>
+                    <td class="label left nowrap middle">
+                        <?= array_key_exists('name', $requires) ? '<span class="required">*</span>' : ''; ?>
+
+                        <?php echo I18N::T('equipments', '仪器名称')?>
+                        <?php echo '<br>'.V('form_filter',['error'=>$form->errors['name'][0]])?>
+                    </td>
+
+                    <td class="label left nowrap middle"><?php echo I18N::T('equipments', '英文名称')?></td>
+
+                </tr>
+                <tr>
+                    <td class="top">
+                        <input placeholder="请输入仪器名称" name="name" class="text" value="<?php echo H($form['name'])?>" />
+                    </td>
+                    <td class="top">
+                        <input placeholder="请输入英文名称" name="en_name" class="text" value="<?php echo H($form['en_name'])?>" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label left nowrap middle"><?php echo I18N::T('equipments', '型号')?></td>
+                    <td class="label left nowrap middle"><?php echo I18N::T('equipments', '规格')?></td>
+                </tr>
+                <tr>
+                    <td class="top">
+                        <input placeholder="请输入型号" name="model_no" class="text" value="<?php echo H($form['model_no']) ?>" />
+                    </td>
+                    <td class="top">
+                        <input placeholder="请输入规格" name="specification" class="text" value="<?php echo H($form['specification']) ?>" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label left nowrap middle"><?= array_key_exists('price', $requires) ? '<span class="required">*</span>' : ''; ?><?php echo I18N::T('equipments', '价格')?></td>
+                    <td class="label left nowrap middle"><?php echo I18N::T('equipments', '制造国家')?></td>
+
+                </tr>
+                <tr>
+                    <td class="top">
+                        <input placeholder="请输入价格" name="price" class="text currency" sign="<?php echo H(Config::get('lab.currency_sign') ) ?>" value="<?php echo H($form['price']) ?>" />
+                    </td>
+                    <td class="top">
+                        <input placeholder="请输入制造国家" name="manu_at" class="text" value="<?php echo H($form['manu_at']) ?>" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label left nowrap middle"><?php echo I18N::T('equipments', '生产厂家')?></td>
+                    <td class="label left nowrap middle"><?php echo I18N::T('equipments', '出厂日期')?></td>
+                </tr>
+                <tr>
+                    <td class="top">
+                        <input placeholder="请输入生产厂家" name="manufacturer" class="text" value="<?php echo H($form['manufacturer']) ?>" />
+                    </td>
+                    <td class="top">
+                        <input placeholder="请输入出厂日期" name="manu_date" date_type="date" class="text date" value="<?php echo H(date('Y-m-d', $form['manu_date'] ?: time())) ?>" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label left nowrap middle"><?php echo I18N::T('equipments', '购置日期')?></td>
+                    <td class="label left nowrap middle"><?php echo I18N::T('equipments', '入网日期')?></td>
+
+                </tr>
+                <tr>
+                    <td class="top">
+                        <input placeholder="请输入购置日期" name="purchased_date" date_type="date"  class="text date" value="<?php echo H(date('Y-m-d', $form['purchased_date'] ?: time())) ?>"  />
+                    </td>
+                    <td class="top">
+                        <input placeholder="请输入入网日期" name="atime" date_type="date"  class="text date" value="<?php echo H(date('Y-m-d', $form['atime'] ?: time())) ?>"  />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label left nowrap middle"><?php echo I18N::T('equipments', '分类号')?></td>
+                    <?= Event::trigger('equipment[edit].view.performance', $form, $equipment); ?>
+                    <td class="label left nowrap middle"><?php echo I18N::T('equipments', '仪器编号')?></td>
+
+                </tr>
+                <tr>
+                    <td class="top"><input placeholder="请输入分类号" name="cat_no" class="text" value="<?php echo H($form['cat_no']) ?>" /></td>
+                    <td class="top">
+                        <input placeholder="<?= I18N::T('equipments', '请输入仪器编号') ?>" name="ref_no" class="text" value="<?php echo H($form['ref_no']) ?>" />
+                        <?= array_key_exists('ref_no', $requires) ? $require : ''; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label left nowrap middle"><?= array_key_exists('location1', $requires) ? '<span class="required">*</span>' : ''; ?><?php echo I18N::T('equipments', '放置房间')?></td>
+                </tr>
+                <tr>
+                    <td class="top">
+                        <?php if (Config::get('equipment.location_type_select')):?>
+                            <?php
+                            $location_root = Tag_Model::root('location');
+                            echo Widget::factory('application:tag_selector', [
+                                'tag' => $form['location_id'] ? O('tag_location', $form['location_id']) : O('tag_location'),
+                                'root' => $location_root,
+                                'name'=>'location_id',
+                                'ajax'=>true,
+                            ]);
+                            /* echo Widget::factory('equipments:tag_selector', [
+                                'autocomplete'=> URI::url('!equipments/autocomplete/tag_location'),
+                                'name'=>'location',
+                                'value'=>$form['location'],
+                            ]); */
+                            ?>
+                        <?php else:?>
+                            <input placeholder="请输入放置房间" name="location" class="text tooltip_position:left" value="<?php echo H($form['location']) ?>" q-tooltip="<?php echo I18N::T('equipments', '楼宇'); ?>"  />
+                        <?php endif;?>
+                    </td>
+                </tr>
+                <?php
+                if ($me->is_allowed_to('修改组织机构', 'equipment')) :
+                    ?>
+
+                    <tr>
+                        <td colspan="2" class="label left nowrap middle">
+                            <?= array_key_exists('group_id', $requires) ? '<span class="required">*</span>' : ''; ?>
+                            <?php echo I18N::T('equipments', '所属单位')?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="middle"><div class="gray_tag_container">
+                                <?php
+                                /* BUG #1036::添加一个仪器的时候，设定仪器的组织机构不为全部后，设定仪器名称为空进行保存，提示不能保存成功，但是仪器的组织机构不是之前设定的组织机构(kai.wu@2011.08.22) */
+                                if (!$me->is_allowed_to('修改组织机构', 'equipment', ['@ignore'=>'修改下属机构的仪器'])) {
+                                    $group_root = $me->group;
+                                }
+                                echo Widget::factory('application:tag_selector', [
+                                    'tag'=> O('tag_group', $form['group_id']),
+                                    'root'=>$group_root,
+                                    'name'=>'group_id',
+                                    'ajax'=>true,
+                                ]);
+                                ?>
+                            </div></td>
+                    </tr>
+                <?php endif;?>
+                <tr>
+                    <td colspan="2" class="label left nowrap top"><?php echo I18N::T('equipments', '主要规格及技术指标')?></td>
+                </tr>
+                <tr>
+                    <td class="top" colspan="2"><textarea placeholder="请输入主要规格及技术指标" style="width: 100%" cols="60" rows="3" class="text autogrow" name="tech_specs"><?php echo H($form['tech_specs']) ?></textarea></td>
+                </tr>
+                <tr>
+                    <td class="label left nowrap top"><?php echo I18N::T('equipments', '主要功能及特色')?></td>
+                </tr>
+                <tr>
+                    <td class="top" colspan="2"><textarea placeholder="请输入主要功能及特色" style="width: 100%;" class="text autogrow" name="features"><?php echo H($form['features']) ?></textarea></td>
+                </tr>
+                <?php
+                /*
+                增加"添加负责的仪器"权限, 同时要求在添加仪器的时候负责人和联系人两项必须只能是自己且只读(和编辑仪器不一样)
+                */
+                ?>
+                <tr>
+                    <td class="label left nowrap top"><?php echo I18N::T('equipments', '主要附件及配置')?></td>
+                </tr>
+                <tr>
+                    <td class="top" colspan="2"><textarea placeholder="请输入主要附件及配置" style="width: 100%;" class="text autogrow" name="configs"><?php echo H($form['configs']) ?></textarea></td>
+                </tr>
+                <tr>
+                    <td class="label left nowrap top"><?php echo I18N::T('equipments', '开放预约')?></td>
+                </tr>
+                <tr>
+                    <td class="top" colspan="2"><textarea placeholder="请输入开放预约" style="width: 100%;" class="text autogrow" name="open_reserv"><?php echo H($form['open_reserv']) ?></textarea>
+                        <?= array_key_exists('open_reserv', $requires) ? $require : ''; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label left nowrap top"><?php echo I18N::T('equipments', '计费信息')?></td>
+                </tr>
+                <tr>
+                    <td class="top" colspan="2"><textarea placeholder="请输入计费信息" style="width: 100%;" class="text autogrow" name="charge_info"><?php echo H($form['charge_info']) ?></textarea>
+                        <?= array_key_exists('charge_info', $requires) ? $require : ''; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label left nowrap top"><?= array_key_exists('incharges', $requires) ? '<span class="required">*</span>' : ''; ?>
+                    <?php echo I18N::T('equipments', '负责人')?>
+                    <?php echo '<br>'.V('form_filter',['error'=>$form->errors['incharges'][0]])?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="top" colspan="2">
+
+                        <?php /* BUG #832::创建新仪器时如未填写必填项目便点添加 在联系人和负责人处“*必填”不显示高亮
+                                 原因：$require本身会产生<span>。(kai.wu@2011.7.26) */ ?>
+
+                        <?php
+                        if (($me->access('管理所有内容')
+                            ||$me->access('管理组织机构'))
+                            || (($me->access('添加/修改所有机构的仪器')
+                            || $me->access('添加/修改下属机构的仪器')) && !$me->access('添加负责的仪器'))) {
+                            $can_add_incharges = $can_add_contacts = true;
+                        } else {
+                            $can_add_incharges = $can_add_contacts = false;
+                        }
+
+                        if ($can_add_incharges) {
+                            echo Widget::factory('multi_user_selector',
+                                [
+                                    'name'=>'incharges',
+                                    'autocomplete'=>URI::url('autocomplete/user'),
+                                    'value'=> $form['incharges'],
+                                    'extra'=> 'token_verify'
+                                ]);
+                        }else{
+                            $val = json_encode([$me->id => $me->name]);
+                            echo $me->name;
+                            echo '<input type="hidden" name="incharges" value=\''.$val.'\' />';
+                        }
+                        ?>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label left nowrap top">
+                        <?= array_key_exists('contacts', $requires) ? '<span class="required">*</span>' : ''; ?>
+                        <?php echo I18N::T('equipments', '联系人')?>
+                        <?php echo "<br>". V('form_filter',['error'=>$form->errors['contacts'][0]])?>
+                        </td>
+                </tr>
+                <tr>
+                    <td class="middle" colspan="2">
+
+                        <?php
+                        /* BUG #942::添加仪器时如没有输入除联系人以外的必填项，则点击添加后联系人一项上输入的内容被清空
+                           原因：user_selector中的user属性需要一个对象，而返回来的只是该对象的id。*/
+                        ?>
+                        <?php
+                        if ($can_add_contacts) {
+                            echo Widget::factory('multi_user_selector',
+                                [
+                                    'name'=>'contacts',
+                                    'autocomplete'=>URI::url('autocomplete/user'),
+                                    'value'=> $form['contacts'],
+                                    'extra'=> 'token_verify'
+                                ]);
+                        }else{
+                            echo $me->name;
+                            echo '<input type="hidden" name="contacts" value=\''.$val.'\' />';
+                        }
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label left nowrap middle"><?php echo I18N::T('equipments', '联系电话')?></td>
+                    <td class="label left nowrap middle">
+                        <?php echo I18N::T('equipments', '联系邮箱')?>
+                        <?php echo '<br>'.V('form_filter',['error'=>$form->errors['email'][0]])?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="top"><input placeholder="请输入联系电话" name="phone" class="text" value="<?php echo H($form['phone']) ?>" /></td>
+                    <td class="top"><input placeholder="请输入联系邮箱" name="email" class="text" value="<?php echo H($form['email']) ?>" /></td>
+                </tr>
+                <tr>
+                    <td class="left nowrap top"><?php echo I18N::T('equipments', '仪器分类')?></td>
+                </tr>
+                <tr>
+                    <td class="top" colspan="2">
+                        <?php
+                        echo Widget::factory('equipments:tag_selector', [
+                            'autocomplete'=> URI::url('!equipments/autocomplete/tags'),
+                            'name'=>'tags',
+                            'value'=>$form['tags'],
+                        ]);
+                        ?>
+                    </td>
+                </tr>
+                <?= V('equipments:add.extra_filed' ,
+                ['form' => $form, 'equipment' => $equipment, 'no_error' => $no_error]) ?>
+                <?php if (Module::is_installed('eq_struct')) :?>
+                <tr>
+                    <td class="label left nowrap middle" style="<?= Config::get('eq_struct.require.struct') ? 'vertical-align: top;' : ''?>"><?php echo I18N::T('cers', '仪器隶属机组')?></td>
+                </tr>
+                <tr>
+                    <td class="top" colspan="2">
+                        <?php echo Widget::factory('eq_struct:struct_selector', [
+                            'name' => "Struct",
+                            'autocomplete' => URI::url('!eq_struct/autocomplete/struct'),
+                            'struct' => $no_error ? $equipment->struct : $form['Struct'],
+                            'disabled' => !$me->is_allowed_to('修改仪器入账', $equipment)
+                        ]);?>
+                    </td>
+                </tr>
+                <?php endif; ?>
+
+                <?php echo $this->other_view; ?>
+
+                <?= V('equipments:add.extra' ,
+                ['form' => $form, 'equipment' => $equipment, 'no_error' => $no_error]) ?>
+                <?php if($me->is_allowed_to('进驻仪器控', 'equipment')): ?>
+                    <tr>
+                        <td class="label left nowrap middle"><?php echo I18N::T('equipments', '进驻仪器控')?></td>
+                    </tr>
+                    <tr>
+                        <td class="label left nowrap middle">
+                            <?php echo Form::radio('yiqikong_share', 1,
+                                $no_error ? $equipment->yiqikong_share : $form['yiqikong_share'],
+                                I18N::T('equipments', '是'), ' class="middle radio"', 'class="middle rpadding_4"'); ?>
+                            <?php echo Form::radio('yiqikong_share', 0,
+                                $no_error ? $equipment->yiqikong_share : $form['yiqikong_share'],
+                                I18N::T('equipments', '否'), ' class="middle radio"', 'class="middle rpadding_4"'); ?>
+                        </td>
+                    </tr>
+                <?php endif; ?>
+                <?php if ($me->is_allowed_to('隐藏', 'equipment')): ?>
+                    <tr>
+                        <td class="label left nowrap middle"><?php echo I18N::T('equipments', '是否隐藏')?></td>
+                    </tr>
+                    <tr>
+                        <td class="label left nowrap middle">
+                            <?php echo Form::radio('hidden', 1,
+                                $no_error ? $equipment->hidden : $form['hidden'],
+                                I18N::T('equipments', '是'), ' class="middle radio"', 'class="middle rpadding_4"'); ?>
+                            <?php echo Form::radio('hidden', 0,
+                                $no_error ? $equipment->hidden : $form['hidden'],
+                                I18N::T('equipments', '否'), ' class="middle radio"', 'class="middle rpadding_4"'); ?>
+                        </td>
+                    </tr>
+
+                <?php endif; ?>
+            </tbody>
+        </table>
+            <div class="button_container">
+                <div class="float_right">
+                    <input type="button" name="cancel" id="cancel" class="font-button-default sm rmargin_2e4" value="取消">
+                    <input type="submit" name="submit" class="font-button-save sm" value="<?php echo H(I18N::T('equipments', '添加')) ?>">
+                </div>
+            </div>
+        </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</div>

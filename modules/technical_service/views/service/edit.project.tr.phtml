@@ -1,0 +1,12 @@
+<td style="width: 5rem;text-align: right;padding-right: 2rem"><?= I18N::T('technical_service', '服务仪器') ?></td>
+<td>
+    <select data-findex="<?= $flexform_index ?>" class="js-example-basic-multiple no_dropdown" name="eqs[<?= $flexform_index ?>][]"
+        multiple="multiple" style="width: 100%">
+        <?php
+            if(isset($eqs)) $eqs = json_decode($eqs,true);
+            foreach ($eqs as $i => $v) :
+                ?>
+        <option value="<?= $i ?>" selected><?= $v ?></option>
+        <?php endforeach; ?>
+    </select>
+</td>

@@ -1,0 +1,156 @@
+<?php
+$me = L('ME');
+$require = V('form_require');
+$unit = Config::get('envmon.unit');
+
+?>
+<div class="form">
+    <form method="post" q-object="add_sensor" q-event="submit" q-static="<?php echo H(['node_id' => $node_id]) ?>">
+        <?php echo V('form_error', ['form' => $form]); ?>
+        <table class="form">
+            <tr>
+                <td class="label left nowrap">
+                    <div class="title">
+                        <?php echo $require; ?>
+                        <?php echo I18N::HT('envmon', '名称'); ?>
+                        <?php echo V('form_filter', ['error' => $form->errors['name'][0]]) ?>
+
+                    </div>
+                    <input name="name" class="text margin_-1" size="40" value="<?php echo H($form['name']) ?>" />
+                </td>
+
+                <td class="label left nowrap">
+                    <div class="title">
+                        <?php echo I18N::HT('envmon', '控制地址'); ?>
+                    </div>
+                    <input name="address" class="text" size="40" value="<?php echo H($form['address']) ?>" />
+                </td>
+            </tr>
+            <tr>
+                <td class="label left nowrap" colspan=2>
+                    <div class="title">
+                        <?php echo $require; ?>
+                        <?php echo I18N::T('envmon', '单位'); ?>
+                        <?php echo V('form_filter', ['error' => $form->errors['unit'][0]]) ?>
+                    </div>
+                    <input name="unit" class="text left margin_-1" size="20" value="<?php echo H($form['unit']) ?>" />
+                    <input type="button" class="font-button-save margin_-1" id="common_unit" value="<?php echo I18N::HT('envmon', '常用'); ?>" />
+                </td>
+            </tr>
+            <tr>
+                <td class="label left nowrap" colspan=2>
+                    <div class="title">
+                        <?php echo I18N::T('envmon', '采样间隔'); ?>
+                    </div>
+                    <input name="interval_limit" class="text left number margin_-1" size="10" value="<?php echo H($form['interval_limit']) ?>">
+                    <?php echo Form::dropdown('interval_format', Date::units('shi'), $form['interval_format'] ?: 's', 'class="middle"'); ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="label left nowrap" colspan=2>
+                    <div class="title">
+                        <?php echo I18N::T('envmon', '正常范围') ?>
+                    </div>
+                    <input name="vfrom" class="text number margin_-1" size="10" value="<?php echo H($form['vfrom']) ?>">
+                    <span class="middle sensor_unit">
+                        <?php echo H($sensor->unit); ?></span>
+                    <span class="middle"> - </span>
+                    <input name="vto" class="text number margin_-1" size="10" value="<?php echo H($form['vto']) ?>">
+                    <span class="middle sensor_unit">
+                        <?php echo H($sensor->unit); ?></span>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td colspan="2">
+                    <hr />
+                </td>
+            </tr>
+
+
+            <tr>
+                <td colspan="2">
+                    <div>
+                        <?php echo Form::checkbox('data_alarm', $form['data_alarm'] == 'on' ? true : false, I18N::T('envmon', '进行数据异常报警'), 'class="middle checkbox monitor"', 'class="middle"'); ?>
+                    </div>
+                    <div class="form padding_2 alarm toggle:data_alarm show_on:on">
+                        <div class="description nowrap">
+                            <?php echo I18N::T('envmon', '以下设置为自定义设置，如果不勾选则按默认设置报警!'); ?>
+                        </div>
+                        <div class="tpadding_3 bpadding_2">
+                            <?php echo Form::checkbox('abnormal_check_status', $form['abnormal_check_status'] == 'on' ? true : false, I18N::T('envmon', '自定义数据超出正常范围报警的参数'), 'class="middle checkbox monitor toggle_status:data_alarm enable_on:on"', 'class="middle "'); ?>
+                        </div>
+                        <span>
+                            <?php echo I18N::T('envmon', '检测时段') ?>
+                            <input name="alert_time_limit" class="text min_text left number toggle_status:abnormal_check_status enable_on:on"
+                                size="5" value="<?php echo ($form['abnormal_check_status'] == 'on') ? H($form['alert_time_limit']) : Config::get('envmon.alert_time', 5); ?>">&#160;
+                            <?php echo I18N::T('envmon', '分钟') ?>&#160;&#160;
+                        </span>
+                        <span>
+                            <?php echo I18N::T('envmon', '报警间隔') ?>
+                            <input name="check_abnormal_time" class="text min_text left number toggle_status:abnormal_check_status enable_on:on"
+                                size="5" value="<?php echo ($form['abnormal_check_status'] == 'on') ? H($form['check_abnormal_time']) : Config::get('envmon.check_abnormal_time', 5); ?>">&#160;
+                            <?php echo I18N::T('envmon', '分钟') ?>&#160;&#160;
+                        </span>
+                        <span>
+                            <?php echo I18N::T('envmon', '报警次数') ?>
+                            <input name="limit_abnormal_times" class="text min_text left number toggle_status:abnormal_check_status enable_on:on"
+                                size="5" value="<?php echo ($form['abnormal_check_status'] == 'on') ? H($form['limit_abnormal_times']) : Config::get('envmon.limit_abnormal_times', 3); ?>">
+                        </span>
+
+                        <div class="tpadding_3 bpadding_2">
+                            <?php echo Form::checkbox('nodata_check_status', $form['nodata_check_status'] == 'on' ? true : false, I18N::T('envmon', '自定义无数据报警的参数'), 'class="middle checkbox monitor toggle_status:data_alarm enable_on:on"', 'class="middle "'); ?>
+                        </div>
+                        <span>
+                            <?php echo I18N::T('envmon', '检测时段') ?>
+                            <input name="nodata_alert_time" class="text min_text left number toggle_status:nodata_check_status enable_on:on"
+                                size="5" value="<?php echo ($form['nodata_check_status'] == 'on') ? H($form['nodata_alert_time']) : Config::get('envmon.nodata_alert_time', 5); ?>">&#160;
+                            <?php echo I18N::T('envmon', '分钟') ?>&#160;&#160;
+                        </span>
+                        <span>
+                            <?php echo I18N::T('envmon', '报警间隔') ?>
+                            <input name="check_nodata_time" class="text min_text left number toggle_status:nodata_check_status enable_on:on"
+                                size="5" value="<?php echo ($form['nodata_check_status'] == 'on') ? H($form['check_nodata_time']) : Config::get('envmon.check_nodata_time', 5); ?>">&#160;
+                            <?php echo I18N::T('envmon', '分钟') ?>&#160;&#160;
+                        </span>
+                        <span>
+                            <?php echo I18N::T('envmon', '报警次数') ?>
+                            <input name="limit_nodata_times" class="text min_text left number toggle_status:nodata_check_status enable_on:on"
+                                size="5" value="<?php echo ($form['nodata_check_status'] == 'on') ? H($form['limit_nodata_times']) : Config::get('envmon.limit_nodata_times', 3); ?>">
+                        </span>
+                        <div>
+                </td>
+            </tr>
+
+
+
+            <tr>
+                <td colspan="2">
+                    <hr />
+                </td>
+            </tr>
+            <tr>
+                <td class="label left nowrap">
+                    <span class="">
+                        <?php echo I18N::T('envmon', '是否进行监控') ?>
+                    </span>
+                    <span class="float_right">
+                        <?php echo Form::radio('status', Env_Sensor_Model::IN_SERVICE, $form['status'], I18N::T('envmon', '是'), ' class="middle radio"', 'class="middle "'); ?>
+                        <span class="rmargin_60"></span>
+
+                        <?php echo Form::radio('status', Env_Sensor_Model::OUT_OF_SERVICE, $form['status'], I18N::T('envmon', '否'), ' class="middle radio"', 'class="middle "'); ?>
+                    </span>
+                </td>
+            </tr>
+        </table>
+        <?php echo JS::load('envmon:unit', ['url' => URI::url('!envmon/index')]); ?>
+        <div class="button_container">
+            <div class="float_right">
+                <input name="cancel" id="cancel" type='reset' class="font-button-default sm rmargin_2e4" value="<?php echo I18N::HT('envmon', '取消'); ?>" />
+                <input name="submit" type='submit' class="font-button-save sm" value="<?php echo I18N::HT('envmon', '保存'); ?>" />
+            </div>
+        </div>
+    </form>
+</div>
+</script>

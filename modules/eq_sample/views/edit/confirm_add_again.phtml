@@ -1,0 +1,38 @@
+<?php
+    $q_object = L('ME')->is_allowed_to('添加送样记录', $sample->equipment) ? 'add_sample_record_again' : 'add_again';
+?>
+<div class="form padding_2">
+	<table class="form" style="width: 100%">
+		<tr>
+			<td>
+                <div class="nowrap padding_2">
+                <?php echo I18N::T('eq_sample','成功添加送样申请! 您要以此为模板继续添加吗?')?>
+                </div>
+			</td>
+		</tr>
+        <tr>
+            <td>
+                <div class="float_right">
+                <a class="font-button-default rmargin_2e4 close_dialog"><?php echo I18N::T('eq_sample','关闭')?></a>
+                <a class="font-button-save"
+                    q-event="click"
+                    q-object="<?php echo H($q_object) ?>"
+                    q-static="id=<?php echo $sample->id?>"
+                    q-src="<?php echo H(URI::url('!eq_sample/index')) ?>"><?php echo I18N::T('eq_sample', '继续')?></a>
+                </div>
+            </td>
+        </tr>
+	</table>
+</div>
+<script>
+    jQuery(function($){
+        $('a.close_dialog').click(function(){
+            $('.dialog_close').click();
+        });
+
+        //dialog关闭后需刷新页面
+        $(Dialog).one('before_close',function(){
+            location.reload()
+        });
+    })
+</script>

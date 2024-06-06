@@ -1,0 +1,21 @@
+<?php echo CSS::load_async('people:switchrole');?>
+<div class="Switchrole_item" >
+    <?php
+    if (Switchrole::user_select_role() === $role):?>
+    <img class="Switchrole_image" src="!people/icons/roles/role<?=$role_img_list ?>.png"/>
+        <div class="Switchrole_current">
+            <div class="Switchrole_current_font">当前</div>
+        </div>
+    <?php else:?>
+    <img id="select_role[<?=H($role)?>]" class="Switchrole_image" src="!people/icons/roles/role_n<?=$role_img_list ?>.png"/>
+        <script>
+            document.getElementById("select_role[<?=H($role)?>]").addEventListener('click', function(){
+                RoleClick("<?=H($role)?>")
+            })
+        </script>
+    <?php endif;?>
+    <div class="Switchrole_font">
+        <?=H($role)?>
+    </div>
+    <input style="display: none" value="<?=H($role)?>"></input>
+</div>

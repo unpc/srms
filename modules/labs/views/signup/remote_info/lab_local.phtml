@@ -1,0 +1,20 @@
+<?php 
+$form_config = Config::get('form.user_signup');
+    $requires = (array)$form_config['requires'];
+
+    $_require = function($key) use ($requires) {
+        echo $requires[$key] ? V('form_require') : '';
+    }
+?>
+<tr class="lab">
+    <td class="right nowrap top"><div style="padding-top:4px"><?php  $_require('lab_id'); ?><?php echo I18N::T('labs', '实验室')?></div></td>
+    <td class="sinup_table_interval"></td>
+    <td>
+        <div>
+        <?php echo Widget::factory('labs:lab_selector', [
+                                'name' => 'lab_id',
+                                'selected_lab' => $lab_local->id,
+                                ]); ?>
+        </div>
+    </td>
+</tr>

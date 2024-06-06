@@ -1,0 +1,154 @@
+<div class="hr_1">&#160;</div>
+<div class="form padding_1">
+<table class="form">
+	<tbody>
+	<tr>
+		<td class="top icon">
+			<a href="<?php echo $staff->user->url('photo', NULL, NULL, 'edit'); ?>"><img src="<?php echo H($staff->user->icon_url('64')) ?>" /></a>
+		</td>
+		<td class="top">
+			<form method="post" autocomplete="off" action="<?php echo H(URI::url() ) ?>">
+<?php  
+$form_no_error = ($form->no_error!==FALSE); 
+echo V('form_error', ['form'=>$form]);
+$require = (string) V('form_require');
+?>
+			<table class="form">
+				<tbody>
+					<tr>
+						<td class="label right nowrap"><?php echo I18N::T('staff', '职位');?></td>
+						<td class="top"><?php echo Form::dropdown('position', Staff::get_positions(), $form_no_error?$staff->position->id:$form['position'], 'class="dropdown"'); ?></td>
+					</tr>					
+					<tr>
+						<td class="label right nowrap"><?php echo I18N::T('staff', '角色');?></td>
+						<td class="top"><?php echo Form::dropdown('role', Staff_Model::$roles, $form_no_error?$staff->role:$form['role'], 'class="dropdown"'); ?></td>
+					</tr>					
+					<tr>
+						<td class="label right nowrap"><?php echo I18N::T('staff', '身份证号')?></td>
+						<td class="top"><input name="IDnumber" class="text" size="20" value="<?php echo H($form_no_error?$staff->IDnumber:$form['IDnumber'])?>" /></td>
+					</tr>
+					<tr>
+						<td class="label right nowrap"><?php echo I18N::T('staff', '籍贯')?></td>
+						<td class="top"><input name="birthplace" class="text" size="15" value="<?php echo H($form_no_error?$staff->birthplace:$form['birthplace'])?>" /></td>
+					</tr>
+					<tr>
+						<td class="label right nowrap"><?php echo I18N::T('staff', '出生日期')?></td>
+						<td class="top"><input name="birthday" class="text date" size="15" value="<?php echo H($form_no_error?$staff->birthday:$form['birthday'])?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/></td>
+					</tr>
+					<tr>
+						<td class="label right nowrap"><?php echo I18N::T('staff', '学校')?></td>
+						<td class="top"><input name="school" class="text" size="30" value="<?php echo H($form_no_error?$staff->school:$form['school'])?>" /></td>
+					</tr>
+					<tr>
+						<td class="label right nowrap"><?php echo I18N::T('staff', '专业')?></td>
+						<td class="top"><input name="professional" class="text" size="30" value="<?php echo H($form_no_error?$staff->professional:$form['professional'])?>" /></td>
+					</tr>
+					<tr>
+						<td class="label right nowrap">
+							<span class="middle"><?php echo I18N::T('staff', '实习开始时间'); ?></span>
+						</td>
+						<td class="top">
+							<input name="practice_time" type="text" class="text date toggle_status:has_practice enable_on:on middle" value="<?php echo $staff->practice_time; ?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/>
+							<span class="middle" style="padding-left:10px;"><?php echo Form::checkbox('has_practice', $staff->practice_time?TRUE:FALSE, '', 'class="monitor"'); ?></span>
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap">
+							<span class="middle"><?php echo I18N::T('staff', '试用开始时间'); ?></span>
+						</td>
+						<td class="top">
+							<input name="trial_time" type="text" class="text date toggle_status:has_trial enable_on:on middle" value="<?php echo $staff->trial_time; ?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/>
+							<span class="middle" style="padding-left:10px;"><?php echo Form::checkbox('has_trial', $staff->trial_time?TRUE:FALSE, '', 'class="monitor"'); ?></span>
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap">
+							<span class="middle"><?php echo I18N::T('staff', '正式录用时间'); ?></span>
+						</td>
+						<td class="top">
+							<input name="normal_time" type="text" class="text date toggle_status:has_normal enable_on:on middle" value="<?php echo $staff->normal_time; ?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/>
+							<span class="middle" style="padding-left:10px;"><?php echo Form::checkbox('has_normal', $staff->normal_time?TRUE:FALSE, '', 'class="monitor"'); ?></span>
+						</td>
+					</tr>
+					<?php if( L('ME')->is_allowed_to('管理', $staff)) { ?>
+					<tr>
+						<td class="label right nowrap">
+							<span class="middle"><?php echo I18N::T('staff', '合同开始时间'); ?></span>
+						</td>
+						<td class="top">
+							<input name="start_time" type="text" class="text date toggle_status:has_start enable_on:on middle" value="<?php echo $staff->start_time; ?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/>
+							<span class="middle" style="padding-left:10px;"><?php echo Form::checkbox('has_start', $staff->start_time?TRUE:FALSE, '', 'class="monitor"'); ?></span>
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap">
+							<span class="middle"><?php echo I18N::T('staff', '合同到期时间'); ?></span>
+						</td>
+						<td class="top">
+							<input name="contract_time" type="text" class="text date toggle_status:has_contract enable_on:on middle" value="<?php echo $staff->contract_time; ?>" q-date_format="<?php echo HT('$year/$month/$day')?>"/>
+							<span class="middle" style="padding-left:10px;"><?php echo Form::checkbox('has_contract', $staff->contract_time?TRUE:FALSE, '', 'class="monitor"'); ?></span>
+						</td>
+					</tr>
+					<tr>
+						<td class="top label right nowrap">
+							<span class="middle"><?php echo I18N::T('staff', '薪金信息'); ?></span>
+						</td>
+						<td class="top">
+							<textarea class="text autogrow autoselect" rows="3" cols="60" name="salary"><?php 
+								echo H($staff->salary);
+							?></textarea>
+						</td>
+					</tr>
+					<tr>
+						<td class="top label right nowrap">
+							<span class="middle"><?php echo I18N::T('staff', '合同信息'); ?></span>
+						</td>
+						<td class="top">
+							<textarea class="text autogrow autoselect" rows="3" cols="60" name="positions"><?php 
+								echo H($staff->positions);
+							?></textarea>
+						</td>
+					</tr>
+					<?php } ?>
+					<tr>
+						<td class="top label right nowrap">
+							<span class="middle"><?php echo I18N::T('staff', '保险信息'); ?></span>
+						</td>
+						<td class="top">
+							<textarea class="text autogrow autoselect" rows="3" cols="60" name="insurance"><?php 
+								echo H($staff->insurance);
+							?></textarea>
+						</td>
+					</tr>
+					<tr>
+						<td class="top label right nowrap">
+							<span class="middle"><?php echo I18N::T('staff', '备注'); ?></span>
+						</td>
+						<td class="top">
+							<textarea class="text autogrow autoselect" rows="3" cols="60" name="remarks"><?php 
+								echo H($staff->remarks);
+							?></textarea>
+						</td>
+					</tr>
+					<tr>
+						<td class="top label right nowrap">
+							<span class="middle"><?php echo I18N::T('staff', '附件'); ?></span>
+						</td>
+						<td class="top">
+							<?php echo V('nfs:nfs_lite/view', ['object'=>$staff->user, 'path_type'=>'attachments'] );?>
+						</td>
+					</tr>
+					<tr><td colspan="2" class="hr_1">&#160;</td></tr>
+					<tr>
+						<td></td>
+						<td>
+							<input type="submit" name="submit" class="button button_save" value="<?php echo H(I18N::T('equipments', '更新')) ?>" />
+							<input type="reset" class="button button_cancel" value="<?php echo H(I18N::T('equipments', '取消')) ?>" />
+						</td>
+					</tr>
+			</tbody>
+			</table>
+		</td>
+	</tr>
+</table>
+

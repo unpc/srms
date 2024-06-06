@@ -1,0 +1,19 @@
+<div class="prevent_default" width="100%" id="<?php echo H($files_form) ?>">
+    <table id="nfs_sticky" width="100%">
+        <thead>
+        <tr>
+            <th class="left nowrap"><span class="header"><?php echo I18N::T('nfs', '文件名称'); ?></span></th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php
+        foreach ($attachments as $attachment):?>
+            <tr>
+                <td style="text-align: center"><a
+                            href="<?= URI::url('!equipments/teach_download/download', ['id' => $object->id, 'path' => $attachment]) ?>"><?= $attachment ?></a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>

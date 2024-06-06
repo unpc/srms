@@ -1,0 +1,295 @@
+<style>
+    input.text {
+        width: 378px;
+    }
+
+    .tag_selector {
+        min-width: 400px;
+    }
+</style>
+<?php $form_id = 'labs_lab_edit_info_' . uniqid(); ?>
+<div class="form">
+    <table class="form" width="100%">
+        <tbody>
+        <tr>
+            <td class="icon top" width="130">
+                <div class="short_container">
+                    <div class="img_icon" style="position: relative;">
+                        <img class="icon" src="<?php echo H($lab->icon_url('100')) ?>" width="104"/>
+                        <div class="icon_cover" style="display: none;">
+                            <div class="modify_icon">+</div>
+                            <div class="interval_12"></div>
+                            <div class="modify_font">修改图标</div>
+                        </div>
+                    </div>
+                    <div class="interval_24"></div>
+                    <a class="font-button-delete lmargin_10"
+                       href="<?php echo H(URI::url('!labs/lab/delete_photo.' . $lab->id)) ?>"
+                       confirm="<?php echo H(I18N::T('labs', '确定要删除图标吗?')) ?>"><?php echo H(I18N::T('labs', '删除图标')) ?></a>
+                    <input class="upload_icon" name="file" type="file" class="file" style="display: none;"/>
+                </div>
+                <script type="text/javascript">
+                    $.upload_icon(<?php echo '"' . URI::url() . '"'; ?>);
+                </script>
+            </td>
+
+            <td class="top">
+                <form class="edit" autocomplete="off" method="post" action="<?php echo H(URI::url()) ?>"
+                      id="<?php echo H($form_id) ?>">
+                    <?php
+                    echo V('form_error', ['form' => $form]);
+                    $no_error = ($form->no_error !== FALSE);
+                    ?>
+                    <?php $require = (string)V('form_require'); ?>
+                    <table class="form">
+                        <tbody>
+                        <tr>
+                            <td colspan="4">
+                                <h2 class="section_title">
+                                    <span class="border"></span>
+                                    <span class="black_title"><?php echo I18N::T('people', '基本信息') ?></span>
+                                    <span class="float_right" style="font-size: 14px;font-weight: normal;color: #F5222D;"><span class="required">*</span>必填</span>
+                                </h2>
+                            </td>
+                        </tr>
+                        <tr><td colspan="4"><div class="interval_16"></div> </td></tr>
+                        <?php
+                        /*
+                        NO.TASK#274(guoping.zhang@2010.11.26)
+                        应用权限判断新规则
+                        */
+                        $me = L('ME');
+                        if ($me->is_allowed_to('修改', $lab)):
+                            if ($me->is_allowed_to('修改组织机构', $lab)):
+                                ?>
+                                <tr>
+                                    <td class="padding_2" colspan="2">
+                                        <div class="bpadding_2">
+                                            <span class="rpadding_1"><?php echo I18N::T('labs', '组织机构') ?></span><?php echo $require; ?>
+                                        </div>
+                                        <div>
+                                            <?php
+                                            if (!$me->is_allowed_to('修改组织机构', $lab, ['@ignore' => '修改下属机构实验室'])) {
+                                                $group_root = $me->group;
+                                            }
+                                            echo Widget::factory('application:tag_selector', [
+                                                'tag' => $form['group_id'] ? O('tag_group', $form['group_id']) : $lab->group,
+                                                'root' => $group_root,
+                                                'name' => 'group_id',
+                                                'ajax' => true
+                                            ]);
+                                            ?>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+
+                            <tr>
+                                <td class="padding_2 rpadding_4" colspan="2">
+                                    <div class="bpadding_1">
+                                        <span class="rpadding_1"><?php echo I18N::T('labs', '实验室名称') ?></span><?php echo $require; ?>
+                                        <br>
+                                        <?php echo V('form_filter', ['error' => $form->errors['name'][0]]); ?>
+                                    </div>
+                                    <div>
+                                        <input name="name" class="text" size="54"
+                                               value="<?php echo H($no_error ? $lab->name : $form['name']) ?>"/>
+                                    </div>
+                                </td>
+                                <td class="padding_2 lpadding_4" colspan="2">
+                                    <div class="bpadding_1">
+                                        <span class="rpadding_1"><?php echo I18N::T('labs', '实验室联系方式') ?></span><?php echo $require; ?>
+                                        <br>
+                                        <?php echo V('form_filter', ['error' => $form->errors['lab_contact'][0]]); ?>
+                                    </div>
+                                    <div>
+                                        <input name="lab_contact" class="text" size="54"
+                                               value="<?php echo H($no_error ? $lab->contact : $form['lab_contact']) ?>"/>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="padding_2 rpadding_4" colspan="2">
+                                    <div class="bpadding_1">
+                                        <span class="rpadding_1"><?php echo I18N::T('labs', '实验室编号') ?></span>
+                                    </div>
+                                    <div>
+                                        <input
+                                                name="ref_no"
+                                                class="text"
+                                                size="54"
+                                                value="<?php echo H($no_error ? $lab->ref_no : $form['ref_no']) ?>"/>
+                                    </div>
+                                </td>
+                                <td class="padding_2 lpadding_4" colspan="2">
+                                    <div class="bpadding_1">
+                                        <span class="rpadding_1"><?php echo I18N::T('labs', '实验室类型') ?></span>
+                                    </div>
+                                    <div>
+                                        <input name="type" class="text" size="54"
+                                               value="<?php echo H($no_error ? $lab->type : $form['type']) ?>"/>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="padding_2 rpadding_4" colspan="2">
+                                    <div class="bpadding_1">
+                                        <span class="rpadding_1"><?php echo I18N::T('labs', '所属学科') ?></span>
+                                    </div>
+                                    <div>
+                                        <input name="subject" class="text" size="54"
+                                               value="<?php echo H($no_error ? $lab->subject : $form['subject']) ?>"/>
+                                    </div>
+                                </td>
+                                <td class="padding_2 lpadding_4" colspan="2">
+                                    <div class="bpadding_1">
+                                        <span class="rpadding_1"><?php echo I18N::T('labs', '实验室使用面积') ?></span>
+                                    </div>
+                                    <div>
+                                        <input name="util_area" class="text" size="54"
+                                               value="<?php echo H($no_error ? $lab->util_area : $form['util_area']) ?>"/>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <?php
+                            /*
+                              * BUG #1072::实验室没有“楼”，但有“房间号”
+                             * 解决：删除原来的room属性，新增location和location2分别存储“楼层”和“房间号“ (kai.wu@2011.08.31)
+                             */
+                            ?>
+                            <tr>
+                                <td class="padding_2 rpadding_4" colspan="2">
+                                    <div class="bpadding_1">
+                                        <span class="rpadding_1"><?php echo I18N::T('labs', '实验室所在地') ?></span>
+                                    </div>
+                                    <div>
+                                        <input name="location" class="text tooltip_position:left" size="54"
+                                               q-tooltip="<?php echo I18N::T('labs', '楼宇'); ?>"
+                                               value="<?php echo H($no_error ? $lab->location : $form['location']) ?>"/>
+                                    </div>
+                                </td>
+                                <td class="padding_2 lpadding_4" colspan="2">
+                                    <div class="bpadding_1">
+                                        <span class="rpadding_1"><?php echo I18N::T('labs', '房间号') ?></span>
+                                    </div>
+                                    <div>
+                                        <input name="location2" class="text tooltip_position:left" size="54"
+                                               q-tooltip="<?php echo I18N::T('labs', '房间号'); ?>"
+                                               value="<?php echo H($no_error ? $lab->location2 : $form['location2']) ?>"/>
+                                    </div>
+                                </td>
+                            </tr>
+
+
+                            <?php $lab_users = Q("user[lab={$lab}]"); ?>
+                            <tr>
+                                <td class="padding_2" colspan="4">
+                                    <div class="bpadding_1">
+                                        <span class="rpadding_1"><?php echo I18N::T('labs', '负责人') ?></span><?php echo $require; ?>
+                                        <br>
+                                        <?php echo V('form_filter', ['error' => $form->errors['owner_id'][0]]); ?>
+                                    </div>
+                                    <div style="width: 100%" class="top nowrap">
+                                        <?php
+                                        $multi_lab = $GLOBALS['preload']['people.multi_lab'];
+                                        $disabled = ($multi_lab && $me->id == $lab->owner->id && !$me->access('管理所有内容'));
+                                        echo Widget::factory('user_selector', [
+                                            'autocomplete' => $lab->url(NULL, NULL, NULL, 'autocomplete_owner'),
+                                            'name' => 'owner_id',
+                                            'user' => $no_error ? $lab->owner : (O('user', $form['owner_id'])),
+                                            'disabled' => $disabled
+                                        ]);
+                                        ?>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        <?php endif; ?>
+                        <tr>
+                            <td class="padding_2" colspan="4">
+                                <div class="bpadding_1">
+                                    <span class="rpadding_1"><?php echo I18N::T('labs', '实验室说明') ?></span>
+                                </div>
+                                <textarea name="description"
+                                          class="text autogrow"><?php echo H($no_error ? $lab->description : $form['description']) ?></textarea>
+                            </td>
+                        </tr>
+                        <?php if ($me->is_allowed_to('激活', $lab)): ?>
+                            <tr><td colspan="4"><div class="interval_16"></div> </td></tr>
+                            <tr>
+                                <td colspan="4">
+                                    <h2 class="section_title">
+                                        <span class="border"></span>
+                                        <span class="black_title"><?php echo I18N::T('people', '状态信息') ?></span>
+                                    </h2>
+                                </td>
+                            </tr>
+                            <tr><td colspan="4"><div class="interval_16"></div> </td></tr>
+                            <tr>
+                                <td class="padding_2" colspan="4">
+                                    <div class="bpadding_1">
+                                        <span class="rpadding_1"><?php echo I18N::T('labs', '是否激活') ?></span>
+                                    </div>
+                                    <?php echo Form::radio('activate', '1', $no_error ? ($lab->atime > 0) : ($form['activate'] > 0), I18N::T('labs', '是'), 'class="middle checkbox"', 'class="middle rmargin_252"'); ?>
+                                    &nbsp;&nbsp;<?php echo Form::radio('activate', '0', $no_error ? ($lab->atime > 0) : ($form['activate'] > 0), I18N::T('labs', '否'), 'class="middle checkbox"', 'class="middle"'); ?>
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                        <tr>
+                            <td colspan="5">
+                                <div class="interval_60"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td  colspan="5">
+                                <div class="">
+                                    <input type="submit" name="submit" class="font-button-save float_right"
+                                           value="<?php echo H(I18N::T('labs', '保存修改')) ?>"/>
+                                    <input type="reset" class="font-button-default float_right rmargin_16"
+                                           value="<?php echo H(I18N::T('labs', '取消')) ?>"/>
+                                    <?php
+                                    /*
+                                    NO.TASK#274(guoping.zhang@2010.11.26)
+                                    应用权限判断新规则
+                                    */
+                                    if (L('ME')->is_allowed_to('删除', $lab)): ?>
+
+                                        <?php /* BUG #932::http://cheng.liu.nankai.gin.genee.cc/!labs/lab/edit.82 在chrome浏览器中删除按钮错位(kai.wu@2011.8.1) */ ?>
+                                        <?php /* BUG #1030::实验室修改页面，更新 取消和删除三个按钮的对齐方式异常：删除没有与其他两个按钮对齐(kai.wu@2011.08.22) */ ?>
+                                        <input type="button" class="font-button-delete float_right rmargin_16" onclick="
+                                                javascript:if (confirm('<?php echo I18N::T('labs', '你确定要删除吗? 删除后不可恢复!'); ?>'))
+                                                window.location.href='<?php echo $lab->url(NULL, NULL, NULL, 'delete') ?>'"
+                                               value="<?php echo H(I18N::T('labs', '删除课题组')) ?>"/>
+                                    <?php endif; ?>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript">
+    (function ($) {
+        var $form = $('#<?php echo $form_id;?>');
+
+        var ori_status = $form.find('input[name=activate]:checked').val();
+
+        $('#<?php echo $form_id?>').find(':submit').bind('click', function () {
+            var c_status = $form.find('input[name=activate]:checked').val();
+
+            if (ori_status != c_status && c_status == 0) {
+                c = '<?php echo JS::escape(I18N::T('labs', '实验室变为未激活, 会将该实验室内所有成员更改为未激活! \n您确定要继续操作吗?'))?>';
+
+                if (!confirm(c)) {
+                    return false;
+                }
+            }
+        });
+    })(jQuery);
+</script>

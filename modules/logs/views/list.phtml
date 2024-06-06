@@ -1,0 +1,53 @@
+<?php
+	echo CSS::load_async('logs:log');
+	$uniqid = uniqid();
+	//选取所有复选框的id
+	$select_all_id = 'su_select_all_'.$uniqid;
+
+	$logs_form_id = 'su_logs_form_'.$uniqid;
+	$download_id = 'su_download_'.$uniqid;
+	$tbody_log_list_id = 'tbody_log_list_'.$uniqid;
+
+?>
+<div class="panel clearfix log_bar">
+	<span class="float_right">
+		<a href="<?= H(URI::url('admin/logs'))?>"  class="button icon-refresh" title="<?php echo I18N::T('logs', '刷新');?>">&nbsp;<?php echo I18N::T('logs', '刷新');?></a>
+	    <a id="<?php echo $download_id; ?>" title="<?php echo I18N::T('logs', '批量下载'); ?>"  href="#" class="button icon-bottom">&nbsp;<?php echo I18N::T('logs', '下载'); ?></a>
+	    <div class="log_dropdown hidden" style="width: 7rem;">
+               <a href="#" name="win"><?php echo I18N::T('logs', 'ZIP (Windows)'); ?></a>
+               <a href="#" name="mac"><?php echo I18N::T('logs', 'ZIP (Mac/Linux)');?></a>
+        </div>
+	</span>
+	<span class="button middle" style="line-height:24px" ><?php echo $path; ?></span>
+</div>
+<div class="interval_6"></div>
+<div>
+ <form method="post" action="<?php echo H(URI::url('!logs/log')) ?>" class="prevent_default" id="<?php echo H($logs_form_id ) ?>">
+	<table class="sticky flexible">
+		<thead>
+			<tr>
+				<th class="left nowrap">
+					<span class="header" style="padding-top: 4px;"><?php echo Form::checkbox('', FALSE, NULL, 'id="'.$select_all_id.'" class="checkbox"'); ?></span>
+				</th>
+				<th class="left nowrap"><span class="header strong"><?php echo I18N::T('logs', '文件名称'); ?></span></th>
+				<th class="left nowrap"><span class="header strong"><?php echo I18N::T('logs', '更新时间'); ?></span></th>
+				<th class="left nowrap"><span class="header strong"><?php echo I18N::T('logs', '占用空间'); ?></span></th>
+				<th class="last right strong">操作</th>
+			</tr>
+		</thead>
+
+			<?php
+				echo V('logs:log/log', [
+							'logs' => $logs,
+							'logs_form_id' => $logs_form_id,
+							'select_all_id' => $select_all_id,
+							'download_id' => $download_id,
+							'tbody_log_list_id' => $tbody_log_list_id ,
+							'submit_url' => URI::url('!logs/log'),
+						]);
+			?>
+
+
+	</table>
+ </form>
+</div>

@@ -1,0 +1,33 @@
+<?php $panel_buttons =  $message->links(); ?>
+<?php echo V('application:panel_buttons', ['panel_buttons' => $panel_buttons]); ?>
+
+<div class="interval_24"></div>
+<div class="message_content lpadding_30">
+	<table class="form">
+	<tr>
+		<td class="middle interval_22" colspan="2"><?php echo V('messages:messages_table/data/sender_new', ['message'=>$message]); ?></td>
+	</tr>
+    <tr class="interval_8"></tr>
+	<tr>
+		<td class="right left interval_22"><strong class="description"><?php echo I18N::HT('messages', '发件时间:')?></td>
+		<td class="middle lpadding_8"><?php echo Date::format($message->ctime, 'Y/m/d H:i'); ?></td>
+	</tr>
+	<tr>
+		<td class="right left interval_22"><strong class="description"><?php echo I18N::HT('messages', '收件人:')?></td>
+		<td class="middle lpadding_8"><?php $message->receiver->render(); ?></td>
+	</tr>
+    <tr class="interval_16"></tr>
+    <tr>
+        <td class="middle interval_22" colspan="2"
+            style="color: #333333;font-size: 14px;font-weight:600;line-height:22px;"><?php echo H(new Markup(stripslashes($message->title), TRUE)); ?></td>
+    </tr>
+	</table>
+
+	<div><hr style="border-color:#e5e5e5" /></div>
+	<div class="message_body">
+		<?php echo new Markup(strip_tags(stripslashes($message->body), '<br><a>'), TRUE); ?>
+
+	</div>
+
+    <?php echo Event::trigger('notification_read_setting.user.setting', $message) ?>
+</div>

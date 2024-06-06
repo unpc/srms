@@ -1,0 +1,33 @@
+
+.ep_triple {
+    overflow: hidden;
+    padding-left:8px;
+    padding-right:8px;
+    /*width: 424px;*/
+    width: 424px;
+    /*width: 100%;*/
+    width: 460px;
+    li {
+        float: left;
+        display: inline;
+        width: 33.33333333%;
+        height: 24px;
+        margin-bottom:16px;
+    }
+    h4{
+        margin-bottom: 16px;
+        margin-top:15px;
+    }
+    input.monitor{
+        vertical-align: middle;
+        width: 16px;
+        height: 16px;
+        border: 1px solid #E5E5E5;
+        margin-top: -1px;
+        margin-right: 8px;
+    }
+}
+.ep_title{
+    margin-bottom: 10px;
+    margin-top:15px;
+}
