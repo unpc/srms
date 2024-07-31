@@ -112,7 +112,7 @@ table.sticky_header,
     thead th {
         height: 44px;
         cursor: default;
-        background-color: #FAFAFA;
+        background-color: var(--basiccolor);
         font-size: 14px;
         border-bottom: 1px solid #f4f5f6;
         border-top: 1px solid #f0f0f0;
@@ -124,7 +124,7 @@ table.sticky_header,
             clear: right;
             height: 18px;
             line-height: 18px;
-            color: #333333;
+            color: #FFF;
             _height: 18px;
             overflow: hidden;
         }

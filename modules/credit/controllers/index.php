@@ -660,7 +660,7 @@ class Index_Controller extends Base_Controller
         ]);
     }
 
-    public static function _index_ban($e, $tabs)
+    public function _index_ban($e, $tabs)
     {
         $me            = L('ME');
         $tabs->content = V('credit:ban');

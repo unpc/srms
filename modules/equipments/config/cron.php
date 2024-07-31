@@ -48,3 +48,9 @@ $config['eq_record_segment'] = [
     'cron' => '0 3 * * *',
     'job'=> ROOT_PATH. 'cli/cli.php segment_eq_record segment',
 ];
+
+$config['auto_close_records'] = [
+	'title' => '每分钟检测自动关机信息状态更新仪器状态',
+	'cron' => '* * * * *',
+	'job' => ROOT_PATH . 'cli/cli.php eq_record auto_close_records'
+];

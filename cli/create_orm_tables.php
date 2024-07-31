@@ -104,6 +104,7 @@ $_CreateLabActions = function($action) {
                     $lab->save();
                     $db->query('REPLACE INTO `_config` (`key`, `val`) VALUES ("default_lab_id", "%s")', @serialize($lab->id));
                 }
+                var_dump(3);
                 return $lab;
             };
             break;
@@ -309,4 +310,4 @@ if (Module::is_installed('roles')) {
 }
 
 // 各模块自己完成初始化，注意不要重复初始化
-Event::trigger('create_orm_tables');
+//Event::trigger('create_orm_tables');

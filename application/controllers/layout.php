@@ -16,6 +16,7 @@ abstract class Layout_Controller extends _Layout_Controller {
 		$this->add_css('laydate'); // 日期控件
 		$this->add_css('selectpicker'); // 多项选择控件
 		$this->add_css('ep_dialog');
+		$this->add_css('sbmenu_admin');
 	
 		$this->add_js('jquery.ui jquery.resize jquery.mousewheel');
 		$this->add_js('caret hint autogrow autocomplete tab_ok toggle confirm');

@@ -7,18 +7,19 @@
 
 jQuery(function($){
 
-	$('div > .category').livequery('click',
-		function () {
-			var $this = $(this);
-			if ($this.next().is(':hidden')) {
-				$this.next().slideDown(300);
-				$this.find('.category_image').removeClass('icon-up').addClass('icon-down');
-			} else {
-				$this.next().slideUp(300);
-				$this.find('.category_image').removeClass('icon-down').addClass('icon-up');
-			}
+	$('.top_sidebar_menu .category_container')
+	.on('mouseover', function () {
+		var $items = $(this).find('.items');
+		if ($items.is(':hidden')) {
+			$items.addClass('animal_sidebar_items');
+			$items.show();
+		} 
+	})
+	.on('mouseleave', function () {
+		var $items = $(this).find('.items');
+		if (!$items.is(':hidden')) {
+			$items.hide();
+			$items.removeClass('animal_sidebar_items');
 		}
-    );
-
-	$('.items_color_select').prev().children('.category_image').removeClass('icon-up').addClass('icon-down');
+	})
 });

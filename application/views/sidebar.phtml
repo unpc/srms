@@ -23,7 +23,7 @@ uasort($items, function($a, $b) {
 $items = array_reverse($items);
 
 foreach ($items as $id => $item) {
-	$view = (string) V(is_array($item) ? $item['view']:$item);
+	$view = (string) V(is_array($item) ? $item['view'] : $item);
 	if ($view) {
 		$output .= '<div class="sidebar_item sidebar_'.$id.'">'.$view.'</div>';
 	}

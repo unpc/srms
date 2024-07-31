@@ -11,11 +11,11 @@ if(Lab::$messages):
 
 foreach ((array) Lab::$messages as $type => $messages):
 ?>
-<div role="alert" class="message message_<?=$type?>" style="z-index: 2000;display:none">
+<div role="alert" class="message message_<?=$type?>" style="z-index: 2000;display:none;float: right;padding: 6px 32px 6px 16px;min-height: 32px;position: relative;border-radius: 6px;max-width: 80%;">
     <i class="message_icon icon_<?=$type?>"></i>
     <p class="message_content"><?php echo implode('</p><p>', $messages); ?></p>
     <?php if(in_array($type, [Lab::MESSAGE_ERROR, Lab::MESSAGE_WARNING])): ?>
-    <botton class="message_<?=$type?>_cancel icon-cancel1" style="color: #999999;position: absolute;right: 20px;">&nbsp;
+    <botton class="message_<?=$type?>_cancel icon-cancel1" style="color: #999999;position: absolute;right: 6px;">&nbsp;
     </botton>
     <?php endif; ?>
 </div>

@@ -7,7 +7,7 @@ $config['syslog'] = TRUE; // 同时使用 syslog 记录日志 (xiaopei.li@2012-1
 $config['locale'] = 'zh_CN';
 $config['locales'] = [ 'zh_CN'=>'中文','en_US'=>'English'];
 
-$config['version'] = 'release-3.31.0-dev';
+$config['version'] = 'Release/1.0';
 
 $config['login_page'] = 'login';
 
@@ -15,7 +15,7 @@ $config['allow_register'] = TRUE;
 
 $config['tmp_dir'] = '/tmp/lims/';
 
-$config['email_address'] = 'support@geneegroup.com';
+$config['email_address'] = 'support@booguo.com';
 $config['email_name'] = 'LabScout LIMS';
 
 $config['supported_browsers'] = [

@@ -51,7 +51,7 @@ class API_EQ_GMeter {
         $this->_ready();
         $this->_log('epc-device connect, uuid: ' . $uuid);
 
-        $control_address = 'gmeter://'.$uuid;
+        $control_address = 'Biot://'.$uuid;
         $equipment = O('equipment', ['control_address'=>$control_address]);
         if (!$equipment->id) throw new API_Exception('找不到对应的仪器!', 1002);
 
@@ -456,7 +456,7 @@ class API_EQ_GMeter {
         $user = $data['user'];
         $uuid = $data['uuid'];
         $equipment = O('equipment', $id);
-        if (!$equipment->id || $equipment->control_address != 'gmeter://'.$uuid) throw new API_Exception('找不到对应的仪器!', 1002);
+        if (!$equipment->id || $equipment->control_address != 'Biot://'.$uuid) throw new API_Exception('找不到对应的仪器!', 1002);
 
         $db = ORM_Model::db('equipment');
         $db->query('UPDATE `equipment` SET `is_using`=%d, `is_monitoring`=1, `is_monitoring_mtime`=%d WHERE `id`=%d', !!$user, time(), $id);

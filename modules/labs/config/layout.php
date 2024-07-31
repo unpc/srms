@@ -1,9 +1,9 @@
 <?php
 
-$config['sidebar']['current_user'] = [
-	'view'=>'labs:sidebar/current_user',
-	'weight' => -50,
-];
+// $config['sidebar']['current_user'] = [
+// 	'view'=>'labs:sidebar/current_user',
+// 	'weight' => -50,
+// ];
 $config['sidebar']['signup'] = ['view'=>'labs:sidebar/signup', 'weight'=>-40];
 
 $config['sidebar']['lab_signup'] = ['view'=>'labs:sidebar/lab_signup', 'weight'=>-30];

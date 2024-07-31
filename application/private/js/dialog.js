@@ -72,18 +72,18 @@
             /*wrapper.css({
                     'margin-top': document_scroll_top + 60
                 });*/
-
 			background.css({
 				zIndex: 600,
 				position: 'fixed',
 				left: 0,
 				top: 0,
 				right: 0,
-				bottom: 0
+				bottom: 0,
+				opacity: 0
 				/*height: document.body.scrollHeight,
 				width: document.body.scrollWidth*/
 			})
-			.show();
+			.show().animate({ opacity: 1 }, 300);
 
 			if (opt.src) {
 				content.addClass("noload").attr("src", opt.src);
@@ -246,9 +246,9 @@
                     Dialog.view.find('.dialog_content').empty();
                     Dialog.view.hide();
 
-                    //将dialog宽度设置成最小
-                  //  Dialog.view.find('.dialog_border').css('min-width', '1px');
-                  //  Dialog.view.find('.dialog_close_border').css('min-width', '1px');
+                    // 将dialog宽度设置成最小
+                  	// Dialog.view.find('.dialog_border').css('min-width', '1px');
+                  	// Dialog.view.find('.dialog_close_border').css('min-width', '1px');
                     Dialog.view.find('.dialog_wrapper').width(1).removeData('document_scroll_top');
                 }
                 clearInterval(Dialog.autoWidthInterval);

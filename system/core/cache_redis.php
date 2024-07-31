@@ -33,7 +33,7 @@ class Cache_Redis implements Cache_Handler {
     }
 
     function remove($key) {
-        return $this->redis->delete($key);
+        return $this->redis->del($key);
     }
 
     function flush() {

@@ -4,32 +4,6 @@
 jQuery(function($){
 
 	var $menu = $('#' + menu_id);
-	
-	/*
-	$menu.find('.category').bind('click', function(){
-		var $category = $(this);
-		var $button = $category.find('.toggle_button');
-		$button.toggleClass("toggle_button_collapsed");
-		var hidden = $button.hasClass("toggle_button_collapsed") ? 1 : 0;
-		
-		Q.trigger({
-			object:'set_session',
-			event:'click',
-			data:{c_name:$button.next().text(), hidden: hidden},
-			url: ajax_url,
-			success: function() {
-				if (hidden) {
-					$category.next('.items').slideUp(200);
-				}
-				else {
-					$category.next('.items').slideDown(200);
-				}
-			}
-		});		
-
-		return false;
-	});
-	*/
 
 	$menu.find('a.toggle_button_hidden').click(function(){
 		var $button = $(this);

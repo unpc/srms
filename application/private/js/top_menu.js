@@ -9,6 +9,7 @@ jQuery(function($){
 
     // 默认角色选择
     $switch_default_role = $('a#switch_default_role');
+    $switch_default_role_li = $('.switch_default_role_li');
     /* $switch_default_role.livequery('click', function() {
         var $switch_default_role_ul = $('ul.switch_default_role_ul');
         if ($switch_default_role_ul.is(':hidden')) {
@@ -18,39 +19,32 @@ jQuery(function($){
         }
     }) */
 
-    $switch_default_role.mouseover(function (e) {
-        var $switch_default_role_ul = $('ul.switch_default_role_ul');
-        $switch_default_role_ul.slideDown(300);
-    })
-    .mouseleave(function (e) {
-        var $switch_default_role_ul = $('ul.switch_default_role_ul');
-        if ($.contains($('.switch_default_role_ul')[0], e.relatedTarget) || $('.switch_default_role_ul')[0] == e.relatedTarget) {
-            return;
-        } else {
-            $switch_default_role_ul.slideUp(300);
+    // shortcut 快捷方式按钮
+    $('.top_sidebar_shortcuts').on('mouseover', function() {
+        var $fields = $(this).find('.shortcut_fields');
+        if ($fields.is(":hidden")) {
+            $fields.addClass('animal_shortcut_fields');
+            $fields.show();
+        }
+    }).on('mouseleave', function() {
+        var $fields = $(this).find('.shortcut_fields');
+        if (!$fields.is(":hidden")) {
+            $fields.hide();
+            $fields.removeClass('animal_shortcut_fields');
         }
     });
 
-    $('ul.switch_default_role_ul').mouseleave(function (e) {
-        if ($.contains($('.switch_default_role_ul')[0], e.relatedTarget) || $('.switch_default_role_ul')[0] == e.relatedTarget) {
-            return;
-        } else {
-            $(this).hide();
-            $('ul.extra-list').hide();
+    $('.shortcut_menu').on('mouseover', function() {
+        var $fields = $(this).find('.shortcut_extra_fields');
+        if ($fields.is(":hidden")) {
+            $fields.addClass('animal_shortcut_extra_fields');
+            $fields.show();
         }
-    })
-
-    // shortcut 快捷方式按钮
-    $('.shortcut_extra > .shortcut_extra_title').livequery('click', function() {
-        var $right_content_menus = $(this).parent().find('.right_content_menu');
-        if ($right_content_menus.is(":hidden")) {
-            $right_content_menus.slideDown(300);
-
-        } else {
-            $right_content_menus.slideUp(300);
-            var $other_right_content_fields = $(this).parent().find('.right_content_fields');
-            $other_right_content_fields.slideUp(300);
-            $(this).parent().find('.right_shortcut').removeClass('active');
+    }).on('mouseleave', function() {
+        var $fields = $(this).find('.shortcut_extra_fields');
+        if (!$fields.is(":hidden")) {
+            $fields.hide();
+            $fields.removeClass('animal_shortcut_extra_fields');
         }
     });
 
@@ -71,9 +65,13 @@ jQuery(function($){
     });
 
     // icon-avatar 点击头像打开扩展字段
-    $('.icon-avatar').mouseover(function (e) {
-        var $span = $('.icon-avatar').find("span.icon");
-        $('ul.extra-list').slideDown(300);
+    $('.icon-avatar')
+    .mouseover(function (e) {
+        if ($('ul.extra-list').is(':hidden')) {
+            $('ul.extra-list').show(0, 'linear', function (e) {
+                $('ul.extra-list').css('top', '48px');
+            });
+        }
     })
     .mouseleave(function (e) {
         var $span = $('.icon-avatar').find("span.icon");
@@ -82,11 +80,9 @@ jQuery(function($){
         } else if($.contains($('ul.switch_default_role_ul')[0], e.relatedTarget) || $('ul.switch_default_role_ul')[0] == e.relatedTarget) {
             return;
         } else {
-            $('ul.extra-list').slideUp(300);
+            $('ul.extra-list').hide(100).css('top', '58px');
         }
-        // if ($.contains($('ul.extra-list')[0], e.target) || $('ul.extra-list')[0] == e.target) return
-        // else $('ul.extra-list').slideUp(300)
-    })
+    });
 
     $('ul.extra-list').mouseleave(function (e) {
         var $span = $('.icon-avatar').find("span.icon");
@@ -95,8 +91,42 @@ jQuery(function($){
         } else if($.contains($('ul.switch_default_role_ul')[0], e.relatedTarget) || $('ul.switch_default_role_ul')[0] == e.relatedTarget) {
             return;
         } else {
-            $(this).slideUp(300);
+            $('ul.extra-list').hide(100).css('top', '58px');
+        }
+    });
+
+    $switch_default_role_li
+    .mouseover(function (e) {
+        var $switch_default_role_ul = $('ul.switch_default_role_ul');
+        if ($switch_default_role_ul.is(':hidden')) {
+            $switch_default_role_ul.show(100, 'linear', function (e) {
+                $switch_default_role_ul.css('top', '0px');
+            });
         }
     })
+    .mouseleave(function (e) {
+        var $switch_default_role_ul = $('ul.switch_default_role_ul');
+        if (!$switch_default_role_ul.is(':hidden')) {
+            $switch_default_role_ul.hide(100).css('top', '10px');
+        }
+    });
+
+    // $('ul.switch_default_role_ul').mouseleave(function (e) {
+    //     if ($.contains($('.switch_default_role_ul')[0], e.relatedTarget) || $('.switch_default_role_ul')[0] == e.relatedTarget) {
+    //         return;
+    //     } else {
+    //         $(this).hide();
+    //         $('ul.extra-list').hide().css('top', '58px');
+    //     }
+    // });
+
+    $switch_default_role.livequery('click', function() {
+        var $switch_default_role_ul = $('ul.switch_default_role_ul');
+        if ($switch_default_role_ul.is(':hidden')) {
+            $switch_default_role_ul.show().css('top', '0px');
+        } else {
+            $switch_default_role_ul.hide().css('top', '10px');
+        }
+    });
     
 });

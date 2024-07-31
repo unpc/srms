@@ -6,24 +6,4 @@
         <?= $secondary_tabs->content ?>
     </div>
 </div>
-<script>
-    jQuery(function($){
-        $("#profile_dashboard_content").parent(".tab_content")
-            .css('margin', '0px 16px 66px 16px')
-            .css('padding', '0px 16px 16px 16px');
-        Q.trigger({
-            object: 'switch_role',
-            event: 'view',
-            url: '<?php echo URI::url("!people/switchrole"); ?>'
-        });
-        if(!$('#profile_dashboard_content .dashboard_secondary_tab .tab_pagination div').length) {
-            $('#profile_dashboard_content .dashboard_secondary_tab .tab_pagination')
-                .css("border-bottom", "1px solid #ffffff")
-                .css("margin-bottom", "10px")
-        } else {
-            $('#profile_dashboard_content div.tabs_container_wrapper .tabs_container')
-                .css("padding-left", "0px");
-        }
-    })
-</script>
 

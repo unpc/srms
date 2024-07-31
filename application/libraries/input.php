@@ -8,12 +8,6 @@ class Input extends _Input {
 
     static function setup(){
 
-		if((function_exists("get_magic_quotes_gpc") && get_magic_quotes_gpc())    || (ini_get('magic_quotes_sybase') && (strtolower(ini_get('magic_quotes_sybase'))!="off")) ){
-			Input::stripslashes_deep($_GET);
-			Input::stripslashes_deep($_POST);
-			Input::stripslashes_deep($_COOKIE);
-		}
-		
 		$route = $_SERVER['PATH_INFO'];
 		if(!$route) $route = $_SERVER['ORIG_PATH_INFO'];
 		$route = preg_replace('/^[\/ ]*|[\/ ]*$|'.preg_quote(Config::get('system.url_suffix')).'$/iu','', $route);

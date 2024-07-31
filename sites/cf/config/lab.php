@@ -1,12 +1,11 @@
 <?php
 
-$config['name'] = '基理实验室';
+$config['name'] = '布果科技';
 
 $config['modules'] = [
 
     // helpers
     'calendars' => true,
-    'wiki' => true,
     'nfs' => true,
     'oauth' => true,
 
@@ -20,7 +19,6 @@ $config['modules'] = [
     'labs' => true,
     'messages' => true,
     'nfs_share' => true,
-    'billing' => true,
 
     // extensions
     'eq_charge' => true,
@@ -29,16 +27,12 @@ $config['modules'] = [
     'eq_sample' => true,
     'eq_mon' => true,
     'eq_ban' => true,
-    'eq_remote' => true,
     'update' => true,
     'extra' => true,
     //'eq_meter'=> TRUE,
 
     // yiqikong
-    'yiqikong' => TRUE,
-    'wechat' => TRUE,
     'login_plus' => TRUE,
     'support' => TRUE,
-    'gpui' => TRUE,
     'third_support' => TRUE,
 ];

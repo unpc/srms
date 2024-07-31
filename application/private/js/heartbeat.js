@@ -60,7 +60,7 @@
                 },
                 complete: function() {
                     if (hasError) {
-                        window.location.href = window.location.href;
+                        //window.location.href = window.location.href;
                     }
                 }
             });

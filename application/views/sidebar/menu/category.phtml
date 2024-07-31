@@ -1,19 +1,21 @@
-<?php if (!$hide_category_title): ?>
-    <div class="category category_color">
-        <span class="middle"><?php echo H($name) ?></span>
-        <!-- <span class='category_image'><img src="images/point_down.png" with="20" height="20" /></span> -->
-        <span class="category_image icon-up"></span>
+<div class="category_container">
+    <?php
+        $show = false;
+        foreach ($subMods as $subMod) {
+            if (in_array($subMod, $moreMods)) {
+                $show = strpos($subMod, MODULE_ID . '_') !== false;
+            } else {
+                $show = in_array(MODULE_ID, $subMods);
+            }
+            if ($show) break;
+        }
+    ?>
+    <div class="category category_color <?= ($show ? 'active' : '') ?>">
+        <?php if ($show): ?>
+            <span><?= H($name) ?> / <span class="black"><?= I18N::HT(($items[MODULE_ID]['list']['#module'] ?: MODULE_ID), $items[MODULE_ID]['list']['title']) ?></span></span>
+        <?php else: ?>
+            <span><?= H($name) ?></span>
+        <?php endif; ?>
     </div>
-<?php endif ?>
-<?php
-$show = false;
-foreach ($subMods as $subMod) {
-    if (in_array($subMod, $moreMods)) {
-        $show = strpos($subMod, MODULE_ID . '_') !== false;
-    } else {
-        $show = in_array(MODULE_ID, $subMods);
-    }
-    if ($show) break;
-}
-?>
-<div class="items clearfix" style="display: <?= ($show ? 'block' : 'none') ?>"><?php echo $content; ?></div>
+    <div class="items clearfix" style="display: none;"><?php echo $content; ?></div>
+</div>

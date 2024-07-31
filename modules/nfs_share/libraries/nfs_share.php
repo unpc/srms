@@ -242,7 +242,7 @@ class NFS_Share {
 		//某些情况下出现了指向错误的symlink文件需要删除
         $link = NFS_Share::get_share_path($object, 'lab');
         is_link($link) and @unlink($link);
-		@unlink(substr($dir, 0, -1));
+		//@unlink(substr($dir, 0, -1));
 
 		File::rmdir($dir);
 

@@ -1,159 +1,154 @@
-<?php
-	if (Input::route() != $_SESSION['system.current_layout_url']) {
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+
+<head>
+    <meta name="renderer" content="webkit" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="<?php echo Config::get('system.base_url') ?>gini-ui/iconfont.css" rel="stylesheet" />
+    <title>
+        <?php echo H($title ? T(Config::get('page.title_pattern'), ['%title'=>$title]) : Config::get('page.title_default'));
+    ?>
+    </title>
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <meta http-equiv="Content-Script-Type" content="text/javascript" />
+    <?php /*web app中去除浏览器上地址栏选项的设置*/ ?>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <?php /*web app中去除iphone对连串数字拨号映射设置*/ ?>
+    <meta name="format-detection" content="telephone=no" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1" />
+    <base href="<?php echo H(Config::get('system.base_url') ) ?>" />
+    <link rel="shortcut icon" href="<?php echo H(_C('images/favicon.png')) ?>" />
+    <?php /*web app 中定义app图片的方式*/ ?>
+    <link rel="apple-touch-icon" href="<?php echo H(_C('images/icon_touch.png') ) ?>" />
+    <?php echo $this->controller->load_css(); ?>
+    <?php echo $this->controller->load_js(TRUE); ?>
+    <script>
+    (function($) {
+        Q['mousewheelEventDuration'] =
+            <?php echo JS::quote(Config::get('datebox.mousewheel_event_duration', 0.2));?>;
+        Q['24hour'] = <?php echo JS::quote(!!Config::get('system.24hour')); ?>;
+        // 系统时区与utc的时间差
+        Q['utc_offset'] = <?php echo Date::get_timezone_offset('UTC')*1000;//毫秒数?>
+    })(jQuery);
+    </script>
+
+</head>
+
+<body style="background-color: #F1F5F4;">
+    <?php
+    if (Input::route() != $_SESSION['system.current_layout_url']) {
 		$_SESSION['system.last_layout_url'] = $_SESSION['system.current_layout_url'];
 	}
 	$_SESSION['system.current_layout_url'] = Input::route();
-	//顶栏是否需要替换分站内容
-    $replace = Module::is_installed('db_sync') && $_SESSION['from_lab'];
-    $slave_host = $replace ? Config::get('site.slave')[$_SESSION['from_lab']]['host'] : '';
+    if( $_SESSION['system.current_layout_url'] == 'login'
+        || $_SESSION['system.current_layout_url'] == '!labs/signup'
+        || $_SESSION['system.current_layout_url'] == '!labs/signup/lab'
+        || (!Auth::logged_in() && $_SESSION['system.current_layout_url'] == '')
+    ) :
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-<head>
-<meta name="renderer" content="webkit" />
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link href="<?php echo Config::get('system.base_url') ?>gini-ui/iconfont.css" rel="stylesheet" />
-<title>
-	<?php echo H($title ? T(Config::get('page.title_pattern'), ['%title'=>$title]) : Config::get('page.title_default'));
- ?>
-</title>
-<meta http-equiv="Content-Style-Type" content="text/css" />
-<meta http-equiv="Content-Script-Type" content="text/javascript" />
-<?php /*web app中去除浏览器上地址栏选项的设置*/ ?>
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<?php /*web app中去除iphone对连串数字拨号映射设置*/ ?>
-<meta name="format-detection" content="telephone=no" />
-<?php /*web app中固定显示页面的定义方式*/?>
-<?php /*<meta name="viewport" content="user-scalable=yes, width=device-width, minimum-scale=1.0, maximum-scale=1.0" /> */ ?>
-<meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1" />
-<base href="<?php echo H(Config::get('system.base_url') ) ?>" />
-<link rel="shortcut icon" href="<?php echo H(_C('favicon.ico')) ?>" type="image/x-icon" />
-<?php /*web app 中定义app图片的方式*/ ?>
-<link rel="apple-touch-icon" href="<?php echo H(_C('images/icon_touch.png') ) ?>" />
-<?php echo $this->controller->load_css(); ?>
-<?php echo $this->controller->load_js(TRUE); ?>
-<script>
-(function($){
-    Q['mousewheelEventDuration'] = <?php echo JS::quote(Config::get('datebox.mousewheel_event_duration', 0.2));?>;
-	Q['24hour'] = <?php echo JS::quote(!!Config::get('system.24hour')); ?>;
-	// 系统时区与utc的时间差
-	Q['utc_offset'] = <?php echo Date::get_timezone_offset('UTC')*1000;//毫秒数?>
-})(jQuery);
-</script>
-
-<?php
-	if (Lab::get('online.kf5')) {
-		echo Event::trigger('support.online.kf5');
-	}
+    <?php
+    $lbg_cache = _C('images/lb2g.png') && file_exists(ROOT_PATH.PUBLIC_BASE._C('images/lbg.png'));
+    $lbg_img = $lbg_cache ? _C('images/lbg.png') : ('/lims/images/bg.jpg');
 ?>
-
-</head>
-<body style="background-color: #F1F5F4;">
-<?php
-if( $_SESSION['system.current_layout_url'] == 'login'
-    || $_SESSION['system.current_layout_url'] == '!labs/signup'
-	|| $_SESSION['system.current_layout_url'] == '!labs/signup/lab'
-	|| (!Auth::logged_in() && $_SESSION['system.current_layout_url'] == '')
-) :
-?>
-<?php
-$lbg_cache = _C('images/lb2g.png') && file_exists(ROOT_PATH.PUBLIC_BASE._C('images/lbg.png'));
-$lbg_img = $lbg_cache ? _C('images/lbg.png') : ('/lims/images/bg.jpg');
-?>
-<div class="center_content login_page" style="background-image: url(<?= $lbg_img ?>) !important;">
-    <?php echo V('message'); ?>
-    <div class="center_pos" style="background-color: <?= ($lbg_cache ? 'var(--loginbgcolor) / 0%' : 'var(--loginbgcolor);' ) ?>"><?php echo $this->body ?></div>
-</div>
-<?php elseif(!Auth::logged_in()):?>
+    <div class="center_content login_page" style="background-image: url(<?= $lbg_img ?>) !important;">
+        <?php echo V('message'); ?>
+        <div class="center_pos"
+            style="background-color: <?= ($lbg_cache ? 'var(--loginbgcolor) / 0%' : 'var(--loginbgcolor);' ) ?>">
+            <?php echo $this->body ?></div>
+    </div>
+    <?php elseif(!Auth::logged_in()):?>
     <div class="center_pos" style="background-color: #F1F5F4"><?php echo $this->body ?></div>
-<?php else: ?>
-	<div style="width: 100%;height: 100%;">
-    <div class="layout-body" id="layout_body">
-        <!--侧边栏-->
-		<div id="sidebar" class="top">
-			<div class="sidebar_wrapper">
-				<div class="sidebar_content">
-                    <div style="height: 48px;line-height: 48px;">
-                        <a class="logo float_left" href="<?php echo H(URI::url('/')) ?>">
-                            <img class="logo_img middle" src="<?php echo H(_C('images/logo.png')) ?>" usemap="#logo_map"/>
-                        </a>
-                    </div>
-					<?php echo $this->sidebar ?>
-				</div>
-			</div>
-		</div>
-        <div>
-            <!--顶部-->
-            <div class="top layout-header" height="32">
-                <div id="header">
-                    <div class="header_content">
-                        <div id="top_menu"><?= V('top_menu') ?></div>
+    <?php else: ?>
+    <div style="width: 100%;height: 100%;">
+        <div class="layout-body" id="layout_body">
+            <!--侧边栏-->
+            <?php /* ?>
+            <div id="sidebar" class="top">
+                <div class="sidebar_wrapper">
+                    <div class="sidebar_content">
+                        <div style="height: 48px;line-height: 48px;">
+                            <a class="logo float_left" href="<?php echo H(URI::url('/')) ?>"
+                                style="background-color: #ffffff;">
+                                <img class="logo_img middle" src="<?php echo H(_C('images/logo.png')) ?>"
+                                    usemap="#logo_map" style="height: 48px;" />
+                            </a>
+                        </div>
+                        <?php echo $this->sidebar ?>
                     </div>
                 </div>
             </div>
-            <!--主体-->
-            <div id="center" class="top" style="padding-top: 48px">
-                <div class="center_content">
-                    <?php echo $this->breadcrumb;?>
-                    <?php if ($this->title):?>
-                    <div style="background-color: #ffffff;padding:12px 0 0 23px;">
-                        <span class="header_title"><?php echo $this->title?></span>
+            <?php */ ?>
+            <div>
+                <!--顶部-->
+                <div class="top layout-header">
+                    <div id="header">
+                        <div class="header_bg">
+                            <img height="48px" src="<?= _C('images/logo.png') ?>" />
+                        </div>
+                        <div class="header_content">
+                            <div id="module_menu"><?= V('module_menu') ?></div>
+                            <div id="top_menu"><?= V('top_menu') ?></div>
+                        </div>
                     </div>
-                    <?php endif; ?>
-                    <?php echo V('message'); ?>
-                    <?php echo $this->header_content ?></div>
+                </div>
+                <div class="section_header">
+                    <section class="section" style="position: absolute;width: 100%;bottom: -6px;">
+                        <div class="curved-bg" style=" position: relative;">
+                            <svg width="100%" height="56px" viewBox="0 0 100 100" version="1.1" preserveAspectRatio="none" class="">
+                                <path d="M0,0 C16.6666667,66 33.3333333,99 50,99 C66.6666667,99 83.3333333,66 100,0 L100,100 L0,100 L0,0 Z" fill="#f5f7fa"></path>
+                            </svg>
+                        </div>
+                    </section>
+                </div>
+                <!--主体-->
+                <div id="center" class="top" style="margin-top: 48px; position: relative;">
+                    <div class="center_content">
+                        <?php echo $this->breadcrumb;?>
+                        <?php echo V('message'); ?>
+                        <?php echo $this->header_content ?>
+                    </div>
                     <div class="body"><?php echo $this->body ?></div>
                 </div>
             </div>
-            <div class="layout-footer">
-                <div class="bottom" height="28" style="padding-left: 201px;">
-                    <div id="footer"><div class="footer_content">
-                            <?php echo JS::load('footer_time', ['server_time'=>Date::time()])?>
-                            <?php echo JS::load('icon', ['decode_url'=> URI::url('icon/decode')]);?>
-                            <?php echo $this->footer ?>
-                        </div></div>
-                </div>
-            </div>
-
         </div>
-	</div>
+    </div>
 
-	</div>
-	<?php echo $this->controller->load_js(FALSE); ?>
+    </div>
+    <?php echo $this->controller->load_js(FALSE); ?>
 
-	<script>
-	var current = <?php echo JS::quote($_SESSION['system.current_layout_url']); ?>;
-	var cur = current.split(/[!/]/);
-    cur.splice(0,1);
-    for(var i = cur.length;i > 0;i--){
-        var cur_class = '.list_item_'+cur.join("_");
-        if($('#sidebar '+cur_class).length > 0) {
-            $('#sidebar '+cur_class+' a span').addClass('cur_class');
-            $('#sidebar '+cur_class).addClass('active');
-            $('#sidebar '+cur_class).parent().addClass('items_color_select');
-            $('#sidebar '+cur_class).parent().prev().addClass('category_color_select');
+    <script>
+    var current = <?php echo JS::quote($_SESSION['system.current_layout_url']); ?>;
+    var cur = current.split(/[!/]/);
+    cur.splice(0, 1);
+    for (var i = cur.length; i > 0; i--) {
+        var cur_class = '.list_item_' + cur.join("_");
+        if ($('#sidebar ' + cur_class).length > 0) {
+            $('#sidebar ' + cur_class + ' a span').addClass('cur_class');
+            $('#sidebar ' + cur_class).addClass('active');
+            $('#sidebar ' + cur_class).parent().addClass('items_color_select');
+            $('#sidebar ' + cur_class).parent().prev().addClass('category_color_select');
             break;
         }
-        cur.splice(i-1,1);
+        cur.splice(i - 1, 1);
     }
     </script>
-<?php endif;?>
+    <?php endif;?>
 
-<script type="text/javascript">
-<?php
-$me = L('ME');
-if (Q("equipment {$me}.incharge")->total_count()):
-?>
-$().ready(function() {
-    Q.trigger({
-        object: 'usenotice',
-        event: 'check',
-        url: "<?= URI::url('!equipments/usenotice') ?>"
-    });
-})
-<?php endif;?>
-</script>
+    <script type="text/javascript">
+    <?php
+        $me = L('ME');
+        if (Q("equipment {$me}.incharge")->total_count()):
+    ?>
+    $().ready(function() {
+        Q.trigger({
+            object: 'usenotice',
+            event: 'check',
+            url: "<?= URI::url('!equipments/usenotice') ?>"
+        });
+    })
+    <?php endif;?>
+    </script>
 
 </body>
-<?php if (Module::is_installed('db_sync')) echo V('db_sync:q_trigger')?>
+
 </html>

@@ -24,6 +24,9 @@
     margin-top: 60px;
     z-index: 1000;
     width: 0;
+
+    transition: width 0.4s, height 0.4s, left 0.4s;
+
 }
 
 .dialog_border {
@@ -32,7 +35,6 @@
     line-height: 1;
 
     /*padding-bottom: 5px;*/
-    border-radius: 5px;
     background-color: #fff;
 
 
@@ -207,10 +209,8 @@ td.middle {
 }
 
 .dialog_close_border {
-    background-color: #fafafa;
+    background-color: var(--basiccolor);
     display: block;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
     height: 48px;
     position: relative;
 }
@@ -223,7 +223,7 @@ td.middle {
     font-size: 16px;
     font-weight: bold;
     line-height: 48px;
-    color: #333333;
+    color: #FFF;
     white-space: nowrap;
 }
 

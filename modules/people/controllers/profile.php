@@ -626,7 +626,9 @@ class Profile_Controller extends Base_Controller
                 32位的服务器，由于intval的取值范围时－214748368～214748367；可能出现溢出的情形：
                 如果数值大于2147483637，则返回2147483648
                  */
-                $card_no = $form['card_no'] + 0; //添加 +0 可强制转换成无符号数
+                //$card_no = $form['card_no'] + 0; //添加 +0 可强制转换成无符号数
+
+                $card_no = H($form['card_no']);
 
                 if ($card_no) {
                     $user->card_no   = $card_no;

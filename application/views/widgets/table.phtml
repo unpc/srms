@@ -308,7 +308,7 @@ jQuery(function($){
 	if (<?= Module::is_installed('uno') ? 1 : 0 ?>) {
 		document.getElementById("table_layout").style.cssText='width: ' + (w - 65) + 'px;overflow: auto;';
 	} else {
-		document.getElementById("table_layout").style.cssText='width: ' + (w - 270) + 'px;overflow: auto;';
+		document.getElementById("table_layout").style.cssText='width: ' + (w * 0.9 - 32) + 'px;overflow: auto;';
 	}
 	if (<?= $fix_header ? 1 : 0 ?>) {
 		$("#table_layout").css('height', Math.min($("#table_layout").height(), $(window).height() - 200))

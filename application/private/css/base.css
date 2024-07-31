@@ -1,8 +1,8 @@
 :root {
-    --basiccolor: #2BA07F;
-    --backgroundcolor: rgba(43, 160, 127, 0.00);
-    --loginbgcolor: rgba(43, 160, 127, 0.88);
-    --hovercolor: #228D66;
+    --basiccolor: #1a94b3;
+    --backgroundcolor: rgba(235, 242, 240, 0);
+    --loginbgcolor: #f3f3f3;
+    --hovercolor: #1385a2;
 
     --bottonPaddingRight: 5px;
 
