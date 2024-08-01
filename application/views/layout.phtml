@@ -48,13 +48,13 @@
 ?>
     <?php
     $lbg_cache = _C('images/lb2g.png') && file_exists(ROOT_PATH.PUBLIC_BASE._C('images/lbg.png'));
-    $lbg_img = $lbg_cache ? _C('images/lbg.png') : ('/lims/images/bg.jpg');
+    $lbg_img = $lbg_cache ? _C('images/lbg.png') : ('/images/bg.jpeg');
 ?>
     <div class="center_content login_page" style="background-image: url(<?= $lbg_img ?>) !important;">
         <?php echo V('message'); ?>
-        <div class="center_pos"
-            style="background-color: <?= ($lbg_cache ? 'var(--loginbgcolor) / 0%' : 'var(--loginbgcolor);' ) ?>">
-            <?php echo $this->body ?></div>
+        <div class="center_pos">
+            <?php echo $this->body ?>
+        </div>
     </div>
     <?php elseif(!Auth::logged_in()):?>
     <div class="center_pos" style="background-color: #F1F5F4"><?php echo $this->body ?></div>

@@ -1581,8 +1581,8 @@ div.login_page {
     height: 100%;
     background-image: url('images/bg.jpg');
     background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
+    background-size: auto;
+    background-position: right;
     .login_color {
         background: linear-gradient(-30deg, rgba(43, 160, 127, 0.38), rgba(87, 239, 196, 0.38));
     }
@@ -2337,7 +2337,6 @@ form.edit {
 
 .center_pos {
     /*width: 454px;*/
-    background-color: var(--loginbgcolor);
     /*position: fixed;*/
     top: 0px;
     left: 0px;
