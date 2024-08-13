@@ -1,0 +1,8 @@
+<?php $total_count = $users->total_count(); ?>
+<?php if(!$total_count): ?>
+<a class="prevent_default"><?= H('未知用户'); ?></a>
+<?php elseif($total_count): ?>
+    <?php foreach($users as $user):?>
+        <a style="text-decoration: underline;" href="<?= H($user->url()) ?>" class="prevent_default"><?= H($user->name); ?></a>
+    <?php endforeach;?>
+<?php endif;?>

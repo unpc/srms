@@ -46,11 +46,11 @@ try {
 	$user->token = Auth::normalize($token);
 	echo 'Email[support@geneegroup.com]: ';
 	$email = trim(fgets(STDIN));
-	$user->email = $email ?: 'support@geneegroup.com';
+	$user->email = $email ?: 'support@booguo.com';
 
-	echo 'Name[技术支持]: ';
+	echo 'Name[业务支持]: ';
 	$name = trim(fgets(STDIN));
-	$user->name = $name ?: '技术支持';
+	$user->name = $name ?: '业务支持';
 
 	$user->member_type = 0;
 	$user->hidden = 1;

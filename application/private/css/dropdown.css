@@ -3,7 +3,7 @@
 .dropdown_container {
 	display:inline-block;
 	border:1px solid #E5E5E5;
-	color: #FFF;
+	/* color: #FFF; */
     height: 28px;
     line-height: 28px;
 	width: 278px;

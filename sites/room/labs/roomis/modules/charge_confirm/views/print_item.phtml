@@ -1,0 +1,110 @@
+<?php 
+$equipment = $charge->equipment; 
+$user = $charge->user; 
+?>
+<style>
+    div {
+        margin-bottom: 15px;
+    }
+    div span {
+        display: inline-block;
+    }
+</style>
+<div>
+    <span style="width: 80px; padding-left: 200px;"><?= T('计费编号：') ?></span>
+    <span style="width: 20%;"><?= H($charge->transaction->id) ?></span>
+    <span><?= T('收款部门（公章）：') ?></span>
+    <span><?= H($equipment->group->name) ?></span>
+</div>
+<table>
+    <tbody>
+        <tr>
+            <td colspan="4" style="font-weight: bold;"><?= T('基本信息') ?></td>
+        </tr>
+        <tr>
+            <td><?= T('仪器设备名称') ?></td>
+            <td><?= H($equipment->name) ?></td>
+            <td><?= T('仪器设备编号') ?></td>
+            <td><?= H($equipment->ref_no) ?></td>
+        </tr>
+        <tr>
+            <td><?= T('共享类型') ?></td>
+            <td>
+            <?php 
+                if ($equipment->accept_reserv && $equipment->accept_sample) {
+                    $type = '预约/送样'; 
+                } elseif ($equipment->accept_reserv && !$equipment->accept_sample) {
+                    $type = '预约'; 
+                } elseif (!$equipment->accept_reserv && $equipment->accept_sample) {
+                    $type = '送样'; 
+                }
+                echo T($type);
+            ?>
+            </td>
+            <td><?= T('设备负责人') ?></td>
+            <td><?= join(', ', Q("$equipment<incharge user")->to_assoc('id', 'name')) ?></td>
+        </tr>
+        <tr>
+            <td><?= T('课题组名称') ?></td>
+            <td><?= H(Q("$user lab")->current()->name) ?></td>
+            <td><?= T('课题组负责人') ?></td>
+            <td><?= H(Q("$user lab")->current()->owner->name) ?></td>
+        </tr>
+        <tr>
+            <td colspan="4" style="font-weight: bold;"><?= T('设备使用明细') ?></td>
+        </tr>
+        <tr>
+            <td><?= T('使用人姓名') ?></td>
+            <td><?= H($user->name) ?></td>
+            <td><?= T('使用人工号') ?></td>
+            <td><?= H($user->ref_no) ?></td>
+        </tr>
+        <tr>
+            <td><?= T('使用机时/测样数') ?></td>
+            <td style="width: 32%;"><?= H(strip_tags($charge->description)) ?></td>
+            <td><?= T('使用时间') ?></td>
+            <td><?= date('Y-m-d H:i:s', $charge->ctime) ?></td>
+        </tr>
+        <tr>
+            <td colspan="4" style="font-weight: bold;"><?= T('资金费用明细') ?></td>
+        </tr>
+        <tr>
+            <td><?= T('序号') ?></td>
+            <td><?= T('资金账号') ?></td>
+            <td><?= T('金额') ?></td>
+            <td><?= T('财务凭证号') ?></td>
+        </tr>
+        <tr>
+            <td><?= T('1') ?></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><?= T('2') ?></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><?= T('收费合计（元）') ?></td>
+            <td><?= Number::currency($charge->amount) ?></td>
+            <td><?= T('合计（大写）：') ?></td>
+            <td><?= Number::rmb_format($charge->amount) ?></td>
+        </tr>
+        <tr>
+            <td><?= T('收款账号') ?></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><?= T('收费确认节点信息') ?></td>
+            <td colspan="3"><?= H($charge->auditor->name . ' ' . date('Y-m-d H:i:s', $charge->rtime)) ?></td>
+        </tr>
+        <tr>
+            <td><?= T('项目负责人（签章）') ?></td>
+            <td colspan="3"></td>
+        </tr>
+    </tbody>
+</table>
