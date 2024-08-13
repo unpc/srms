@@ -82,26 +82,24 @@
     </div>
 </div>
 
-<div style="margin: 0 16px;">
-    <div id="user_component_list">
-        <ul>
-            <?php
-            foreach ($card_list as $card) {
-                ?>
-                <li class="com_list <?=$card['key'] ?> <?= strpos($active_tab, $card['key']) !== false ? 'active' : '' ?>">
-                    <a href="<?= $card['url']?>">
-                        <div class="com_list_left">
-                            <div class="com_list_icon"><i class="icon-<?=$card['key'] ?>-da"></i></div>
-                        </div>
-                        <div class="com_list_right">
-                            <p class="title"><?=$card['name'] ?></p>
-                            <p class="num"><?=$card['total'] ?></p>
-                        </div>
-                    </a>
-                </li>
-                <?php
-            }
+<div id="user_component_list">
+    <ul>
+        <?php
+        foreach ($card_list as $card) {
             ?>
-        </ul>
-    </div>
+            <li class="com_list <?=$card['key'] ?> <?= strpos($active_tab, $card['key']) !== false ? 'active' : '' ?>">
+                <a href="<?= $card['url']?>">
+                    <div class="com_list_left">
+                        <div class="com_list_icon"><i class="icon-<?=$card['key'] ?>-da"></i></div>
+                    </div>
+                    <div class="com_list_right">
+                        <p class="title"><?=$card['name'] ?></p>
+                        <p class="num"><?=$card['total'] ?></p>
+                    </div>
+                </a>
+            </li>
+            <?php
+        }
+        ?>
+    </ul>
 </div>

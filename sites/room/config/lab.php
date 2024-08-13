@@ -23,11 +23,12 @@ $config['modules'] = [
     // extensions
     'update' => true,
     'extra' => true,
-    //'eq_meter'=> TRUE,
+    'eq_reserv'=> TRUE,
 
     // yiqikong
     'login_plus' => TRUE,
     'support' => TRUE,
+    'yiqikong' => TRUE,
 
     // roomis
     'meeting' => TRUE,
@@ -36,5 +37,9 @@ $config['modules'] = [
     'component' => TRUE,
     'announces' => TRUE,
     'room' => TRUE,
-    'vidmon' => TRUE
+    'vidmon' => TRUE,
+
+    'credit' => TRUE,
+    'eq_ban' => TRUE,
+    
 ];

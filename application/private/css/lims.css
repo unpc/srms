@@ -1543,7 +1543,7 @@ img.frame {
     position: absolute;
     display: block;
     z-index: 10;
-    right: 40px;
+    right: 10px;
     top: 14px;
     width: 5px;
     height: 5px;
