@@ -1,0 +1,51 @@
+<div class="login-content" style="
+    max-width: 660px;
+    min-height: 460px;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 100px;
+    position: relative;">
+    <div class="bbox"></div>
+	<div class="left-form-box  no-captcha-challenge" style="text-align: center;
+	background-color: var(--basiccolor);
+    height: 100%;
+    position: absolute;
+    top: 102px;
+    left: 2px;
+    height: 456px;
+    width: 656px;">
+		<?php echo V('application:login_form', $this->vars); ?>
+	</div>
+</div>
+<style>
+    .bbox {
+        position: relative;
+        top: 100px;
+        width: 660px;
+        height: 460px;
+        background: repeating-conic-gradient(from var(--a), #FFF 0%, #FFF 5%, transparent 5%, transparent 40%, #FFF 50%);
+        animation: animate 2.5s linear infinite;
+    }
+    @property --a
+    {
+        syntax: '<angle>';
+        inherits: false;
+        initial-value: 0deg;
+    }
+    @keyframes animate {
+        0%
+        {
+            --a: 0deg;
+        }
+        100% {
+            --a: 360deg;
+        }
+    }
+    .bbox::after {
+        content: '';
+        position: absolute;
+        inset: 3px;
+        background: #FFF;
+    }
+</style>
+

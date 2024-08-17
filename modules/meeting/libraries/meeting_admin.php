@@ -6,19 +6,17 @@ class Meeting_Admin
     public static function setup()
     {
         $me = L('ME');
-        if ($me->access('添加/修改所有会议室') && !Event::trigger('db_sync.need_to_hidden', 'meeting')) {
+        if ($me->access('添加/修改所有会议室')) {
             Event::bind('admin.index.tab', 'Meeting_Admin::_primary_tab');
         }
     }
 
     static function _primary_tab ($e, $tabs) {
-        if (!Event::trigger('db_sync.need_to_hidden', 'meeting')) {
-            $tabs->add_tab('meeting', [
-                'url'=>URI::url('admin/meeting'),
-                'title'=> I18N::T('meeting', '会议室管理'),
-            ]);
-            Event::bind('admin.index.content', 'Meeting_Admin::_primary_content', 0, 'meeting');
-        }
+        $tabs->add_tab('meeting', [
+            'url'=>URI::url('admin/meeting'),
+            'title'=> I18N::T('meeting', '会议室管理'),
+        ]);
+        Event::bind('admin.index.content', 'Meeting_Admin::_primary_content', 0, 'meeting');
     }
 
     public static function _primary_content($e, $tabs)

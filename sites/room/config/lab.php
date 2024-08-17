@@ -42,4 +42,8 @@ $config['modules'] = [
     'credit' => TRUE,
     'eq_ban' => TRUE,
     
+    'course' => TRUE,
+    'notice' => TRUE,
+    'exam_room' => TRUE,
+    'terminal' => TRUE
 ];

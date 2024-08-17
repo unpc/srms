@@ -25,20 +25,20 @@
                     $current_levels = $root->current_levels($tag);
                     if ($current_levels <= $GLOBALS['preload']['tag.group_limit']):
                         ?>
-                        <a style="color: #B8B8B8" class="icon-edit middle view event:click object:tag_edit src:<?php echo URI::url('tags') ?> static:<?php echo H(['id'=>$tag->id, 'uniqid'=>$uniqid, 'parent_uniqid'=>$parent_uniqid, 'collapsed'=>$collapsed, 'tag_name'=>$tag->name(), 'title'=>$title]); ?>"><?php echo T(''); ?></a>
+                        <a style="color: var(--basiccolor)" class="icon-edit middle view event:click object:tag_edit src:<?php echo URI::url('tags') ?> static:<?php echo H(['id'=>$tag->id, 'uniqid'=>$uniqid, 'parent_uniqid'=>$parent_uniqid, 'collapsed'=>$collapsed, 'tag_name'=>$tag->name(), 'title'=>$title]); ?>"><?php echo T(''); ?></a>
                     <?php
                     endif;
                 #endif
                 else:
                     #ifndef (tag.group_limit)
                     ?>
-                    <a style="color: #B8B8B8" class="icon-edit middle view event:click object:tag_edit src:<?php echo URI::url('tags') ?> static:<?php echo H(['id'=>$tag->id, 'uniqid'=>$uniqid, 'parent_uniqid'=>$parent_uniqid, 'collapsed'=>$collapsed, 'tag_name'=>$tag->name(), 'title'=>$title]); ?>"><?php echo T(''); ?></a>
+                    <a style="color: var(--basiccolor)" class="icon-edit middle view event:click object:tag_edit src:<?php echo URI::url('tags') ?> static:<?php echo H(['id'=>$tag->id, 'uniqid'=>$uniqid, 'parent_uniqid'=>$parent_uniqid, 'collapsed'=>$collapsed, 'tag_name'=>$tag->name(), 'title'=>$title]); ?>"><?php echo T(''); ?></a>
                 <?php
                     #endif
                 endif;
                 ?>
 
-			<a  style="color: #B8B8B8" class="icon-trash middle view event:click object:tag_delete src:<?php echo URI::url('tags') ?> static:<?php echo H(['id'=>$tag->id, 'uniqid'=>$uniqid, 'parent_uniqid'=>$parent_uniqid, 'tag_name'=>$tag->name()]); ?>"><?php echo T(''); ?></a>
+			<a  style="color: var(--basiccolor)" class="icon-trash middle view event:click object:tag_delete src:<?php echo URI::url('tags') ?> static:<?php echo H(['id'=>$tag->id, 'uniqid'=>$uniqid, 'parent_uniqid'=>$parent_uniqid, 'tag_name'=>$tag->name()]); ?>"><?php echo T(''); ?></a>
             <?php endif; ?>
             <?php
             /*
@@ -50,14 +50,14 @@
                 #if (tag.group_limit >= 1)
                 if ($current_levels < $GLOBALS['preload']['tag.group_limit']):
                     ?>
-                    <a  style="color: #B8B8B8" class="icon-add middle view event:click object:tag_edit src:<?php echo URI::url('tags') ?> static:<?php echo H(['parent'=>$tag->id, 'uniqid'=>$uniqid, 'parent_uniqid'=>$parent_uniqid, 'tag_name'=>$tag->name(), 'title'=>$title]); ?>"><?php echo T(''); ?></a>
+                    <a  style="color: var(--basiccolor)" class="icon-add middle view event:click object:tag_edit src:<?php echo URI::url('tags') ?> static:<?php echo H(['parent'=>$tag->id, 'uniqid'=>$uniqid, 'parent_uniqid'=>$parent_uniqid, 'tag_name'=>$tag->name(), 'title'=>$title]); ?>"><?php echo T(''); ?></a>
                 <?php
                 endif;
             #endif
             else:
                 #ifndef (tag.group_limit)
                 ?>
-                <a  style="color: #B8B8B8" class="icon-add middle view event:click object:tag_edit src:<?php echo URI::url('tags') ?> static:<?php echo H(['parent'=>$tag->id, 'uniqid'=>$uniqid, 'parent_uniqid'=>$parent_uniqid, 'tag_name'=>$tag->name(), 'title'=>$title]); ?>"><?php echo T(''); ?></a>
+                <a  style="color: var(--basiccolor)" class="icon-add middle view event:click object:tag_edit src:<?php echo URI::url('tags') ?> static:<?php echo H(['parent'=>$tag->id, 'uniqid'=>$uniqid, 'parent_uniqid'=>$parent_uniqid, 'tag_name'=>$tag->name(), 'title'=>$title]); ?>"><?php echo T(''); ?></a>
             <?php
                 #endif
             endif;?>
