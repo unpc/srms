@@ -1,0 +1,19 @@
+<div class="form">
+    <form method="post" action="<?php echo H(URI::url('!meeting/reserv/export', ['form_token'=> $form_token, 'type'=>$type])) ?>" target="<?= $type == 'csv' ? '_self' : '_blank'?>" class="prevent_default">
+        <?php echo Form::hidden('dtstart', $dtstart);?>
+        <?php echo Form::hidden('dtend', $dtend);?>
+        <?php echo Form::hidden('calendar_id', $calendar_id);?>
+        <div class="interval_30"></div>
+        <ul class="ep_triple">
+            <?php foreach(Config::get('calendar.export_columns.meeting') as $key => $value) : ?>
+                <li class="nowrap"><?php echo Form::checkbox("columns[{$key}]", TRUE, I18N::T('meeting', $value), 'class="checkbox"')?></li>
+            <?php endforeach;?>
+        </ul>
+    <div class="button_container">
+            <div class="float_right">
+                <input name="cancel" id="cancel" type="reset" class="font-button-default rmargin_2e4" value="取消">
+                <input name="submit" type="submit" class="font-button-save" value="<?php echo H(I18N::T('meeting', '提交')) ?>">
+            </div>
+     </div>
+    </form>
+</div>

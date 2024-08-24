@@ -1,0 +1,31 @@
+<div class="interval_24"></div>
+<h2 class="section_title">
+    <span class="border"></span>
+    <span class="black_title"><?php echo I18N::T('meeting', '基本信息') ?></span>
+</h2>
+<div class="interval_30"></div>
+<div>
+<table class="form meeting_info_form lmaigin_1e5" style="min-width:400px">
+	<tr>
+		<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::T('meeting', '会议室名称')?></span></td>
+		<td class="value" width="300"><?php echo H($meeting->name) ?></td>
+		<td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::T('meeting', '地点')?></span></td>
+		<td calss="value" width="300"><?php echo V('application:tag/path', ['tag' => $meeting->location, 'tag_root' => Tag_Model::root('location'), 'url_template' => URI::url('', 'location_id=%tag_id')]) ?></td>
+        <td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::T('meeting', '负责人')?></span></td>
+		<td class="value" width="300"><?php echo V('meeting:meeting_table/data/incharge', ['meeting'=>$meeting]);?></td>
+	</tr>
+    <tr><td colspan="6" height="30"></td></tr>
+    <tr>
+        <td class="nowrap tight"><span class="status_tag status_tag_label"><?php echo I18N::T('meeting', '联系人')?></span></td>
+        <td class="value"><?php echo V('meeting:meeting_table/data/contacts', ['meeting'=>$meeting]);?></td>
+    </tr>
+    <tr><td colspan="6" height="30"></td></tr>
+	<tr>
+		<td class="top nowrap tight">
+            <div class="interval_8"></div>
+            <span class="status_tag status_tag_label"><?php echo I18N::T('meeting', '备注')?></span>
+        </td>
+		<td class="value" colspan="5" style="line-height: 28px;"><?php echo H($meeting->description, true) ?></td>
+	</tr>
+</table>
+</div>

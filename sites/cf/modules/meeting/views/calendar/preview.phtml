@@ -1,0 +1,17 @@
+<div class="padding_1 clearfix">
+	<table class="form">
+        <?php 
+            foreach($infos as $info) {
+                echo $info; 
+            }
+        ?>
+		<?php if (L('ME')->is_allowed_to('修改', $component)) : ?>
+			<tr>
+				<td></td>
+				<td>
+					<a q-event="click" q-static="<?php echo H(['id' => $component->id, 'calendar_id' => $component->calendar->id, 'dtstart' => $component->dtstart, 'dtent' => $component->dtend]); ?>" q-object="edit_component" q-src="<?php echo URI::url('!calendars/calendar'); ?>" class="button button_edit"><?php echo I18N::T('meeting', '编辑'); ?></a>
+				</td>
+			</tr>
+		<?php endif; ?>
+	</table>
+</div>

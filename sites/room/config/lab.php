@@ -28,7 +28,7 @@ $config['modules'] = [
     // yiqikong
     'login_plus' => TRUE,
     'support' => TRUE,
-    'yiqikong' => TRUE,
+    //'yiqikong' => TRUE,
 
     // roomis
     'meeting' => TRUE,

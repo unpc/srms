@@ -1,0 +1,28 @@
+<?php
+	$meeting = $component->calendar->parent;
+	$user = $component->organizer;
+	$show_meeting_name = FALSE;
+	switch($current_calendar->parent_name) {
+	//查看所有会议室预约
+    case 'calendar' :
+        if ($current_calendar->type == 'all_meetings') {
+        	$show_meeting_name = TRUE;
+		}
+    break;
+    case 'user':
+	    if ($current_calendar->type == 'me_incharge') {
+	    	$show_meeting_name = TRUE;
+		}
+    break;
+	}
+
+?>
+<div q-preview="<?php echo URI::url('!meeting/reserv'); ?>" q-static="<?php echo H(['component_id' => $component->id]); ?>">
+<?php echo H($component->name);?>
+</div>
+<div>
+<p><a class="prevent_default" href="<?php echo H($user->url()) ?>" ><?php echo H($user->name);?></a></p>
+<?php if ($show_meeting_name) :?>
+	<p><a class="prevent_default" href="<?php echo $meeting->url(); ?>"><?php echo H($meeting->name) ?></a></p>
+<?php endif;?> 
+</div>

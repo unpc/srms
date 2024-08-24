@@ -1,0 +1,36 @@
+<?php
+	$table = Widget::factory('table');
+    $table->name = 'meeting_approved_auth';
+    
+    $table->add_columns((array) $columns);
+
+	$table->empty_message = I18N::T('meeting', '没有已通过授权记录!');
+
+	if (count($auths) > 0) foreach($auths as $auth) {
+
+        $user = $auth->user;
+		if ($user->id) {
+			$at_view = $user->icon('32', 'style="display:block"');
+			$name_view = V('meeting:users_table/data/name', ['user'=>$user, 'auth' => $auth]);
+		} else if ($auth->tag->id) {
+            $at_view = '用户标签';
+            $name_view = V('meeting:users_table/data/tag', ['auth' => $auth]);
+		}
+
+		$table->add_row([
+			/* '@' => [
+				'view' => $at_view,
+				'extra' => 'style="padding:4px" align="right"',
+			], */
+			'approved_name' => $name_view,
+			'contact_info' => V('meeting:users_table/data/mobile', ['user'=>$user, 'auth'=>$auth]),
+			'address' => V('meeting:users_table/data/address', ['user'=>$user]),
+			'ctime' => $auth->ctime ? date('Y/m/d', $auth->ctime) : T('--'),
+			'atime' => $auth->atime?date('Y/m/d', $auth->atime):I18N::T('meeting', '不过期'),
+			'rest' => Widget::factory('application:links', ['links' => $auth->links('approved')]),
+		]);
+	}
+
+	echo $table;
+?>
+<?= $pagination; ?>

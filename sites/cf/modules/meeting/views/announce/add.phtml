@@ -1,0 +1,38 @@
+<div class="form">
+<form method="post" autocomplete="off" q-event="submit" q-object="add_announce" q-static="<?php echo H(['eid'=>$eid])?>">
+<?php echo V('form_error', ['form'=>$form]);?>
+<?php $require = (string) V('form_require'); ?>
+<table class="form">
+	<tbody>
+	<tr>
+		<td class="label left middle nowrap">
+            <?= $require ?><?php echo I18N::T('meeting', '标题'); ?>
+            <?php echo '<br>'.V('form_filter',['error'=>$form->errors['title'][0]])?>
+		</td>
+		<td class="top nowrap">
+			<input name="title" class="text" value="<?php echo H($form['title'])?>" />
+		</td>
+	</tr>
+	<tr>
+		<td class="label left middle nowrap">
+            <?= $require ?><?php echo I18N::T('meeting', '内容')?>
+            <?php echo '<br>'.V('form_filter',['error'=>$form->errors['title'][0]])?>
+        </td>
+		<td class="top nowrap">
+            <textarea name="content" rows="9" cols="60" class="text autogrow"><?php echo H($form['content']) ?></textarea>
+		</td>
+	</tr>
+	<tr>
+		<td class="label left nowrap">&#160;</td>
+		<td class="top nowrap">
+			<?php echo Form::checkbox('stick', $form['stick'] == 'on' ? TRUE : FALSE, I18N::T('meeting', '置顶公告'), 'class="middle checkbox"', 'class="middle"');?>
+		</td>
+	</tr>
+</table>
+<div class="button_container">
+    <div class="float_right">
+        <input type="submit" name="submit" class="font-button-save" value="<?php echo H(I18N::T('meeting', '保存')) ?>">
+    </div>
+</div>
+</form>
+</div>

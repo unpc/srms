@@ -3,95 +3,109 @@
 <table class="form">
 	<tbody>
 	<tr>
-		<!--<td class="icon top">
-			<img src="<?php // echo H($meeting->icon_url('64')) ?>" />
-		</td>-->
 		<td class="top">
 		<form method="post" q-object="add" autocomplete="off" action="<?php echo H(URI::url('!meeting/index')) ?>">
-		<?php echo V('form_error', ['form'=>$form]);?>
-		<?php $require = (string) V('form_require', ['extra_class' => 'top']); ?>
-		<table class="form">
-			<tbody>
-				<tr>
-					<td class="label right nowrap middle">
-                        <?php echo $require; ?><?php echo I18N::T('meeting', '会议室名称')?>
-                        <?php echo '<br>'.V('form_filter',['error'=>$form->errors['name'][0]])?>
-                    </td>
-					<td class="top">
-						<input name="name" class="text" size="40" value="<?php echo H($form['name'])?>" />
-					</td>
-				</tr>
-				<tr>
-					<td class="label right nowrap middle"><?php echo I18N::T('meeting', '坐席数')?></td>
-					<td class="top">
-						<input name="seats" class="text" size="40" value="<?php echo H($form['seats'])?>" />
-					</td>
-				</tr>
-				<tr>
-					<td class="label right nowrap middle">
-                        <?php echo $require; ?><?php echo I18N::T('meeting', '地理位置')?>
-                        <?php echo '<br>'.V('form_filter',['error'=>$form->errors['location'][0]])?>
-                    </td>
-					<td class="top">
-						<?php
-                                echo Widget::factory('application:tag_selector', [
-                                    'tag' => $form['location']?O('tag_location', $form['location']):'',
-                                    'root' => Tag_Model::root('location'),
-                                    'name' => 'location',
-                                    'class' => 'tag_selector_full',
-                                    'ajax' => true,
-                                ]);
-                        ?>
-					</td>
-				</tr>
-				<tr>
-					<td class="label right nowrap top">
-                        <?php echo $require; ?><?php echo I18N::T('meeting', '负责人')?>
-                        <?php echo '<br>'.V('form_filter',['error'=>$form->errors['incharges'][0]])?>
-                    </td>
-					<td class="top">
-						<?php echo Widget::factory('multi_user_selector',
-									[
-										'name'=>'incharges',
-										'autocomplete'=>URI::url('autocomplete/user'),
-										'value'=> $form['incharges'],
-										'extra'=> 'token_verify'
+			<?php echo V('form_error', ['form'=>$form]);?>
+			<?php $require = (string) V('form_require', ['extra_class' => 'top']); ?>
+			<table class="form">
+				<tbody>
+					<tr>
+						<td class="label right nowrap middle">
+							<?php echo $require; ?><?php echo I18N::T('meeting', '空间编号')?>
+							<?php echo '<br>'.V('form_filter',['error'=>$form->errors['ref_no']])?>
+						</td>
+						<td class="top">
+							<input name="ref_no" class="text" size="40" value="<?php echo H($form['ref_no'])?>" />
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle">
+							<?php echo $require; ?><?php echo I18N::T('meeting', '空间名称')?>
+							<?php echo '<br>'.V('form_filter',['error'=>$form->errors['name'][0]])?>
+						</td>
+						<td class="top">
+							<input name="name" class="text" size="40" value="<?php echo H($form['name'])?>" />
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle">
+							<?php echo I18N::T('meeting', '空间英文名称')?>
+							<?php echo '<br>'.V('form_filter',['error'=>$form->errors['en_name']])?>
+						</td>
+						<td class="top">
+							<input name="en_name" class="text" size="40" value="<?php echo H($form['en_name'])?>" />
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap top">
+							<?php echo I18N::T('meeting', '空间负责人')?>
+							<?php echo '<br>'.V('form_filter',['error'=>$form->errors['incharges'][0]])?>
+						</td>
+						<td class="top">
+							<?php echo Widget::factory('user_selector', [
+								'name' => 'incharge',
+								'autocomplete' => URI::url('autocomplete/user'),
+								'value'=> $form['incharge'],
+								'extra'=> 'token_verify'
+							]);
+							?>
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle">
+							<?php echo I18N::T('meeting', '联系方式')?>
+						</td>
+						<td class="top">
+							<input name="phone" class="text readonly" size="40" readonly value="<?php echo H($form['phone'])?>" />
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle">
+							<?php echo $require; ?><?php echo I18N::T('meeting', '地理位置')?>
+							<?php echo '<br>'.V('form_filter',['error'=>$form->errors['location'][0]])?>
+						</td>
+						<td class="top">
+							<?php
+									echo Widget::factory('application:tag_selector', [
+										'tag' => $form['location'] ? O('tag_location', $form['location']) : '',
+										'root' => Tag_Model::root('location'),
+										'name' => 'location',
+										'class' => 'tag_selector_full',
+										'ajax' => true,
 									]);
-						?>
-					</td>
-				</tr>
+							?>
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle">
+							<?php echo I18N::T('meeting', '空间面积')?>
+						</td>
+						<td class="top">
+							<input name="util_area" class="text number" size="36" value="<?php echo H($form['util_area'])?>" /><span class="description">&nbsp;m²</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle">
+							<?php echo I18N::T('meeting', '空间类型')?>
+							<?php echo '<br>'.V('form_filter',['error'=>$form->errors['type']])?>
+						</td>
+						<td class="top">
+							<input name="type" class="text" size="40" value="<?php echo H($form['type'])?>" />
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap top"><?php echo I18N::T('meeting', '空间描述')?></td>
+						<td class="top"><textarea class="text autogrow" rows="3" cols="60" name="description"><?php echo H($form['description']) ?></textarea></td>
+					</tr>
 
-				<tr>
-					<td class="label right nowrap top">
-                        <?php echo $require; ?><?php echo I18N::T('meeting', '联系人')?>
-                        <?php echo '<br>'.V('form_filter',['error'=>$form->errors['contacts'][0]])?>
-                    </td>
-					<td class="middle">
-						<?php
-							echo Widget::factory('multi_user_selector',
-									[
-										'name'=>'contacts',
-										'autocomplete'=>URI::url('autocomplete/user'),
-										'value'=> $form['contacts'],
-										'extra'=> 'token_verify'
-								]);
-						?>
-					</td>
-				</tr>
-
-				<tr>
-					<td class="label right nowrap top"><?php echo I18N::T('meeting', '备注')?></td>
-					<td class="top"><textarea class="text autogrow" rows="3" cols="60" name="description"><?php echo H($form['description']) ?></textarea></td>
-				</tr>
-
-			</tbody>
-		</table>
-        <div class="button_container">
-            <div class="float_right">
-                <input type="button" name="cancel" id="cancel" class="font-button-default sm rmargin_2e4" value="取消">
-                <input type="submit" name="submit" class="font-button-save" value="<?php echo H(I18N::T('equipments', '添加')) ?>">
-            </div>
-        </div>
+				</tbody>
+			</table>
+			<div class="button_container">
+				<div class="float_right">
+					<input type="button" name="cancel" id="cancel" class="font-button-default sm rmargin_2e4" value="取消">
+					<input type="submit" name="submit" class="font-button-save" value="<?php echo H(I18N::T('equipments', '添加')) ?>">
+				</div>
+			</div>
 		</form>
 		</td>
 	</tr>

@@ -1,0 +1,15 @@
+<div>
+    <a href="<?php echo H($user->url() ) ?>">
+        <strong class="name"><?php echo H($user->name) ?></strong>
+    </a>
+</div>
+<?php
+if (!$GLOBALS['preload']['people.multi_lab']) $lab = Q("$user lab")->current();
+if (Module::is_installed('labs') && $lab->id): 
+?>
+<div>
+    <a class="description" href="<?php echo H($lab->url() ) ?>">
+        <?php echo H($lab->name) ?>
+    </a>
+</div>
+<?php endif; ?>

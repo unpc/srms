@@ -1,0 +1,6 @@
+<?php
+	$phones = [];
+	if ($user->phone) $phones[] = $user->phone;
+	if ($user->mobile) $phones[] = $user->mobile;
+?>
+<span class="phone"><?php echo H(implode(', ', $phones)); ?></span>

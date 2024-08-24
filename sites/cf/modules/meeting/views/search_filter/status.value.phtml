@@ -1,0 +1,10 @@
+<?php 
+
+	if($status == Meeting_Model::STATUS_USING) {
+		echo I18N::T('meeting', '使用中');
+	}
+	elseif ($status == Meeting_Model::STATUS_AVAILABLE) {
+		echo I18N::T('meeting', '空闲');
+	}
+		
+?>

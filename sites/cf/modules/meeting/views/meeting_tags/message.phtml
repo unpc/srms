@@ -1,0 +1,15 @@
+<?php $message_id = 'message_id_'. uniqid()?>
+<?php if($type&&$message):?>
+<div role="alert" class="message message_<?=$type?>" style="z-index: 2000;display:none">
+    <i class="message_icon icon_<?=$type?>"></i>
+    <p class="message_content"><?php echo  $message; ?>
+  </p>
+</div>
+<script type="text/javascript">
+
+$('.message').slideToggle();
+  setTimeout(() => {
+    $('.message').slideToggle();
+  }, 2000);
+</script>
+<?php endif;?>

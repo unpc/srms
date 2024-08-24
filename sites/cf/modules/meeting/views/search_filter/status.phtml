@@ -1,0 +1,4 @@
+<?php
+	$control_statuses = ['--', Meeting_Model::STATUS_USING =>'使用中', Meeting_Model::STATUS_AVAILABLE=>'空闲'];
+	echo Form::dropdown($status_name,I18N::T('meeting', $control_statuses), $form['status'],'class="autosubmittable dropdown middle"'); 
+?>	

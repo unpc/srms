@@ -1,0 +1,44 @@
+<?php
+	$control_uniqid = 'control_id_'. uniqid();
+	$me = L('ME');
+?>
+<div class="clearfix" id="<?php echo $control_uniqid; ?>" style="position: relative;background-color: #ffffff;padding:16px;">
+<table class="form flexible">
+<tbody>
+<tr>
+
+			<td width="130">
+				<div class="icon-radius"><img src="<?php echo H($meeting->icon_url('100')) ?>" width="100"></div>
+                <div class="interval_12"><div>
+			</td>
+			<td class="top">
+				<h2>
+					<a href="<?php echo H( URI::url('')) ?>"><?php echo H($meeting->name);?></a>
+				</h2>
+                <div class="interval_12">
+
+                </div>
+				<p>
+					<?php echo I18N::T('meeting', '联系人')?>:
+					<?php echo V('meeting:meeting_table/data/contacts', ['meeting' => $meeting]);?>
+				</p>
+				<?php
+				if(!$me->is_allowed_to('修改', $meeting)
+				&& $meeting->require_auth
+				&& !ME_Reserv_Access::check_authorized($me, $meeting, false)) : ?>
+					<p><?php echo V('auths/status', ['meeting'=>$meeting]); ?></p>
+				<?php
+				endif;
+				?>
+			</td>
+            <td class="top right">
+                <?php if ($me->is_allowed_to('修改', $meeting)) : ?>
+                <div class="float_right">
+        			<a class="button button_edit" href="<?php echo H( URI::url('!meeting/index/edit.'.$meeting->id)) ?>" title="<?php echo I18N::T('meeting', '修改');?>"><?php echo I18N::T('meeting', '修改');?></a>
+        		</div>
+                <?php endif;?>
+            </td>
+		</tr>
+</tbody>
+</table>
+</div>

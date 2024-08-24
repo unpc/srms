@@ -1,0 +1,73 @@
+<?php
+$tag = O('tag_meeting_user_tags', $tid);
+$message_uniqid = 'message_'.uniqid();
+?>
+<div class="relate_view">
+<form method="post" autocomplete="off"
+	q-object="tag_relate_data"
+	q-event="submit"
+	q-static="<?= H(['uniqid'=>$message_uniqid, 'id' => $id]) ?>"
+	q-src="<?= URI::url('!meeting/meeting') ?>">
+	<div id="<?= H($message_uniqid) ?>"></div>
+	<input class="hidden text" value="<?= H($tag->id) ?>" name="tid" />
+    <div class="interval_30"></div>
+	<h2 class="section_title"><?php echo $tag->name;?></h2>
+    <div class="interval_30"></div>
+
+	<div class="form" style="min-height: 85px;">
+		<?php $users = Q("{$tag} user")->to_assoc('id', 'name');?>
+		<span class='float_left tip_name'><?php echo I18N::T('meeting', '用户')?></span>
+		<div class="user_box float_right" style="width: 83%;">
+			<?php
+			$tooltip = I18N::T('meeting', '请输入关键字并选择');
+			echo Widget::factory('multi_user_selector', [
+				'autocomplete'=> URI::url('!equipments/autocomplete/user'),
+				'name'=>'users',
+				'size'=>'60',
+				'value'=>@json_encode($users),
+				'tooltip'=>$tooltip,
+				'extra'=>'token_verify'
+			]);
+			?>
+		</div>
+	</div>
+	<?php if (Module::is_installed('labs')): ?>
+    <div class="interval_20"></div>
+	<div class="form" style="min-height: 85px;">
+		<?php $labs = Q("{$tag} lab")->to_assoc('id', 'name');?>
+		<span class='float_left tip_name'><?php echo I18N::T('meeting', '实验室')?></span>
+		<div class="lab_box float_right" style="width: 83%;">
+			<?php
+			echo Widget::factory('equipments:tag_selector', [
+				'autocomplete' => URI::url('!equipments/autocomplete/labs'),
+				'name' => 'labs',
+				'value' => @json_encode($labs),
+			]);
+			?>
+		</div>
+	</div>
+	<?php endif ?>
+    <div class="interval_20"></div>
+	<div class="form" style="min-height: 85px;">
+		<?php
+		$root = Tag_Model::root('group'); 
+		$groups = Q("{$tag} tag_group[root={$root}]")->to_assoc('id', 'name');
+		?>
+		<span class='float_left tip_name'><?= I18N::T('meeting', '组织机构')?></h4></span>
+		<div class="group_box float_right" style="width: 83%;">
+			<?= Widget::factory('equipments:tag_selector', [
+				'autocomplete'=> URI::url('!equipments/autocomplete/groups'),
+				'name'=>'groups',
+				'value'=>@json_encode($groups),
+			]);
+			?>
+		</div>
+	</div>
+    <div class="interval_60"></div>
+    <?php if (Config::get('site.type') != 'slave'): ?>
+	<div class="form float_right">
+		<input name="submit" type="submit" class="font-button-save" value="<?php echo H(I18N::T('equipments', '保存修改')) ?>" />
+	</div>
+    <?php endif;?>
+</form>
+</div>

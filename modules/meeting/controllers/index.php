@@ -154,7 +154,7 @@ class Index_Controller extends Base_Controller
         $this->layout->body->primary_tabs
             ->add_tab('add', [
                 'url'   => URI::url(''),
-                'title' => I18N::T('meeting', '添加会议室'),
+                'title' => I18N::T('meeting', '添加空间'),
             ])
             ->select('add')
             ->content = V('meeting:add', [
@@ -718,7 +718,7 @@ class Index_AJAX_Controller extends AJAX_Controller
         $meeting = O('meeting');
 
         JS::dialog(V('add', ['form' => $form, 'meeting' => $meeting]), [
-            'title' => I18N::T('meeting', '添加会议室'),
+            'title' => I18N::T('meeting', '添加空间'),
         ]);
     }
 

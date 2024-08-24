@@ -1,0 +1,29 @@
+<div class="interval_24"></div>
+<form style="height: 160px;" class="form" q-object="admin_create_tag" q-event="submit"
+q-src="<?= H(URI::url('!meeting/meeting')) ?>">
+	<?= V('form_error', ['form' => $form]);?>
+	<table>
+		<tbody>
+			<tr>
+				<td class="nowrap middle">
+					<span class="label"><?= I18N::T('meeting', '标签名称')?></span>
+				</td>
+                <td>
+                    <input class="text" name="name" />
+                </td>
+			</tr>
+            <tr>
+                <td></td>
+                <td style="padding-top: 0;">
+                    <?php echo V('form_filter', ['error'=>$form->errors["name"][0]]); ?>
+                </td>
+            </tr>
+		</tbody>
+	</table>
+    <div class="button_container">
+        <div class="float_right">
+            <input type="button" name="cancel" id="cancel" class="font-button-default  sm rmargin_2e4" value="<?php echo H(I18N::T('admin', '取消')) ?>" />
+            <input type="submit" name="submit" class="font-button-save sm" value="<?php echo H(I18N::T('admin', '确定')) ?>" />
+        </div>
+    </div>
+</form>

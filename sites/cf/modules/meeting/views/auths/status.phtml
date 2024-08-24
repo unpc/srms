@@ -1,0 +1,21 @@
+<?php 
+$me = L('ME'); 
+if ($me->id) {
+	echo '<span class="description">'.I18N::T('meeting', '该会议室需要授权后方可使用: ').'</span>'; 
+	$auth = O('um_auth', ['meeting'=>$meeting, 'user'=>$me]);
+
+	switch ($auth->status) {
+		case UM_Auth_Model::STATUS_APPLIED:
+			echo I18N::T('meeting', '您已经申请使用该会议室');
+			break;
+		case UM_Auth_Model::STATUS_APPROVED:
+			echo I18N::T('meeting', '您已经通过授权');
+			break;
+		case UM_Auth_Model::STATUS_REFUSE:
+			echo '<span class="red">' . I18N::T('meeting', '您上次的授权申请被拒绝!') . '</span>';
+			echo '<a class="blue" href="'.$auth->url($meeting->id, NULL, NULL, 'apply').'">'.I18N::T('meeting', '申请使用该会议室').'</a>';
+			break;
+		default:
+			echo '<a class="blue" href="'.$auth->url($meeting->id, NULL, NULL, 'apply').'">'.I18N::T('meeting', '申请使用该会议室').'</a>';
+	}
+}

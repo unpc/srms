@@ -1,0 +1,16 @@
+<?php 
+$uniqid = 'meeting_'.uniqid();
+
+$autocomplete = $this->autocomplete ?: URI::url('!meeting/autocomplete/meeting');
+
+$size = $this->size ?: 40;
+
+if ($meeting->id) {
+	$name = $meeting->name;
+}
+else {
+	$name = '';
+}
+?>
+<input id="<?php echo $uniqid?>_meeting" name="<?php echo H($this->name ) ?>" type="hidden" value="<?php echo H($meeting->id) ?>" />
+<input id="<?php echo $uniqid?>_meeting_name" class="text middle select_on_focus autocomplete:<?php echo H($autocomplete) ?> autocomplete_alt:#<?php echo $uniqid?>_meeting" size="<?php echo H($size) ?>" value="<?php echo H($name) ?>" />

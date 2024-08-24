@@ -1,0 +1,40 @@
+<?php 
+echo JS::load_async('preview');
+echo CSS::load_async('preview');
+
+$calendar = O('calendar' , ['parent'=>$meeting]);
+if (!$calendar->id) {
+	$calendar = O('calendar');
+	$calendar->parent = $meeting;
+	$calendar->type = 'me_reserv';
+	$calendar->name = I18N::T('meeting', '%meeting的预约', ['%meeting' => $meeting->name]);
+	$calendar->save();
+}
+
+$now = time();
+if (!$form['dtstart']) {
+	$dtstart = $now;
+	$date=getdate($dtstart);
+	$dtstart = mktime(0,0,0,$date['mon'], $date['mday'], $date['year']);
+} else {
+	$dtstart = $form['dtstart'];
+}
+$dtend = $form['dtend'] ?: $dtstart + 604800;
+
+if ($meeting->accept_block_time) {
+	$block_time = (array)$meeting->reserv_block_data;
+	$block_time['default']['interval_time'] = $meeting->reserv_interval_time;
+	$block_time['default']['align_time'] = $meeting->reserv_align_time;
+}
+$search_date = $form['date']?:'';
+$browser_id = 'browser_'.uniqid();
+?>
+<script type="text/javascript">
+Q.Calendar = Q.Calendar || {};
+//Q.Calendar.left_nav_area = <?php //echo JS::quote((string) V('meeting:calendar/left_nav', ['calendar_id'=> $calendar->id]));?>
+</script>
+<?php if ($type == 'list'): ?>
+<div id="<?php echo H($browser_id) ?>" src="<?php echo H($calendar->url($type, ['browser_id'=>$browser_id, 'st'=>$dtstart, 'ed'=>$dtend, 'dtstart'=>$dtstart, 'dtend'=>$dtend, 'block_time'=>$block_time, 'calendar_id'=>$calendar->id,'hidden_tabs'=>1,'date'=>$search_date])); ?>"></div>
+<?php else:?>
+    <div id="<?php echo H($browser_id) ?>" src="<?php echo H($calendar->url($type, ['browser_id'=>$browser_id, 'st'=>$dtstart, 'ed'=>$dtend, 'block_time'=>$block_time, 'calendar_id'=>$calendar->id,'hidden_tabs'=>1,'date'=>$search_date, 'disable_day' => true])); ?>"></div>
+<?php endif;?>

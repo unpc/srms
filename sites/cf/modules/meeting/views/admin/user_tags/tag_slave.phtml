@@ -1,0 +1,34 @@
+<?php 
+$tag = O('tag_meeting_user_tags', $id);
+$uniqid = 'tag_'.uniqid();
+// 9行因没有做拖拽所以禁用了特殊鼠标样式
+?>
+<div class="item:<?= $tag->id; ?> equipment_tag tag_weight:<?= $tag->weight; ?> <?= $tid == $id ? 'active' : '';?>" 
+id="<?= H($uniqid) ?>">
+<div class="tag_title item:<?= $tag->id ?>">
+	<div class="tag_drag_handle" style="cursor: default">&nbsp;</div>
+	<input class="text hidden" value="<?= H($id) ?>" />
+	<span class="tag_name"><?= H($tag->name)?></span>
+</div>
+</div>
+<script>
+    $("#<?= $uniqid?>").bind('click', function(e){
+        var $item = $(this);
+        var $input = $item.find('input:text:eq(0)');
+        Q.trigger({
+            object: 'admin_replace_tag',
+            event: 'click',
+            data: {
+                tid: $input.val(),
+                uniqid: '<?= $relate_uniqid?>'
+            },
+            url: '<?= URI::url("!meeting/meeting")?>',
+            complete: function () {
+                $box = $("#<?= $relate_uniqid?> .equipment_tags .active");
+                $box.removeClass('active');
+                $item.addClass('active');
+            }
+        });
+        return false;
+    });
+</script>

@@ -1,5 +1,6 @@
 <?php
 $config['controller[admin/index].ready'][] = 'Meeting_Admin::setup';
+$config['controller[admin/index].ready'][] = 'Meeting_Room::setup';
 $config['controller[!meeting/meeting/index].ready'][] = 'Auths::setup_view';
 $config['controller[!meeting/meeting/index].ready'][] = 'ME_Reserv::setup_view';
 $config['controller[!entrance/door/index].ready'][] = 'Meeting_Door::setup';

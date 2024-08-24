@@ -1,0 +1,13 @@
+<?php $uniqid = 'message_'.uniqid(); ?>
+<div id="<?= H($uniqid) ?>" class="message message_normal">
+	<p><?= I18N::T('meeting', '用户标签设置成功!')?></p>
+	<script>
+	jQuery(function($){
+		setTimeout(function(){
+			$("#<?= $uniqid ?>").fadeOut('slow', function(){
+				$(this).remove();
+			})
+		}, 500);
+	});
+	</script>
+</div>

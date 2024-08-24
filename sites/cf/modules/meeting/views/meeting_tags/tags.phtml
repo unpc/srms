@@ -1,0 +1,54 @@
+<?php
+echo CSS::load_async('equipments:relate_list');
+$uniqid = 'relate_tags_'.uniqid();
+$keys = array_keys($tags);
+$tid = $this->tid ?: $keys[0];
+?>
+
+<div class="icon-radius float_left" style="width: 130px;">
+    <img src="<?php echo H($meeting->icon_url('100')) ?>" width="100" />
+</div>
+
+<div class="interval_12"></div>
+<h2 class="section_title">
+    <span class="border"></span>
+    <span class="black_title">标签设置</span>
+</h2>
+<div class="interval_30"></div>
+
+<div class="relate_list" id="<?= H($uniqid) ?>">
+
+    <div class="relate_left">
+        <div class="padding_1 panel clearfix add_tags center tmargin_3 bmargin_3">
+        <a  class="font-button-default border_gray gray"
+        q-object="create_tag"
+        q-event="click"
+        q-static="<?php echo H(['id'=>$meeting->id])?>"
+        q-src="<?php echo H(URI::url('!meeting/meeting')) ?>">
+        <span class='icon-add rmargin_1'></span><?php echo T('添加标签')?></a>
+        </div>
+
+    	<div class="equipment_tags">
+        <?php
+        foreach($tags as $key => $tag) {
+            echo V('meeting:meeting_tags/tag', [
+                'id' => $key,
+                'tid' => $tid,
+                'relate_uniqid' => $uniqid
+            ]);
+        }
+        ?>
+    	</div>
+    </div>
+
+    <div class="relate_right" id="<?php echo H($uniqid) ?>">
+    	<?php
+        if ($tid) {
+            echo V('meeting:meeting_tags/relate_view', [
+                'tid' => $tid,
+                'id' => $meeting->id
+            ]);
+        }
+    	?>
+    </div>
+</div>

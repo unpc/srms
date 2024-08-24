@@ -3,8 +3,8 @@
 if (L('ME')->is_allowed_to('添加', 'meeting')):
     $panel_buttons[] = [
         'url' => URI::url('!meeting/index/add'),
-        'tip'   => I18N::T('meeting', '添加会议室'),
-        'text' => I18N::T('meeting', '添加会议室'),
+        'tip'   => I18N::T('meeting', '添加空间'),
+        'text' => I18N::T('meeting', '添加空间'),
         'extra' => 'q-object="add" q-event="click" class="button button_add" q-src="' . URI::url('!meeting/index') . '"',
     ];
 endif;
@@ -23,7 +23,7 @@ $columns = [
     // '@'        => null,
     'name'     => [
         'weight'   => 20,
-        'title'    => I18N::T('meeting', '会议室名称'),
+        'title'    => I18N::T('meeting', '空间名称'),
         'sortable' => true,
         'align'    => ' left',
         'nowrap'   => true,
@@ -99,7 +99,7 @@ foreach ($meetings as $meeting) {
 }
 
 $table->add_columns($columns);
-$table->empty_message = I18N::T('meeting', '没有会议室信息');
+$table->empty_message = I18N::T('meeting', '没有空间信息');
 
 $param = [
     'panel_buttons'     => $panel_buttons,

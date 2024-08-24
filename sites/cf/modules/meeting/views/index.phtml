@@ -1,0 +1,114 @@
+<?php
+
+if (L('ME')->is_allowed_to('添加', 'meeting')):
+    $panel_buttons[] = [
+        'url' => URI::url('!meeting/index/add'),
+        'tip'   => I18N::T('meeting', '添加会议室'),
+        'text' => I18N::T('meeting', '添加会议室'),
+        'extra' => 'q-object="add" q-event="click" class="button button_add" q-src="' . URI::url('!meeting/index') . '"',
+    ];
+endif;
+
+$table           = Widget::factory('table');
+$table->name     = 'meeting';
+$table->sort_asc = $sort_asc;
+$table->sort_by  = $sort_by;
+
+$location_root = Tag_Model::root('location');
+if ($form['location_id']) {
+    $location = o("tag_location", $form['location_id']);
+}
+
+$columns = [
+    // '@'        => null,
+    'name'     => [
+        'weight'   => 20,
+        'title'    => I18N::T('meeting', '会议室名称'),
+        'sortable' => true,
+        'align'    => ' left',
+        'nowrap'   => true,
+        'filter'   => [
+            'form'  => V('meeting:search_filter/name', ['name' => $form['name']]),
+            'value' => $form['name'] ? H($form['name']) : null,
+            'field' => 'name',
+        ],
+    ],
+    'status'   => [
+        'weight' => 20,
+        'title'  => I18N::T('meeting', '使用状态'),
+        'align'  => 'left',
+        'nowrap' => true,
+        'filter' => [
+            'form'  => V('meeting:search_filter/status', ['form' => $form,
+                'status_name'                                        => 'status', 'status_value' => $form['status']]),
+            'value' => V('meeting:search_filter/status.value', ['status' => $form['status']]),
+            'field' => 'status',
+        ],
+    ],
+    'location' => [
+        'weight' => 20,
+        'title'  => I18N::T('meeting', '地点'),
+        'align'  => 'left',
+        'nowrap' => true,
+        'filter' => [
+            'form' => V('meeting:search_filter/location', [
+                'name' => 'location_id',
+                'tag' => $location,
+                'root' => $location_root,
+                'field_title' => I18N::T('people', '请选择地理位置'),
+            ]),
+            'value' => $location->id ? H($location->name): NULL,
+            'field' => 'location_id',
+        ],
+    ],
+    'incharge' => [
+        'weight' => 20,
+        'title'  => I18N::T('meeting', '负责人'),
+        'align'  => 'left',
+        'nowrap' => true,
+    ],
+    /*'rest'     => [
+        'title'  => I18N::T('meeting', '操作'),
+        'align'  => 'right',
+        'weight' => 30,
+    ],*/
+
+];
+if (L('ME')->is_allowed_to('修改', 'meeting')) {
+    $columns['rest'] = [
+        'title'  => I18N::T('meeting', '操作'),
+        'align'  => 'left',
+        'weight' => 30,
+    ];
+}
+
+foreach ($meetings as $meeting) {
+    $links = $meeting->links('edit');
+    $row = [
+        '@'        => [
+            'view'  => $meeting->icon('32', 'style="display:block"'),
+            'extra' => 'style="padding:4px" align="right"',
+        ],
+        'name'     => V('meeting:meeting_table/data/name', ['meeting' => $meeting]),
+        'status'   => V('meeting:meeting_table/data/status', ['meeting' => $meeting]),
+        'location' => V('application:tag/path', ['tag' => $meeting->location, 'tag_root' => Tag_Model::root('location'), 'url_template' => URI::url('', 'location_id=%tag_id')]),
+        'incharge' => V('meeting:meeting_table/data/incharge', ['meeting' => $meeting]),
+        'rest'     => Widget::factory('application:links', ['links' => $links]),
+    ];
+    $table->add_row($row);
+}
+
+$table->add_columns($columns);
+$table->empty_message = I18N::T('meeting', '没有会议室信息');
+
+$param = [
+    'panel_buttons'     => $panel_buttons,
+    'top_input_arr' => ['name', 'ref_no'],
+    'columns'       => $table->columns,
+    'extra_view'    => '<div class="adj statistics middle">'.$pagination.'</div>'
+];
+echo V('application:search_box', $param);
+
+echo $table;
+?>
+<div class="pages"><?php echo $pagination;?></div>

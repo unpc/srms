@@ -1,0 +1,48 @@
+<?php
+$table = Widget::factory('table');
+$table->name = 'door_meeting';
+
+$table->add_columns([
+    /*'image' => [
+        'nowrap' => TRUE
+    ],*/
+    'name'=>[
+        'title' => I18N::T('meeting', '会议室名称'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'status' => [
+        'weight' => 20,
+        'title' => I18N::T('meeting', '使用状态'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'location' => [
+        'weight' => 20,
+        'title' => I18N::T('meeting', '地点'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ],
+    'incharge' => [
+        'weight' => 20,
+        'title' => I18N::T('meeting', '负责人'),
+        'align' => 'left',
+        'nowrap' => TRUE,
+    ]
+]);
+
+foreach ($meetings as $meeting) {
+	$table->add_row([
+		/*'image' => [
+			'view' => $meeting->icon('32', 'style="display:block"'),
+			'extra' => 'style="padding:4px" align="left"'
+		],*/
+		'name' => V('meeting:meeting_table/data/name', ['meeting' => $meeting]),
+		'status' => V('meeting:meeting_table/data/status', ['meeting' => $meeting]),
+		'location' => V('application:tag/path', ['tag' => $meeting->location, 'tag_root' => Tag_Model::root('location'), 'url_template' => URI::url('', 'location_id=%tag_id')]),
+		'incharge' => V('meeting:meeting_table/data/incharge', ['meeting' => $meeting]),
+	]);
+}
+$table->empty_message = I18N::T('meeting', '没有会议室信息');
+
+echo $table;

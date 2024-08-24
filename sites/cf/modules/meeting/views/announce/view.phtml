@@ -1,0 +1,23 @@
+<div class="padding_2" style="width: 600px;margin: 0px auto">
+<div class="clearfix">
+  <h3 style="font: 30px bold; margin-bottom: 20px;"><?php echo H($announce->title)?></h3>
+  <div style="padding: 10px; padding-left: 0; height: 300px; overflow: auto;">
+	<?php echo H($announce->content, TRUE) ?>
+  </div>
+</div>
+<?php 
+$me = L('ME');
+if (EQ_Status_Model::NO_LONGER_IN_SERVICE != $announce->meeting->status && !$me->connected_with($announce, 'read') && !$me->is_allowed_to('修改公告', $announce->meeting)):
+?>
+<div class="hr_1" style="background: #fff;">&#160;</div>
+<form method="post" autocomplete="off" q-event="submit" q-object="view_announce" q-static="<?php echo H(['a_id'=>$announce->id])?>" class="center">
+	<?php echo Form::checkbox('has_read', FALSE, I18N::T('meeting', '我已阅读此公告'), 'class="middle checkbox"', 'class="middle"'); ?>
+	<br/>
+	<input type="submit" name="submit" class="font-button-save" style="margin-top: 5px;" value="<?php echo H(I18N::T('meeting', '确认')) ?>" />
+</form>
+<?php else:?>
+<form method="post" autocomplete="off", q-event="submit" q-object="view_and_close_announce" q-static="<?php echo H(['a_id'=>$announce->id])?>" class="center"> 
+    <input type="submit" name="submit" class="font-button-save" value="<?php echo H(I18N::T('meeting', '阅读并关闭')) ?>" />
+</form>
+<?php endif; ?>
+</div>

@@ -1,0 +1,5 @@
+<?php
+    $this->dtstart = $this->dtstart ? date('Y-m-d', (int) $this->dtstart) : '';
+    $this->dtend = $this->dtend ? date('Y-m-d', (int) $this->dtend) : '';
+ ?>
+<input name="<?= $this->start ?>" date_type="date" class="text date small_search_text toggle_status:<?php echo $this->startcheck_name?> enable_on:on" value="<?php echo H($this->dtstart) ?>" /><span class="middle description date_interval">-</span><input name="<?= $this->end ?>" date_type="date" class="text date small_search_text toggle_status:<?php echo $this->endcheck_name?> enable_on:on" value="<?php echo H($this->dtend) ?>"/>

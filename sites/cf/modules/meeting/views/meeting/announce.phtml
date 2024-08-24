@@ -1,0 +1,40 @@
+<?php
+$me = L('ME');
+$table = Widget::factory('table', ['extra_class'=>'meeting_announcement_table']);
+$table->name = 'meeting_announces';
+$table->add_columns([
+	'mtime'=>[
+		'title'=>I18N::T('meeting', '日期'),
+		'nowrap'=>TRUE,
+	],
+	'title'=>[
+		'title'=>I18N::T('meeting', '公告'),
+		'nowrap'=>TRUE,
+	],
+	'rest'=>[
+        'title'=>I18N::T('meeting', '操作'),
+		'align' => 'right',
+		'nowrap' => TRUE,
+	],
+]);
+
+$table->empty_message = I18N::T('meeting', '此会议室暂无公告!');
+foreach ($announces as $announce) {
+	$is_read = $me->connected_with($announce, 'read');
+	$links = $announce->links('index');
+
+	$table->add_row( [
+		'mtime' => Date::format($announce->mtime),
+		'title' => V('meeting:announce/table/data/title', ['announce'=>$announce, 'is_read'=>$is_read]),
+		'rest' => Widget::factory('application:links', ['links' => $links]),
+		'#extra_class' => $is_read ? 'meeting_announce_is_read' : '',
+	]);
+}
+
+$param = [
+	'panel_buttons'     => $panel_buttons,
+];
+echo V('application:search_box', $param);
+
+echo $table;
+?>

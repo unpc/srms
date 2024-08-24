@@ -1,0 +1,32 @@
+<div class="form padding_2">
+	<p class="description"><?php echo I18N::HT('equipments', '请将登录终端中提示的随机码输入, 点击确定获得对应超级密码');?></p>
+	<div class="hr_1">&#160;</div>
+	<form method="post" action="<?php echo URI::url(); ?>">
+	<table class="form">
+		<tr>
+			<td class="label right nowrap">
+				<?php echo I18N::HT('equipments', '随机码'); ?>
+			</td>
+			<td>
+				<input name="rand_code" class="text" value="<?php echo H($rand_code); ?>" />
+			</td>
+		</tr>
+<?php if ($super_code): ?>
+		<tr>
+			<td class="label right nowrap">
+				<?php echo I18N::HT('equipments', '超级密码'); ?>
+			</td>
+			<td>
+				<div class="center padding_1" style="background-color:#666;color: var(--basiccolor);"><pre><strong><big><big><?php echo H($super_code); ?></big></big></strong></pre></div>
+			</td>
+		</tr>
+<?php endif; ?>
+		<tr>
+			<td></td>
+			<td>
+				<input type="submit" class="button button_refresh" name="submit" value="<?php echo $super_code ? I18N::HT('equipments', '重新生成') : I18N::HT('equipments', '生成超级密码'); ?>" />
+			</td>
+		</tr>
+	</table>
+	</form>
+</div>

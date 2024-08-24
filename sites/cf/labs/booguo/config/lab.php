@@ -34,4 +34,4 @@ $config['modules']['meeting'] = true;
 // $config['modules']['exam'] = TRUE;
 // $config['modules']['nrii'] = true;
 // $config['modules']['eq_evaluate'] = true;
-$config['modules']['yiqikong'] = true;
+// $config['modules']['yiqikong'] = true;
