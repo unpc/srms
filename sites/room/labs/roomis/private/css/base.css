@@ -1,8 +1,8 @@
 :root {
-    --basiccolor: #138f76;
+    --basiccolor: rgb(17, 24, 39);
     --backgroundcolor: rgba(235, 242, 240, 0);
     --loginbgcolor: #f3f3f3;
-    --hovercolor: #0c725e;
+    --hovercolor: rgb(11, 14, 22);
 
     --bottonPaddingRight: 5px;
 
@@ -10,4 +10,28 @@
     /*--hovercolor: #69331d;*/
     /*--backgroundcolor: rgba(139, 43, 160, 0.08);*/
     /*--loginbgcolor: rgba(139, 43, 160, 0.88);*/
+}
+
+body {
+    .body {
+        .tabs_container_wrapper {
+            padding: 0px;
+        }
+    }
+
+    a.dialog_close {
+        color: #FFF;
+    }
+    
+    #header {
+        border-bottom: none;
+        padding: 5px 0px;
+
+        #module_menu {
+            top: 5px;
+        }
+        #top_menu {
+            top: 5px;
+        }
+    }
 }

@@ -135,7 +135,6 @@ class Lab {
         return array_merge(self::$local_config_fields,
             (array)Config::get('notification.equipments_conf'),
             (array)Event::trigger('admin.equipments.notification_configs', []),
-            (array)EQ_Charge_Admin::get_notif_config(),
             (array)Config::get('notification.eq_sample.templates'));
     }
 
