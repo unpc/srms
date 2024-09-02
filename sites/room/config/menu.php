@@ -9,6 +9,16 @@ $config['top'] = [
                 'title' => '空间列表',
                 'url' => '!meeting',
                 'icon' => ''
+            ],
+            'group' => [
+                'title' => '空间分组',
+                'url' => 'admin/meeting.group',
+                'icon' => ''
+            ],
+            'equipments' => [
+                'title' => '设施管理',
+                'url' => '!equipments',
+                'icon' => ''
             ]
         ]
     ],
@@ -19,6 +29,11 @@ $config['top'] = [
             'attendance' => [
                 'title' => '考勤列表',
                 'url' => '!attendance',
+                'icon' => ''
+            ],
+            'setting' => [
+                'title' => '考勤设置',
+                'url' => '!attendance/setting',
                 'icon' => ''
             ]
         ]
@@ -31,6 +46,11 @@ $config['top'] = [
                 'title' => '课程列表',
                 'url' => '!course',
                 'icon' => ''
+            ],
+            'arrange' => [
+                'title' => '课程排程',
+                'url' => '!course/arrange',
+                'icon' => ''
             ]
         ]
     ],
@@ -42,6 +62,11 @@ $config['top'] = [
                 'title' => '考场信息',
                 'url' => '!exam',
                 'icon' => ''
+            ],
+            'setting' => [
+                'title' => '签到设置',
+                'url' => '!exam/setting',
+                'icon' => ''
             ]
         ]
     ],
@@ -50,9 +75,36 @@ $config['top'] = [
         'icon' => 'iconfont icon-message1',
         'items' => [
             'notice' => [
-                'title' => '公播信息',
-                'url' => '!notice',
-                'icon' => ''
+                'title' => '公播管理',
+                'icon' => 'iconfont icon-setting',
+                'items' => [
+                    'people' => [
+                        'title' => '素材中心',
+                        'url' => '!people',
+                        'icon' => ''
+                    ],
+                    'labs' => [
+                        'title' => '播单管理',
+                        'url' => '!labs',
+                        'icon' => ''
+                    ],
+                    'role' => [
+                        'title' => '审核管理',
+                        'url' => '!roles',
+                        'icon' => ''
+                    ]
+                ]
+            ],
+            'message' => [
+                'title' => '消息管理',
+                'icon' => 'iconfont icon-message1',
+                'items' => [
+                    'message' => [
+                        'title' => '消息中心',
+                        'url' => '!messages',
+                        'icon' => ''
+                    ]
+                ]
             ]
         ]
     ],
@@ -64,6 +116,11 @@ $config['top'] = [
                 'title' => '门禁管理',
                 'url' => '!entrance',
                 'icon' => ''
+            ],
+            'vidmon' => [
+                'title' => '视频监控',
+                'url' => '!vidmon',
+                'icon' => ''
             ]
         ]
     ],
@@ -74,6 +131,21 @@ $config['top'] = [
             'space' => [
                 'title' => '空间数据分析',
                 'url' => '!data/space',
+                'icon' => ''
+            ],
+            'attendance' => [
+                'title' => '考勤数据分析',
+                'url' => '!data/attendance',
+                'icon' => ''
+            ],
+            'course' => [
+                'title' => '课程数据分析',
+                'url' => '!data/course',
+                'icon' => ''
+            ],
+            'exam_room' => [
+                'title' => '考场数据分析',
+                'url' => '!data/exam_room',
                 'icon' => ''
             ]
         ]
