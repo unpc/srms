@@ -11,7 +11,6 @@ jQuery(function($){
 	.on('mouseover', function () {
 		var $items = $(this).find('.items');
 		if ($items.is(':hidden')) {
-			$items.addClass('animal_sidebar_items');
 			$items.show();
 		} 
 	})
@@ -19,7 +18,6 @@ jQuery(function($){
 		var $items = $(this).find('.items');
 		if (!$items.is(':hidden')) {
 			$items.hide();
-			$items.removeClass('animal_sidebar_items');
 		}
 	})
 });

@@ -16,6 +16,7 @@
         }
 
         .category {
+            font-size: 16px;
             height: 48px;
             line-height: 48px;
             text-align: center;
@@ -40,34 +41,40 @@
         .items {
             position: absolute;
             z-index: 1000;
-            left: 0;
-            top: 48px;
-            min-width: 100px;
+            left: 12px;
+            top: 43px;
+            min-width: 160px;
             width: 100%;
             background-color: #FFF;
-            color: var(--basiccolor);
-            -moz-box-shadow: 2px 2px 4px var(--hovercolor);
-            -webkit-box-shadow: 2px 2px 4px var(--hovercolor);
-            box-shadow: 2px 2px 4px var(--hovercolor);
+            color: rgba(51, 65, 85, 1);
+            --tw-shadow: 0 0 3px rgba(60, 72, 88, 0.15) !important;
+            --tw-ring-offset-shadow: 0 0 #0000;
+            --tw-ring-shadow: 0 0 #0000;
+            -webkit-box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) !important;
+            box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) !important;
+            padding: 5px 0px;
 
             .item {
                 position: relative;
-                transition: background-color 0.2s;
+
+                &.item_title {
+                    font-size: 16px;
+                    border-bottom: 1px dotted rgb(156, 163, 175);
+                    display: flex;
+                    align-items: center;
+                    margin: 0px 12px;
+                }
 
                 &:hover {
-                    background-color: var(--basiccolor);
-
-                    a {
-                        color: #FFF;
-                    }
+                    background-color: rgba(249, 250, 251, 1);
                 }
 
                 .item_content {
                     line-height: 36px;
-                    color: var(--basiccolor);
+                    color: rgba(51, 65, 85, 1);
                     display: flex;
                     align-items: center;
-                    padding-left: 6px;
+                    padding-left: 12px;
                 }
             }
         }
@@ -78,22 +85,6 @@
             }
         }
     }
-}
-
-@keyframes sidebar_items {
-    from {
-        top: 53px;
-        background-color: var(--basiccolor);
-    }
-
-    to {
-        top: 48px;
-        background-color: #FFFFFF;
-    }
-}
-
-.animal_sidebar_items {
-    animation: sidebar_items 0.5s ease-in-out;
 }
 
 

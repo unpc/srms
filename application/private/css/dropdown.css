@@ -99,6 +99,7 @@
 	/* background-color: var(--basiccolor); */
 	color: var(--basiccolor);
 	text-decoration: none;
+	background-color: rgba(249, 250, 251, 1);
 }
 
 .dropdown_group a.dropdown_item {

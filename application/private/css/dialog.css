@@ -67,7 +67,7 @@
         margin-top: 25px;
     }
 
-    .max_dialog_W600{
+    .max_dialog_W600 {
         max-width: 600px;
         td.label,td div.title {
             white-space: normal; 
@@ -95,7 +95,7 @@
             white-space: pre-wrap;
             word-wrap: break-word;
             overflow: hidden;
-}
+        }
     } 
 
     tr {
@@ -110,9 +110,9 @@
             }
         }
 
-td.middle {
-    padding-top: 10px !important;
-}
+        td.middle {
+            padding-top: 10px !important;
+        }
 
         td {
            &:first-child+td{
@@ -120,7 +120,7 @@ td.middle {
            }
 
 
-			padding-top: 20px ;
+			padding-top: 10px ;
 
 			div{
                 &.title{

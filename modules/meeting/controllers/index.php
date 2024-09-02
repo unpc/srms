@@ -736,49 +736,29 @@ class Index_AJAX_Controller extends AJAX_Controller
 
             $location_root = Tag_Model::root('location');
             $form = Form::filter(Input::form())
-                ->validate('name', 'not_empty', I18N::T('meeting', '请输入会议室名称!'))
-                ->validate('location', 'not_empty', I18N::T('meeting', '请输入会议室地理位置!'));
+                ->validate('name', 'not_empty', I18N::T('meeting', '请输入空间名称!'))
+                ->validate('ref_no', 'not_empty', I18N::T('meeting', '请输入空间编号!'))
+                ->validate('location', 'not_empty', I18N::T('meeting', '请选择空间地理位置!'));
 
             if ($form['location'] == $location_root->id) {
                 $form->set_error('location', I18N::T('meeting', '地理位置不能为空!'));
             } 
-            $incharges = (array) @json_decode($form['incharges'], true);
-            $contacts  = (array) @json_decode($form['contacts'], true);
-
-            if (count($incharges) == 0) {
-                $form->set_error('incharges', I18N::T('meeting', '请指定至少一名会议室负责人!'));
-            }
-            if (count($contacts) == 0) {
-                $form->set_error('contacts', I18N::T('meeting', '请指定至少一名会议室联系人!'));
-            }
 
             if ($form->no_error) {
-                $meeting->name        = $form['name'];
-                $meeting->seats = (int)$form['seats']; 
-                $location = o("tag_location", $form['location']);
+                $meeting->name = H($form['name']);
+                $meeting->en_name = H($form['en_name']);
+                $meeting->ref_no = H($form['ref_no']);
+                $meeting->ctime = Date::time();
+                $meeting->type = (int)$form['type'];
+                $meeting->util_area = (int)$form['util_area'];
+                $meeting->phone = H($form['phone']);
+                $location = O("tag_location", (int)$form['location']);
                 $meeting->location = $location;     
                 $meeting->description = $form['description'];
-
                 $meeting->save();
                 if ($meeting->id) {
-                    foreach ($incharges as $id => $name) {
-                        $user = O('user', $id);
-                        if (!$user->id) {
-                            continue;
-                        }
-
-                        $meeting->connect($user, 'incharge');
-                        $user->follow($meeting);
-                    }
-
-                    //会议室多个联系人
-                    foreach ($contacts as $id => $name) {
-                        $user = O('user', $id);
-                        if (!$user->id) {
-                            continue;
-                        }
-
-                        $meeting->connect($user, 'contact');
+                    $user = O('user', (int)$form['incharge']);
+                    if ($user->id) {
                         $meeting->connect($user, 'incharge');
                         $user->follow($meeting);
                     }
@@ -788,12 +768,11 @@ class Index_AJAX_Controller extends AJAX_Controller
                         $location->connect($meeting);
                     }
 
-                    Lab::message(Lab::MESSAGE_NORMAL, I18N::T('meeting', '会议室添加成功!'));
-                    // URI::redirect($meeting->url(null, null, null, 'edit'));
+                    Lab::message(Lab::MESSAGE_NORMAL, I18N::T('meeting', '空间添加成功!'));
                     JS::redirect($meeting->url(null, null, null, 'view'));
 
                 } else {
-                    Lab::message(Lab::MESSAGE_ERROR, I18N::T('meeting', '会议室添加失败! 请与系统管理员联系。'));
+                    Lab::message(Lab::MESSAGE_ERROR, I18N::T('meeting', '空间添加失败! 请与系统管理员联系。'));
                 }
 
             }

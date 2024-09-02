@@ -1,0 +1,28 @@
+<?php
+    foreach ($items as $key => $item):
+        if ($item['items']) {
+            $sub_list = $item['items'];
+            echo V('application:sidebar/menu/sub_category', [
+                'name' => $item['title'], 
+                'icon' => $item['icon'],
+                'content' => (string) V('application:sidebar/menu/list', ['items' => $sub_list])
+            ]);
+        }
+        else {
+?>
+    <div class="item list_item <?= $k ? 'active' : ''?>">
+        <a class="item_content clearfix" href="<?php echo H(URI::url($item['url']) ) ?>" <?php echo $item['target'] ? 'target="'. $item['target'].'"' : NULL;?>>
+            <!-- <img src="<?php // echo $item['icon'] ? H(_C($item['icon'])) : '' ?>" width="16px" height="16px" class="pngfix middle"/> -->
+            <span class="<?= $item['class'] ?> rmargin_2"></span><span class="middle menu_font"><?php echo I18N::HT($item['i18n'], $item['title']); ?></span>
+            <?php
+            if ($item['notif_callback']) :
+                $number = call_user_func($item['notif_callback'], $item);
+                if ($number): 
+                    $len = strlen($number); 
+            ?>
+                <span class="sidebar_notif num_notif num_notif_<?php echo $len; ?> middle"><?php echo $number; ?></span>
+                <?php endif; ?>
+            <?php endif;?>
+        </a>
+    </div>
+<?php } endforeach; ?>

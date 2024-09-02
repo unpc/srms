@@ -90,7 +90,7 @@
 							<?php echo '<br>'.V('form_filter',['error'=>$form->errors['type']])?>
 						</td>
 						<td class="top">
-							<input name="type" class="text" size="40" value="<?php echo H($form['type'])?>" />
+							<?= Form::dropdown('type', I18N::T('meeting', Meeting_Model::$TYPES), $form['type'], 'class="autosubmittable dropdown middle"'); ?>
 						</td>
 					</tr>
 					<tr>

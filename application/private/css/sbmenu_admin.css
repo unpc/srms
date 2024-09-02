@@ -49,6 +49,11 @@
 				position: relative;
 				transition: background-color 0.2s;
 
+				&.item_title {
+					font-size: 16px;
+					border-bottom: 1px dotted rgb(156, 163, 175);
+				}
+
 				&:hover {
 					background-color: var(--basiccolor);
 

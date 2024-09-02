@@ -11,7 +11,10 @@
         }
     ?>
     <div class="category category_color <?= ($show ? 'active' : '') ?>">
-        <span><?= H($name) ?></span>&#160;<span class="angle icon-down" style="font-size: 10px;"></span>
+        <?php if ($icon): ?>
+            <i class="<?= $icon ?>"></i>    
+        <?php endif; ?>
+        <span><?= H($name) ?></span>&#160;<span class="angle icon-down icon-lg" style="font-size: 12px;"></span>
     </div>
     <div class="items clearfix" style="display: none;"><?php echo $content; ?></div>
 </div>

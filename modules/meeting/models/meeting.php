@@ -9,6 +9,18 @@ class Meeting_Model extends Presentable_Model
     //空闲
     const STATUS_AVAILABLE = 2;
 
+
+    const TYPE_SPACE = 0;
+    const TYPE_TECH = 1;
+    const TYPE_SPACE_TECH = 2;
+
+    static $TYPES = [
+        self::TYPE_SPACE => '空间预约',
+        self::TYPE_TECH => '教学预约',
+        self::TYPE_SPACE_TECH => '空间/教学预约'
+    ];
+
+
     protected $object_page = [
         'view'    => '!meeting/meeting/index.%id[.%arguments]',
         'meeting' => '!meeting/meeting/index.%id[.%arguments]',

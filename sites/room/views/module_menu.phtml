@@ -1,0 +1,62 @@
+<div class="top_sidebar_shortcuts">
+    <!-- 先加载原先sidebar中的快捷方式 -->
+    <?php
+        $allshortcuts = Config::get('lab.shortcuts');
+        if (count($allshortcuts) > 0) {
+            ksort($allshortcuts);
+            foreach ($allshortcuts as $key => $shortcuts) {
+                foreach ((array) $shortcuts as $key => $shortcut) {
+                    $items = [];
+                    foreach ((array)$shortcut as $item) {
+                        $output1 = (string)(V($item));
+                        if ($output1) $items[] = $output1;
+                    }
+                    if (count($items)) {
+                        $output = (string)V("sidebar/shortcuts_menu",[
+                                "key" => $key, 
+                                "shortcuts" => $items
+                        ]);
+                        $outputs[] =  $output;
+                    }
+                }
+            }
+        }
+        if (Switchrole::user_select_role() == '普通用户' && !in_array(L('ME')->token, Config::get('lab.admin', []))) $outputs = [];
+        if (count($outputs) > 0):
+    ?>
+        <div class="shortcut_extra_title">快捷链接</div>
+        <div class="shortcut_fields">
+            <?php foreach ($outputs as $output): ?>
+                <div class="shortcut_menu"><?= $output ?></div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+</div>
+
+<div class="vertical_separator"></div>
+
+<?php
+	$me = L('ME');
+	if ($me->id):
+		$uniqid = 'sbmenu_'.uniqid(); 
+?>
+    <div id="<?php echo H($uniqid) ?>" class="top_sidebar_menu">
+        <?php
+            $m_items = (array)Config::get('menu.top');
+
+            $view_name = 'application:sidebar/menu/list';
+
+            foreach ((array) $m_items as $name => $items) {
+                $list = $items['items'];
+                $content = trim((string) V($view_name, ['items' => $list]));
+                
+                echo V('application:sidebar/menu/category', [
+                    'name' => $items['title'],
+                    'icon' => $items['icon'],
+                    'content' => $content
+                ]);
+            }
+        ?>
+        <?php echo JS::load('application:sbmenu', ['menu_id'=> $uniqid, 'ajax_url'=>URI::url('admin'), 'mode'=>$mode]); ?>
+    </div>
+<?php endif;?>

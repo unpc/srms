@@ -1,6 +1,6 @@
 <?php
 $k = false;
-if ($item['key'] && is_array($item['key'])) {
+if ($items['key'] && is_array($items['key'])) {
     foreach ($item['key'] as $key) {
         if(count(explode($key, $_SERVER['REQUEST_URI']))>1){
             $k = true;
