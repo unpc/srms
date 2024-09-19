@@ -12,6 +12,8 @@ $step = $step ?? 4;
 $trh = $step == 4 ? 30 : 40;
 $mgr = $step == 4 ? 10 : 50;
 
+$show_search_filter = TRUE;
+
 if ($this->force_show_search_filter) {
 	$show_search_filter = $advanced_search = true;
 }
@@ -206,7 +208,7 @@ jQuery(function($) {
 
     var $filter_search = $('.filter_search');
     var $filter_panel = $('.filter_panel');
-    var $angle = $('.angle');
+    var $angle = $('.angle', $filter_search);
     var $text = $('.filter_search span:first-child');
     $filter_search.bind('click', function() {
         $filter_panel.slideToggle();
