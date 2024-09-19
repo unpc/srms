@@ -18,4 +18,5 @@ $config['separated'] = [
     'meeting_user_tags', // 仪器用户标签
     'location',
     'service_type',//服务类型
+    'room'
 ];

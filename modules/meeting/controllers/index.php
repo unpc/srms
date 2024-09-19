@@ -181,24 +181,42 @@ class Index_Controller extends Base_Controller
 
         Event::bind('meeting.edit.content', [$this, '_edit_info'], 0, 'info');
         Event::bind('meeting.edit.content', [$this, '_edit_photo'], 0, 'photo');
-        Event::bind('meeting.edit.content', [$this, '_edit_tag'], 0, 'tag');
+        Event::bind('meeting.edit.content', [$this, '_edit_group'], 0, 'group');
         Event::bind('meeting.edit.content', [$this, '_edit_reserv'], 0, 'reserv');
+        Event::bind('meeting.edit.content', [$this, '_edit_device'], 0, 'device');
+        Event::bind('meeting.edit.content', [$this, '_edit_capture'], 0, 'capture');
+        Event::bind('meeting.edit.content', [$this, '_edit_client'], 0, 'client');
         $this->layout->body->primary_tabs
             ->add_tab('info', [
                 'url'    => $meeting->url('info', null, null, 'edit'),
                 'title'  => I18N::T('meeting', '基本信息'),
                 'weight' => 0,
             ])
-            ->add_tab('tag', [
-                'url'    => $meeting->url('tag', null, null, 'edit'),
-                'title'  => I18N::T('meeting', '用户标签'),
-                'weight' => 20,
-            ])
             ->add_tab('reserv', [
                 'url'    => $meeting->url('reserv', null, null, 'edit'),
                 'title'  => I18N::T('meeting', '预约设置'),
                 'weight' => 10,
-                ]);
+            ])
+            ->add_tab('group', [
+                'url'    => $meeting->url('group', null, null, 'edit'),
+                'title'  => I18N::T('meeting', '分组设置'),
+                'weight' => 15,
+            ])
+            ->add_tab('device', [
+                'url'    => $meeting->url('device', null, null, 'edit'),
+                'title'  => I18N::T('meeting', '设施管理'),
+                'weight' => 30,
+            ])
+            ->add_tab('capture', [
+                'url'    => $meeting->url('capture', null, null, 'edit'),
+                'title'  => I18N::T('meeting', '摄像头管理'),
+                'weight' => 35,
+            ])
+            ->add_tab('client', [
+                'url'    => $meeting->url('client', null, null, 'edit'),
+                'title'  => I18N::T('meeting', '终端管理'),
+                'weight' => 40,
+            ]);
 
         $this->layout->body->primary_tabs
             ->set('meeting', $meeting)
@@ -210,7 +228,7 @@ class Index_Controller extends Base_Controller
         $breadcrumbs = [
             [
                 'url' => '!meeting',
-                'title' => I18N::T('meeting', '会议室列表'),
+                'title' => I18N::T('meeting', '空间列表'),
             ],
             [
                 'url' => $meeting->url(),
@@ -238,78 +256,51 @@ class Index_Controller extends Base_Controller
         if (Input::form('submit')) {
 
             $location_root = Tag_Model::root('location');
+
             $form = Form::filter(Input::form())
-                ->validate('name', 'not_empty', I18N::T('meeting', '请输入会议室名称!'))
-                ->validate('location', 'not_empty', I18N::T('meeting', '请输入会议室地理位置!'));
+                ->validate('name', 'not_empty', I18N::T('meeting', '请输入空间名称!'))
+                ->validate('ref_no', 'not_empty', I18N::T('meeting', '请输入空间编号!'))
+                ->validate('location', 'not_empty', I18N::T('meeting', '请选择空间地理位置!'));
 
             if ($form['location'] == $location_root->id) {
                 $form->set_error('location', I18N::T('meeting', '地理位置不能为空!'));
             } 
 
-            $incharges = (array) @json_decode($form['incharges'], true);
-            $contacts  = (array) @json_decode($form['contacts'], true);
-            if ($me->is_allowed_to('修改', $meeting)) {
-                if (count($incharges) == 0) {
-                    $form->set_error('incharges', I18N::T('meeting', '请指定至少一名会议室负责人!'));
-                }
-                if (count($contacts) == 0) {
-                    $form->set_error('contacts', I18N::T('meeting', '请指定至少一名会议室联系人!'));
-                }
-            }
-
             if ($form->no_error) {
-                $meeting->name = $form['name'];              
-                $meeting->seats = (int)$form['seats'];
-                $location = o("tag_location", $form['location']);
-                $meeting->location = $location; 
+                $meeting->name = H($form['name']);
+                $meeting->en_name = H($form['en_name']);
+                $meeting->ref_no = H($form['ref_no']);
+                $meeting->ctime = Date::time();
+                $meeting->type = (int)$form['type'];
+                $meeting->util_area = (int)$form['util_area'];
+                $meeting->phone = H($form['phone']);
+                $location = O("tag_location", (int)$form['location']);
+                $meeting->location = $location;     
                 $meeting->description = $form['description'];
-                $meeting->require_auth = $form['require_auth'] ? 1 : 0;
-
-                if ($me->is_allowed_to('修改', $meeting)) {
+                $meeting->save();
+                if ($meeting->id) {
                     foreach (Q("$meeting user.incharge") as $incharge) {
                         $meeting->disconnect($incharge, 'incharge');
                     }
 
-                    foreach ($incharges as $id => $name) {
-                        $user = O('user', $id);
-                        if (!$user->id) {
-                            continue;
-                        }
-
+                    $user = O('user', (int)$form['incharge']);
+                    if ($user->id) {
                         $meeting->connect($user, 'incharge');
                         $user->follow($meeting);
                     }
-
-                    foreach (Q("$meeting user.contact") as $contact) {
-                        $meeting->disconnect($contact, 'contact');
-                        $meeting->disconnect($contact, 'incharge');
-                    }
-
-                    foreach ($contacts as $id => $name) {
-                        $user = O('user', $id);
-                        if (!$user->id) {
-                            continue;
-                        }
-
-                        $meeting->connect($user, 'contact');
-                        $meeting->connect($user, 'incharge');
-                        $user->follow($meeting);
-                    }
-                }
-
-                if ($meeting->save()) {
 
                     if ($location->id) {
                         $location_root->disconnect($meeting);
                         $location->connect($meeting);
                     }
 
-                    Lab::message(Lab::MESSAGE_NORMAL, I18N::T('meeting', '会议室已更新'));
-                } else {
-                    Lab::message(Lab::MESSAGE_ERROR, I18N::T('meeting', '会议室信息更新失败! 请与系统管理员联系。'));
-                }
-            }
+                    Lab::message(Lab::MESSAGE_NORMAL, I18N::T('meeting', '空间已更新'));
 
+                } else {
+                    Lab::message(Lab::MESSAGE_ERROR, I18N::T('meeting', '空间信息更新失败! 请与系统管理员联系。'));
+                }
+
+            }
         }
 
         $tabs->content = V('meeting/edit.info', ['form' => $form, 'meeting' => $meeting]);
@@ -343,6 +334,39 @@ class Index_Controller extends Base_Controller
         }
 
         $tabs->content = V('meeting/edit.photo');
+    }
+
+    public function _edit_group($e, $tabs) {
+        $meeting = $tabs->meeting;
+
+        $form    = Form::filter(Input::form());
+
+        if ($form['submit']) {
+            $groups = (array)@json_decode($form['groups'], TRUE);
+			if ($form->no_error) {
+				$old_groups = Q("$meeting tag_room")->to_assoc('id', 'name');
+				$disconGroups = array_diff_key($old_groups, $groups);
+				$newConGroups = array_diff_key($groups, $old_groups);
+				foreach ($disconGroups as $id => $name) {
+					$tag = O('tag_room', $id);
+					$tag->id && $meeting->disconnect($tag);
+				}
+				foreach ($newConGroups as $id => $name) {
+					$tag = O('tag_room', $id);
+					$tag->id && $meeting->connect($tag);
+				}
+
+                $me = L('ME');
+                Log::add(strtr('[meetings] %user_name[%user_id]修改了空间%member_name[%member_id]的分组信息', ['%user_name'=> $me->name, '%user_id'=> $me->id, '%member_name'=> $meeting->name, '%mbmer_id'=> $meeting->id]), 'journal');
+				Lab::message(LAB::MESSAGE_NORMAL, I18N::T('meeting', '空间分组信息保存成功！'));
+				URI::redirect($meeting->url('group', NULL, NULL, 'edit'));
+			}
+        }
+
+        $tabs->content = V('meeting/edit.group', [
+            'meeting' => $meeting,
+            'form' => $form
+        ]);
     }
 
     public function _edit_reserv($e, $tabs)
@@ -639,6 +663,49 @@ class Index_Controller extends Base_Controller
             'tags'    => $tags,
         ]);
     }
+
+    static function _edit_device($e, $tabs) {
+		$meeting = $tabs->meeting;
+        $form = Form::filter(Input::form());
+
+		if ($form['submit']) {
+            $equipments = (array)$form['equipments'];
+            Meeting_Room::batch_connect($equipments, $meeting, 'equipment', 'room');
+            Lab::message(Lab::MESSAGE_NORMAL, I18N::T('meeting', '设施关联成功!'));
+        }
+
+		$content = V('meeting/edit.device', ['meeting' => $meeting, 'form' => $form]);
+		$tabs->content = $content;
+	}
+
+    static function _edit_capture($e, $tabs) {
+        $meeting = $tabs->meeting;
+        $form = Form::filter(Input::form());
+
+		if ($form['submit']) {
+            $vidcams = (array)$form['vidcams'];
+            Meeting_Room::batch_connect($vidcams, $meeting, 'vidcam', 'room');
+            Lab::message(Lab::MESSAGE_NORMAL, I18N::T('meeting', '摄像头关联成功!'));
+        }
+
+		$content = V('meeting/edit.capture', ['meeting' => $meeting, 'form' => $form]);
+		$tabs->content = $content;
+    }
+
+    static function _edit_client($e, $tabs) {
+        $meeting = $tabs->meeting;
+        $form = Form::filter(Input::form());
+
+		if ($form['submit']) {
+            $clients = (array)$form['client'];
+            Meeting_Room::batch_connect($clients, $meeting, 'client', 'room');
+            Lab::message(Lab::MESSAGE_NORMAL, I18N::T('meeting', '终端设备关联成功!'));
+        }
+
+		$content = V('meeting/edit.client', ['meeting' => $meeting, 'form' => $form]);
+		$tabs->content = $content;
+    }
+
 
     public function delete_photo($id = 0)
     {

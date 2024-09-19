@@ -20,7 +20,9 @@ if ($form['location_id']) {
 }
 
 $columns = [
-    // '@'        => null,
+    'img'        => [
+        'extra_class' => 'w80'
+    ],
     'name'     => [
         'weight'   => 20,
         'title'    => I18N::T('meeting', '空间名称'),
@@ -33,17 +35,11 @@ $columns = [
             'field' => 'name',
         ],
     ],
-    'status'   => [
+    'type'   => [
         'weight' => 20,
-        'title'  => I18N::T('meeting', '使用状态'),
+        'title'  => I18N::T('meeting', '类型'),
         'align'  => 'left',
         'nowrap' => true,
-        'filter' => [
-            'form'  => V('meeting:search_filter/status', ['form' => $form,
-                'status_name'                                        => 'status', 'status_value' => $form['status']]),
-            'value' => V('meeting:search_filter/status.value', ['status' => $form['status']]),
-            'field' => 'status',
-        ],
     ],
     'location' => [
         'weight' => 20,
@@ -61,8 +57,25 @@ $columns = [
             'field' => 'location_id',
         ],
     ],
+    'groups'   => [
+        'weight' => 21,
+        'align' => 'left',
+        'title'  => I18N::T('meeting', '分组信息')
+    ],
+    'status'   => [
+        'weight' => 25,
+        'title'  => I18N::T('meeting', '使用状态'),
+        'align'  => 'left',
+        'nowrap' => true,
+        'filter' => [
+            'form'  => V('meeting:search_filter/status', ['form' => $form,
+                'status_name'                                        => 'status', 'status_value' => $form['status']]),
+            'value' => V('meeting:search_filter/status.value', ['status' => $form['status']]),
+            'field' => 'status',
+        ],
+    ],
     'incharge' => [
-        'weight' => 20,
+        'weight' => 30,
         'title'  => I18N::T('meeting', '负责人'),
         'align'  => 'left',
         'nowrap' => true,
@@ -78,21 +91,23 @@ if (L('ME')->is_allowed_to('修改', 'meeting')) {
     $columns['rest'] = [
         'title'  => I18N::T('meeting', '操作'),
         'align'  => 'left',
-        'weight' => 30,
+        'weight' => 35,
     ];
 }
 
 foreach ($meetings as $meeting) {
     $links = $meeting->links('edit');
     $row = [
-        '@'        => [
-            'view'  => $meeting->icon('32', 'style="display:block"'),
-            'extra' => 'style="padding:4px" align="right"',
+        'img'        => [
+            'view'  => $meeting->icon('64', 'style="display:block"'),
+            'extra' => 'style="padding:4px" align="middle"',
         ],
         'name'     => V('meeting:meeting_table/data/name', ['meeting' => $meeting]),
+        'type'     => Meeting_Model::$TYPES[(int)$meeting->type],
         'status'   => V('meeting:meeting_table/data/status', ['meeting' => $meeting]),
         'location' => V('application:tag/path', ['tag' => $meeting->location, 'tag_root' => Tag_Model::root('location'), 'url_template' => URI::url('', 'location_id=%tag_id')]),
         'incharge' => V('meeting:meeting_table/data/incharge', ['meeting' => $meeting]),
+        'groups'   => V('meeting:meeting_table/data/groups', ['meeting' => $meeting]),
         'rest'     => Widget::factory('application:links', ['links' => $links]),
     ];
     $table->add_row($row);

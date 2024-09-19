@@ -1,5 +1,5 @@
 <div class="form">
-<table class="form flexible">
+<table class="form">
 	<tbody>
 	<tr>
 		<td class="icon top" width="130">
@@ -38,7 +38,7 @@
             <tr>
                 <td class="padding_2  rpadding_4" colspan="2">
                     <div class="bpadding_2">
-                        <span class="rpadding_1"><?php echo I18N::T('meeting', '会议室名称')?></span><?php echo $require; ?>
+                        <span class="rpadding_1"><?php echo I18N::T('meeting', '空间名称')?></span><?php echo $require; ?>
                     </div>
                     <div>
                         <input name="name" class="text"  size="54" value="<?php echo H($meeting->name); ?>" />
@@ -46,18 +46,26 @@
                 </td>
                 <td  class="padding_2  lpadding_4" colspan="2">
                     <div class="bpadding_2">
-                        <?php echo I18N::T('meeting', '坐席数')?>
+                        <?php echo I18N::T('meeting', '空间编号')?><?php echo $require; ?>
                     </div>
                     <div>
-                        <input name="seats" class="text"  size="54" value="<?= $meeting->seats ?>" />
+                        <input name="ref_no" class="text"  size="54" value="<?= H($meeting->ref_no) ?>" />
                     </div>
                 </td>
             </tr>
-             
+
             <tr>
                 <td class="padding_2  rpadding_4" colspan="2">
                     <div class="bpadding_2">
-                        <span class="rpadding_1"><?php echo I18N::T('meeting', '地点')?></span><?php echo $require; ?>
+                        <span class="rpadding_1"><?php echo I18N::T('meeting', '空间英文名称')?></span>
+                    </div>
+                    <div>
+                        <input name="en_name" class="text"  size="54" value="<?php echo H($meeting->en_name); ?>" />
+                    </div>
+                </td>
+                <td class="padding_2  lpadding_4" colspan="2">
+                    <div class="bpadding_2">
+                        <span class="rpadding_1"><?php echo I18N::T('meeting', '地理位置')?></span><?php echo $require; ?>
                     </div>
                     <div>
                         <?php 
@@ -81,50 +89,35 @@
                     </div>
                     <div>
                         <?php
-                        $users = Q("{$meeting} user.incharge");
-                        $incharges = [];
-                        foreach ($users as $incharge) {
-                            $incharges[$incharge->id] = $incharge->name;
-                            if (!$GLOBALS['preload']['people.multi_lab']) {
-                                $incharges[$incharge->id] .= '('.Q("$incharge lab")->current()->name.')';
-                            }
-                        }
-                        echo Widget::factory('multi_user_selector',
-                            [
-                                'name'=>'incharges',
-                                'autocomplete'=>URI::url('autocomplete/user'),
-                                'value'=> json_encode($incharges),
-                                'extra'=>'token_verify'
-
+                            $user = Q("{$meeting} user.incharge")->current();
+                            echo Widget::factory('user_selector', [
+                                'name' => 'incharge',
+                                'autocomplete' => URI::url('autocomplete/user'),
+                                'user'=> $form['incharge'] ?: $user->id,
+                                'extra'=> 'token_verify'
                             ]);
                         ?>
                     </div>
                 </td>
             </tr>
-             
+
             <tr>
-                <td class="padding_2" colspan="4">
+                <td class="padding_2  rpadding_4" colspan="2">
                     <div class="bpadding_2">
-                        <span class="rpadding_1"><?php echo I18N::T('meeting', '联系人')?></span><?php echo $require; ?>
+                        <span class="rpadding_1"><?php echo I18N::T('meeting', '空间面积')?></span>
                     </div>
                     <div>
-                        <?php
-                        $us = Q("{$meeting} user.contact");
-                        $contacts = [];
-                        foreach ($us as $contact) {
-                            $contacts[$contact->id] = $contact->name;
-                            if (!$GLOBALS['preload']['people.multi_lab']) {
-                                $contacts[$contact->id] .= '('.Q("$contact lab")->current()->name.')';
-                            }
-                        }
-                        echo Widget::factory('multi_user_selector',
-                            [
-                                'name'=>'contacts',
-                                'autocomplete'=>URI::url('autocomplete/user'),
-                                'value'=> json_encode($contacts, TRUE),
-                                'extra'=>'token_verify'
-                            ]);
-                        ?>
+                        <input name="util_area" class="text"  size="54" value="<?php echo H($meeting->util_area); ?>" /><span class="description">&nbsp;m²</span>
+                    </div>
+                </td>
+                <td class="padding_2  lpadding_4" colspan="2">
+                    <div class="bpadding_2">
+                        <span class="rpadding_1"><?php echo I18N::T('meeting', '空间类型')?></span>
+                    </div>
+                    <div>
+                        <?php foreach (Meeting_Model::$TYPES as $key => $value): ?>
+                            <?= Form::radio("type", $key, ($form['type'] ?: $meeting->type), I18N::T('meeting', $value), 'class="monitor radio"'); ?> &#160;
+                        <?php endforeach; ?>
                     </div>
                 </td>
             </tr>
@@ -135,11 +128,11 @@
                         <span class="rpadding_1"><?php echo I18N::T('meeting', '备注')?></span>
                     </div>
                     <div>
-                        <textarea class="text autogrow" name="description"><?php echo H($meeting->description);?></textarea>
+                        <textarea class="text autogrow" name="description"><?php echo H($form['description'] ?: $meeting->description);?></textarea>
                     </div>
                 </td>
             </tr>
-             
+            <!--
             <tr>
                 <td class="padding_2  rpadding_4" colspan="2">
                     <div class="bpadding_2">
@@ -147,6 +140,7 @@
                     </div>
                 </td>
             </tr>
+            -->
 
 
             <tr>
@@ -161,7 +155,7 @@
                                 $lab_meeting_component_counts = Q("cal_component[me_room={$meeting}]")->total_count();
                                 $counts = $cal_component_counts + $lab_meeting_component_counts;
                                 if ($counts == 0) : ?>
-                                    <a class="font-button-delete" confirm="<?php echo H(I18N::T('meeting', '您确定删除该会议室吗?')) ?>" href="<?php echo H($meeting->url(NULL, NULL, NULL, 'delete') ) ?>"><?php echo I18N::T('meeting', '删除会议室')?></a>
+                                    <a class="font-button-delete" confirm="<?php echo H(I18N::T('meeting', '您确定删除该空间吗?')) ?>" href="<?php echo H($meeting->url(NULL, NULL, NULL, 'delete') ) ?>"><?php echo I18N::T('meeting', '删除空间')?></a>
                                 <?php endif; ?>
                             <?php endif; ?>
                         </div>

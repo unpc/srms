@@ -92,4 +92,116 @@ class Autocomplete_Controller extends AJAX_Controller {
         }
     }
 
+    function tag_room() {
+        $s = trim(Input::form('s'));
+		$st = trim(Input::form('st'));
+		$start = 0;
+		if ($st) {
+			$start = $st;
+		}
+		if($start >= 100) return;	
+		$n = 5;
+		if($start == 0) $n = 10;
+		$root = Tag_Model::root('room', '空间分组');
+		if ($s) {
+			$s = Q::quote($s);
+			$tags = Q("tag_room[root={$root}][name*={$s}]:limit({$start},{$n})");
+		}
+		else {
+			$tags = Q("tag_room[root={$root}]:limit({$start},{$n})");
+		}
+		
+		$tags_count = $tags->total_count();
+		if ($start == 0 && !$tags_count) {
+			Output::$AJAX[] = [
+				'html' => (string) V('autocomplete/special/empty'),
+				'special' => TRUE
+			];
+		}
+		else {
+			foreach($tags as $tag){
+				Output::$AJAX[] = [
+					'html' => (string) V('meeting:autocomplete/user_tag', ['tag' => $tag]),
+					'alt' => $tag->id,
+					'text' => $tag->name,
+				];
+			}
+
+			if ($start == 95) {
+				Output::$AJAX[] = [
+					'html' => (string) V('autocomplete/special/rest'),
+					'special' => TRUE
+				];
+			}
+		}
+    }
+
+    function vidcams() {
+		$s = trim(Input::form('s'));
+		$st = trim(Input::form('st'));
+		$start = 0;
+		if ($st) {
+			$start = $st;
+		}
+		$n = 5;
+		if($start == 0) $n = 10;
+		if($start >= 100) return;		
+		if ($s) {
+			$s = Q::quote($s);
+			$selector = "vidcam[name*={$s}]:limit({$start},{$n})";
+
+			$vidcams = Q($selector);
+			$vidcams_count = $vidcams->total_count();
+		
+			if ($start == 0 && !$vidcams_count) {
+				Output::$AJAX[] = [
+					'html' => (string) V('autocomplete/special/empty'),
+					'special' => TRUE
+				];
+			}
+			else {
+				foreach ($vidcams as $vidcam) {
+					Output::$AJAX[] = [
+						'html' => (string) V('autocomplete/vidcam', ['vidcam' => $vidcam]),
+						'alt' => $vidcam->id,
+						'tip' => I18N::T('meeting', '%vidcam', ['%vidcam' => $vidcam->name]),
+					];
+				}
+				if ($start == 95) {
+					Output::$AJAX[] = [
+						'html' => (string) V('autocomplete/special/rest'),
+						'special' => TRUE
+					];
+				}
+			}
+		}
+		else {
+			$selector = "vidcam:limit({$start},{$n})";
+			$vidcams = Q($selector);
+			$vidcams_count = $vidcams->total_count();
+		
+			if ($start == 0 && !$vidcams_count) {
+				Output::$AJAX[] = [
+					'html' => (string) V('autocomplete/special/empty'),
+					'special' => TRUE
+				];
+			}
+			else {
+				foreach ($vidcams as $vidcam) {
+					Output::$AJAX[] = [
+						'html' =>(string) V('autocomplete/vidcam', ['vidcam' => $vidcam]),
+						'alt' => $vidcam->id,
+						'tip' => I18N::T('meeting', '%vidcam', ['%vidcam' => $vidcam->name]),
+					];
+				}
+				if ($start == 95) {
+					Output::$AJAX[] = [
+						'html' => (string) V('autocomplete/special/rest'),
+						'special' => TRUE
+					];
+				}
+			}
+		}
+	}
+
 }

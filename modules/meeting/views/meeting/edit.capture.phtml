@@ -1,0 +1,28 @@
+<div class="icon-radius float_left" style="width: 130px;"><?php echo $meeting->icon('104');?></div>
+<div class="form clearfix" style="padding-left: 130px;">
+	<form method="post" class="edit">
+        <?php echo V('form_error', ['form'=>$form]);?>
+        <div class="interval_12"></div>
+        <?php
+            $vidcams = Q("{$meeting}<room vidcam");
+            $specific = [];
+            foreach ($vidcams as $key => $vidcam) {
+                if (isset($specific[$key])) continue;
+                $specific[$key]['vidcam'] = $vidcam;
+            }
+            echo Widget::factory('flexform', [
+                'title' => I18N::T('meeting', '关联摄像头'),
+                'template_data' => ['disabled' => TRUE],
+                'existing_data' => $specific,
+                'delete_message' => I18N::T('meeting', '您确定要取消该摄像头的关联吗？请谨慎操作！'),
+                'item_view' => 'meeting:device/vidcam_item',
+                'extra_vars' => [
+                    'meeting' => $meeting,
+                ],
+            ]);
+        ?>
+        <div class="interval_60"></div>
+        <input name="submit" class="font-button-save float_right" type="submit" value="<?= H(I18N::T('eq_door', '保存修改')) ?>">
+        <div class="interval_60"></div>
+	</form>
+</div>

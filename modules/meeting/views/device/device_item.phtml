@@ -1,0 +1,26 @@
+<div style="width: 100%">
+<table class="form" width="80%;">
+	<tbody>
+		<tr>
+            <td class="top icon" width="50">
+                <?php $icon_equipment = $equipment->id ? $equipment : O('equipment'); ?>
+                <?= $icon_equipment->icon('32'); ?>
+			</td>
+			<td class="middle">
+				<table class="form">
+                    <tr>
+                        <td width="100"><div><?php echo I18N::T('meeting', "设施[{$flexform_index}]")?></div></td>
+						<td >
+                            <?php echo Widget::factory('equipments:equipment_selector', [
+								'name' => 'equipments['.$flexform_index.']',
+								'equipment' => $equipment
+							]);?>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</tbody>
+</table>
+</div>
+<div class="interval_30"></div>

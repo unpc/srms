@@ -26,6 +26,7 @@ class Meeting_Model extends Presentable_Model
         'meeting' => '!meeting/meeting/index.%id[.%arguments]',
         'edit'    => '!meeting/index/edit.%id[.%arguments]',
         'delete'  => '!meeting/index/delete.%id[.%arguments]',
+        'reserv' => '!meeting/meeting/index.%id[.%arguments]'
     ];
 
     public function get_root()

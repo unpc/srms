@@ -14,7 +14,7 @@ class Meeting_Admin
     static function _primary_tab ($e, $tabs) {
         $tabs->add_tab('meeting', [
             'url'=>URI::url('admin/meeting'),
-            'title'=> I18N::T('meeting', '会议室管理'),
+            'title'=> I18N::T('meeting', '空间管理'),
         ]);
         Event::bind('admin.index.content', 'Meeting_Admin::_primary_content', 0, 'meeting');
     }

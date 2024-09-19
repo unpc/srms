@@ -1416,7 +1416,7 @@ div.pagination a:hover {
         color: #000;
         min-width: 500px;
         *position: relative;
-        margin: 26px 5% 0px;
+        margin: 16px 5% 0px;
 
         .header_title {
             height: 26px;
@@ -2834,4 +2834,36 @@ a.flexform_button_add:hover{
     height: 0 !important;
     width: 0 !important;
     display: none !important; /*Safari and Chrome*/
+}
+
+.w10 {
+    width: 10px !important;
+}
+.w30 {
+    width: 30px !important;
+}
+.w50 {
+    width: 50px !important;
+}
+.w80 {
+    width: 80px !important;
+}
+.w100 {
+    width: 100px !important;
+}
+
+.h10 {
+    height: 10px !important;
+}
+.h30 {
+    height: 30px !important;
+}
+.h50 {
+    height: 50px !important;
+}
+.h80 {
+    height: 80px !important;
+}
+.h100 {
+    height: 100px !important;
 }

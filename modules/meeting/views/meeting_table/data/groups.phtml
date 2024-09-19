@@ -1,0 +1,3 @@
+<?php foreach (Q("{$meeting} tag_room") as $tag): ?>
+    <span class="status_tag status_tag_disable"><?= H($tag->name) ?></span>
+<?php endforeach; ?>

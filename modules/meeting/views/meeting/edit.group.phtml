@@ -1,0 +1,46 @@
+<div class="form">
+	<?php echo V('form_error', ['form'=>$form]); ?>
+	<table class="form flexible">
+		<tr>
+			<td class="icon top" width="130">
+                <div class="short_container">
+                    <div class="icon-radius img_icon" style="position: relative;">
+                            <?php echo $meeting->icon('104'); ?>
+                    </div>
+                </div>
+            </td>
+            <td class="">
+				<form class="edit" action="<?php echo H(URI::url()) ?>" method="post" autocomplete="off">
+                    <h2 class="section_title">
+                        <span class="border"></span>
+                        <span class="black_title"><?= I18N::T('meeting', '设置分组')?></span>
+                    </h2>
+                    <div class="interval_12"></div>
+                    <table>
+                        <tbody>
+                        <tr>
+                            <td>
+                                <?php
+                                    if ($form->no_error) {
+                                        $root = Tag_Model::root('room', '空间分组');
+                                        $tags = @json_encode(Q("{$meeting} tag_room[root=$root]")->to_assoc('id', 'name'));
+                                    }
+                                    echo Widget::factory('application:multi_tag_selector', [
+                                        'autocomplete' => URI::url('!meeting/autocomplete/tag_room'),
+                                        'name' => "groups",
+                                        'value' => $form->no_error ? $tags : $form['groups']
+                                    ]);
+                                ?>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="interval_60"></div>
+					<div class="float_right">
+                        <input type="submit" name="submit" class="font-button-save" value="<?php echo H(I18N::T('labs', '保存修改')) ?>"/>
+                    </div>
+				</form>
+			</td>
+		</tr>
+	</table>
+</div>

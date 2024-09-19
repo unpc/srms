@@ -1,0 +1,13 @@
+<?php
+$uniqid = 'vidcam_'.uniqid();
+
+$autocomplete = $this->autocomplete ?: URI::url('!meeting/autocomplete/vidcams');
+
+$size = $this->size ?: 40;
+
+$name = $vidcam->id ? $vidcam->name : '';
+
+?>
+<input id="<?php echo $uniqid?>_vidcam" name="<?php echo H($this->name ) ?>" type="hidden" value="<?php echo H($vidcam->id) ?>" />
+<input id="<?php echo $uniqid?>_vidcam_name" class="text middle select_on_focus autocomplete:<?php echo H($autocomplete) ?> autocomplete_alt:#<?php echo $uniqid?>_vidcam" size="<?php echo H($size) ?>" value="<?php echo H($name) ?>"
+placeholder="<?php echo I18N::T('entrance', '请输入关键字并选择') ;?>" />

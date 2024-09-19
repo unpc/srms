@@ -1,3 +1,6 @@
 <div q-preview="<?php echo H(URI::url('!meeting/index')) ?>" q-static="<?php echo H(['id'=>$meeting->id]); ?>">
 	<a href="<?php echo H($meeting->url()) ?>"><?php echo H($meeting->name) ?></a>
+	<span>
+		<a href="<?= $meeting->url('reserv')?>" class="prevent_default  status_tag status_tag_info"><?= I18N::HT('eq_reserv', '预约') ?></a>
+	</span>
 </div>

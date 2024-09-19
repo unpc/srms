@@ -13,7 +13,7 @@ class EQ_Door_Meeting {
             $tabs->add_tab('eq_door', [
                 'title' => I18N::T('eq_door', '门禁设置'),
                 'url' => $meeting->url('eq_door', NULL, NULL, 'edit'),
-                'weight' => 30
+                'weight' => 25
             ]);
         }
     }
