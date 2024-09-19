@@ -96,6 +96,17 @@ a:hover {
         color: var(--basiccolor) !important;
         border-left: 1px solid var(--basiccolor) !important;
     }
+    .tabs_content {
+        .tab_wrapper {
+            margin-left: -4px;
+            height: 22px;
+        }
+        a:first-child {
+            .tab_wrapper {
+                margin-left: 1px;
+            }
+        }
+    }
 }
 
 .week_month {

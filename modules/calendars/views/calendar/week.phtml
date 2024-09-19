@@ -25,6 +25,8 @@ $right_id = 'calendar_right_nav_'. uniqid();
     $(".calendar_week_header_left").addClass("display_with_calendar_week_header_left");
     $(".calendar_week_header_right").removeClass("display_with_calendar_week_header_right");
     $(".calendar_week_header_right").addClass("display_with_calendar_week_header_right");
+	var tw = $("#<?= $cal_week_rel?>").width();
+	$('#week_month').css('left', tw - 100);
 </script>
 <table id="<?php echo H($cal_week_rel) ?>" class="calendar_week flexible datetime:<?php echo $dtstart?>" cellpadding="0" cellspacing="0" style="margin-top: 45px;">
 	<thead class="header">
@@ -50,7 +52,7 @@ $right_id = 'calendar_right_nav_'. uniqid();
                             <?php endif;?>
                         </div>
 
-						<div class = "float_left toggle_view week_month" id="week_month" style="left:-5px; top: 15px; width: 150px; ">
+						<div class = "float_left toggle_view week_month" id="week_month" style="left:0px; top: 15px; width: 150px; ">
 							<a href="<?php echo H(URI::url('', ['st'=>$dtprev] + Input::get())) ?>" class="calendar_button" style="width: 34px;">
 								<span class="calendar_pre icon-left  rpadding_1"></span>
 							</a>

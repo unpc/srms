@@ -52,7 +52,7 @@ $now = time();
 
 <div class="panel clearfix calendar_pad_bottom">
 
-    <div class = "float_left toggle_view week_month" style="left: 2041px;">
+    <div class = "float_left toggle_view week_month week_month_type" style="left: 2041px;">
         <?php if (!$form['disable_day']): ?>
             <a href="<?php echo H($calendar->url('day', ['st'=>$now] + Input::get())) ?>" class="calendar_button">
                 <span><?php echo I18N::T('calendars', '日')?> </span>
@@ -70,7 +70,7 @@ $now = time();
         <?php endif;?>
     </div>
 
-	<div class = "float_left toggle_view week_month" id="week_month" style="left:-4px; bottom: 28px; width: 150px; ">
+	<div class = "float_left toggle_view week_month" id="week_month" style="left:0px; bottom: 28px; width: 150px; ">
 		<a href="<?php echo H(URI::url('', ['st'=>$dtprev] + Input::get())) ?>" class="calendar_button" style="width: 34px;">
 			<span class="calendar_pre icon-left  rpadding_1"></span>
 		</a>
@@ -94,6 +94,8 @@ $now = time();
     $('.calendar_week_header_right').css({position: "unset", width: ''});
     $(".calendar_week_header_left").removeClass("display_with_calendar_week_header_left");
     $(".calendar_week_header_right").removeClass("display_with_calendar_week_header_right");
+	var tw = $(".calendar_month").width();
+	$('.week_month_type').css('left', tw - 100);
 </script>
 <table class="calendar_month flexible" cellpadding="0" cellspacing="0" style="margin-top: 45px;">
 	<thead class="header">

@@ -45,13 +45,13 @@
             var header_height = 0;
             var layout_width  = 70;
             if ($('.layout-header').height()) {
-                header_height = 48;
+                header_height = 58;
                 layout_width  = 270;
             }
-            var vOffset =  $body.scrollTop() + 48 + header_height - $originalHeader.offset().top;
+            var vOffset =  $body.scrollTop() + 58 + header_height - $originalHeader.offset().top;
             if (vOffset > 0  && vLength > 40) {
                 if (supportFix) {
-                    $header.show().css({left: $originalHeader.offset().left - $body.scrollLeft() + 1, top: (48 + header_height), visibility:"visible"});
+                    $header.show().css({left: $originalHeader.offset().left - $body.scrollLeft() + 1, top: (58 + header_height + 2), visibility:"visible"});
                     $('.display_with_calendar_week_header_left').css({left: $originalHeader.offset().left - $body.scrollLeft() + 1, top: (2 + header_height), visibility:"visible", position: "fixed", zIndex: 500});
                     
                     $('.display_with_calendar_week_header_content').css({
@@ -71,7 +71,7 @@
                         top: (2 + header_height), width: $('.display_with_calendar_week_header_right').find('#toggle_button').width(), visibility:"visible", position: "fixed", zIndex: 500});
                 }
                 else {
-                    $header.css({top: $body.scrollTop() - 36,  visibility:"visible"}); // 为什么要减36 不明白
+                    $header.css({top: $body.scrollTop() - 34,  visibility:"visible"}); // 为什么要减36 不明白
                 }
             }
             else {
