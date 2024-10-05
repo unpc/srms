@@ -1,0 +1,20 @@
+<?php
+  $reserv = O('me_reserv', ['component' => $component]);
+  $is_check = isset($form['is_check']) ? : $reserv->is_check;
+?>
+<tr>
+	<td class="label left nowrap" colspan="2">
+    <div>
+        <div class="title" style="line-height: initial;">
+            <?= I18N::T('meeting', $properties['label']) ?>
+        </div>
+        <?= Form::radio('is_check', 0, (int)$is_check,
+        I18N::T('meeting', '不签到'), 'class="monitor middle radio"', 'class="middle"'); ?>
+        <span class="rmargin_152">&nbsp;</span>
+        <?= Form::radio('is_check', 1, (int)$is_check,
+        I18N::T('meeting', '签到'),  'class="monitor middle radio"', 'class="middle"');
+        $tooltip = I18N::T('meeting', '请输入关键字并选择');
+        ?>
+    </div>
+	</td>
+</tr>

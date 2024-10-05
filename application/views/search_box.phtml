@@ -115,12 +115,10 @@ document.documentElement.style.setProperty('--window-width', winMinWidth + 'px')
                 </div>
                 <?php endif; ?>
                 <?php endforeach; ?>
-                <!--end-->
-                <!--高级搜索区域-->
 
                 <?php if ($advanced_search) : ?>
                 <div class="filter_search float_left">
-                    <span><?= $show_search_filter ? '关闭高级搜索' : '高级搜索'; ?></span><span
+                    <span><?= $show_search_filter ? '关闭更多搜索' : '展开更多搜索'; ?></span><span
                         class="angle icon-<?= $show_search_filter ? 'up' : 'down'; ?> icon-lg"></span>
                 </div>
                 <?php endif; ?>
@@ -215,12 +213,12 @@ jQuery(function($) {
         if ($angle.hasClass('icon-down')) {
             $angle.removeClass('icon-down').addClass('icon-up');
             $filter_search.css("margin-left", '20px');
-            $text.text('关闭高级搜索');
+            $text.text('关闭更多搜索');
             DownSubmit();
         } else {
             $angle.removeClass('icon-up').addClass('icon-down');
             $filter_search.css("margin-left", '0');
-            $text.text('高级搜索');
+            $text.text('展开更多搜索');
             TopSubmit();
         }
     });

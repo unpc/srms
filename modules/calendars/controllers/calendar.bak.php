@@ -464,101 +464,68 @@ class Calendar_AJAX_Controller extends AJAX_Controller
                 }
             }
 
-            $dtstart = $form['dtstart'];
-            $dtend = $form['dtend'];
-
-            if ($form->no_error && $dtstart == $dtend) {
+            if ($form->no_error && $form['dtstart'] == $form['dtend']) {
                 $form->set_error('dtend', I18N::T('calendars', '开始、结束时间重叠，请输入正确的时间!'));
                 Lab::message(Lab::MESSAGE_ERROR, I18N::T('calendars', '开始、结束时间重叠，请输入正确的时间!'));
             }
 
-            if ($dtstart > $dtend) {
-                list($dtstart, $dtend) = [$dtend, $dtstart];
-            }
-
-            // 时间赋值的代码调整顺序，以便在eq_reserv中进行块状限时调整
-            $component->dtstart = $dtstart;
-            $component->dtend = $dtend;
-
             if ($form->no_error) {
-                $msg = Event::trigger('calendar.component_form.attempt_submit.log', $form, $component, $calendar);
-                if ( !$msg ) {
-                    if (!$component->id) {
-                        $msg = sprintf('[calendars] %s[%d] 于 %s 尝试创建新的预约!', $me->name, $me->id, Date::format(Date::time()));
-                    }
-                    else {
-                        $msg = sprintf('[calendars] %s[%d] 于 %s 尝试修改预约[%d]!', $me->name, $me->id, Date::format(Date::time()), $component->id);
-                    }
-                    Log::add($msg, 'journal');
+                $ticketId              = md5($me->gapper_id ?: (LAB_ID . '_' . $me->id)); // 增加验证表单数据和tikcet是否同一用户
+                $calendar              = $component->calendar;
+                $tree                  = [];
+                $tree                  = $form;
+                $tree['id']            = intval($component->id ? O('eq_reserv', ['component' => $component])->id : 0);
+                $tree['agent_id'] = (int) $me->id;
+                $tree['user_id'] = (int) $form['organizer'];
+                $tree['dtstart'] = (int) $form['dtstart'];
+                $tree['dtend'] = (int) $form['dtend'];
+                $tree['equipment_id'] = (int) $form['equipment_id'];
+                $tree['description'] = $form['description'];
+                $tree['SITE_ID'] = SITE_ID;
+                $tree['LAB_ID'] = LAB_ID;
+                $tree['project'] = (int) $form['project'];
+                $tree['name'] = $form['name'];
+                $tree['cal_week_rel'] = $form['cal_week_rel'];
+                $tree['browser_id'] = $form['browser_id'];
+                $tree['component_id'] = $form['component_id'];
+                $tree['calendar_id'] = $form['calendar_id'];
+                $tree['ticketId'] = $ticketId;
+                $tree['form_token'] = $form['form_token'];
+                $tree['mode'] = $mode;
+                $tree['count'] = (int) $form['count'];
+                $tree['extra_fields'] = $form['extra_fields'];
+                $tree['submit'] = $form['submit'];
+                if ($calendar->parent->name() == 'equipment') {
+                    $tree['tube'] = $calendar->parent->yiqikong_id ?: hash_hmac('sha1', LAB_ID . '_equipment_' . $calendar->parent->id, null);
+                } elseif ($calendar->parent->name() == 'meeting') {
+                    $tree['tube'] = hash_hmac('sha1', LAB_ID . '_meeting_' . $calendar->parent->id, null);
+                    $tree['meeting_type'] = $form['type'];
+                    $tree['roles'] = $form['roles'];
+                    $tree['groups'] = $form['groups'];
+                    $tree['users'] = $form['users'];
                 }
-                
-                $mutex_file = Config::get('system.tmp_dir').Misc::key('calendar', $calendar->id);
-                $fp = fopen($mutex_file, 'w+');
-                if ($fp) {
-                    //独享、不阻塞锁
-					if (flock($fp, LOCK_EX | LOCK_NB)) {
-                        $can_save = $component->id ? $me->is_allowed_to('修改', $component) : $me->is_allowed_to('添加', $component);
-                        if ($can_save) {
-                            Config::set('debug.database', 1);
-							$component->save();
-                            Cache::L('YiQiKongReservAction', true); // bug: 21835 用户预约后发了两条提醒消息
-                            if (isset($form['count'])) $form['extra_fields']['count'] = $form['count'];
-                            Event::trigger('calendar.component_form.post_submit', $component, $form);
 
-                            if (!$component->id) {
-								Log::add(strtr('[calendars] %user_name[%user_id] 于 %date 成功创建新的预约[%component_id]!', array(
-										'%user_name' => $me->name,
-										'%user_id' => $me->id,
-										'%date' => Date::format(Date::time()),
-										'%component_id' => $component->id,
-								)), 'journal');
-							}
-							else {
-								Log::add(strtr('[calendars] %user_name[%user_id] 于 %date 成功修改预约[%component_id]!', array(
-										'%user_name' => $me->name,
-										'%user_id' => $me->id,
-										'%date' => Date::format(Date::time()),
-										'%component_id' => $component->id,
-								)), 'journal');
-							}
+                $ctime   = time();
+                $rawData = json_encode([
+                    'id'       => $me->gapper_id ?: (LAB_ID . '_' . $me->id),
+                    'ticketId' => $ticketId,
+                    'email'    => $me->email,
+                    'ctime'    => $ctime,
+                ]);
 
-                            $merge = L('MERGE_COMPONENT_ID');
-                            if ($merge) {
-                                $component = O('cal_component', $merge);
-                                Log::add(strtr('[calendars] %user_name[%user_id] 于 %date 合并预约[%component_id], 时间为[%dtstart ~ %dtend]', array(
-                                        '%user_name' => $me->name,
-                                        '%user_id' => $me->id,
-                                        '%date' => Date::format(Date::time()),
-                                        '%component_id' => $merge,
-                                        '%dtstart' => Date::format($component->dtstart),
-                                        '%dtend' => Date::format($component->dtend)
-                                        )), 'journal');
-
-                                $ids = join(',', (array)L('REMOVE_COMPONENT_IDS'));
-
-                                Cache::L('MERGE_COMPONENT_ID', NULL);
-                                Cache::L('REMOVE_COMPONENT_IDS', NULL);
-                            }
-
-							$func = "_show_{$mode}_component";
-							$this->$func($component, $calendar);
-						}
-						else {
-							$messages = Lab::messages(Lab::MESSAGE_ERROR);
-							if (count($messages) > 0) {
-								JS::alert(implode("\n", $messages));
-							}
-						}
-					    JS::close_dialog();
-						flock($fp, LOCK_UN);
-						fclose($fp);
-                    }
-                    else {
-						JS::alert(I18N::T('calendars', '系统数据繁忙，请稍后重试!'));
-					}
-                }
-            } 
-            else {
+                $reservConfig = Config::get('reserv');
+                $secretKey    = substr($reservConfig['reserv-server']['client_secret'], 0, 16);
+                $iv           = substr($reservConfig['reserv-server']['client_id'], 0, 16);
+                $ticket       = Encrypt_Aes::encrypt($rawData, $secretKey, $iv);
+                JS::dialog(V('calendars:calendar/component_form_submit', [
+                    'calendar' => $calendar,
+                    'ticket'   => $ticket,
+                    'tree'     => $tree,
+                    'ticketId' => $ticketId,
+                ]), [
+                    'title' => I18N::T('calendars', '预约等待'),
+                ]);
+            } else {
                 $form['id'] = $component->id;
                 $this->form = $form;
                 if ($component->id) {
@@ -698,21 +665,20 @@ class Calendar_AJAX_Controller extends AJAX_Controller
                 continue;
             }
             $reserv    = O('eq_reserv', ['component' => $component]);
-            $object = $component->calendar->parent;
-            if ($object->name() == 'equipment') {
-                if ($equipment->control_mode && $reserv->id && $reserv->dtend <= Date::time() && $reserv->status == EQ_Reserv_Model::PENDING) {
-                    $record         = Q("eq_record[reserv={$reserv}][dtend>0]:limit(1)")->current();
-                    $reserv->status = $reserv->get_status(true, $record);
-                }
+            $equipment = $component->calendar->parent;
+            if ($equipment->control_mode && $reserv->id && $reserv->dtend <= Date::time() && $reserv->status == EQ_Reserv_Model::PENDING) {
+                $record         = Q("eq_record[reserv={$reserv}][dtend>0]:limit(1)")->current();
+                $reserv->status = $reserv->get_status(true, $record);
             }
-
-            $color = $component->color($calendar);
+            if ($component->type == '3') {
+                $color = 1;
+            }
 
             $cdata[] = [
                 'id'       => $component->id,
                 'dtStart'  => (int) $component->dtstart,
                 'dtEnd'    => (int) $component->dtend,
-                'color'    => $color,
+                'color'    => $color ?: $reserv->status,
                 'calendar' => $calendar,
                 'extra_class' => (int) $component->dtend < Date::time() ? "calendar_opacity_5":"calendar_opacity_9",
                 'content'  => $component->render('calendars:calendar/component_content', true, ['current_calendar' => $calendar, 'mode' => 'week']),

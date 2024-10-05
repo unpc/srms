@@ -49,3 +49,9 @@ $config['calendar.list_empty_message'][] = 'ME_Reserv::empty_meeting_reserv_mess
 $config['operate_door_is_allowed'][] = 'ME_Reserv::operate_door_is_allowed';
 
 $config['component.notice'][] = 'ME_Reserv::notice';
+
+// 针对于workflow来处理
+$config['workflow_model.after.pass'][] = 'ME_Reserv_Flow::on_workflow_model_pass';
+$config['workflow_model.after.reject'][] = 'ME_Reserv_Flow::on_workflow_model_reject';
+
+$config['calendar.component.get_color'][] = ['callback' => 'ME_Reserv_Flow::cal_component_get_color', 'weight' => -999];

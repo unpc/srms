@@ -32,14 +32,14 @@ $config['me_reserv'] = [
 		'component' => ['type'=>'object', 'oname'=>'cal_component'],
 		'meeting' => ['type'=>'object', 'oname' => 'meeting'],
 		'user' => ['type'=>'object', 'oname' => 'user'],
-		'type' => ['type'=>'varchar(50)', 'null'=>FALSE, 'default'=>''],
-		'roles' => ['type'=>'text'],
-		'groups' => ['type'=>'text'],
-		'users' => ['type'=>'text'],
+		'type' => ['type'=>'int', 'null'=>FALSE, 'default'=>0],
+		'users' => ['type'=>'text', 'null' => FALSE, 'default'=>''],
 		'dtstart' => ['type'=>'int', 'null'=>FALSE, 'default'=>0],
 		'dtend' => ['type'=>'int', 'null'=>FALSE, 'default'=>0],
 		'ctime' => ['type'=>'int', 'null'=>FALSE, 'default'=>0],
 		'mtime' => ['type'=>'int', 'null'=>FALSE, 'default'=>0],
+		'is_check' => ['type'=>'int', 'null'=>FALSE, 'default'=>0],
+		'status' => ['type'=>'int', 'null'=>FALSE, 'default'=>0]
 	],
 	'indexes' => [
 		'component' => ['fields' => ['component']],
@@ -47,10 +47,13 @@ $config['me_reserv'] = [
 		'user' => ['fields' => ['user']],
 		'dtstart' => ['fields' => ['dtstart']],
 		'dtend' => ['fields' => ['dtend']],
+		'is_check' => ['fields' => ['is_check']],
+		'type' => ['fields' => ['type']],
+		'status' => ['fields' => ['status']]
 	],
 ];
 
-$config['meeting_announce']=[
+$config['meeting_announce'] = [
     'fields' => [
 		'title' => ['type' => 'varchar(150)', 'null' => FALSE, 'default' => ''],
 		'content' => ['type' => 'text'],

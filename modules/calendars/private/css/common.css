@@ -340,6 +340,10 @@ div.panel {
 
 .calendar_week .block {
     position: absolute;
+    .content {
+        margin-left: 4px;
+        margin-top: 6px;
+    }
 }
 
 .calendar_week .block_7 a, .calendar_month .block_7 a {
@@ -353,14 +357,14 @@ div.panel {
 }
 
 .calendar_week .block.block_top, .calendar_month .block.block_top {
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
+    /* border-top-left-radius: 4px;
+    border-top-right-radius: 4px; */
     margin-top: -1px;
 }
 
 .calendar_week .block.block_bottom, .calendar_month .block.block_bottom {
-    border-bottom-left-radius: 4px;
-    border-bottom-right-radius: 4px;
+    /* border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px; */
     margin-bottom: -1px;
 }
 
@@ -405,20 +409,22 @@ div.panel {
 }
 
 .calendar_week .block_0, .calendar_month .block_0 {
-    background-color: #4EC7A5;
-    border-radius: 2px !important;
-    border: 0;
+    background-color: var(--basiccolor);
     .block_title {
         background-color: rgba(16, 0, 0, 0.08);
         color: white;
         padding: 4px 5px;
     }
+    .content {
+        color: #FFF;
+        a {
+            color: #FFF;
+        }
+    }
 }
 
 .calendar_week .block_1, .calendar_month .block_1 {
-    background-color: #4EC7A5;
-    border-radius: 2px !important;
-    border: 0;
+    background-color: var(--basiccolor);
     .block_title {
         background-color: rgba(16, 0, 0, 0.08);
         color: white;
@@ -428,8 +434,6 @@ div.panel {
 
 .calendar_week .block_2, .calendar_month .block_2 {
     background-color: #A978FD;
-    border-radius: 2px !important;
-    border: 0;
     .block_title {
         background-color: rgba(16, 0, 0, 0.08);
         color: white;
@@ -439,8 +443,6 @@ div.panel {
 
 .calendar_week .block_4, .calendar_month .block_4 {
     background-color: #FF575F;
-    border-radius: 2px !important;
-    border: 0;
     .block_title {
         background-color: rgba(16, 0, 0, 0.08);
         color: white;
@@ -451,8 +453,6 @@ div.panel {
 .calendar_week .block_5, .calendar_month .block_5,
 .calendar_week .block_8, .calendar_month .block_8 {
     background-color: #FEC554;
-    border-radius: 2px !important;
-    border: 0;
     .block_title {
         background-color: rgba(16, 0, 0, 0.08);
         color: white;
@@ -461,8 +461,6 @@ div.panel {
 }
 .calendar_week .block_6, .calendar_month .block_6 {
     background-color: #FEC554;
-    border-radius: 2px !important;
-    border: 0;
     .block_title {
         background-color: rgba(16, 0, 0, 0.08);
         color: white;
@@ -472,7 +470,6 @@ div.panel {
 
 .calendar_week .block_7, .calendar_month .block_7 {
     background-color: #52A6E3;
-    border-radius: 2px !important;
     border: 0;
     .block_title {
         background-color: rgba(16, 0, 0, 0.08);
@@ -483,8 +480,6 @@ div.panel {
 
 .calendar_week .block_9, .calendar_month .block_9 {
     background-color: #D6D6D6;
-    border-radius: 2px !important;
-    border: 0;
     .block_title {
         background-color: rgba(16, 0, 0, 0.08);
         color: white;
@@ -494,7 +489,6 @@ div.panel {
 .calendar_week .block_8 .block_left_resizer,
 .calendar_month .block_8 .block_left_resizer {
     background-color: rgb(18, 23, 100);
-    border: 0;
     border-radius: 2px !important;
 }
 

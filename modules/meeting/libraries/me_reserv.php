@@ -27,27 +27,31 @@ class ME_Reserv {
         if ($parent->name() == 'meeting') {
 			$form = $view->component_form;
             $form['#global_css'] = "
-            .dialog_content tr td input.text {
-                width: 160px !important;
-                float: left;
-            }
-            .dialog_content .max_dialog_W600 td div.title {
-                line-height: 30px;
-                float: left;
-                width: 60px;
-            }
-            .dialog_content .max_dialog_W600 {
-                min-width: 510px;
-            }
+                .dialog_content tr td input.text {
+                    width: 160px !important;
+                    float: left;
+                }
+                .dialog_content .max_dialog_W600 td div.title {
+                    line-height: 30px;
+                    float: left;
+                    width: 60px;
+                }
+                .dialog_content .max_dialog_W600 {
+                    min-width: 510px;
+                }
             ";
-            $form['name']['default_value'] = I18N::T('meeting', '会议室预约');
+            $form['name']['default_value'] = I18N::T('meeting', '空间预约');
+            $form['name']['label'] = I18N::T('meeting', '预约名称');
+
             $is_admin = $me->is_allowed_to('管理预约', $parent);
-            $form['organizer']['label'] = I18N::T('calendars', '预约者');
+            $form['organizer']['label'] = I18N::T('calendars', '预约人');
+            
             if (!$me->is_allowed_to('管理预约', $parent)) {
                 unset($form['organizer']);
 			}
+
 			$form['partner'] = [
-				'label' => I18N::T('meeting', '参与者'),
+				'label' => I18N::T('meeting', '参会人'),
 				'weight' => 25,
 				'path' => [
 					'form' => 'meeting:calendar/component_form/partner',
@@ -55,32 +59,41 @@ class ME_Reserv {
 				]
 			];
             $form['description'] = [
-                'label' => I18N::T('meeting', '备注'),
+                'label' => I18N::T('meeting', '预约内容'),
                 'weight' => 100,
                 'path' => [
                     'form' => 'meeting:calendar/component_form/description',
                     'info' => 'meeting:calendar/component_info/'
                 ]
             ];
+
             $form['dtstart']['weight'] = 21;
             $form['dtstart']['path']['form'] = 'meeting:calendar/component_form/dtstart';
+
             $form['dtend']['weight'] = 21;
 
-            if ($GLOBALS['preload']['calendars.enable_repeat_event']) {
-                if ($me->is_allowed_to('添加重复规则', $view->component->calendar)) {
-                    if ($view->component->id) {
-                        $type = $view->component->type;
-                        if ($type == Cal_Component_Model::TYPE_VEVENT) {
-                            $label = I18N::T('eq_reserv', '预约');
-                        } elseif ($type == Cal_Component_Model::TYPE_VFREEBUSY) {
-                            $label = I18N::T('eq_reserv', '非预约时段');
-                        }
-                        if ($label) {
-                            $form['rrule'] = [
-                                'label'  => $label,
-                                'weight' => 1,
-                            ];
-                        }
+            $form['is_check'] = [
+                'label' => I18N::T('meeting', '是否签到'),
+				'weight' => 35,
+				'path' => [
+					'form' => 'meeting:calendar/component_form/is_check',
+					'info' => 'meeting:calendar/component_info/'
+				]
+            ];
+
+            if ($me->is_allowed_to('添加重复规则', $view->component->calendar)) {
+                if ($view->component->id) {
+                    $type = $view->component->type;
+                    if ($type == Cal_Component_Model::TYPE_VEVENT) {
+                        $label = I18N::T('eq_reserv', '预约');
+                    } elseif ($type == Cal_Component_Model::TYPE_VFREEBUSY) {
+                        $label = I18N::T('eq_reserv', '非预约时段');
+                    }
+                    if ($label) {
+                        $form['rrule'] = [
+                            'label'  => $label,
+                            'weight' => 1,
+                        ];
                     }
                 }
             }
@@ -88,6 +101,7 @@ class ME_Reserv {
             uasort($form, 'Cal_Component_Model::cmp');
             $view->component_form = $form;
         }
+
         if  ($parent->name() == 'lab') {
             $form = $view->component_form;
             $form['connect_meeting'] = [
@@ -570,13 +584,10 @@ class ME_Reserv {
 			$reserv = O('me_reserv', ['component' => $component]);
 			$reserv->component = $component;
 			$reserv->meeting = $parent;
-			$reserv->type = $form['meeting_type'];
+			$reserv->type = $form['type'];
 			$reserv->user = $component->organizer;
-			if ($reserv->type == 'part') {
-				$reserv->roles = $form['roles'];
-				$reserv->groups = $form['groups'];
-				$reserv->users = $form['users'];
-			}
+			$reserv->users = $form['users'] ?: '';
+            $reserv->is_check = (int)$form['is_check'];
 			$reserv->dtstart = $component->dtstart;
 			$reserv->dtend = $component->dtend;
 			$reserv->save();
@@ -662,24 +673,6 @@ class ME_Reserv {
 			$attendees = (array)json_decode($new_data['attendee_users'],TRUE);
 			$groups = (array)json_decode($new_data['attendee_groups'],TRUE);
 			$roles = (array)json_decode($new_data['attendee_roles'],TRUE);
-				/* group */
-			if ($groups) {
-				foreach ($groups as $key => $value) {
-					$group = (array)Q('(tag_group#'.$key.') user')->to_assoc('id', 'name');
-					if (count($group) > 0) {
-					   $attendees_from_groups += $group;
-					}
-				}
-				$attendees += $attendees_from_groups;
-			}
-				/* role */
-			if ($roles) {
-				$role = [];
-				foreach ($roles as $key => $value) {
-					$role = Q("role[id={$key}] user")->to_assoc('id','name');
-					$attendees += $role;
-				}				
-			}
 
 			$receivers = [];
 			$me = L('ME');
@@ -843,7 +836,7 @@ class ME_Reserv {
 		$parent_name = $calendar->parent->name();
 		$cal_type = $calendar->type;
 
-		$return = null;
+		$return = 0;
 
 		 if (($parent_name == 'user' && $cal_type=='me_incharge') || ($parent_name == 'calendar' && $cal_type=='all_meetings')) {
 		 	if (!$component->me_room->id) {
@@ -856,7 +849,15 @@ class ME_Reserv {
 				$e->return_value = $return;
 				return false;
 			}
-		}	
+		}
+
+        if ($parent_name == 'meeting') {
+            $reserv = O('me_reserv', ['component' => $component]);
+            $return = (int)$reserv->status;
+        }
+
+        $e->return_value = $return;
+		return true;
 	}
 
     static function component_content_render($e, $component, $current_calendar = NULL) {
@@ -933,7 +934,7 @@ class ME_Reserv {
 			$reserv = Q("me_reserv[meeting={$meeting}][dtstart~dtend={$start}|dtstart~dtend={$end}]")->current();
 
 			if ($reserv->user->id == $user->id
-			|| $reserv->type == 'all') {
+			|| $reserv->type == 0) {
 				$e->return_value = TRUE;
                 return TRUE;
 			}
@@ -1393,4 +1394,5 @@ class ME_Reserv {
             'modify_reserv_latest_limit' => max(0, $modify_reserv_latest_limit),
         ];
     }
+
 }

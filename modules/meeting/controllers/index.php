@@ -428,118 +428,9 @@ class Index_Controller extends Base_Controller
                 }
             }
 
-            // 工作时间
-            Q("eq_reserv_time[meeting={$meeting}]")->delete_all();
-
-            foreach ($form['startdate'] as $key => $value) {
-                $fail = 0;
-                $time = O('eq_reserv_time', $form['id'][$key]);
-                $time->meeting = $meeting;
-                $rules = [];
-
-                $time->controlall = $form['controlall'][$key];
-                if ($time->controlall) {
-                    $time->controluser = '';
-                    $time->controllab = '';
-                    $time->controlgroup = '';
-                }
-                else {
-                    $time->controluser = ($form['select_user_mode_user'][$key] == 'on' && $form['user'][$key] != '{}')
-                        ? $form['user'][$key] : '';
-                    
-                    $time->controllab = ($form['select_user_mode_lab'][$key] == 'on' && $form['lab'][$key] != '{}')
-                        ? $form['lab'][$key] : '';
-    
-                    $time->controlgroup = ($form['select_user_mode_group'][$key] == 'on' && $form['group'][$key] != '{}')
-                        ? $form['group'][$key] : '';
-
-                    if ($time->controluser == '' && $time->controllab == '' && $time->controlgroup == '') {
-                        $form->set_error('controlall['.$key.']', I18N::T('eq_sample', '选择个别用户后请选择具体使用用户!'));
-                        $fail ++;
-                    }
-                }
-
-                if ($form['starttime'][$key] >= 31593600) $form['starttime'][$key] = $form['starttime'][$key] - 86400;
-                elseif ($form['starttime'][$key] < 31507200) $form['starttime'][$key] = $form['starttime'][$key] + 86400;
-                if ($form['endtime'][$key] >= 31593600) $form['endtime'][$key] = $form['endtime'][$key] - 86400;
-                elseif ($form['endtime'][$key] < 31507200) $form['endtime'][$key] = $form['endtime'][$key] + 86400;
-
-                if ($form['startdate'][$key] > $form['enddate'][$key]) {
-                    $form->set_error('working_date['.$key.']', I18N::T('eq_sample', '起始日期不能大于结束日期!'));
-                    $fail ++;
-                }
-
-                if ($form['starttime'][$key] >= $form['endtime'][$key]) {
-                    $form->set_error('working_time['.$key.']', I18N::T('eq_sample', '起始时间不能大于等于结束时间!'));
-                    $fail ++;
-                }
-
-                $time->ltstart = mktime(0, 0, 0, date('m', $form['startdate'][$key]), date('d', $form['startdate'][$key]), date('Y', $form['startdate'][$key]));
-                $time->ltend = mktime(23, 59, 59, date('m', $form['enddate'][$key]), date('d', $form['enddate'][$key]), date('Y', $form['enddate'][$key]));
-                $time->dtstart = mktime(date('H', $form['starttime'][$key]), date('i', $form['starttime'][$key]), date('s', $form['starttime'][$key]), 1, 1, 1971);
-                $time->dtend = mktime(date('H', $form['endtime'][$key]), date('i', $form['endtime'][$key]), date('s', $form['endtime'][$key]), 1, 1, 1971);
-                $time->type = $form['repeat'][$key] ? $form['rtype'][$key] : 1;
-                $time->num = $form['repeat'][$key] ? $form['rnum'][$key] : 1;
-                
-                switch($time->type) {
-                    case -2:    //用户选择工作日，默认为周一到周五
-                        $rules = [1,2,3,4,5];
-                        break;
-                    case -3:    //用户选择周末，默认为周六周日
-                        $rules = [0,6];
-                        break;
-                    case 2:
-                        $rules = array_keys($form['week_day'][$key] ? : []);
-                        if (!$rules) {
-                            $form->set_error('rule_form_'.$key, I18N::T('eq_sample', '请选择预约时间间隔的具体星期!'));
-                            $fail ++;
-                        }
-                        break;
-                    case 3:
-                        $rules = array_keys($form['month_day'][$key] ? : []);
-                        if (!$rules) {
-                            $form->set_error('rule_form_'.$key, I18N::T('eq_sample', '请选择预约时间间隔的具体日期!'));
-                            $fail ++;
-                        }
-                        break;
-                    case 4:
-                        $rules = array_keys($form['year_month'][$key] ? : []);
-                        if (!$rules) {
-                            $form->set_error('rule_form_'.$key, I18N::T('eq_sample', '请选择预约时间间隔的具体月份!'));
-                            $fail ++;
-                        }
-                        break;
-                }
-                $time->days = $rules;
-
-                if (!$fail && $time->save()) {
-                    $success++ ;
-                    Log::add(strtr('[eq_sample] %user_name[%user_id] 修改%equipment_name[%equipment_id]预约时间的规则', [
-                        '%user_name' => L('ME')->name,
-                        '%user_id' => L('ME')->id,
-                        '%equipment_name' => $equipment->name,
-                        '%equipment_id' => $equipment->id,
-                    ]), 'journal');
-                }
-                else $fails ++;
-                
-                $ntime['id'] = $time->id;
-                $ntime['equipment'] = $time->equipment->id;
-                $ntime['startdate'] = $time->ltstart;
-                $ntime['enddate'] = $time->ltend;
-                $ntime['starttime'] = $time->dtstart;
-                $ntime['endtime'] = $time->dtend;
-                $ntime['rtype'] = $time->type;
-                $ntime['rnum'] = $time->num;
-                $ntime['days'] = $time->days;
-                $ntime['controlall'] = $time->controlall;
-                $ntime['controluser'] = $time->controluser;
-                $ntime['controllab'] = $time->controllab;
-                $ntime['controlgroup'] = $time->controlgroup;
-                $times[] = $ntime;
-            }
-
             if ($form->no_error) {
+                $meeting->need_approval = ($form['need_approval'] == 'on');
+
                 $su = true;
 
                 if ($form['default_add_earliest'] == 'customize') {
@@ -600,29 +491,7 @@ class Index_Controller extends Base_Controller
             }
 
             
-        } else {
-            $times = [];
-            $sample_times = Q("eq_reserv_time[meeting={$meeting}]");
-
-            foreach ($sample_times as $key => $value) {
-                $time = [];
-                $time['id'] = $value->id;
-                $time['equipment'] = $value->equipment->id;
-                $time['meeting'] = $value->meeting->id;
-                $time['startdate'] = $value->ltstart;
-                $time['enddate'] = $value->ltend;
-                $time['starttime'] = $value->dtstart;
-                $time['endtime'] = $value->dtend;
-                $time['rtype'] = $value->type;
-                $time['rnum'] = $value->num;
-                $time['days'] = explode(',', $value->days);
-                $time['controlall'] = $value->controlall;
-                $time['controluser'] = $value->controluser;
-                $time['controllab'] = $value->controllab;
-                $time['controlgroup'] = $value->controlgroup;
-                $times[] = $time;
-            }
-        }
+        } 
 
         if (!is_null($properties->get('add_reserv_earliest_limit', '@'))) {
             list($add_reserv_earliest_time, $add_reserv_earliest_format) = Date::format_interval($properties->get('add_reserv_earliest_limit', '@'), 'hid');

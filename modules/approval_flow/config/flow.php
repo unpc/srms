@@ -94,3 +94,25 @@ $config['ue_training'] = [
         'title' => '已驳回'
     ]
 ];
+
+$config['me_reserv'] = [
+    'approve_incharge' => [
+        'title' => '待负责人审',
+        'action' => [
+            'pass' => [
+                'title' => '通过',
+                'next' => 'done'
+            ],
+            'reject' => [
+                'title' => '驳回',
+                'next' => 'rejected'
+            ],
+        ]
+    ],
+    'done' => [
+        'title' => '已通过'
+    ],
+    'rejected' => [
+        'title' => '已驳回'
+    ]
+];

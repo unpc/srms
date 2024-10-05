@@ -13,16 +13,14 @@
                     <form method="post" class="edit" autocomplete="off" action="<?php echo H(URI::url()) ?>">
                     <?php echo V('form_error', ['form'=>$form]);?>
                     <?php $require = (string) V('form_require', ['extra_class' => 'top']); ?>
-
-                    <div class="form">
-                        <?php
-                            echo Widget::factory('flexform', [
-                                'title'=>I18N::T('meeting', '工作时间设置'),
-                                'template_data' => ['disabled'=>true],
-                                'existing_data' => $times,
-                                'item_view' => 'eq_empower:time/item',
-                            ]);
-                        ?>
+                    <div class="interval_30"></div>
+                        <h2 class="section_title">
+                            <span class="border"></span>
+                            <span class="black_title"><?php echo I18N::HT('eq_reserv', '预约审核'); ?></span>
+                        </h2>
+                    <div class="interval_12"></div>
+                    <div class="lmaigin_1e5">
+                        <?php echo Form::checkbox('need_approval', $meeting->need_approval, I18N::T('meeting', '需要审核'), 'class="middle checkbox monitor"', 'class="middle"'); ?>
                     </div>
 
                     <div class="interval_30"></div>
