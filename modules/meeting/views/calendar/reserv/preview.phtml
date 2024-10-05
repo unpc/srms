@@ -65,7 +65,8 @@
 
               <?php 
                 $reserv = O('me_reserv', ['component' => $component]);
-                if ($me->is_allowed_to('审核', $reserv)) : ?>
+                $workflow = O('workflow', ['source' => $reserv]);
+                if ($workflow->id && $workflow->flag != 'done' && $me->is_allowed_to('审核', $reserv)) : ?>
                 <a title="审核" class="button icon-approving" q-src="<?php echo URI::url('!workflow/index'); ?>" q-event="click" q-object="workflow_approval" q-static="<?php echo H([
                   'source_name' => 'me_reserv',
                   'source_id' => $reserv->id
