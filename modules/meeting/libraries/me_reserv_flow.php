@@ -31,10 +31,13 @@ class ME_Reserv_Flow
     // workflow 在被驳回时做的判断处理
     public static function on_workflow_model_reject($e, $workflow)
     {
-        $source = $workflow->source;
-        if ($workflow->flag != 'reject' || $workflow->source_name != 'me_reserv') {
+        if ($workflow->flag != 'rejected' || $workflow->source_name != 'me_reserv') {
             return FALSE;
         }
+
+        $reserv = O($workflow->source_name, $workflow->source_id);
+        $component = $reserv->component;
+        $component->delete();
     }
 
     // 根据审核状态给与不同的样式显示
@@ -46,7 +49,7 @@ class ME_Reserv_Flow
             $reserv = O('me_reserv', ['component' => $component]);
             $workflow = O('workflow', ['source' => $reserv]);
             if ($workflow->id) {
-                if ($workflow->flag == 'reject') {
+                if ($workflow->flag == 'rejected') {
                     $return = 4 + 6;
                 }
                 else if ($workflow->flag == 'done') {

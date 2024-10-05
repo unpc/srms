@@ -119,7 +119,7 @@ class Workflow_Model extends Presentable_Model
                     $node->save();
                 }
                 
-                Event::trigger("model_approval.after.reject", $this);
+                Event::trigger("workflow_model.after.reject", $this);
                 return $this;
             }
         }
