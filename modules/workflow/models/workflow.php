@@ -39,7 +39,7 @@ class Workflow_Model extends Presentable_Model
     {
         $me = L('ME');
 
-        $config = Config::get("workflow.{$this->source->name()}", []);
+        $config = Config::get("workflow.{$this->source_name}", []);
         $steps = $config['steps'];
         $can_pass = true;
         $check = $steps[$this->flag]['action']['pass']['check'] ?: [];
@@ -84,7 +84,7 @@ class Workflow_Model extends Presentable_Model
     public function reject($auto = false)
     {
         $me = L('ME');
-        $config = Config::get("workflow.{$this->source->name()}", []);
+        $config = Config::get("workflow.{$this->source_name}", []);
         $steps = $config['steps'];
         $can_reject = true;
         $check = $steps[$this->flag]['action']['reject']['check'] ?: [];
@@ -129,7 +129,7 @@ class Workflow_Model extends Presentable_Model
     public function & links($mode = 'index')
     {
         $me = L('ME');
-        $config = Config::get("workflow.{$this->source->name()}", []);
+        $config = Config::get("workflow.{$this->source_name}", []);
         $steps = $config['steps'];
         $links = [];
     

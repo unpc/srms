@@ -23,7 +23,7 @@ class ME_Reserv_Flow
     public static function on_workflow_model_pass($e, $workflow)
     {
         $source = $workflow->source;
-        if ($workflow->flag != 'done' || $source->name() != 'me_reserv') {
+        if ($workflow->flag != 'done' || $workflow->source_name != 'me_reserv') {
             return FALSE;
         }
     }
@@ -32,13 +32,14 @@ class ME_Reserv_Flow
     public static function on_workflow_model_reject($e, $workflow)
     {
         $source = $workflow->source;
-        if ($workflow->flag != 'reject' || $source->name() != 'me_reserv') {
+        if ($workflow->flag != 'reject' || $workflow->source_name != 'me_reserv') {
             return FALSE;
         }
     }
 
     // 根据审核状态给与不同的样式显示
-    static function cal_component_get_color($e, $component, $calendar) {
+    static function cal_component_get_color($e, $component, $calendar)
+    {
 		$parent_name = $calendar->parent->name();
 
         if ($parent_name == 'meeting') {
@@ -62,4 +63,21 @@ class ME_Reserv_Flow
 
 		return TRUE;
 	}
+
+    public static function me_reserv_ACL($e, $user, $perm_name, $reserv, $options)
+    {
+        $meeting = $reserv->meeting;
+        switch ($perm_name) {
+            case '审核':
+                if (Q("{$user}<incharge {$meeting}")->total_count()) {
+                    $e->return_value = TRUE;
+                    return FALSE;
+                }
+                break;
+            default:
+                break;
+        }
+
+        return TRUE;
+    }
 }

@@ -1,0 +1,47 @@
+<div class="form">
+    <?php if (isset($message)): ?>
+        <div class="message message_error clearfix nowrap"><?php echo H($message);?></div>
+    <?php endif;?>
+    <form q-object="workflow_approval" q-event="submit" q-src="<?php echo H(URI::url('!workflow/index')) ?>"
+        autocomplete="off" method="post">
+        <input class="hide" name="source_name" value="<?= $object->name() ?>" />
+        <input class="hide" name="source_id" value="<?= $object->id ?>" />
+        <table class="form">
+            <tr><td colspan="2"><div class="interval_12"></div</tr>
+            <tr>
+                <td class="label left top nowrap">
+                    <div class="">
+                        <span><?php echo I18N::HT('approval', '审核操作');?></span>
+                    </div>
+                </td>
+                <td class="left top nowrap">
+                    <div class="">
+                        <?php echo Form::radio('action', 'pass', ($form['action'] != 'reject') ? TRUE : FALSE, I18N::T('meeting', '通过'), 'class="monitor radio"'); ?>
+                        &#160;&#160;
+                        <?php echo Form::radio('action', 'reject', ($form['action'] == 'reject') ? TRUE : FALSE, I18N::T('meeting', '驳回'), 'class="monitor radio"'); ?>
+                    </div>
+                </td>
+            </tr>
+            <tr><td colspan="2"><div class="interval_12"></div</tr>
+            <tr>
+                <td class="label left top nowrap">
+                    <div class="">
+                        <span><?php echo I18N::HT('approval', '备注');?></span>
+                    </div>
+                </td>
+                <td class="left top nowrap">
+                    <div class="">
+                        <textarea class="top textarea autogrow padding_1" name="description" rows="5"
+                            cols="50"><?= $form['description'] ?></textarea>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" class="label right top nowrap">
+                    <div class=""><input name="submit" type='submit' class="font-button-save middle"
+                            value="<?php echo I18N::HT('approval', '提交');?>"></div>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>

@@ -55,3 +55,6 @@ $config['workflow_model.after.pass'][] = 'ME_Reserv_Flow::on_workflow_model_pass
 $config['workflow_model.after.reject'][] = 'ME_Reserv_Flow::on_workflow_model_reject';
 
 $config['calendar.component.get_color'][] = ['callback' => 'ME_Reserv_Flow::cal_component_get_color', 'weight' => -999];
+
+
+$config['is_allowed_to[审核].me_reserv'][] = 'ME_Reserv_Flow::me_reserv_ACL';

@@ -18,6 +18,16 @@
 ?>
 <div q-preview="<?php echo URI::url('!meeting/reserv'); ?>" q-static="<?php echo H(['component_id' => $component->id]); ?>">
 	<?php echo H($component->name);?>
+	<?php if (Module::is_installed('workflow')): ?>
+		<?php
+			$reserv = O('me_reserv', ['component' => $component]);
+            $workflow = O('workflow', ['source' => $reserv]);
+			$config = Config::get('workflow.me_reserv', []);
+			if ($workflow->id && $workflow->flag != 'done'):
+		?>
+			<span class="status_tag status_tag_error"><?= $config['steps'][$workflow->flag]['title'] ?></span>
+		<?php endif; ?>
+	<?php endif; ?>
 </div>
 <div>
 	<p><a class="prevent_default" href="<?php echo H($user->url()) ?>" ><?php echo H($user->name);?></a></p>

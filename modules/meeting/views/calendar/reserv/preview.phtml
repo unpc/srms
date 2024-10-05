@@ -42,24 +42,35 @@
       $me = L('ME');
       if ($me->is_allowed_to('修改', $component) || $me->is_allowed_to('删除', $component)) : ?>
         <tr class="padding_3">
-          <td>&nbsp;</td>
+          <td>&nbsp;<div style="margin-top: 10px;"></div></td>
           <td>
             <div class="lmaigin_1e5">
               <?php if ($me->is_allowed_to('修改', $component)) : ?>
                 <a title="修改" class="button icon-edit" q-src="<?php echo URI::url('!calendars/calendar'); ?>" q-event="click" q-static="<?php echo H([
-                                                                              'id' => $component->id,
-                                                                              'calendar_id' => $component->calendar->id,
-                                                                              'dtstart' => $component->dtstart,
-                                                                              'dtend' => $component->dtend,
-                                                                              'mode' => 'week',
-                                                                            ]); ?>" q-object="edit_component">
-                  <?php echo I18N::T('eq_reserv', '修改'); ?>
+                  'id' => $component->id,
+                  'calendar_id' => $component->calendar->id,
+                  'dtstart' => $component->dtstart,
+                  'dtend' => $component->dtend,
+                  'mode' => 'week',
+                ]); ?>" q-object="edit_component">
+                  <?php echo I18N::T('meeting', '修改'); ?>
                 </a>
               <?php endif; ?>
 
               <?php if ($me->is_allowed_to('删除', $component)) : ?>
                 <a title="删除" class="button icon-trash" q-src="<?php echo URI::url('!calendars/calendar'); ?>" q-event="click" q-object="delete_component" q-static="<?php echo H(['component_id' => $component->id,]); ?>">
-                  <?php echo I18N::T('eq_reserv', '删除'); ?>
+                  <?php echo I18N::T('meeting', '删除'); ?>
+                </a>
+              <?php endif; ?>
+
+              <?php 
+                $reserv = O('me_reserv', ['component' => $component]);
+                if ($me->is_allowed_to('审核', $reserv)) : ?>
+                <a title="审核" class="button icon-approving" q-src="<?php echo URI::url('!workflow/index'); ?>" q-event="click" q-object="workflow_approval" q-static="<?php echo H([
+                  'source_name' => 'me_reserv',
+                  'source_id' => $reserv->id
+                ]); ?>">
+                  <?php echo I18N::T('meeting', '审核'); ?>
                 </a>
               <?php endif; ?>
             </div>
