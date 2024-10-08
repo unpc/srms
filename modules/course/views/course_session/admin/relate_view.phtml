@@ -1,0 +1,67 @@
+<?php
+$message_uniqid = uniqid();
+$me = L('ME');
+$form_id = 'course_classification_form_'. uniqid();
+?>
+<div class="relate_view">
+    <form method="post" autocomplete="off" id="<?php echo H($form_id) ?>">
+        <div class="form tpadding_2 rpadding_4 bpadding_5">
+            <input type="text" name="key" value="<?php echo H($key) ?>" class="hidden" />
+            <div id="<?php echo H($message_uniqid) ?>"></div>
+            <input type="text" name="message_uniqid" value="<?php echo H($message_uniqid) ?>" class="hidden" />
+            <div class="user_box">
+            <div class="main_title clearfix">
+            <h2 class="section_title">
+                <div>
+                    <a class="float_right view blue pointer event:click object:add_course_session src:!course/admin static:type=<?php echo $key?>" title="<?= I18N::T('course','添加')?>">
+                        <span class="icon-add vertical_middle"></span>
+                        <span class="vertical_middle" style="font-size: 14px;font-family: PingFangSC-Regular, PingFang SC;font-weight: 400;">
+                            <?= I18N::T('course','添加')?>
+                        </span>
+                    </a>
+                </div>
+                <span class="middle"><?= I18N::T('course','节次信息')?></span>
+            </h2>
+            </div>
+            <div class="interval_20"></div>
+            <ul class="margin-left-1-half">
+                <?php
+                $sessions = Q("course_session[term={$key}]:sort(session A)");
+                foreach($sessions as $v):
+                ?>
+                <li class="tpadding_2">
+                <?= I18N::T('course','第')?> <input name="session_<?=$v->id?>" size="5" class="text number" size="34" value="<?php echo H($form["session_{$v->id}"] ? : $v->session)?>" /> <?= I18N::T('course','节课')?>,
+                <?= I18N::T('course','节次开始时间')?>: <input name="dtstart_<?=$v->id?>" size="10" class="text date" date_type="time" value="<?php echo H($form["dtstart_{$v->id}"] ? : $v->dtstart) ?>" />
+                <?= I18N::T('course','节次结束时间')?>: <input name="dtend_<?=$v->id?>" size="10" class="text date" date_type="time" value="<?php echo H($form["dtend_{$v->id}"] ? : $v->dtend) ?>" />
+                <div class="trash_area lpadding_3" style="display: inline-block;">
+                    <a class="flexform_button_delete view pointer event:click object:delete_course_session src:!course/admin static:id=<?php echo $v->id ?>" title="<?= I18N::T('course','删除')?>" style="color: #F5222D">
+                        <span style="position: relative;top: 1.5px;" class=" icon-trash"></span>
+                        <?php echo HT('删除');?>
+                    </a>
+                </div>
+                </li>
+                <?php endforeach;?>
+            </ul>
+            </div>
+            <div class="submit_button">
+                <input name="submit" type="submit" class="font-button-save float_right" value="<?php echo H(T('更新')) ?>" />
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+$('#<?php echo $form_id;?>').submit(function () {
+        Q.trigger({
+            object: 'edit_course_session',
+            event: 'submit',
+            url: '<?php echo URI::url('!course/admin')?>',
+            data: {
+                form: $(this).serialize()
+            }
+        });
+        $('body,html').animate({scrollTop:0},200);
+        return false;
+    });
+</script>
+

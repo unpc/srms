@@ -80,17 +80,17 @@ $config['top'] = [
                 'items' => [
                     'people' => [
                         'title' => '素材中心',
-                        'url' => '!people',
+                        'url' => '!notice/play.material',
                         'icon' => ''
                     ],
                     'labs' => [
                         'title' => '播单管理',
-                        'url' => '!labs',
+                        'url' => '!notice/play.list',
                         'icon' => ''
                     ],
                     'role' => [
                         'title' => '审核管理',
-                        'url' => '!roles',
+                        'url' => '!notice/approval',
                         'icon' => ''
                     ]
                 ]

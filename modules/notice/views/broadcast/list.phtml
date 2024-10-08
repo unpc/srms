@@ -1,0 +1,94 @@
+<?php
+
+$panel_buttons[] = [
+    'url' => URI::url('!notice/index/add'),
+    'tip'   => I18N::T('notice', '添加播单'),
+    'text' => I18N::T('notice', '添加播单'),
+    'extra' => 'q-object="add_broadcast" q-event="click" class="button button_add" q-src="' . URI::url('!notice/index') . '"',
+];
+
+$table           = Widget::factory('table');
+$table->name     = 'broadcast';
+$table->sort_asc = $sort_asc;
+$table->sort_by  = $sort_by;
+
+$columns = [
+    'img'        => [
+        'extra_class' => 'w80'
+    ],
+    'name'     => [
+        'weight'   => 20,
+        'title'    => I18N::T('notice', '播单名称'),
+        'sortable' => true,
+        'align'    => 'left',
+        'nowrap'   => true,
+        'filter'   => [
+            'form'  => V('notice:search_filter/name', ['name' => $form['name']]),
+            'value' => $form['name'] ? H($form['name']) : null,
+            'field' => 'name',
+        ],
+    ],
+    'description'   => [
+        'weight' => 20,
+        'title'  => I18N::T('notice', '播单内容'),
+        'align'  => 'left',
+        'nowrap' => true,
+    ],
+    'meetings'   => [
+        'weight' => 20,
+        'title'  => I18N::T('notice', '所属空间'),
+        'align'  => 'left',
+        'nowrap' => true,
+    ],
+    'status'   => [
+        'weight' => 21,
+        'align' => 'left',
+        'title'  => I18N::T('notice', '状态')
+    ],
+    'user' => [
+        'weight' => 30,
+        'title'  => I18N::T('notice', '提交人'),
+        'align'  => 'left',
+        'nowrap' => true,
+    ],
+    'ctime'   => [
+        'weight' => 25,
+        'title'  => I18N::T('notice', '提交时间'),
+        'align'  => 'left',
+        'nowrap' => true
+    ],
+    'rest'     => [
+        'title'  => I18N::T('notice', '操作'),
+        'align'  => 'right',
+        'weight' => 30,
+    ]
+
+];
+
+foreach ($broadcasts as $broadcast) {
+    $links = $broadcast->links('edit');
+    $row = [
+        'img'        => [
+            'view'  => $broadcast->icon('64', 'style="display:block"'),
+            'extra' => 'style="padding:4px" align="middle"'
+        ],
+        'name'     => $broadcast->name
+    ];
+    $table->add_row($row);
+}
+
+$table->add_columns($columns);
+$table->empty_message = I18N::T('meeting', '没有素材信息');
+
+$param = [
+    'panel_buttons'     => $panel_buttons,
+    'top_input_arr' => ['name', 'ref_no'],
+    'columns'       => $table->columns,
+    'extra_view'    => '<div class="adj statistics middle">'.$pagination.'</div>'
+];
+echo V('application:search_box', $param);
+
+echo $table;
+
+?>
+<div class="pages"><?= $pagination; ?></div>

@@ -1,0 +1,102 @@
+<?php $me = L('ME');?>
+<div class="form">
+<table class="form">
+	<tbody>
+	<tr>
+		<td class="top">
+		<form method="post" q-object="add" autocomplete="off" action="<?php echo H(URI::url('!course/index')) ?>">
+			<?php echo V('form_error', ['form'=>$form]);?>
+			<?php $require = (string) V('form_require', ['extra_class' => 'top']); ?>
+			<table class="form">
+				<tbody>
+					<tr>
+						<td class="label right nowrap middle">
+							<?php echo $require; ?><?php echo I18N::T('course', '学年学期')?>
+							<?php echo '<br>'.V('form_filter',['error'=>$form->errors['school_term'][0]])?>
+						</td>
+						<td class="top">
+							<?php echo Widget::factory('school_term_selector', [
+								'name' => 'school_term',
+								'autocomplete' => URI::url('!course/autocomplete/school_term'),
+								'value'=> $form['school_term']
+							]);
+							?>
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle">
+							<?php echo $require; ?><?php echo I18N::T('course', '课程代码')?>
+							<?php echo '<br>'.V('form_filter',['error'=>$form->errors['ref_no'][0]])?>
+						</td>
+						<td class="top">
+							<input name="ref_no" class="text" size="40" value="<?php echo H($form['ref_no'])?>" />
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle">
+							<?php echo $require; ?><?php echo I18N::T('course', '课程名称')?>
+							<?php echo '<br>'.V('form_filter',['error'=>$form->errors['name'][0]])?>
+						</td>
+						<td class="top">
+							<input name="name" class="text" size="40" value="<?php echo H($form['name'])?>" />
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle">
+							<?php echo $require; ?><?php echo I18N::T('course', '教师工号')?>
+							<?php echo '<br>'.V('form_filter',['error'=>$form->errors['teacher_ref_no'][0]])?>
+						</td>
+						<td class="top">
+							<input name="teacher_ref_no" class="text" size="40" value="<?php echo H($form['teacher_ref_no'])?>" />
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle">
+							<?php echo $require; ?><?php echo I18N::T('course', '教师姓名')?>
+							<?php echo '<br>'.V('form_filter',['error'=>$form->errors['teacher_name'][0]])?>
+						</td>
+						<td class="top">
+							<input name="teacher_name" class="text" size="40" value="<?php echo H($form['teacher_name'])?>" />
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle">
+							<?php echo $require; ?><?php echo I18N::T('course', '节次')?>
+							<?php echo '<br>'.V('form_filter',['error'=>$form->errors['course_session'][0]])?>
+						</td>
+						<td class="top">
+							<input name="course_session" class="text" size="40" value="<?php echo H($form['course_session'])?>" />
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle">
+							<?php echo $require; ?><?php echo I18N::T('course', '星期几')?>
+							<?php echo '<br>'.V('form_filter',['error'=>$form->errors['week_day'][0]])?>
+						</td>
+						<td class="top">
+							<input name="week_day" class="text" size="40" value="<?php echo H($form['week_day'])?>" />
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle">
+							<?php echo $require; ?><?php echo I18N::T('course', '教学周')?>
+							<?php echo '<br>'.V('form_filter',['error'=>$form->errors['week'][0]])?>
+						</td>
+						<td class="top">
+							<input name="week" class="text" size="40" value="<?php echo H($form['week'])?>" />
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="button_container">
+				<div class="float_right">
+					<input type="button" name="cancel" id="cancel" class="font-button-default sm rmargin_2e4" value="取消">
+					<input type="submit" name="submit" class="font-button-save" value="<?php echo H(I18N::T('course', '添加')) ?>">
+				</div>
+			</div>
+		</form>
+		</td>
+	</tr>
+	</tbody>
+</table>
+</div>

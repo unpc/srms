@@ -1,0 +1,104 @@
+<?php
+
+if (L('ME')->is_allowed_to('添加', 'course')):
+    $panel_buttons[] = [
+        'url' => URI::url('!course/index/add'),
+        'tip'   => I18N::T('course', '添加课程'),
+        'text' => I18N::T('course', '添加课程'),
+        'extra' => 'q-object="add" q-event="click" class="button button_add" q-src="' . URI::url('!course/index') . '"',
+    ];
+    $panel_buttons[] = [
+        'url' => URI::url('!course/index/import'),
+        'tip'   => I18N::T('course', '导入课程'),
+        'text' => I18N::T('course', '导入课程'),
+        'extra' => 'q-object="import" q-event="click" class="button button_add" q-src="' . URI::url('!course/index') . '"',
+    ];
+endif;
+
+$table           = Widget::factory('table');
+$table->name     = 'course';
+$table->sort_asc = $sort_asc;
+$table->sort_by  = $sort_by;
+
+$columns = [
+    'school_term'     => [
+        'weight'   => 20,
+        'title'    => I18N::T('course', '学年学期'),
+        'sortable' => true,
+        'align'    => ' left',
+        'nowrap'   => true,
+        'filter'   => [
+            'form'  => V('course:search_filter/name', ['name' => $form['name']]),
+            'value' => $form['name'] ? H($form['name']) : null,
+            'field' => 'name',
+        ],
+    ],
+    'name'     => [
+        'weight'   => 20,
+        'title'    => I18N::T('course', '课程名称'),
+        'sortable' => true,
+        'align'    => ' left',
+        'nowrap'   => true,
+    ],
+    'ref_no'     => [
+        'weight'   => 20,
+        'title'    => I18N::T('course', '课程代码'),
+        'sortable' => true,
+        'align'    => ' left',
+        'nowrap'   => true,
+    ],
+    'teacher_info'     => [
+        'weight'   => 20,
+        'title'    => I18N::T('course', '教师信息'),
+        'sortable' => true,
+        'align'    => ' left',
+        'nowrap'   => true,
+    ],
+    'course_date'     => [
+        'weight'   => 20,
+        'title'    => I18N::T('course', '课程时间'),
+        'sortable' => true,
+        'align'    => ' left',
+        'nowrap'   => true,
+    ]
+];
+
+if (L('ME')->is_allowed_to('修改', 'course')) {
+    $columns['rest'] = [
+        'title'  => I18N::T('course', '操作'),
+        'align'  => 'left',
+        'weight' => 30,
+    ];
+}
+
+foreach ($courses as $course) {
+    $links = $course->links('edit');
+    $row = [
+        '@'        => [
+            'view'  => $course->icon('32', 'style="display:block"'),
+            'extra' => 'style="padding:4px" align="right"',
+        ],
+        'name'     => V('course:course_table/data/name', ['course' => $course]),
+        'ref_no'   =>  V('course:course_table/data/ref_no', ['course' => $course]),
+        'school_term' =>  V('course:course_table/data/school_term', ['course' => $course]),
+        'teacher_info' =>  V('course:course_table/data/teacher_info', ['course' => $course]),
+        'course_date' =>  V('course:course_table/data/course_date', ['course' => $course]),
+        'rest'     => Widget::factory('application:links', ['links' => $links]),
+    ];
+    $table->add_row($row);
+}
+
+$table->add_columns($columns);
+$table->empty_message = I18N::T('course', '没有课程信息');
+
+$param = [
+    'panel_buttons'     => $panel_buttons,
+    'top_input_arr' => ['school_term'],
+    'columns'       => $table->columns,
+    'extra_view'    => '<div class="adj statistics middle">'.$pagination.'</div>'
+];
+echo V('application:search_box', $param);
+
+echo $table;
+?>
+<div class="pages"><?php echo $pagination;?></div>

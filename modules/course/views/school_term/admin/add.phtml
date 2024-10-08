@@ -1,0 +1,63 @@
+<?php $me = L('ME');?>
+<div class="form">
+<table class="form">
+	<tbody>
+	<tr>
+		<td class="top">
+		<form method="post" q-object="add_school_term" autocomplete="off" action="<?php echo H(URI::url('!course/admin')) ?>">
+			<?php echo V('form_error', ['form'=>$form]);?>
+			<?php $require = (string) V('form_require', ['extra_class' => 'top']); ?>
+			<table class="form">
+				<tbody>
+					<tr>
+						<td class="label right nowrap middle">
+							<?php echo $require; ?><?php echo I18N::T('course', '所属学年')?>
+							<?php echo '<br>'.V('form_filter',['error'=>$form->errors['year'][0]])?>
+						</td>
+						<td class="top">
+							<input name="year" class="text" size="40" value="<?php echo H($form['year'] ? : $term->year)?>" />
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle">
+							<?php echo $require; ?><?php echo I18N::T('course', '所属学期')?>
+							<?php echo '<br>'.V('form_filter',['error'=>$form->errors['term'][0]])?>
+						</td>
+						<td class="top">
+						<?php foreach (School_Term_Model::$TYPES as $key => $value): ?>
+                            <?= Form::radio("term", $key, ($form['term'] ? : $term->term), I18N::T('course', $value), 'class="monitor radio"'); ?> &#160;
+                        <?php endforeach; ?>
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle">
+							<?php echo $require; ?><?php echo I18N::T('course', '学期开始时间')?>
+							<?php echo '<br>'.V('form_filter',['error'=>$form->errors['dtstart'][0]])?>
+						</td>
+						<td class="top">
+							<input name="dtstart" class="text date" value="<?php echo H($form["dtstart"] ? : $term->dtstart) ?>" />
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle">
+							<?php echo $require; ?><?php echo I18N::T('course', '学期结束时间')?>
+							<?php echo '<br>'.V('form_filter',['error'=>$form->errors['dtend'][0]])?>
+						</td>
+						<td class="top">
+							<input name="dtend" class="text date" value="<?php echo H($form["dtend"] ? : $term->dtend) ?>" />
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="button_container">
+				<div class="float_right">
+					<input type="button" name="cancel" id="cancel" class="font-button-default sm rmargin_2e4" value="取消">
+					<input type="submit" name="submit" class="font-button-save" value="<?php echo H(I18N::T('course', '添加')) ?>">
+				</div>
+			</div>
+		</form>
+		</td>
+	</tr>
+	</tbody>
+</table>
+</div>

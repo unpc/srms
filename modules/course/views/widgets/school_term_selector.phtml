@@ -1,0 +1,18 @@
+<?php $require = (string) V('form_require'); ?>
+<?php 
+$uniqid = 'school_term_'.uniqid();
+
+$school_term = is_object($this->school_term) ? $this->school_term : O('school_term', $this->school_term);
+$autocomplete = $this->autocomplete ?: URI::url('autocomplete/school_term');
+
+$size = $this->size ?: 40;
+
+$sname = $school_term->id ? H($school_term->year)."(".School_Term_Model::$TYPES[$school_term->term].")": '';
+error_log($this->school_term);
+if ($disabled) {
+    $disabled = 'disabled="disabled"';
+}
+?>
+<input id="<?php echo $uniqid?>_school_term" name="<?php echo H($this->name ) ?>" type="hidden" value="<?php echo H($school_term->id) ?>" />
+<input id="<?php echo $uniqid?>_school_term_name" <?php echo $disabled;?> class="text middle select_on_focus autocomplete:<?php echo H($autocomplete) ?> autocomplete_alt:#<?php echo $uniqid?>_school_term" 
+ value="<?php echo H($sname) ?>" q-tooltip="<?php echo H(T('请输入关键字并选择') ) ?>" />

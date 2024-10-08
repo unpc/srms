@@ -1,0 +1,49 @@
+<?php $me = L('ME');?>
+<div>
+<table >
+	<tbody>
+	<tr>
+		<td class="top">
+		<!-- <form autocomplete="off" method="post" action="!course/import" enctype="multipart/form-data"> -->
+		<form autocomplete="off" q-event="submit" q-object="import" q-src="<?php echo H(URI::url('!course/index')) ?>" method="post">
+			<?php echo V('form_error', ['form'=>$form]);?>
+			<?php $require = (string) V('form_require', ['extra_class' => 'top']); ?>
+			<table class="form">
+				<tbody>
+					<tr>
+						<td class="label right nowrap middle">
+							<?php echo $require; ?><?php echo I18N::T('course', '学年学期')?>
+							<?php echo '<br>'.V('form_filter',['error'=>$form->errors['school_term'][0]])?>
+						</td>
+						<td class="top">
+							<?php echo Widget::factory('school_term_selector', [
+								'name' => 'school_term',
+								'autocomplete' => URI::url('!course/autocomplete/school_term'),
+								'value'=> $form['school_term']
+							]);
+							?>
+						</td>
+					</tr>
+					<tr>
+						<td class="label right nowrap middle">
+							<?php echo $require; ?><?php echo I18N::T('course', '课程文件')?>
+							<?php echo '<br>'.V('form_filter',['error'=>$form->errors['file'][0]])?>
+						</td>
+						<td class="top">
+							<input name="file" type="file" class="file" />
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="button_container">
+				<div class="float_right">
+					<input type="button" name="cancel" id="cancel" class="font-button-default sm rmargin_2e4" value="取消">
+					<input type="submit" class="font-button-save button_import" value="<?php echo H(I18N::T('course', '添加')) ?>">
+				</div>
+			</div>
+		</form>
+		</td>
+	</tr>
+	</tbody>
+</table>
+</div>

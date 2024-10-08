@@ -1,0 +1,68 @@
+<?php
+
+$table           = Widget::factory('table');
+$table->name     = 'school_term';
+$table->sort_asc = $sort_asc;
+$table->sort_by  = $sort_by;
+
+$columns = [
+    'year'     => [
+        'weight'   => 5,
+        'title'    => I18N::T('course', '学年名称'),
+        'sortable' => true,
+        'align'    => ' left',
+        'nowrap'   => true,
+    ],
+    'term'     => [
+        'weight'   => 10,
+        'title'    => I18N::T('course', '学期名称'),
+        'sortable' => true,
+        'align'    => ' left',
+        'nowrap'   => true,
+    ],
+    'time'     => [
+        'weight'   => 15,
+        'title'    => I18N::T('course', '学期时间'),
+        'sortable' => true,
+        'align'    => ' left',
+        'nowrap'   => true,
+    ]
+];
+
+if (L('ME')->is_allowed_to('修改', 'school_term')) {
+    $columns['rest'] = [
+        'title'  => I18N::T('course', '操作'),
+        'align'  => 'left',
+        'weight' => 30,
+    ];
+}
+
+foreach ($terms as $term) {
+    $links = $term->links('edit');
+    $row = [
+        '@'        => [
+            'view'  => $term->icon('32', 'style="display:block"'),
+            'extra' => 'style="padding:4px" align="right"',
+        ],
+        'year'     => V('course:school_term/admin/term_table/data/year', ['term' => $term]),
+        'term'     => V('course:school_term/admin/term_table/data/term', ['term' => $term]),
+        'time'     => V('course:school_term/admin/term_table/data/time', ['term' => $term]),
+        'rest'     => Widget::factory('application:links', ['links' => $links]),
+    ];
+    $table->add_row($row);
+}
+
+$table->add_columns($columns);
+$table->empty_message = I18N::T('course', '没有学期信息');
+
+$param = [
+    'panel_buttons'     => $panel_buttons,
+    'top_input_arr' => ['year', 'term'],
+    'columns'       => $table->columns,
+    'extra_view'    => '<div class="adj statistics middle">'.$pagination.'</div>'
+];
+echo V('application:search_box', $param);
+
+echo $table;
+?>
+<div class="pages"><?php echo $pagination;?></div>
