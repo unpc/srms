@@ -1,7 +1,7 @@
 <div class="category_container">
     <?php
         $show = false;
-        foreach ($subMods as $subMod) {
+        foreach ((array)$subMods as $subMod) {
             if (in_array($subMod, $moreMods)) {
                 $show = strpos($subMod, MODULE_ID . '_') !== false;
             } else {

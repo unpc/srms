@@ -1,0 +1,107 @@
+<?php $me = L('ME');?>
+<form class="edit" enctype="multipart/form-data" method="post" autocomplete="off" q-object="add_broadcast" action="<?php echo H(URI::url('!notice/index') ) ?>">
+    <?php echo V('form_error', ['form'=>$form]);?>
+    <?php $require = (string) V('form_require', ['extra_class' => 'top']); ?>
+    <?php $requires = Config::get('form.equipment_add')['requires']; ?>
+    <table class="form">
+        <tbody>
+            <tr>
+                <td class="label right nowrap middle"><span class="required">*</span><?= I18N::T('notice', '播单名称')?></td>
+                <td class="top nowrap">
+                    <input placeholder="请输入播单名称" name="name" class="text" value="<?php echo H($form['name'])?>" />
+                </td>
+            </tr>
+            <tr>
+                <td class="label right nowrap top"><?= I18N::T('notice', '播单内容')?></td>
+                <td class="top nowrap">
+                    <textarea class="text autogrow autoselect" rows="3" cols="60" name="description"><?= $form['description'] ?></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td class="label right nowrap middle"><span class="required">*</span><?= I18N::T('notice', '播单素材类型')?></td>
+                <td class="top nowrap">
+                    <?php 
+                        $types = Material_Model::$TYPES;
+                        foreach ($types as $key => $value) {
+                            echo Form::radio('type', $key, (int)$form['type'], I18N::T('notice', $value), 'class="monitor radio"');
+                            echo "&#160;&#160;";
+                        }
+                    ?>
+                </td>
+            </tr>
+            <tr class="toggle:type show_on:0 hidden">
+                <td class="label right nowrap top">&#160;&#160;&#160;&#160;<?php echo I18N::T('notice', '文本播单')?></td>
+                <td class="top nowrap">
+                    <?= Widget::factory('notice:multi_material_selector', [
+                        'name' => 'materials_0',
+                        'value' => $form['materials'],
+                        'autocomplete' => _U('!notice/autocomplete/material.0')
+                    ]) ?>
+                </td>
+            </tr>
+            <tr class="toggle:type show_on:1 hidden">
+                <td class="label right nowrap top">&#160;&#160;&#160;&#160;<?php echo I18N::T('notice', '图片播单')?></td>
+                <td class="top nowrap">
+                    <?= Widget::factory('notice:multi_material_selector', [
+                        'name' => 'materials_1',
+                        'value' => $form['materials'],
+                        'autocomplete' => _U('!notice/autocomplete/material.1')
+                    ]) ?>
+                </td>
+            </tr>
+            <tr class="toggle:type show_on:2 hidden">
+                <td class="label right nowrap top">&#160;&#160;&#160;&#160;<?php echo I18N::T('notice', '视频播单')?></td>
+                <td class="top nowrap">
+                    <?= Widget::factory('notice:multi_material_selector', [
+                        'name' => 'materials_2',
+                        'value' => $form['materials'],
+                        'autocomplete' => _U('!notice/autocomplete/material.2')
+                    ]) ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="label right nowrap middle"><?= I18N::T('notice', '关联元素')?></td>
+                <td class="top nowrap">
+                    <?php 
+                        $connects = [ 0 => '空间', 1 => '空间分组' ];
+                        foreach ($connects as $key => $value) {
+                            echo Form::radio('connect', $key, (int)$form['connect'], I18N::T('notice', $value), 'class="monitor radio"');
+                            echo "&#160;&#160;";
+                        }
+                    ?>
+                </td>
+            </tr>
+            <tr class="toggle:connect show_on:0 hidden">
+                <td class="label right nowrap middle"></td>
+                <td class="top nowrap">
+                    <?= Widget::factory('meeting:multi_meeting_selector', [
+                        'name' => 'meetings',
+                        'value' => $form['meetings'],
+                        'autocomplete' => _U('!meeting/autocomplete/meeting')
+                    ]) ?>
+                </td>
+            </tr>
+            <tr class="toggle:connect show_on:1 hidden">
+                <td class="label right nowrap middle"></td>
+                <td class="top nowrap">
+                    <select class="middle" name="meeting_group" style="display: initial; width: 100%;">
+                        <option value="0" <?= $form['meeting_group'] == 0 ? 'checked' : '' ?>><?= "---" ?></option>
+                        <?php
+                            $root = Tag_Model::root('room', '空间分组');
+                            $tags = Q("tag_room[root={$root}]:sort(weight A)");
+                            foreach ($tags as $tag):
+                        ?>
+                            <option value="<?= $tag->id ?>" <?= $form['meeting_group'] == $tag->id ? 'checked' : '' ?>><?= H($tag->name) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="button_container">
+        <div class="float_right">
+            <input type="button" name="cancel" id="cancel" class="font-button-default sm rmargin_2e4" value="取消">
+            <input type="submit" class="font-button-save sm" value="<?= I18N::HT('notice', '添加') ?>">
+        </div>
+    </div>
+</form>

@@ -101,8 +101,10 @@ class Presentable_Model extends ORM_Model {
 					$nsize = $sz;
 					break;
 				}
-				elseif (abs($size - $sz) < abs($size - $csize)){
-					$csize = $sz;
+				elseif (is_numeric($sz)) {
+					if (abs($size - $sz) < abs($size - $csize)) {
+						$csize = $sz;
+					}
 				}
 			}
 

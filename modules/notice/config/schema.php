@@ -1,6 +1,6 @@
 <?php
 
-$config['meterial'] = [
+$config['material'] = [
 	'fields' => [
 		'name' => ['type'=>'varchar(150)', 'null'=>FALSE, 'default'=>''],
 		'name_abbr' => ['type' => 'varchar(150)', 'null' => FALSE, 'default' => ''],
@@ -14,6 +14,7 @@ $config['meterial'] = [
 		'name' => ['fields' => ['name']],
 		'ctime' => ['fields' => ['ctime']],
 		'type' => ['fields' => ['type']],
+		'user' => ['fields' => ['user']]
 	],
 ];
 

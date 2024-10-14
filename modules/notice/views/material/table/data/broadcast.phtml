@@ -1,0 +1,3 @@
+<?php foreach (Q("{$material} broadcast") as $broadcast): ?>
+    <span class="status_tag status_tag_normal"><i class="iconfont icon-book"></i> <?= H($broadcast->name) ?></span>
+<?php endforeach; ?>

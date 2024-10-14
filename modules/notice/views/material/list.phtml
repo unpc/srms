@@ -28,19 +28,13 @@ $columns = [
             'field' => 'name',
         ],
     ],
-    'description'   => [
-        'weight' => 20,
-        'title'  => I18N::T('notice', '素材介绍'),
-        'align'  => 'left',
-        'nowrap' => true,
-    ],
     'type'   => [
         'weight' => 20,
         'title'  => I18N::T('notice', '素材类型'),
         'align'  => 'left',
         'nowrap' => true,
     ],
-    'groups'   => [
+    'broadcast'   => [
         'weight' => 21,
         'align' => 'left',
         'title'  => I18N::T('notice', '素材播单')
@@ -66,13 +60,15 @@ $columns = [
 ];
 
 foreach ($materials as $material) {
-    $links = $material->links('edit');
+    $links = $material->links();
     $row = [
-        'img'        => [
-            'view'  => $material->icon('64', 'style="display:block"'),
-            'extra' => 'style="padding:4px" align="middle"'
-        ],
-        'name'     => $material->name
+        'img'   => V('material/table/data/cover', ['material' => $material]),
+        'name'  => H($material->name),
+        'type'  => Material_Model::$TYPES[$material->type],
+        'broadcast' => V('material/table/data/broadcast', ['material' => $material]),
+        'user' => $material->user->id ? $material->user->name : '--',
+        'ctime' => Date::format($material->ctime),
+        'rest' => Widget::factory('application:links', ['links' => $links])
     ];
     $table->add_row($row);
 }

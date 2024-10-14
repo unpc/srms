@@ -11,7 +11,7 @@ $config['school_term'] = [
 		'mtime' => ['type'=>'int', 'null'=>FALSE, 'default'=>0],
     ],
     'indexes' => [
-        'name' => ['fields' => ['name']],
+        'year' => ['fields' => ['year']],
         'dtstart' => ['fields' => ['dtstart']],
         'dtend' => ['fields' => ['dtend']],
     ],

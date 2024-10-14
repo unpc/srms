@@ -13,9 +13,6 @@ $table->sort_asc = $sort_asc;
 $table->sort_by  = $sort_by;
 
 $columns = [
-    'img'        => [
-        'extra_class' => 'w80'
-    ],
     'name'     => [
         'weight'   => 20,
         'title'    => I18N::T('notice', '播单名称'),
@@ -66,13 +63,15 @@ $columns = [
 ];
 
 foreach ($broadcasts as $broadcast) {
-    $links = $broadcast->links('edit');
+    $links = $broadcast->links();
     $row = [
-        'img'        => [
-            'view'  => $broadcast->icon('64', 'style="display:block"'),
-            'extra' => 'style="padding:4px" align="middle"'
-        ],
-        'name'     => $broadcast->name
+        'name'     => H($broadcast->name),
+        'description' => $broadcast->description,
+        'meetings' => V('broadcast/table/data/meetings', ['broadcast' => $broadcast]),
+        'status' => '<span class="status_tag ' . Broadcast_Model::$STATU_STATES[(int)$broadcast->status] . '">' . Broadcast_Model::$STATUS[(int)$broadcast->status] . '</span>',
+        'user' => H($broadcast->user->name),
+        'ctime' => Date::format($broadcast->ctime),
+        'rest' => Widget::factory('links', ['links' => $links])
     ];
     $table->add_row($row);
 }

@@ -1,0 +1,3 @@
+<?php foreach (Q("{$broadcast} meeting") as $meeting): ?>
+    <span class="status_tag status_tag_normal"><i class="iconfont icon-home"></i> <?= H($meeting->name) ?></span>
+<?php endforeach; ?>

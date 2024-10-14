@@ -1,5 +1,5 @@
 <?php $me = L('ME');?>
-<form class="edit" method="post" autocomplete="off" q-object="add" action="<?php echo H(URI::url('!equipments/index') ) ?>">
+<form class="edit" enctype="multipart/form-data" method="post" autocomplete="off" q-object="add_meterial" action="<?php echo H(URI::url('!notice/index') ) ?>">
     <?php echo V('form_error', ['form'=>$form]);?>
     <?php $require = (string) V('form_require', ['extra_class' => 'top']); ?>
     <?php $requires = Config::get('form.equipment_add')['requires']; ?>
@@ -26,19 +26,19 @@
             <tr class="toggle:type show_on:0 hidden">
                 <td class="label left nowrap top">&#160;&#160;&#160;&#160;<?php echo I18N::T('notice', '文本内容')?></td>
                 <td class="top nowrap">
-                   <textarea class="text autogrow autoselect" rows="3" cols="60" name="description"></textarea>
+                   <textarea class="text autogrow autoselect" rows="6" cols="80" name="description"></textarea>
                 </td>
             </tr>
             <tr class="toggle:type show_on:1 hidden">
                 <td class="label left nowrap middle">&#160;&#160;&#160;&#160;<?php echo I18N::T('notice', '上传图片')?></td>
                 <td class="top nowrap">
-                   
+                    <input type="file" id="imageUpload" name="image" accept="image/*" />
                 </td>
             </tr>
             <tr class="toggle:type show_on:2 hidden">
                 <td class="label left nowrap middle">&#160;&#160;&#160;&#160;<?php echo I18N::T('notice', '上传视频')?></td>
                 <td class="top nowrap">
-                   
+                    <input type="file" id="video" name="video" accept="video/*" />
                 </td>
             </tr>
         </tbody>
@@ -46,7 +46,7 @@
     <div class="button_container">
         <div class="float_right">
             <input type="button" name="cancel" id="cancel" class="font-button-default sm rmargin_2e4" value="取消">
-            <input type="submit" name="submit" class="font-button-save sm" value="<?php echo H(I18N::T('notice', '添加')) ?>">
+            <input type="submit" class="font-button-save sm" value="<?= I18N::HT('notice', '添加') ?>">
         </div>
     </div>
 </form>
