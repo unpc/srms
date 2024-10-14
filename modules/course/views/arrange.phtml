@@ -1,0 +1,10 @@
+<?php
+    echo JS::load_async('preview');
+    echo CSS::load_async('preview');
+	$browser_id = 'browser_' . uniqid();
+?>
+<script type="text/javascript">
+Q.Calendar = Q.Calendar || {};
+</script>
+<div id="<?php echo H($browser_id) ?>" src="<?php echo URI::url('!course/calendar/courses'); ?>" style="position: relative;"></div>
+

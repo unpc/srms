@@ -1,0 +1,423 @@
+<style>
+    div.tab_content {
+        position: inherit !important;
+    }
+    .calendar_pad_bottom {
+        padding-bottom: 30px;
+    }
+    #toggle_button {
+        position: absolute;
+        top: 0;
+    }
+	.calendar_pre:hover {
+		color: #2ba07f;
+	}
+    .calendar_week_header {
+        display: none;
+    }
+    .right a {
+        display: block;
+    }
+    .calendar_week .block_default, .calendar_month .block {
+        border-left-width: 0px;
+    }
+    .calendar_week .block_course , .calendar_month .block_course {
+        background-color: var(--basiccolor);
+        -webkit-border-radius: 2px !important;
+        -moz-border-radius: 2px !important;
+        border-radius: 2px !important;
+        border: 0;
+    }
+</style>
+<?php
+$now = strtotime('midnight', Date::time());
+$left_id = 'calendar_left_nav_'.uniqid();
+$right_id = 'calendar_right_nav_'. uniqid();
+?>
+<div class="overlay" id="<?php echo H($cal_week_rel).'overlay' ?>" >
+</div>
+<script>
+    var o = document.getElementById("layout_body");
+    var w = o.clientWidth || o.offsetWidth;
+    document.getElementById("calendar_time_center").style.cssText='width: ' + (w - 270 -500) + 'px; bottom:0;';
+</script>
+<div class="panel clearfix calendar_pad_bottom" style="width:100%; z-index: 100">
+    <div class="center time_center" id="calendar_time_center" style="bottom:0;">
+        <a href="<?php echo H(URI::url('', ['st'=>$dtprev] + Input::get())) ?>" style="float:none;margin-right: 11px;width: 34px;">
+            <span class=" icon-left  rpadding_1" style="padding-right: 9px"></span>
+        </a>
+        <span class="center_date"><?php echo Date::format($dtstart, I18N::T('calendars', 'Y/m/d')); ?></span>
+        <a href="<?php echo H(URI::url('', ['st'=>$dtnext] + Input::get())) ?>" style="float:none;margin-left: 11px; width: 34px;">
+            <span class=" icon-right lpadding_1" style="padding-left: 9px"></span>
+        </a>
+    </div>
+    <div id="toggle_button" class="float_right">
+        <ul>
+            <?php if (count((array) $panel_buttons) ) : ?>
+                <span><?php echo Widget::factory('application:links', ['links'=>$panel_buttons, 'separator'=>'']);?></span>
+            <?php else:?>
+                <span style="width:10px"></span>
+            <?php endif;?>
+        </ul>
+    </div>
+</div>
+<!--<div class="outer">-->
+<!--    <div class="inner">-->
+        <table id="<?php echo H($cal_week_rel) ?>" class="calendar_week calendar_day flexible datetime:<?php echo $dtstart?>" cellpadding="0" cellspacing="0">
+            <thead class="header">
+            <tr>
+                <td colspan="8">
+
+                </td>
+            </tr>
+            <tr>
+                <td colspan="8" style="height: 50px;">
+                    <div class="panel clearfix calendar_pad_bottom">
+                    </div>
+                </td>
+            </tr>
+            <tr style="bottom: 52px;">
+                <th  class="sticky_col" style="height:48px; width:130px; border-left: 1px solid #f0f2f5;">&#160;</th>
+                <?php
+                $headers = $headers;
+                $dt = $dtstart;
+                $norule = true;
+                $norule_starttime = mktime(0, 0, 0, 1, 1, 1971);
+                $norule_endtime = mktime(23, 59, 59, 1, 1, 1971);
+
+                /**
+                 * @todo 这里是加载什么规则，先不考虑规则的情况
+                 */
+                for ($whour = 0; $whour < count($headers); $whour++) {
+                    if(is_array($rules)) {
+                        if(!array_key_exists($whour, $rules) || $rules[$whour][0] != $norule_starttime || $rules[$whour][1] != $norule_endtime) {
+                            $norule = false;
+                            break;
+                        }
+                    }
+                }
+
+                for ($whour = 0; $whour < count($headers); $whour++) : ?>
+                    <th class="table_col header<?php echo $whour == $whour_now ? ' today' : '' ?>"
+                        <?php
+                        if(!$norule && is_array($rules)&& array_key_exists($whour, $rules)) {
+                            echo 'q-preview="'.URI::url('!calendars/calendar').'"';
+                        }
+                        ?>
+                        q-static="<?php echo H(['wday'=> $whour, 'calendarid'=> $calendar->id, 'dtstart'=>$dtstart]);?>">
+				<span style="padding-left: 2px;"><?php echo I18N::T('calendars', $headers[$whour]); ?>
+                    <?php
+                    if(!$norule && array_key_exists($whour, $rules)) {
+                        echo '<img src=\'images/workingtime.png\'>';
+                    }
+                    ?>
+					</span>
+                        <!-- <span class="float_right title_time"><?php // echo Date::format($dt, I18N::T('calendars', 'm/d')); ?></span> -->
+                    </th>
+                    <?php
+                    $gd = getdate($dt);
+                    $dt = mktime(0,0,0,$gd['mon'], $gd['mday'] + 1, $gd['year']);
+                endfor; ?>
+            </tr>
+            </thead>
+            <tbody>
+            <tr><td colspan="25"></td></tr>
+            </tbody>
+            <tbody>
+            <tr>
+                <td></td>
+                <td colspan="<?= count($headers) ?>">
+                    <div class="hour_components">
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+
+            <tbody class="hour_grid">
+            <?php
+            $count = 1;
+            foreach ($classrooms as $classroom_ref_no => $classroom_name):
+                $classroom = o('meeting', ['ref_no' => $form['classroom_ref_no']]);
+                ?>
+                <?php $line_height = 8; ?>
+                <tr class="<?php echo H($class) ?>" <?php if ($line_height) echo 'style="line-height:' . $line_height . '"';?>>
+                    <td class="sticky_col tick <?php echo 'tick_' . $classroom_ref_no; ?>" data-id="<?php echo $classroom_ref_no  ?>">
+                        <div class="right" style="text-align: right;">
+                            <a class="blue prevent_default" href="<?php echo $classroom->url() ?>"><?php echo H($classroom_name) ?></a>
+                        </div>
+                    </td>
+                    <?php
+                    $dt = $dtstart;
+                    for($whour=0; $whour < count($headers); $whour++):
+                        $cc = "hour_cell";
+                        if ($dt < $now) $cc .= ' past';
+                        if ($whour == $whour_now ) $cc .= ' today';
+                        $cc .= " R{$hh}C{$whour}";
+                        ?>
+                        <td class="<?php echo H($cc) ?> table_col"></td>
+                        <?php
+                        $gd = getdate($dt);
+                        $dt = mktime(0,0,0,$gd['mon'], $gd['mday'] + 1, $gd['year']);
+                    endfor;
+                    ?>
+                </tr>
+            <?php
+            //  break;
+            endforeach;
+            // endfor;
+            ?>
+            </tbody>
+        </table>
+<!--    </div>-->
+<!--</div>-->
+
+<script type="text/javascript">
+Q.js_ready('course:calendar_day', function() {
+
+	Q.globals.cal_week_rel = '#<?php echo $cal_week_rel?>';
+	var blocks = <?php echo JS::quote($blocks) ?>;
+	var url = <?php echo JS::quote(URI::url('!course/calendar')) ?>;
+	var dtstart = <?php echo (int)$dtstart ?>;
+	var user_id = <?php echo (int)$user->id ?>;
+	var dtend = <?php echo (int)$dtnext - 1 ?>;
+
+	Q.Calendar.dtstart = dtstart;
+    Q.Calendar.dtend = dtend;
+
+    var $ = jQuery;
+
+    if ($('.reserv_calendar_left_nav_anchor')) {
+        var $export_buttons = $('.reserv_calendar_left_nav_anchor');
+        $.each($export_buttons, function(i, export_button) {
+            var $export_button = $(export_button);
+
+            var $str = $export_button.attr('q-static');
+            var $subStr = '&dtstart=';
+            $index = $str.indexOf($subStr)
+            if ($index != -1) {
+                $str = $str.substring(0, $index);
+            }
+
+            $export_button.attr('q-static', $str + '&dtstart=' + dtstart + '&dtend=' + dtend);
+            $export_button.replaceWith($export_button.clone().get(0)); // DOM元素替换来触发livequery重新绑定[q-object]
+        })
+    }
+
+    if (Q.Calendar && Q.Calendar.left_nav_area) {
+        $left = $('#<?php echo $left_id?>');
+        $(Q.Calendar.left_nav_area).appendTo($left);
+    }
+
+    if (Q.Calendar && Q.Calendar.right_nav_area) {
+        $right = $('#<?php echo $right_id;?>')
+	}
+
+    var day = new Q.Calendar.Day(Q.globals.cal_week_rel);
+    day.bindBlockEvent(blocks, /* submit_tip */ 1);
+    day.bindLineEvent();
+
+    // 调用接口获取课程块
+	function day_components_get(start, step) {
+		var hasError = true;
+		$.ajax({
+			url: url,
+			data: {
+				_ajax: 1,
+				_object: 'courses_day_components',
+				_event: 'get',
+				dtstart: dtstart,
+				dtend: dtend,
+				start: start,
+				step: step
+			},
+			success: function(data) {
+                hasError = false;
+				var cdata = data.components;
+				if (cdata.length > 0) {
+					for (var i in cdata) {
+						day.getComponent(cdata[i]).render();
+					}
+					delete data.components;
+					day_components_get(start + step, step);
+                    //bindDDDD();
+				}
+			},
+			complete: function() {
+			}
+		});
+	}
+
+    // 获取课程块
+	setTimeout(function () {
+		day_components_get(0, 10);
+		$overlay = '#<?php echo $cal_week_rel."overlay"?>';
+		$($overlay).remove();
+		$('.browser_wrapper').css('position', 'inherit');
+	}, 1000);
+
+    // 课程块悬浮
+    function bindDDDD()
+    {
+        var $preview_container = $('.slide_preview_container');
+        if($preview_container.size() == 0 ){
+
+            $preview_container = $('<div class="slide_preview_container" ><div class="preview_content"/></div>');
+            $preview_container.appendTo( $('body') ).css({top: -10000, right:0});
+        }
+
+        var $document = $(document);
+
+        var closeTimeout = null;
+        var showTimeout = null;
+        var click_on_preview;
+        var timeout = 200;
+
+        //显示preview
+        function show_preview(parent) {
+            click_on_preview = false;
+            var el = $preview_container.data('preview_element');
+            if (!el) return;
+            parent.css({'overflow' : 'hidden'});
+
+            var offset = parent.offset()
+            var scrollTop = $document.scrollTop();
+            var height = $(window).height();
+            var top = 0;
+            var right = '-300px';
+
+            $preview_container.appendTo(parent)
+
+            top = scrollTop <= offset.top ? top : scrollTop - offset.top;
+            height = scrollTop <= offset.top ? height - (offset.top - scrollTop) : height;
+
+            $preview_container.css({
+                top: top + 'px',
+                right: right,
+                height: height + 'px',
+                width: '300px'
+            })
+
+            $preview_container.find('.preview_content').addClass('preview_loading').empty();
+            $preview_container.show().animate({
+                right: '0px'
+            }, 500);
+
+        }
+
+        function unbind_preview_event() {
+            $document.unbind('click.preview');
+            $preview_container
+                .unbind('mouseenter.preview')
+                .unbind('mouseleave.preview')
+                .unbind('click.preview');
+        }
+
+        //关闭previw,将各项css恢复初始值.
+        function close_preview() {
+            unbind_preview_event();
+            $preview_container.hide().appendTo( $('body') ).css({top: -10000, right:0});
+            $preview_container.find('.preview_content').empty();
+            $preview_container.data('preview_element', null);
+        }
+
+        function reset_close_timeout() {
+            if (closeTimeout) {
+                clearTimeout(closeTimeout);
+                closeTimeout = null;
+            }
+        }
+
+        function reset_show_timeout() {
+            if (showTimeout) {
+                clearTimeout(showTimeout);
+                showTimeout = null;
+            }
+        }
+
+        function timeout_close_preview() {
+            closeTimeout = setTimeout(function() {
+                close_preview();
+            }, 1000);
+        }
+
+
+        //绑定mouseenter/mouseleave事件
+        $('[q-slide-preview]')
+            .off('mouseenter.preview')
+            .off('mouseleave.preview')
+            .on('mouseenter.preview', function(e){
+                close_preview();
+                reset_close_timeout();
+                reset_show_timeout();
+
+                var me = $(this);
+                var curr_el = $preview_container.data('preview_element');
+                var el = me[0];
+                if (el == curr_el) {
+                    return;
+                }
+                $preview_container.data('preview_element', el);
+
+                var parent = me.attr('q-slide-parent') ? $(me.attr('q-slide-parent')) : $('body');
+
+                $document
+                    .bind('click.preview', function(){
+                        if (!click_on_preview) {
+                            reset_show_timeout();
+                            reset_close_timeout();
+                            close_preview();
+                            $(this).unbind('click.preview');
+                        }
+                        click_on_preview = false;
+                    });
+
+                $preview_container
+                    .bind('mouseenter.preview', function(e) {
+                        reset_close_timeout();
+                    })
+                    .bind('mouseleave.preview', function(e) {
+                        reset_close_timeout();
+                        timeout_close_preview();
+                    })
+                    .bind('click.preview', function(e) {
+                        click_on_preview = true;
+                    });
+
+                show_preview(parent);
+
+                showTimeout = setTimeout(function() {
+                    //获取传递过来的q-static参数
+                    var str = me.attr('q-static');
+                    var data = Q.toQueryParams(str) || {};
+                    Q.trigger({
+                        object: 'slide_preview',
+                        event: 'click',
+                        data: data,
+                        url: me.attr('q-slide-preview'),
+                        global: false,
+                        success: function(data, status) {
+                            if (data.preview) {
+                                $preview_container.find('.preview_content').removeClass('preview_loading').html(data.preview);
+                                delete data.preview;
+                            }
+                        }
+                    });
+                }, timeout);
+
+            })
+            .on('mouseleave.preview', function(e){
+                reset_close_timeout();
+                timeout_close_preview();
+            });
+    }
+
+    <?php if($hh = Config::get('calendar.hourStart', 0)): ?>
+        window.scrollTo(0, $(".R<?= $hh * 2?>C0").offset().top - 35 - <?php echo (int)Config::get('calendar.line.height', count($headers));?>);
+    <?php endif;?>
+});
+
+    <?php if ($form['disable_month']): ?>
+        document.getElementById("week_month").style.cssText='left: 220px;bottom: 30px;';
+    <?php endif;?>
+</script>
+<?php echo JS::load_async('course:calendar_day');

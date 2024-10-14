@@ -4,13 +4,6 @@ class Index_Controller extends Base_Controller
 {
     public function index()
     {
-        $files = Input::file('file');
-        $form = Input::form();
-        if ($form['submitCourseImport']) {
-            $this->import($form, $files);
-            return;
-        }
-
         if (!L('ME')->is_allowed_to('列表', 'course')) {
             URI::url('error/404');
         }
@@ -59,11 +52,19 @@ class Index_Controller extends Base_Controller
             ]);
     }
 
-    public function import($form, $files)
+    public function arrange() 
     {
-        if ($form['submitCourseImport']) {
-            
-        }
+        $this->layout->body->primary_tabs
+        ->add_tab('arrange', [
+            'url'   => URI::url('!course/arrange'),
+            'title' => I18N::T('course', '课程排程'),
+        ]);
+        $this->layout->body->primary_tabs->delete_tab('index');
+
+        $this->layout->body->primary_tabs
+            ->select('arrange')
+            ->content = V('arrange', [
+            ]);
     }
 }
 
@@ -115,11 +116,33 @@ class Index_AJAX_Controller extends AJAX_Controller
                 $course->teacher_ref_no = H($form['teacher_ref_no']);
                 $course->teacher_name = H($form['teacher_name']);
                 $course->course_session = H($form['course_session']);
+                $teacher = o('user', ['ref_no' => $form['teacher_ref_no']]);
+                if ($teacher->id) $course->teacher = $teacher;
                 $course->week_day = H($form['week_day']);
                 $course->week = H($form['week']);
                 $course->ctime = Date::time();
+                $course->classroom_ref_no = H($form['classroom_ref_no']);
+                $course->classroom_name = H($form['classroom_name']);
+                $course->classbuild_name = H($form['classbuild_name']);
+                $classroom = o('meeting', ['ref_no' => $form['classroom_ref_no']]);
+                if ($classroom->id) $course->classroom = $classroom;
                 $course->save();
+
                 if ($course->id) {
+                    $weeks = explode(',', $course->week);
+                    foreach (Q("course_week[course=$course]") as $connect){
+                        if (!in_array($connect->week, $week)) 
+                            $connect->delete();
+                    }
+                    $connects = Q("course_week[course=$course]")->to_assoc('week', 'week');
+                    foreach ($weeks as $week) {
+                        if (!in_array($week, $connects)) {
+                            $course_week = O("course_week");
+                            $course_week->course = $course;
+                            $course_week->week = $week;
+                            $course_week->save();
+                        }
+                    }
                     Lab::message(Lab::MESSAGE_NORMAL, I18N::T('course', '课程添加成功!'));
                     JS::redirect('!course/index');
                 } else {
@@ -185,12 +208,32 @@ class Index_AJAX_Controller extends AJAX_Controller
                 $course->ref_no = H($form['ref_no']);
                 $course->teacher_ref_no = H($form['teacher_ref_no']);
                 $course->teacher_name = H($form['teacher_name']);
+                $teacher = o('user', ['ref_no' => $form['teacher_ref_no']]);
+                if ($teacher->id) $course->teacher = $teacher;
                 $course->course_session = H($form['course_session']);
                 $course->week_day = H($form['week_day']);
                 $course->week = H($form['week']);
-                $course->ctime = Date::time();
-                $course->save();
-                if ($course->id) {
+                $course->mtime = Date::time();
+                $course->classroom_ref_no = H($form['classroom_ref_no']);
+                $course->classroom_name = H($form['classroom_name']);
+                $course->classbuild_name = H($form['classbuild_name']);
+                $classroom = o('meeting', ['ref_no' => $form['classroom_ref_no']]);
+                if ($classroom->id) $course->classroom = $classroom;
+                if ($course->save()) {
+                    $weeks = explode(',', $course->week);
+                    foreach (Q("course_week[course=$course]") as $connect){
+                        if (!in_array($connect->week, $week)) 
+                            $connect->delete();
+                    }
+                    $connects = Q("course_week[course=$course]")->to_assoc('week', 'week');
+                    foreach ($weeks as $week) {
+                        if (!in_array($week, $connects)) {
+                            $course_week = O("course_week");
+                            $course_week->course = $course;
+                            $course_week->week = $week;
+                            $course_week->save();
+                        }
+                    }
                     Lab::message(Lab::MESSAGE_NORMAL, I18N::T('course', '课程修改成功!'));
                     JS::redirect('!course/index');
                 } else {
@@ -227,9 +270,7 @@ class Index_AJAX_Controller extends AJAX_Controller
         $form = Form::filter(Input::form());
 
         $file = Input::file('file');
-        error_log(print_r($file, 1));
-        error_log(print_r($form, 1));
-        
+
         if (!$file['tmp_name']) {
             $form->set_error('file', I18N::T('course', '请选择您要上传的课程文件!'));
         } else {
@@ -249,6 +290,7 @@ class Index_AJAX_Controller extends AJAX_Controller
             $cmd = 'SITE_ID=' . SITE_ID . ' LAB_ID=' . LAB_ID . ' php ' . ROOT_PATH . 'cli/cli.php Import_Course import ';
             $cmd .= "'".$form['school_term']."' '".$tmp_file_name."' >/dev/null 2>&1 &";
             $process = proc_open($cmd, [], $pipes);
+            error_log($cmd);
             Lab::message(Lab::MESSAGE_NORMAL, I18N::T('course', '课程导入成功!'));
             JS::redirect('!course/index');
         }

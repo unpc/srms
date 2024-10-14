@@ -1,0 +1,5 @@
+<div>
+    <p style="font-size: 12px;color: #fff;"><?php echo H($course->ref_no) ?></p>
+    <p style="font-size: 12px;color: #fff;"><?php echo H($course->name) ?></p>
+    <p style="font-size: 12px;color: #fff;"><?= $course->teacher_name ? : "" ?> 第<?= $course->course_session ?>节</p>
+</div>

@@ -16,3 +16,4 @@ $config['is_allowed_to[列表].course_session'][] = 'Course_Admin::Course_Sessio
 $config['is_allowed_to[添加].course_session'][] = 'Course_Admin::Course_Session_ACL';
 $config['is_allowed_to[修改].course_session'][] = 'Course_Admin::Course_Session_ACL';
 $config['is_allowed_to[删除].course_session'][] = 'Course_Admin::Course_Session_ACL';
+

@@ -15,7 +15,7 @@ class Admin_AJAX_Controller extends AJAX_Controller
             URI::redirect('error/401');
         }
 
-        $term = O('school_term');
+        $term= O('school_term');
 
         JS::dialog(V('course:school_term/admin/add', ['form' => $form, 'term' => $term]), [
             'title' => I18N::T('course', '添加学期'),

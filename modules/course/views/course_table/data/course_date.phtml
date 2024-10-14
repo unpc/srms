@@ -1,3 +1,6 @@
-<div>第 <?= $course->course_session ? : "--" ?> 节</div>
+<?php 
+$course_session = $course->school_term->course_session($course->course_session);
+?>
+<div>第 <?= $course->course_session ? : "--" ?> 节, <?= Date::format($course_session->dtstart, "H:i") ?> ~ <?= Date::format($course_session->dtend, "H:i") ?></div>
 <div>星期 <?= $course->week_day? : "--" ?></div>
 <div>第 <?= $course->week ? : "--" ?> 周</div>

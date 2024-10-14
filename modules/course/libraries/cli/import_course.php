@@ -31,13 +31,13 @@ class CLI_Import_Course {
             2 => 'teacher_ref_no',
             3 => 'teacher_name',
             4 => 'course_session',
-            5 => '开始时间',
-            6 => '结束时间',
+            5 => 'course_session_dtstart',
+            6 => 'course_session_dtend',
             7 => 'week_day',
             8 => 'week',
-            9 => '教室编号',
-            10 => '教室名称',
-            12 => '教学楼名称',
+            9 => 'classroom_ref_no',
+            10 => 'classroom_name',
+            12 => 'classbuild_name',
         ];
 
         //必填列
@@ -75,11 +75,42 @@ class CLI_Import_Course {
                 $course->teacher_ref_no = H($item['teacher_ref_no']);
                 $course->teacher_name = H($item['teacher_name']);
                 $course->course_session = H($item['course_session']);
+                $teacher = o('user', ['ref_no' => $item['teacher_ref_no']]);
+                if ($teacher->id) $course->teacher = $teacher;
                 $course->week_day = H($item['week_day']);
                 $course->week = H($item['week']);
                 $course->ctime = Date::time();
+                $course->classroom_ref_no = H($item['classroom_ref_no']);
+                $course->classroom_name = H($item['classroom_name']);
+                $course->classbuild_name = H($item['classbuild_name']);
+                $classroom = o('meeting', ['ref_no' => $item['classroom_ref_no']]);
+                if ($classroom->id) $course->classroom = $classroom;
                 if ($course->save()) {
-
+                    $weeks = explode(',', $course->week);
+                    foreach (Q("course_week[course=$course]") as $connect){
+                        if (!in_array($connect->week, $week)) 
+                            $connect->delete();
+                    }
+                    $connects = Q("course_week[course=$course]")->to_assoc('week', 'week');
+                    foreach ($weeks as $week) {
+                        if (!in_array($week, $connects)) {
+                            $course_week = O("course_week");
+                            $course_week->course = $course;
+                            $course_week->week = $week;
+                            $course_week->save();
+                        }
+                    }
+                    $course_session = $course->school_term->course_session($course->course_session);
+                    if (!$course_session->id) {
+                        $course_session            = O('course_session');
+                        $course_session->term      = $course->school_term->term;
+                        $course_session->session   = $item['course_session'];
+                        $course_session->dtstart   = strtotime("1970-01-01". $item['course_session_dtstart']);
+                        $course_session->dtend     = strtotime("1970-01-01". $item['course_session_dtend']);
+                        $course_session->save();
+                    }
+                } else {
+                    echo "error \r\n";
                 }
             }
         }

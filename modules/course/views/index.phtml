@@ -54,6 +54,13 @@ $columns = [
         'align'    => ' left',
         'nowrap'   => true,
     ],
+    'room_info'     => [
+        'weight'   => 20,
+        'title'    => I18N::T('course', '上课地点'),
+        'sortable' => true,
+        'align'    => ' left',
+        'nowrap'   => true,
+    ],
     'course_date'     => [
         'weight'   => 20,
         'title'    => I18N::T('course', '课程时间'),
@@ -82,6 +89,7 @@ foreach ($courses as $course) {
         'ref_no'   =>  V('course:course_table/data/ref_no', ['course' => $course]),
         'school_term' =>  V('course:course_table/data/school_term', ['course' => $course]),
         'teacher_info' =>  V('course:course_table/data/teacher_info', ['course' => $course]),
+        'room_info' =>  V('course:course_table/data/room_info', ['course' => $course]),
         'course_date' =>  V('course:course_table/data/course_date', ['course' => $course]),
         'rest'     => Widget::factory('application:links', ['links' => $links]),
     ];
